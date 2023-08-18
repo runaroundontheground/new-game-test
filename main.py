@@ -1,7 +1,5 @@
-import pygame as pg
-import math
 import random as rand
+import pygame as pg
 
-pg.init()
 
 
