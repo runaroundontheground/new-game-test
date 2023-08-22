@@ -1,14 +1,26 @@
-import random as rand
-import pygame as pg
+import random
+import pygame
+
+pygame.init()
+
+keys = pygame.key.get_pressed()
+keysPressed = []
+for num in range(len(keys)):
+    keysPressed.append(False)
+
+screenWidth = 600
+screenHeight = 400
+screen = pygame.display.set_mode((screenWidth, screenHeight))
+
+clock = pygame.time.Clock()
+FPS = 60
+
+running = True
+while running:
 
 
-pg.init()
 
-display = pg.display.set_mode((100, 100))
-rect = pg.Rect(0, 0, 20, 20)
 
-display.fill((255, 255, 255))
-pg.display.flip()
-input()
+    clock.tick(FPS)
 
-pg.quit()
+pygame.quit()
