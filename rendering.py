@@ -9,8 +9,8 @@ lightGray = pygame.surface.Surface((blockSize[0], blockSize[1]))
 lightGray.fill((100,100,100))
 white = pygame.surface.Surface((blockSize[0], blockSize[1]))
 white.fill((255, 255, 255))
-air = pygame.surface.Surface((blockSize[0], blockSize[1]))
-air.fill((0, 255, 0, 255))
+air = 0
+
 blockImages = [air, gray, lightGray, white]
 import random as r
 chunk = {
@@ -18,31 +18,37 @@ chunk = {
 }
 def createChunk():
     for x in range(10):
-        for y in range(3):
+        for y in range(10):
             for z in range(10):
-                
-                chunk[(x,y,z)] = r.randint(1, 2)
-    chunk[(r.randint(0, 10), 2, r.randint(0, 10))] = 0
-    chunk[(r.randint(0, 10), 2, r.randint(0, 10))] = 0
+                coord = (x,y,z)
+                chunk[coord] = 0
+                if y <= 2:
+                    chunk[coord] = y
+                    if r.randint(0, 1):
+                        chunk[coord] = 0
+    
 
-
+createChunk()
 print(chunk)
-layer = 3
+layer = 2
 
 def render():
     global layer
-    screen.fill((0, 0, 0))
+    screen.fill((0, 0, 255))
     
     blocks = []
     for x in range(10):
         for z in range(10):
             block = chunk[(x, layer, z)]
-            image = blockImages[block]
-            image = pygame.transform.scale_by(image, layer+1)
-            imageData = (image, (x*blockSize[0], z*blockSize[1]))
-            blocks.append(imageData)
+            if block != air:
+                image = blockImages[block]
+                image = pygame.transform.scale_by(image, layer+1)
+                imageData = (image, (x*blockSize[0], z*blockSize[1]))
+                blocks.append(imageData)
     
     screen.blits(blocks)
+    layer += 1
+    if layer > 2: layer = 0
     
 
     pygame.display.flip()
