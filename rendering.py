@@ -40,7 +40,7 @@ def render():
     for x in range(10):
         for z in range(10):
             block = chunk[(x, layer, z)]
-            if block != air:
+            if block != air: # make sure that it renders the tile beneath if it is air
                 image = blockImages[block]
                 image = pygame.transform.scale_by(image, layer+1)
                 imageData = (image, (x*blockSize[0], z*blockSize[1]))
