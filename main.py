@@ -1,4 +1,5 @@
 from worldgen import worldGen
+from rendering import render
 from player import player
 import random
 import pygame
@@ -10,27 +11,25 @@ keysPressed = []
 for num in range(len(keys)):
     keysPressed.append(False)
 
-screenWidth, screenHeight = 600, 400
-screen = pygame.display.set_mode((screenWidth, screenHeight))
-
 clock = pygame.time.Clock()
 FPS = 60
 
 running = True
 while running:
-
     
-    if keys[pygame.K_ESCAPE]: pygame.quit()
 
 
-
-    pygame.display.flip()
-    clock.tick(FPS)
+    render()
+    
+    clock.tick(3)
 
 pygame.quit()
 
 """
 the plan
+first:
+    somewhat setup player controlling and camera
+    test some things for the zoomed rendering
 worlgen and height things:
     top down game, randomly generated using perlin noise to create a map of heights
     implement 3 axis somehow: x, y, z
