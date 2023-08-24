@@ -17,13 +17,15 @@ FPS = 60
 running = True
 while running:
     
+    keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == exit:
             pygame.quit()
+    
 
     render()
     
-    clock.tick(1)
+    clock.tick(5)
 
 pygame.quit()
 

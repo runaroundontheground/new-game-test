@@ -45,12 +45,14 @@ def createChunk():
 
 createChunk()
 print(chunk)
-layer = 0
 
+layer = 0
 def render():
     global layer
     screen.fill((0, 0, 255))
-    
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_UP] and layer < heightLimit: layer += 1
+    if keys[pygame.K_DOWN] and layer > 0: layer -= 1
     blocks = []
     for x in range(10):
         for y in range(heightLimit):
@@ -58,12 +60,20 @@ def render():
                 block = chunk[(x, y, z)]
                 if block:
                     image = blockImages[block].copy()
-                    if layer-y != 0:
-                        factor = 1*(y-layer)
-                    else: factor = 1
-                    print(factor)
+                    factor = 1
+                    scale = 0.3
+                    if y > layer:
+                        factor *= (y - layer)
+                    if y < layer:
+                        factor /= (layer - y)
+                    if factor != 1: factor *= scale
+                
+                    
+                    
+                    
                     image = pygame.transform.scale_by(image, abs(factor))
                     imageData = (image, (x*blockSize[0], z*blockSize[1]))
+                    blocks.append(imageData)
                 """
                 if block:
                     image = blockImages[block].copy()
@@ -84,8 +94,7 @@ def render():
                 """
     
     screen.blits(blocks)
-    layer += 1
-    if layer >= heightLimit - 1: layer = 0  
+    
     
       
 
