@@ -23,7 +23,7 @@ while running:
 
     render()
     
-    clock.tick(3)
+    clock.tick(1)
 
 pygame.quit()
 

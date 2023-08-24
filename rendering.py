@@ -27,11 +27,12 @@ def createChunk():
                     chunk[coord] = y
                     if y == 2 and r.randint(0, 1):
                         chunk[coord] = 0
-    
+                if y > 2 and r.randint(0, 3) == 3:
+                    chunk[coord] = 0
 
 createChunk()
 print(chunk)
-layer = 2
+layer = 0
 
 def render():
     global layer
@@ -42,22 +43,24 @@ def render():
         for z in range(10):
             block = chunk[(x, layer, z)]
             if block != air: # make sure that it renders the tile beneath if it is air
-                image = blockImages[block]
+                image = blockImages[block].copy()
                 imageData = (image, (x*blockSize[0], z*blockSize[1]))
                 blocks.append(imageData)
             else:
-                for y in range(heightLimit):
+                y = layer
+                while y > 0:
                     block = chunk[(x,y,z)]
                     if block != air:
-                        image = blockImages[block]
-                        image = pygame.transform.scale_by(image, layer+1)
+                        image = blockImages[block].copy()
+                        image = pygame.transform.scale_by(image, y/layer)
                         imageData = (image, (x*blockSize[0]/(y-layer), z*blockSize[1]/(y-layer)))
-                        blocks.append(imageData)
+                        blocks.insert(0, imageData)
                         break
+                    y -= 1
     
     screen.blits(blocks)
+
     layer += 1
-    if layer > 2: layer = 0
-    
+    if layer >= 9: layer = 0    
 
     pygame.display.flip()
