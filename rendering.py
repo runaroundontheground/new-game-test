@@ -3,6 +3,7 @@ import pygame
 screenWidth, screenHeight = 600, 400
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 blockSize = (30, 30)
+heightLimit = 10
 gray = pygame.surface.Surface((blockSize[0], blockSize[1]))
 gray.fill((50,50,50))
 lightGray = pygame.surface.Surface((blockSize[0], blockSize[1]))
@@ -24,7 +25,7 @@ def createChunk():
                 chunk[coord] = 0
                 if y <= 2:
                     chunk[coord] = y
-                    if r.randint(0, 1):
+                    if y == 2 and r.randint(0, 1):
                         chunk[coord] = 0
     
 
@@ -42,9 +43,17 @@ def render():
             block = chunk[(x, layer, z)]
             if block != air: # make sure that it renders the tile beneath if it is air
                 image = blockImages[block]
-                image = pygame.transform.scale_by(image, layer+1)
                 imageData = (image, (x*blockSize[0], z*blockSize[1]))
                 blocks.append(imageData)
+            else:
+                for y in range(heightLimit):
+                    block = chunk[(x,y,z)]
+                    if block != air:
+                        image = blockImages[block]
+                        image = pygame.transform.scale_by(image, layer+1)
+                        imageData = (image, (x*blockSize[0]/(y-layer), z*blockSize[1]/(y-layer)))
+                        blocks.append(imageData)
+                        break
     
     screen.blits(blocks)
     layer += 1
