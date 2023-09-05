@@ -47,12 +47,13 @@ createChunk()
 print(chunk)
 
 layer = 0
-def render():
+def render(keysPressed):
     global layer
     screen.fill((0, 0, 255))
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_UP] and layer < heightLimit: layer += 1
-    if keys[pygame.K_DOWN] and layer > 0: layer -= 1
+    print(pygame.K_UP)
+    print(len(keysPressed))
+    if keysPressed[pygame.K_UP] and layer < heightLimit: layer += 1
+    if keysPressed[pygame.K_DOWN] and layer > 0: layer -= 1
     blocks = []
     for x in range(10):
         for y in range(heightLimit):
