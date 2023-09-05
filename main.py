@@ -10,20 +10,20 @@ keys = pygame.key.get_pressed()
 keysPressed = []
 for num in range(len(keys)):
     keysPressed.append(False)
-print("length of keysPressed:" + str(len(keysPressed)))
+
 clock = pygame.time.Clock()
 FPS = 60
 
 running = True
 while running:
     
-    tempKeys = keys
-    keys = pygame.key.get_pressed()
+    tempKeys = pygame.key.get_pressed()
     
-    for keyID in range(len(keys)):
+    for keyID in range(len(tempKeys)):
         keysPressed[keyID] = False
-        if not tempKeys[keyID] and keys[keyID]:
+        if not keys[keyID] and tempKeys[keyID]:
             keysPressed[keyID] = True
+    keys = tempKeys
     
     for event in pygame.event.get():
         if event.type == exit:
@@ -32,7 +32,7 @@ while running:
 
     render(keysPressed)
     
-    clock.tick(5)
+    clock.tick(FPS)
 
 pygame.quit()
 

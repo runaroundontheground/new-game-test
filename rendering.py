@@ -50,10 +50,9 @@ layer = 0
 def render(keysPressed):
     global layer
     screen.fill((0, 0, 255))
-    print(pygame.K_UP)
-    print(len(keysPressed))
-    if keysPressed[pygame.K_UP] and layer < heightLimit: layer += 1
-    if keysPressed[pygame.K_DOWN] and layer > 0: layer -= 1
+    
+    if keysPressed[pygame.K_COMMA] and layer < heightLimit: layer += 1
+    if keysPressed[pygame.K_PERIOD] and layer > 0: layer -= 1
     blocks = []
     for x in range(10):
         for y in range(heightLimit):
@@ -62,7 +61,7 @@ def render(keysPressed):
                 if block:
                     image = blockImages[block].copy()
                     factor = 1
-                    scale = 0.3
+                    scale = 0.999
                     if y > layer:
                         factor *= (y - layer)
                     if y < layer:
@@ -73,7 +72,7 @@ def render(keysPressed):
                     
                     
                     image = pygame.transform.scale_by(image, abs(factor))
-                    imageData = (image, (x*blockSize[0], z*blockSize[1]))
+                    imageData = (image, (x*blockSize[0]*factor, z*blockSize[1]*factor))
                     blocks.append(imageData)
                 """
                 if block:
