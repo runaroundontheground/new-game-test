@@ -1,6 +1,6 @@
 import pygame
 pygame.font.init()
-font = pygame.font.Font()
+font = pygame.font.Font(size = 24)
 screenWidth, screenHeight = 600, 400
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 blockSize = (30, 30)
@@ -71,20 +71,19 @@ def render(keysPressed):
             for z in range(10):
                 block = chunk[(x, y, z)]
                 if block:
-                    image = blockImages[block].copy()
-                    factor = 1
-                    if y > layer:
-                        factor *= (y - (layer*2))
-                    if y < layer:
-                        factor /= (layer - y)
-                    
-                
-                    
-                    
-                    
-                    image = pygame.transform.scale_by(image, abs(factor))
-                    image.blit(numbers[y], (0, 0))
-                    imageData = (image, (x*blockSize[0]*factor, z*blockSize[1]*factor))
+                    if layer != y:
+                        image = blockImages[block].copy()
+                        factor = 1
+                        if y > layer:
+                            factor *= (y - (layer*2))
+                        if y < layer:
+                            factor /= (layer - (y/2))
+                        
+                        image = pygame.transform.scale_by(image, abs(factor))
+                        image.blit(numbers[y], (0, 0))
+                        imageData = (image, (x*blockSize[0]*factor, z*blockSize[1]*factor))
+                    else:
+                        imageData = (blockImages[block], (x*blockSize[0], z*blockSize[1]))
                     blocks.append(imageData)
     
     screen.blits(blocks)
