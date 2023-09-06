@@ -1,5 +1,6 @@
 import pygame
-
+pygame.font.init()
+font = pygame.font.Font()
 screenWidth, screenHeight = 600, 400
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 blockSize = (30, 30)
@@ -11,7 +12,18 @@ air = 0
 green = pygame.surface.Surface((blockSize[0], blockSize[1])); green.fill((0, 255, 0))
 red = pygame.surface.Surface((blockSize[0], blockSize[1])); red.fill((255, 0, 0))
 brown = pygame.surface.Surface((blockSize[0], blockSize[1])); brown.fill((200, 75, 0))
-
+numbers = [
+    font.render("0", 0, (0, 0, 0)), 
+    font.render("1", 0, (0, 0, 0)), 
+    font.render("2", 0, (0, 0, 0)), 
+    font.render("3", 0, (0, 0, 0)), 
+    font.render("4", 0, (0, 0, 0)), 
+    font.render("5", 0, (0, 0, 0)), 
+    font.render("6", 0, (0, 0, 0)), 
+    font.render("7", 0, (0, 0, 0)), 
+    font.render("8", 0, (0, 0, 0)), 
+    font.render("9", 0, (0, 0, 0))
+           ]
 blockImages = [air, gray, lightGray, white, green, red, brown]
 import random as r
 chunk = {
@@ -61,17 +73,17 @@ def render(keysPressed):
                 if block:
                     image = blockImages[block].copy()
                     factor = 1
-                    scale = 0.999
                     if y > layer:
-                        factor *= (y - layer)
+                        factor *= (y - (layer*2))
                     if y < layer:
                         factor /= (layer - y)
-                    if factor != 1: factor *= scale
+                    
                 
                     
                     
                     
                     image = pygame.transform.scale_by(image, abs(factor))
+                    image.blit(numbers[y], (0, 0))
                     imageData = (image, (x*blockSize[0]*factor, z*blockSize[1]*factor))
                     blocks.append(imageData)
                 """
