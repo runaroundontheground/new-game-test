@@ -86,24 +86,6 @@ def render(keysPressed):
                     image.blit(numbers[y], (0, 0))
                     imageData = (image, (x*blockSize[0]*factor, z*blockSize[1]*factor))
                     blocks.append(imageData)
-                """
-                if block:
-                    image = blockImages[block].copy()
-                    imageData = (image, (x*blockSize[0], z*blockSize[1]))
-                    blocks.append(imageData)
-                else:
-                    y = heightLimit - 1
-                    while y >= 0:
-                        block = chunk[(x,y,z)]
-                        if block:
-                            image = blockImages[block].copy()
-                            image = pygame.transform.scale_by(image, 1/(layer-y))
-                            print(1/(layer-y)*1.5)
-                            imageData = (image, (x*blockSize[0], z*blockSize[1]))
-                            blocks.insert(0, imageData)
-                            
-                        y -= 1
-                """
     
     screen.blits(blocks)
     
