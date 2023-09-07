@@ -44,9 +44,11 @@ first:
 worlgen and height things:
     top down game, randomly generated using perlin noise to create a map of heights
     implement 3 axis somehow: x, y, z
+
     change the zoom of everything around the player, default zoom for stuff that's the same height,
     lower zoom for stuff that's lower down, and higher zoom for higher stuff
     make tiles transparent if the player is under them
+    
     infinite world or finite, pre-generated? maybe add option for both
     save player/world files into txt or something
     block types:
