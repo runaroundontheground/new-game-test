@@ -21,15 +21,15 @@ colors = [
 ]
 def fillColor(colorNum, colorValue):
     colors[colorNum].fill(colorValue)
-    colors[colorNum] = colors[colorNum].convert_alpha()
+    #colors[colorNum] = colors[colorNum].convert_alpha()
 fillColor(1, (50, 50, 50))
 fillColor(2, (100, 100, 100))
 fillColor(3, (255, 255, 255))
 fillColor(4, (0, 255, 0))
 fillColor(5, (255, 0, 0))
-fillColor(6, (200, 75, 0, 200))
+fillColor(6, (200, 75, 0))
 numbers = []
-print(colors[0])
+
 def makeNumbers():
     for num in range(10):
         print(num)
@@ -49,8 +49,6 @@ def createChunk(chunkCoords = (0, 0)):
     for x in range(10):
         for y in range(heightLimit):
             for z in range(10):
-                chunkCoord = chunkCoords
-                blockCoord = (x,y,z)
                 blockData = 0
                 
 
@@ -60,11 +58,11 @@ def createChunk(chunkCoords = (0, 0)):
                 if y == 3: blockData = 4
                 if y == 4: blockData = 5
                 if y == 5: blockData = 6
-                if r.randint(0, int(y/3)) == 0:
-                    blockData = 0
+                #if r.randint(0, 2) == 0:
+                #    blockData = 0
                 
-                chunkData[blockCoord] = blockData
-                chunks[chunkCoord] = chunkData
+                chunkData[(x, y, z)] = blockData
+                chunks[chunkCoords] = chunkData
 
 createChunk((0, 0))
 createChunk((0, 1))
@@ -97,29 +95,27 @@ def render(keysPressed):
             for y in range(heightLimit):
                 for z in range(10):
                     block = chunks[chunkCoord][(x, y, z)]
-                    if block:
+                    if block != 0:
                         if layer == y:
-                            if chunkCoord[0] == 0: xThingy = 1
-                            else: xThingy = chunkCoord[0]
-                            if chunkCoord[1] == 0: yThingy = 1
-                            else: yThingy = chunkCoord[1]
-                            xPosition = (x * blockSize[0])# * xThingy)
-                            yPosition = (y * blockSize[1])# * yThingy)
-                            position = (xPosition, yPosition)
+                            xPosition = x * blockSize[0]
+                            zPosition = z * blockSize[1]
+                            position = (xPosition, zPosition)
                             imageData = (blockImages[block], position)
                         else:
                             factor = 1
+                            positionFactor = 1
                             image = blockImages[block].copy()
                             if y > layer:
                                 factor += (y - layer) / 10
+                                positionFactor += (y - layer) / 500
                             if y < layer:
                                 factor -= (layer - y) / 10
-                            
-                            
+                                positionFactor -= (layer - y) / 500
                             
                             image = pygame.transform.scale_by(image, abs(factor))
                             image.blit(numbers[y], (0, 0))
-                            imageData = (image, (x*blockSize[0], z*blockSize[1]))
+                            position = (x*blockSize[0], z*blockSize[1])
+                            imageData = (image, position)
 
                         blocks.append(imageData)
     
