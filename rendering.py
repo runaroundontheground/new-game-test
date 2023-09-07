@@ -12,18 +12,14 @@ air = 0
 green = pygame.surface.Surface((blockSize[0], blockSize[1])); green.fill((0, 255, 0))
 red = pygame.surface.Surface((blockSize[0], blockSize[1])); red.fill((255, 0, 0))
 brown = pygame.surface.Surface((blockSize[0], blockSize[1])); brown.fill((200, 75, 0))
-numbers = [
-    font.render("0", 0, (0, 0, 0)), 
-    font.render("1", 0, (0, 0, 0)), 
-    font.render("2", 0, (0, 0, 0)), 
-    font.render("3", 0, (0, 0, 0)), 
-    font.render("4", 0, (0, 0, 0)), 
-    font.render("5", 0, (0, 0, 0)), 
-    font.render("6", 0, (0, 0, 0)), 
-    font.render("7", 0, (0, 0, 0)), 
-    font.render("8", 0, (0, 0, 0)), 
-    font.render("9", 0, (0, 0, 0))
-           ]
+numbers = []
+
+def makeNumbers():
+    for num in range(10):
+        print(num)
+        number = font.render(str(num), 0, (200, 200, 200))
+        numbers.append(number)
+makeNumbers()
 blockImages = [air, gray, lightGray, white, green, red, brown]
 import random as r
 chunk = {
@@ -56,34 +52,36 @@ def createChunk():
                 
 
 createChunk()
-print(chunk)
+
 
 layer = 0
 def render(keysPressed):
     global layer
     screen.fill((0, 0, 255))
     
-    if keysPressed[pygame.K_COMMA] and layer < heightLimit: layer += 1
-    if keysPressed[pygame.K_PERIOD] and layer > 0: layer -= 1
+    if keysPressed[pygame.K_PERIOD] and layer < heightLimit: layer += 1
+    if keysPressed[pygame.K_COMMA] and layer > 0: layer -= 1
     blocks = []
+
     for x in range(10):
         for y in range(heightLimit):
             for z in range(10):
                 block = chunk[(x, y, z)]
                 if block:
-                    if layer != y:
-                        image = blockImages[block].copy()
+                    if layer == y:
+                        imageData = (blockImages[block], (x*blockSize[0], z*blockSize[1]))
+                    else:
                         factor = 1
                         if y > layer:
-                            factor *= (y - (layer*2))
+                            factor += (y - layer)/5
                         if y < layer:
-                            factor /= (layer - (y/2))
+                            factor -= (layer - y)/5
                         
+                        image = blockImages[block].copy()
                         image = pygame.transform.scale_by(image, abs(factor))
                         image.blit(numbers[y], (0, 0))
                         imageData = (image, (x*blockSize[0]*factor, z*blockSize[1]*factor))
-                    else:
-                        imageData = (blockImages[block], (x*blockSize[0], z*blockSize[1]))
+
                     blocks.append(imageData)
     
     screen.blits(blocks)
