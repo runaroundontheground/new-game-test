@@ -3,6 +3,7 @@ from rendering import render
 from player import player
 import random
 import pygame
+import timeit
 
 pygame.init()
 
@@ -15,24 +16,28 @@ clock = pygame.time.Clock()
 FPS = 60
 
 running = True
-while running:
-    
-    tempKeys = pygame.key.get_pressed()
-    
-    for keyID in range(len(tempKeys)):
-        keysPressed[keyID] = False
-        if not keys[keyID] and tempKeys[keyID]:
-            keysPressed[keyID] = True
-    keys = tempKeys
-    
-    for event in pygame.event.get():
-        if event.type == exit:
-            pygame.quit()
-    
 
-    render(keysPressed)
-    
-    clock.tick(FPS)
+def gameLoop():
+    global keys, FPS, clock, keysPressed, running
+    while running:
+        
+        tempKeys = pygame.key.get_pressed()
+        
+        for keyID in range(len(tempKeys)):
+            keysPressed[keyID] = False
+            if not keys[keyID] and tempKeys[keyID]:
+                keysPressed[keyID] = True
+        keys = tempKeys
+        
+        for event in pygame.event.get():
+            if event.type == exit:
+                pygame.quit()
+        
+
+        render(keysPressed)
+        
+        clock.tick(FPS)
+gameLoop()
 
 pygame.quit()
 
