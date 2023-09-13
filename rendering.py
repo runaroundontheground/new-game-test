@@ -103,13 +103,14 @@ def render(keysPressed):
                     if block != 0:
 
                         if y < heightLimit - 1:
-                            if chunks[chunkCoord][(x, y + 1, z)] != 0 or y == heightLimit:
+                            if chunks[chunkCoord][(x, y + 1, z)] != 0:# or y == heightLimit:
 
                                 if layer == y:
                                     xPos = blockCoord[0] * chunkSize[0]
                                     zPos = blockCoord[2] * chunkSize[2]
                                     
-                                    xPos += blockCoord[0] * totalChunkSize
+                                    xPos += chunkCoord[0] * totalChunkSize
+                                    zPos += chunkCoord[1] * totalChunkSize
 
                                     position = (xPos, zPos)
                                     image = blockImages[block].copy()
