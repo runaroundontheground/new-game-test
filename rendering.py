@@ -10,7 +10,8 @@ blockSize = (30, 30) # these need to be the same number
 heightLimit = 6
 chunkSize = (10, heightLimit, 10) # x and z need the same
 totalChunkSize = chunkSize[0] * blockSize[0]
-
+testColor = pygame.surface.Surface((totalChunkSize, blockSize[1]))
+testColor.fill((255, 255, 255))
 colors = [
     0, # air
     pygame.surface.Surface((blockSize[0], blockSize[1])), # gray
@@ -22,7 +23,7 @@ colors = [
 ]
 def fillColor(colorNum, colorValue):
     colors[colorNum].fill(colorValue)
-    #colors[colorNum] = colors[colorNum].convert_alpha()
+    
 fillColor(1, (50, 50, 50))
 fillColor(2, (100, 100, 100))
 fillColor(3, (255, 255, 255))
@@ -30,14 +31,13 @@ fillColor(4, (0, 255, 0))
 fillColor(5, (255, 0, 0))
 fillColor(6, (200, 75, 0))
 numbers = []
-purpleNumbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
     for num in range(10):
         print(num)
         number = font.render(str(num), 0, color)
         thing.append(number)
 makeNumbers()
-makeNumbers(purpleNumbers, (128, 0, 128))
+
 blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5], colors[6]]
 import random as r
 chunks = {
@@ -94,50 +94,55 @@ def render(keysPressed):
 
     for chunkListIndex in range(len(chunkList)):
         chunkCoord = chunkList[chunkListIndex]
-        for x in range(10):
+        for x in range(chunkSize[0]):
             for y in range(heightLimit):
-                for z in range(10):
+                for z in range(chunkSize[2]):
                     blockCoord = (x, y, z)
                     block = chunks[chunkCoord][blockCoord]
 
                     if block != 0:
+                        xPos = (blockCoord[0]) * chunkSize[0]
+                        zPos = (blockCoord[2]) * chunkSize[2]
+                        
+                        xPos += chunkCoord[0] * totalChunkSize
+                        zPos += chunkCoord[1] * totalChunkSize
 
-                        if y < heightLimit - 1:
-                            if chunks[chunkCoord][(x, y + 1, z)] != 0:# or y == heightLimit:
+                        #xPos += blockCoord[0] * (blockSize[0] * chunkSize[0])
+                        #zPos += blockCoord[2] * (blockSize[0] * chunkSize[0])
+                
+                        if layer == y:
+                            
 
-                                if layer == y:
-                                    xPos = blockCoord[0] * chunkSize[0]
-                                    zPos = blockCoord[2] * chunkSize[2]
-                                    
-                                    xPos += chunkCoord[0] * totalChunkSize
-                                    zPos += chunkCoord[1] * totalChunkSize
+                            position = (xPos, zPos)
+                            #image = blockImages[block].copy()
+                            #image.blit(numbers[y], (0, 0))
+                            imageData = (blockImages[block], position)
+                        else:
+                            factor = 1
+                            positionFactor = 1
+                            image = blockImages[block].copy()
+                            if y > layer:
+                                factor += (y - layer) / 10
+                                positionFactor += (y - layer) / 500
+                            if y < layer:
+                                factor -= (layer - y) / 10
+                                positionFactor -= (layer - y) / 500
+                            
+                            #image = pygame.transform.scale_by(image, abs(factor))
+                            #image.blit(numbers[y], (0, 0))
+                            
 
-                                    position = (xPos, zPos)
-                                    image = blockImages[block].copy()
-                                    image.blit(numbers[y], (0, 0))
-                                    imageData = (image, position)
-                                else:
-                                    factor = 1
-                                    positionFactor = 1
-                                    image = blockImages[block].copy()
-                                    if y > layer:
-                                        factor += (y - layer) / 10
-                                        positionFactor += (y - layer) / 500
-                                    if y < layer:
-                                        factor -= (layer - y) / 10
-                                        positionFactor -= (layer - y) / 500
-                                    
-                                    image = pygame.transform.scale_by(image, abs(factor))
-                                    image.blit(numbers[y], (0, 0))
-                                    xPos = x * blockSize[0]
-                                    zPos = z * blockSize[1]
-                                    position = (xPos, zPos)
-                                    imageData = (image, position)
+                            #xPos *= positionFactor
+                            #zPos *= positionFactor
 
-                                blocks.append(imageData)
+                            position = (xPos, zPos)
+                            imageData = (image, position)
+
+                        blocks.append(imageData)
     
     screen.blits(blocks)
-    screen.blit(numbers[layer], (400, 300))
+    screen.blit(numbers[layer], (500, 300))
+    screen.blit(testColor, (0, 0))
     
       
 
