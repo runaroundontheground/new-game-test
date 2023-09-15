@@ -72,7 +72,7 @@ animation ideas:
 
     customizable sections of player (color, armor, etc)
         color of skin, armor, clothes
-        save different colorable things as separate surfaces so they can be recolored
+        save different colorable things as separate surfaces so they can be recolored]
 
 lighting system ideas:
     use something similar to minecraft's lighting, light emmitting stuff has a light level,
