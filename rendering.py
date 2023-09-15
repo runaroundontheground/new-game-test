@@ -3,7 +3,7 @@ pygame.font.init()
 
 font = pygame.font.Font(size = 24)
 
-screenWidth, screenHeight = 600, 400
+screenWidth, screenHeight = 1200, 600
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 blockSize = (30, 30) # these need to be the same number
@@ -15,20 +15,20 @@ colors = [
     0, # air
     pygame.surface.Surface((blockSize[0], blockSize[1])), # gray
     pygame.surface.Surface((blockSize[0], blockSize[1])), # lightGray
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # white
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # green
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # red
-    pygame.surface.Surface((blockSize[0], blockSize[1])) # brown
+    pygame.surface.Surface((blockSize[0], blockSize[1])), # lighter gray
+    pygame.surface.Surface((blockSize[0], blockSize[1])), # lighter lightgray
+    pygame.surface.Surface((blockSize[0], blockSize[1])), # dark white
+    pygame.surface.Surface((blockSize[0], blockSize[1])) # white
 ]
 def fillColor(colorNum, colorValue):
     colors[colorNum].fill(colorValue)
     
-fillColor(1, (50, 50, 50))
-fillColor(2, (100, 100, 100))
-fillColor(3, (255, 255, 255))
-fillColor(4, (0, 255, 0))
-fillColor(5, (255, 0, 0))
-fillColor(6, (200, 75, 0))
+fillColor(1, (0, 0, 0))
+fillColor(2, (50, 50, 50))
+fillColor(3, (100, 100, 100))
+fillColor(4, (150, 150, 150))
+fillColor(5, (200, 200, 200))
+fillColor(6, (255, 255, 255))
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
     for num in range(10):
@@ -52,13 +52,13 @@ def createChunk(chunkCoords = (0, 0)):
             for z in range(10):
                 blockData = 0
                 
-
-                if y == 0: blockData = 1
+                blockData = y + 1
+                """if y == 0: blockData = 1
                 if y == 1: blockData = 2
                 if y == 2: blockData = 3
                 if y == 3: blockData = 4
                 if y == 4: blockData = 5
-                if y == 5: blockData = 6
+                if y == 5: blockData = 6"""
                 if r.randint(0, 2) == 0:
                     blockData = 0
                 
@@ -66,7 +66,7 @@ def createChunk(chunkCoords = (0, 0)):
                 chunks[chunkCoords] = chunkData
 
 def generateTest():
-    createChunk((-1, 0))
+    #createChunk((-1, 0))
     createChunk((0, 0))
     createChunk((0, 1))
     createChunk((1, 0))
@@ -84,7 +84,7 @@ def render(keysPressed):
     # get the chunks to be used for rendering
 
     chunkList = [
-        (-1, 0),
+        #(-1, 0),
         (0, 0),
         (0, 1),
         (1, 0),
@@ -112,26 +112,25 @@ def render(keysPressed):
                         #zPos += z * (blockSize[1] - chunkSize[2])
                 
                         if layer == y:
-                            
-
                             position = (xPos, zPos)
-                            #image = blockImages[block].copy()
-                            #image.blit(numbers[y], (0, 0))
                             imageData = (blockImages[block], position)
                         else:
                             factor = 1
+                            divisor = 1
                             image = blockImages[block].copy()
                             if y > layer:
-                                factor += (y - layer) / 100
-                            if y < layer:
-                                factor -= (layer - y) / 100
-                            
+                                factor += y - layer
+                                factor /= divisor
+                            if y < layer: # layer is 5, y is 4
+                                factor -= layer - y
+                                factor /= divisor
+                            if factor == 0:
+                                factor = 1
                             image = pygame.transform.scale_by(image, abs(factor))
-                            image.blit(numbers[y], (0, 0))
                             
 
-                            xPos *= factor
-                            zPos *= factor
+                            #xPos *= factor
+                            #zPos *= factor
 
                             position = (xPos, zPos)
                             imageData = (image, position)
