@@ -119,24 +119,31 @@ def render(keysPressed):
                             divisor = 1
                             image = blockImages[block].copy()
                             if y > layer:
-                                factor += y - layer
-                                factor /= divisor
-                            if y < layer: # layer is 5, y is 4
-                                factor -= layer - y
-                                factor /= divisor
-                            if factor == 0:
-                                factor = 1
-                            image = pygame.transform.scale_by(image, abs(factor))
+                                factor += (y - layer) / 10
+                                #factor /= divisor
+                                #if factor == 0:
+                                #    factor = 1.1
+                            if y < layer:
+                                factor -= (layer - y) / 10
+                                #factor /= divisor
+                                #if factor == 0:
+                                #    factor = 0.9
                             
+                            
+                            image = pygame.transform.scale_by(image, abs(factor))
 
-                            #xPos *= factor
-                            #zPos *= factor
+                            xPos *= factor
+                            zPos *= factor
+
+                            xPos /= divisor
+                            zPos /= divisor
+
 
                             position = (xPos, zPos)
                             imageData = (image, position)
 
                         blocks.append(imageData)
-    
+    blocks.reverse()
     screen.blits(blocks)
     screen.blit(numbers[layer], (500, 300))
     
