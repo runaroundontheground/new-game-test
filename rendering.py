@@ -32,7 +32,7 @@ fillColor(6, (255, 255, 255))
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
     for num in range(10):
-        print(num)
+        #print(num)
         number = font.render(str(num), 0, color)
         thing.append(number)
 makeNumbers()
@@ -86,12 +86,15 @@ def render(keysPressed):
     chunkList = [
         #(-1, 0),
         (0, 0),
-        (0, 1),
-        (1, 0),
-        (1, 1)
+        #(0, 1),
+        #(1, 0),
+        #(1, 1)
     ]
+    # need to separate which layers of the blocks get rendered at once, so
+    # the lower layers are below the higher ones
     blocks = []
-
+    for i in range(chunkSize[1]):
+        blocks.append( [] )
 
     for chunkListIndex in range(len(chunkList)):
         chunkCoord = chunkList[chunkListIndex]
@@ -116,35 +119,33 @@ def render(keysPressed):
                             imageData = (blockImages[block], position)
                         else:
                             factor = 1
-                            divisor = 1
+                            divisor = 50
                             image = blockImages[block].copy()
                             if y > layer:
-                                factor += (y - layer) / 10
-                                #factor /= divisor
-                                #if factor == 0:
-                                #    factor = 1.1
+                                factor += (y - layer) / divisor
                             if y < layer:
-                                factor -= (layer - y) / 10
-                                #factor /= divisor
-                                #if factor == 0:
-                                #    factor = 0.9
+                                factor -= (layer - y) / divisor
                             
                             
-                            image = pygame.transform.scale_by(image, abs(factor))
+                            image = pygame.transform.scale_by(image, abs(factor * 1.1))
 
                             xPos *= factor
                             zPos *= factor
 
-                            #xPos /= divisor
-                            #zPos /= divisor
+                            
 
 
                             position = (xPos, zPos)
                             imageData = (image, position)
 
-                        blocks.append(imageData)
-    blocks.reverse()
-    screen.blits(blocks)
+                        blocks[y].append(imageData)
+    blockRenderData = []
+    
+    for listOfBlocksIndex in range(chunkSize[1]):
+        blockRenderData += blocks[listOfBlocksIndex]
+
+
+    screen.blits(blockRenderData)
     screen.blit(numbers[layer], (500, 300))
     
       
