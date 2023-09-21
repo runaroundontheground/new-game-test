@@ -86,9 +86,9 @@ def render(keysPressed):
     chunkList = [
         #(-1, 0),
         (0, 0),
-        #(0, 1),
-        #(1, 0),
-        #(1, 1)
+        (0, 1),
+        (1, 0),
+        (1, 1)
     ]
     # need to separate which layers of the blocks get rendered at once, so
     # the lower layers are below the higher ones
@@ -111,15 +111,13 @@ def render(keysPressed):
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
 
-                        #xPos += x * (blockSize[0] - chunkSize[0])
-                        #zPos += z * (blockSize[1] - chunkSize[2])
                 
                         if layer == y:
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
                         else:
                             factor = 1
-                            divisor = 50
+                            divisor = 100
                             image = blockImages[block].copy()
                             if y > layer:
                                 factor += (y - layer) / divisor
@@ -128,7 +126,7 @@ def render(keysPressed):
                             
                             
                             image = pygame.transform.scale_by(image, abs(factor * 1.1))
-
+                                            # multiplpy by 1.1 to remove gaps in blocks
                             xPos *= factor
                             zPos *= factor
 
