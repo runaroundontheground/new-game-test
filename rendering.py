@@ -135,8 +135,8 @@ def render(keysPressed):
                             xPos *= factor
                             zPos *= factor
 
-                            xPos /= divisor
-                            zPos /= divisor
+                            #xPos /= divisor
+                            #zPos /= divisor
 
 
                             position = (xPos, zPos)
