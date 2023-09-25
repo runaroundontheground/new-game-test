@@ -7,7 +7,7 @@ chunkSize = (10, 6) # chunkSize[0] is length and width
 totalChunkSize = chunkSize[0] * blockSize
 
 
-chunks = {}
+chunks = {} # t
 #    (0, 0): {
 #        (0, 1, 0): 0 # currently would be air
 #    }
@@ -25,7 +25,7 @@ def createChunk(chunkCoords = (0, 0)):
                 
                 blockData = y + 1 # this will need to be changed later when 
                 # i add more height or something
-                
+                # hmmmmm i gotta figure out perlin noise...
                 if random.randint(0, 2) == 0: # this also needs to be removed, it just
                     blockData = 0 # makes a tile have a 1/3 chance to be air
                 
