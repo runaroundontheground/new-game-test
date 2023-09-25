@@ -1,9 +1,17 @@
+from controls import keysPressed
+import random
 
 
-blockSize = (30, 30) # these need to be the same number
-chunkSize = (10, 6, 10) # x and z need the same
-totalChunkSize = chunkSize[0] * blockSize[0]
+blockSize = 30 # pixels
+chunkSize = (10, 6) # chunkSize[0] is length and width
+totalChunkSize = chunkSize[0] * blockSize
 
+
+chunks = {}
+#    (0, 0): {
+#        (0, 1, 0): 0 # currently would be air
+#    }
+#}
 
 
 
@@ -15,15 +23,11 @@ def createChunk(chunkCoords = (0, 0)):
             for z in range(10):
                 blockData = 0
                 
-                blockData = y + 1
-                """if y == 0: blockData = 1
-                if y == 1: blockData = 2
-                if y == 2: blockData = 3
-                if y == 3: blockData = 4
-                if y == 4: blockData = 5
-                if y == 5: blockData = 6"""
-                if r.randint(0, 2) == 0:
-                    blockData = 0
+                blockData = y + 1 # this will need to be changed later when 
+                # i add more height or something
+                
+                if random.randint(0, 2) == 0: # this also needs to be removed, it just
+                    blockData = 0 # makes a tile have a 1/3 chance to be air
                 
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData

@@ -1,6 +1,8 @@
+from worldgen import blockSize, totalChunkSize, chunkSize, chunks
 import pygame
-from worldgen import blockSize, totalChunkSize, chunkSize
-pygame.font.init()
+
+#pygame.font.init()
+
 from controls import keysPressed, mouse
 font = pygame.font.Font(size = 24)
 
@@ -8,16 +10,16 @@ screenWidth, screenHeight = 1200, 600
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 
-testColor = pygame.surface.Surface((totalChunkSize, blockSize[1]))
+testColor = pygame.surface.Surface((totalChunkSize, blockSize))
 testColor.fill((255, 255, 255))
 colors = [
     0, # air
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # gray
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # lightGray
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # lighter gray
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # lighter lightgray
-    pygame.surface.Surface((blockSize[0], blockSize[1])), # dark white
-    pygame.surface.Surface((blockSize[0], blockSize[1])) # white
+    pygame.surface.Surface((blockSize, blockSize)), # gray
+    pygame.surface.Surface((blockSize, blockSize)), # lightGray
+    pygame.surface.Surface((blockSize, blockSize)), # lighter gray
+    pygame.surface.Surface((blockSize, blockSize)), # lighter lightgray
+    pygame.surface.Surface((blockSize, blockSize)), # dark white
+    pygame.surface.Surface((blockSize, blockSize)) # white
 ]
 def fillColor(colorNum, colorValue):
     colors[colorNum].fill(colorValue)
@@ -37,11 +39,7 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
 makeNumbers()
 
 blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5], colors[6]]
-chunks = {
-    (0, 0): {
-        (0, 1, 0): 0 # currently would be air
-    }
-}
+
 
 
 
@@ -53,7 +51,6 @@ def render():
     
     if keysPressed[pygame.K_PERIOD] and layer < chunkSize[1] - 1: layer += 1
     if keysPressed[pygame.K_COMMA] and layer > 0: layer -= 1
-  #  if keysPressed[pygame.K_r]: generateTest()
 
     # get the chunks to be used for rendering
 
@@ -74,13 +71,13 @@ def render():
         chunkCoord = chunkList[chunkListIndex]
         for x in range(chunkSize[0]):
             for y in range(chunkSize[1]):
-                for z in range(chunkSize[2]):
+                for z in range(chunkSize[0]):
                     blockCoord = (x, y, z)
                     block = chunks[chunkCoord][blockCoord]
 
                     if block != 0:
-                        xPos = x * blockSize[0]#chunkSize[0]
-                        zPos = z * blockSize[1]#chunkSize[2]
+                        xPos = x * blockSize
+                        zPos = z * blockSize
                         
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
