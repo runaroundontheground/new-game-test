@@ -1,6 +1,6 @@
 from controls import keysPressed
 import random
-
+import math
 
 blockSize = 30 # pixels
 chunkSize = (10, 6) # chunkSize[0] is length and width
@@ -32,11 +32,22 @@ def createChunk(chunkCoords = (0, 0)):
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
-def generateTest():
-    #createChunk((-1, 0))
-    createChunk((0, 0))
-    createChunk((0, 1))
-    createChunk((1, 0))
-    createChunk((1, 1))
-generateTest()
 
+
+def getBlockFromPos(x = 1, y = 1, z = 1, extraInfo = False):
+    
+    chunkX = math.floor(x / blockSize)
+    chunkZ = math.foor(z / blockSize)
+    chunkCoord = (chunkX, chunkZ)
+
+    blockCoord = (x, y, z)
+
+    block = chunks[chunkCoord][blockCoord]
+
+    if extraInfo:
+        pass
+    else:
+        if block != 0:
+            return True
+        else:
+            return False
