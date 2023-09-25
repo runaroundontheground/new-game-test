@@ -1,16 +1,12 @@
-from worldgen import worldGen
+#from worldgen import worldGen
 from rendering import render
 from player import player
+from controls import updateKeys, updateMouse
 import random
 import pygame
 import timeit
 
 pygame.init()
-
-keys = pygame.key.get_pressed()
-keysPressed = []
-for num in range(len(keys)):
-    keysPressed.append(False)
 
 clock = pygame.time.Clock()
 FPS = 60
@@ -18,25 +14,21 @@ FPS = 60
 running = True
 
 def gameLoop():
-    global keys, FPS, clock, keysPressed, running
     while running:
         
-        tempKeys = pygame.key.get_pressed()
-        
-        for keyID in range(len(tempKeys)):
-            keysPressed[keyID] = False
-            if not keys[keyID] and tempKeys[keyID]:
-                keysPressed[keyID] = True
-        keys = tempKeys
+        updateKeys()
+        updateMouse()
         
         for event in pygame.event.get():
             if event.type == exit:
                 pygame.quit()
         
 
-        render(keysPressed)
+        render()
         
         clock.tick(FPS)
+
+
 gameLoop()
 
 pygame.quit()

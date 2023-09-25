@@ -1,6 +1,6 @@
 import pygame
 pygame.font.init()
-
+from controls import keysPressed, mouse
 font = pygame.font.Font(size = 24)
 
 screenWidth, screenHeight = 1200, 600
@@ -73,7 +73,7 @@ def generateTest():
     createChunk((1, 1))
 generateTest()
 layer = 5
-def render(keysPressed):
+def render():
     global layer
     screen.fill((0, 0, 255))
     
@@ -144,7 +144,7 @@ def render(keysPressed):
 
 
     screen.blits(blockRenderData)
-    screen.blit(numbers[layer], (500, 300))
+    screen.blit(numbers[y], (mouse.x + 10, mouse.y))
     
       
 
