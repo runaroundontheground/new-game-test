@@ -1,12 +1,15 @@
 from controls import keysPressed
+from main import screenWidth, screenHeight, totalChunkSize
 import random
 import math
 
-blockSize = 30 # pixels
-chunkSize = (10, 6) # chunkSize[0] is length and width
-totalChunkSize = chunkSize[0] * blockSize
 
+# need to find the size of the screen, for deciding how many chunks to render at once
 
+screenWidthInChunks = math.floor( screenWidth / totalChunkSize )
+screenHeightInChunks = math.floor( screenHeight / totalChunkSize)
+print(screenWidthInChunks)
+print(screenHeightInChunks)
 chunks = {} # t
 #    (0, 0): {
 #        (0, 1, 0): 0 # currently would be air
@@ -31,6 +34,7 @@ def createChunk(chunkCoords = (0, 0)):
                 
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
+
 
 
 

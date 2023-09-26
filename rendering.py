@@ -1,4 +1,4 @@
-from worldgen import blockSize, totalChunkSize, chunkSize, chunks
+#from worldgen import blockSize, totalChunkSize, chunkSize, chunks
 import pygame
 
 #pygame.font.init()
@@ -6,8 +6,6 @@ import pygame
 from controls import keysPressed, mouse
 font = pygame.font.Font(size = 24)
 
-screenWidth, screenHeight = 1200, 600
-screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 
 testColor = pygame.surface.Surface((totalChunkSize, blockSize))
@@ -54,13 +52,8 @@ def render():
 
     # get the chunks to be used for rendering
 
-    chunkList = [
-        #(-1, 0),
-        (0, 0),
-        (0, 1),
-        (1, 0),
-        (1, 1)
-    ]
+    chunkList = []
+
     # need to separate which layers of the blocks get rendered at once, so
     # the lower layers are below the higher ones
     blocks = []

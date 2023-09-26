@@ -1,16 +1,34 @@
 #from worldgen import worldGen
+
+
+
+
+
+from controls import updateKeys, updateMouse
 from rendering import render
 from player import player
-from controls import updateKeys, updateMouse
-import random
 import pygame
-import timeit
 
 pygame.init()
 
+ # why am i getting circular imports??? well heres a fix
+
+blockSize = 30 # pixels
+chunkSize = (10, 6) # chunkSize[0] is length and width
+totalChunkSize = chunkSize[0] * blockSize
+
+screenWidth, screenHeight = 1200, 600
+screen = pygame.display.set_mode((screenWidth, screenHeight))
+
+
+
+
 clock = pygame.time.Clock()
 FPS = 60
-
+class test():
+    def __init__(self):
+        self.screenHeight = 1
+        self.screenWidth = 1
 running = True
 
 def gameLoop():
