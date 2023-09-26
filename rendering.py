@@ -54,7 +54,9 @@ def render():
     if keysPressed[pygame.K_COMMA] and layer > 0: layer -= 1
 
     # get the chunks to be used for rendering
-    print(x in range(0, screenWidthInChunks))
+
+    for i in range(0, screenWidthInChunks):
+        pass
      # i'd need to use the camera position to get it to select the corret spots, but 
      # i don't have a camera yet
 
