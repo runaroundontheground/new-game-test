@@ -1,12 +1,15 @@
-#from worldgen import blockSize, totalChunkSize, chunkSize, chunks
+from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
+from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 import pygame
 
-#pygame.font.init()
-
 from controls import keysPressed, mouse
+
 font = pygame.font.Font(size = 24)
 
 
+
+
+screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 testColor = pygame.surface.Surface((totalChunkSize, blockSize))
 testColor.fill((255, 255, 255))
@@ -51,6 +54,9 @@ def render():
     if keysPressed[pygame.K_COMMA] and layer > 0: layer -= 1
 
     # get the chunks to be used for rendering
+    print(x in range(0, screenWidthInChunks))
+     # i'd need to use the camera position to get it to select the corret spots, but 
+     # i don't have a camera yet
 
     chunkList = []
 
@@ -108,7 +114,7 @@ def render():
 
 
     screen.blits(blockRenderData)
-    screen.blit(numbers[y], (mouse.x + 10, mouse.y))
+    screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     
       
 
