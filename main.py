@@ -9,7 +9,6 @@ pygame.init()
 
 
 
-
 from rendering import render
 
 clock = pygame.time.Clock()
@@ -22,6 +21,8 @@ def gameLoop():
         
         updateKeys()
         updateMouse()
+
+        player.doStuff()
         
         for event in pygame.event.get():
             if event.type == exit:
