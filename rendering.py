@@ -2,6 +2,7 @@ from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, block
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 from widelyUsedVariables import camera
 from worldgen import createChunk
+from player import player
 import pygame
 
 from controls import keysPressed, mouse
@@ -15,8 +16,8 @@ font = pygame.font.Font(size = 24)
 
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
-testColor = pygame.surface.Surface((totalChunkSize, blockSize))
-testColor.fill((255, 255, 255))
+playerColor = pygame.surface.Surface((30, 30))
+playerColor.fill((0, 255, 0))
 colors = [
     0, # air
     pygame.surface.Surface((blockSize, blockSize)), # gray
@@ -62,8 +63,9 @@ def render():
     chunkList = []
      # once camera exists, find the chunk that it's in (top left corner of it)
       # and then use that instead of 0 here
-    for x in range(0, screenWidthInChunks):
-        for z in range(0, screenHeightInChunks):
+    cameraChunk = camera.currentChunk
+    for x in range(cameraChunk[0], cameraChunk[0] + screenWidthInChunks):
+        for z in range(cameraChunk[1], cameraChunk[1] + screenHeightInChunks):
             try:
                 chunks[(x, z)]
             except:
@@ -114,8 +116,6 @@ def render():
                             xPos *= factor
                             zPos *= factor
 
-                            
-
 
                             position = (xPos, zPos)
                             imageData = (image, position)
@@ -131,6 +131,7 @@ def render():
        # need to append it to whatever list it's layer corresponds to
     screen.blits(blockRenderData)
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
+    screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
     
       
 

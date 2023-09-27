@@ -1,4 +1,6 @@
 from controls import keysPressed, keys, mouse
+from widelyUsedVariables import camera
+from worldgen import getChunkCoord
 import pygame
 # just for faster writing:
 up = pygame.K_w
@@ -24,20 +26,30 @@ class Player():
         self.y += self.yv
         self.z += self.zv
 
-        if keysPressed[right]:
+        if keys[0][right]:
                 # add more checks later
             self.x += 1
-        if keysPressed[left]:
+        if keys[0][left]:
             self.x -= 1
-        if keysPressed[up]:
+        if keys[0][up]:
             self.z -= 1
-        if keysPressed[down]:
+        if keys[0][down]:
             self.z += 1
+
+    def updateCamera(self):
+        camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
+        camera.z -= round((camera.z - self.z + camera.centerTheCamera[1]) / camera.smoothness)
+        camera.currentChunk = getChunkCoord(camera.x, camera.z)
 
 
 
     def doStuff(self):
         self.generalMovement()
+        
+        self.updateCamera()
+
+
+
 
             
 

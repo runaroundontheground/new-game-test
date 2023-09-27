@@ -1,9 +1,9 @@
 import pygame
 pygame.display.init()
-
-keys = pygame.key.get_pressed()
+keys = []
+keys.append(pygame.key.get_pressed())
 keysPressed = []
-for num in range(len(keys)):
+for num in range(len(keys[0])):
     keysPressed.append(False)
 
 class Mouse():
@@ -14,15 +14,18 @@ class Mouse():
 
 mouse = Mouse()
 
+
 def updateKeys():
-    global keys
+    
     tempKeys = pygame.key.get_pressed()
         
     for keyID in range(len(tempKeys)):
         keysPressed[keyID] = False
-        if not keys[keyID] and tempKeys[keyID]:
+        if not keys[0][keyID] and tempKeys[keyID]:
             keysPressed[keyID] = True
-    keys = tempKeys
+    keys[0] = tempKeys
+
+    
 
 def updateMouse():
     mouse.pos = pygame.mouse.get_pos()
