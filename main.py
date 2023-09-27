@@ -65,6 +65,7 @@ animation ideas:
         figure rest out later
     or i could make a few generalized animations, swing two handed, swing one handed
     held one handed, held two handed
+    later edit: why would i want to use inverse kinematics here??
 
     customizable sections of player (color, armor, etc)
         color of skin, armor, clothes

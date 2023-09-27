@@ -27,14 +27,14 @@ def createChunk(chunkCoords = (0, 0)):
 
 
 
-def getBlockFromPos(x = 1, y = 1, z = 1, extraInfo = False):
+def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
     chunkX = math.floor(x / blockSize)
     chunkZ = math.foor(z / blockSize)
     chunkCoord = (chunkX, chunkZ)
 
-    blockCoord = (x, y, z)
-
+    blockCoord = (round(x), round(y), round(z))
+     # rounding might cause problems later, we'll see
     block = chunks[chunkCoord][blockCoord]
 
     if extraInfo:
@@ -44,3 +44,14 @@ def getBlockFromPos(x = 1, y = 1, z = 1, extraInfo = False):
             return True
         else:
             return False
+
+def getChunkCoord(x = 1, z = 1):
+    xPos = math.floor(x / blockSize)
+    zPos = math.floor(z / blockSize)
+
+    chunkCoord = (xPos, zPos)
+
+    return chunkCoord
+
+
+

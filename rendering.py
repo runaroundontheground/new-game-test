@@ -1,8 +1,12 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
+from widelyUsedVariables import camera
+from worldgen import createChunk
 import pygame
 
 from controls import keysPressed, mouse
+
+pygame.font.init()
 
 font = pygame.font.Font(size = 24)
 
@@ -45,7 +49,8 @@ blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5],
 
 
 
-layer = 5
+layer = 5 
+"""layer will later be replaced with the player's y position"""
 def render():
     global layer
     screen.fill((0, 0, 255))
@@ -54,13 +59,20 @@ def render():
     if keysPressed[pygame.K_COMMA] and layer > 0: layer -= 1
 
     # get the chunks to be used for rendering
-
-    for i in range(0, screenWidthInChunks):
-        pass
+    chunkList = []
+     # once camera exists, find the chunk that it's in (top left corner of it)
+      # and then use that instead of 0 here
+    for x in range(0, screenWidthInChunks):
+        for z in range(0, screenHeightInChunks):
+            try:
+                chunks[(x, z)]
+            except:
+                createChunk((x, z))
+            else:
+                chunkList.append((x, z))
      # i'd need to use the camera position to get it to select the corret spots, but 
      # i don't have a camera yet
 
-    chunkList = []
 
     # need to separate which layers of the blocks get rendered at once, so
     # the lower layers are below the higher ones
@@ -98,7 +110,7 @@ def render():
                             
                             
                             image = pygame.transform.scale_by(image, abs(factor * 1.1))
-                                            # multiplpy by 1.1 to remove gaps in blocks
+                                            # multiply by 1.1 to remove gaps in blocks
                             xPos *= factor
                             zPos *= factor
 
@@ -114,7 +126,9 @@ def render():
     for listOfBlocksIndex in range(chunkSize[1]):
         blockRenderData += blocks[listOfBlocksIndex]
 
-
+     # so here's a problem:
+       # when rendering anything that isn't a block, i'll probably
+       # need to append it to whatever list it's layer corresponds to
     screen.blits(blockRenderData)
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     

@@ -1,5 +1,5 @@
 import pygame
-pygame.init()
+pygame.display.init()
 
 keys = pygame.key.get_pressed()
 keysPressed = []
