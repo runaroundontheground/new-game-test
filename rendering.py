@@ -100,8 +100,8 @@ def render():
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
                             # here's a test
-                            xPos -= camera.x
-                            zPos -= camera.z
+                            xPos += camera.x
+                            zPos += camera.z
                             
                         else:
                             factor = 1
@@ -123,8 +123,8 @@ def render():
                             zPos *= factor
 
                             # here's a test
-                            xPos -= camera.x
-                            zPos -= camera.z
+                            xPos += camera.x
+                            zPos += camera.z
 
                             position = (xPos, zPos)
                             imageData = (image, position)
@@ -141,10 +141,8 @@ def render():
     screen.blits(blockRenderData)
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
-    print(camera.x)
-    print(camera.z)
-    print(player.x)
-    print(player.y)
-      
+    print("camera x: " + str(camera.x) + ", camera z: " + str(camera.z))
+    print("player x: " + str(player.x) + ", player z: " + str(player.z))
+    
 
     pygame.display.flip()
