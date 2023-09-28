@@ -20,6 +20,8 @@ class Player():
         self.yv = 0
         self.zv = 0 # implementing velocity may be harder with 3 axis...
 
+        self.moveSpeed = 5
+
     def generalMovement(self):
 
         self.x += self.xv
@@ -28,17 +30,19 @@ class Player():
 
         if keys[0][right]:
                 # add more checks later
-            self.x += 1
+            self.x += self.moveSpeed
         if keys[0][left]:
-            self.x -= 1
+            self.x -= self.moveSpeed
         if keys[0][up]:
-            self.z -= 1
+            self.z -= self.moveSpeed
         if keys[0][down]:
-            self.z += 1
+            self.z += self.moveSpeed
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.z -= round((camera.z - self.z + camera.centerTheCamera[1]) / camera.smoothness)
+        #camera.x -= round((camera.x - self.x) / camera.smoothness)
+        #camera.z -= round((camera.z - self.z) / camera.smoothness)
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
 
 

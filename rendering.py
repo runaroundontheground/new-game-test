@@ -61,8 +61,7 @@ def render():
 
     # get the chunks to be used for rendering
     chunkList = []
-     # once camera exists, find the chunk that it's in (top left corner of it)
-      # and then use that instead of 0 here
+
     cameraChunk = camera.currentChunk
     for x in range(cameraChunk[0], cameraChunk[0] + screenWidthInChunks):
         for z in range(cameraChunk[1], cameraChunk[1] + screenHeightInChunks):
@@ -72,8 +71,7 @@ def render():
                 createChunk((x, z))
             else:
                 chunkList.append((x, z))
-     # i'd need to use the camera position to get it to select the corret spots, but 
-     # i don't have a camera yet
+
 
 
     # need to separate which layers of the blocks get rendered at once, so
@@ -96,19 +94,27 @@ def render():
                         
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
-
-                
+                        
+                        
                         if layer == y:
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
+                            # here's a test
+                            xPos -= camera.x
+                            zPos -= camera.z
+                            
                         else:
                             factor = 1
                             divisor = 100
                             image = blockImages[block].copy()
                             if y > layer:
                                 factor += (y - layer) / divisor
+                                # testing
+                              #  factor += factor/camera.centerTheCamera[0]
                             if y < layer:
                                 factor -= (layer - y) / divisor
+                                # more testing
+                               # factor -= factor/camera.centerTheCamera[1]
                             
                             
                             image = pygame.transform.scale_by(image, abs(factor * 1.1))
@@ -116,10 +122,13 @@ def render():
                             xPos *= factor
                             zPos *= factor
 
+                            # here's a test
+                            xPos -= camera.x
+                            zPos -= camera.z
 
                             position = (xPos, zPos)
                             imageData = (image, position)
-
+                        
                         blocks[y].append(imageData)
     blockRenderData = []
     
@@ -132,7 +141,10 @@ def render():
     screen.blits(blockRenderData)
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
-    
+    print(camera.x)
+    print(camera.z)
+    print(player.x)
+    print(player.y)
       
 
     pygame.display.flip()
