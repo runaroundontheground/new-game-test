@@ -61,5 +61,14 @@ def getChunkCoord(x = 1, z = 1):
 
     return chunkCoord
 
+def getBlockCoord(x = 1, y = 1, z = 1):
+    xPos = math.floor(x / blockSize)
+    yPos = math.floor(y / blockSize)
+    zPos = math.floor(z / blockSize)
+
+    blockCoord = (xPos, yPos, zPos)
+
+    return blockCoord
+
 
 

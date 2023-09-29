@@ -1,4 +1,4 @@
-screenWidth, screenHeight = 1200, 600
+screenWidth, screenHeight = 1000, 500
 
 blockSize = 30 # pixels
 chunkSize = (10, 6) # chunkSize[0] is length and width

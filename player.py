@@ -1,6 +1,6 @@
+from widelyUsedVariables import camera, blockSize
 from controls import keysPressed, keys, mouse
-from widelyUsedVariables import camera
-from worldgen import getChunkCoord
+from worldgen import getChunkCoord, getBlockCoord
 import pygame
 # just for faster writing:
 up = pygame.K_w
@@ -22,6 +22,10 @@ class Player():
 
         self.moveSpeed = 5
 
+        self.width = blockSize
+        self.height = blockSize
+        self.fixCameraPos = (self.width/2, self.height/2)
+
         self.currentChunk = (0, 0)
 
     def generalMovement(self):
@@ -30,7 +34,8 @@ class Player():
         self.y += self.yv
         self.z += self.zv
 
-        self.currentChunk = getChunkCoord(self.x, self.z)
+        self.chunkCoord = getChunkCoord(self.x, self.z)
+        self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
         if keys[0][right]:
                 # add more checks later

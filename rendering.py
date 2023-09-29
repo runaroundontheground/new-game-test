@@ -57,15 +57,14 @@ def render():
     global layer
     screen.fill((0, 0, 255))
     
-    if keysPressed[pygame.K_PERIOD] and layer < chunkSize[1] - 1: layer += 1
-    if keysPressed[pygame.K_COMMA] and layer > 0: layer -= 1
+    
 
     # get the chunks to be used for rendering
     chunkList = []
     cameraChunk = camera.currentChunk
     screenExtension = 1
-    for x in range(cameraChunk[0] - screenExtension, cameraChunk[0] + screenWidthInChunks + screenExtension):
-        for z in range(cameraChunk[1] - screenExtension, cameraChunk[1] + screenHeightInChunks + screenExtension):
+    for x in range(cameraChunk[0] - screenExtension, cameraChunk[0] + screenWidthInChunks + screenExtension + 1):
+        for z in range(cameraChunk[1] - screenExtension, cameraChunk[1] + screenHeightInChunks + screenExtension + 1):
             try:
                 chunks[(x, z)]
             except:
@@ -96,11 +95,11 @@ def render():
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
 
-                        xPos -= camera.x
-                        zPos -= camera.z
+                        xPos -= camera.x - player.fixCameraPos[0]
+                        zPos -= camera.z - player.fixCameraPos[1]
                         
                         
-                        if layer == y:
+                        if player.blockCoord[1] == y:
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
 
@@ -112,7 +111,7 @@ def render():
 
 
                             # a test
-                            factor += (y - layer) / divisor
+                            factor += (layer - y) / divisor
 
 
 
@@ -151,7 +150,7 @@ def render():
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
 
-    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.currentChunk)
+    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     thing = font.render(debugRenderingStuff, 0, (255, 0, 0))
     screen.blit(thing, (400, 400))
 
