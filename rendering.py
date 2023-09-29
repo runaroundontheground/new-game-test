@@ -39,7 +39,6 @@ fillColor(6, (255, 255, 255))
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
     for num in range(10):
-        #print(num)
         number = font.render(str(num), 0, color)
         thing.append(number)
 makeNumbers()
@@ -61,7 +60,6 @@ def render():
 
     # get the chunks to be used for rendering
     chunkList = []
-    #print("camera's chunk: " + str(camera.currentChunk) + ", players position: " + str(player.x) + ", " + str(player.y) + ", " + str(player.z))
     cameraChunk = camera.currentChunk
     screenExtension = 1
     for x in range(cameraChunk[0] - screenExtension, cameraChunk[0] + screenWidthInChunks + screenExtension):
@@ -140,8 +138,6 @@ def render():
     screen.blits(blockRenderData)
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
-    #print("camera x: " + str(camera.x) + ", camera z: " + str(camera.z))
-    #print("player x: " + str(player.x) + ", player z: " + str(player.z))
     
 
     pygame.display.flip()
