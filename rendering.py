@@ -63,8 +63,9 @@ def render():
     chunkList = []
     #print("camera's chunk: " + str(camera.currentChunk) + ", players position: " + str(player.x) + ", " + str(player.y) + ", " + str(player.z))
     cameraChunk = camera.currentChunk
-    for x in range(cameraChunk[0] - 1, cameraChunk[0] + screenWidthInChunks):
-        for z in range(cameraChunk[1] - 1, cameraChunk[1] + screenHeightInChunks):
+    screenExtension = 1
+    for x in range(cameraChunk[0] - screenExtension, cameraChunk[0] + screenWidthInChunks + screenExtension):
+        for z in range(cameraChunk[1] - screenExtension, cameraChunk[1] + screenHeightInChunks + screenExtension):
             try:
                 chunks[(x, z)]
             except:
