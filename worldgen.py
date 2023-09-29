@@ -5,14 +5,22 @@ import math
 
 
 
+def createFirstChunk():
+    chunkData = {}
+    for x in range(chunkSize[0]):
+        for y in range(chunkSize[1]):
+            for z in range(chunkSize[0]):
+                blockData = 5
 
-
+                chunkData[(x, y, z)] = blockData
+                chunks[(0, 0)] = chunkData
+createFirstChunk()
 
 def createChunk(chunkCoords = (0, 0)):
     chunkData = {}
-    for x in range(10):
+    for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
-            for z in range(10):
+            for z in range(chunkSize[0]):
                 blockData = 0
                 
                 blockData = y + 1 # this will need to be changed later when 

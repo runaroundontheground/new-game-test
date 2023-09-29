@@ -22,11 +22,15 @@ class Player():
 
         self.moveSpeed = 5
 
+        self.currentChunk = (0, 0)
+
     def generalMovement(self):
 
         self.x += self.xv
         self.y += self.yv
         self.z += self.zv
+
+        self.currentChunk = getChunkCoord(self.x, self.z)
 
         if keys[0][right]:
                 # add more checks later
@@ -38,6 +42,7 @@ class Player():
         if keys[0][down]:
             self.z += self.moveSpeed
 
+
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.z -= round((camera.z - self.z + camera.centerTheCamera[1]) / camera.smoothness)
@@ -48,6 +53,7 @@ class Player():
 
 
     def doStuff(self):
+        
         self.generalMovement()
         
         self.updateCamera()

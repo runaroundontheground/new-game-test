@@ -41,6 +41,8 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
     for num in range(10):
         number = font.render(str(num), 0, color)
         thing.append(number)
+    minus = font.render("-", 0, (255, 0, 0))
+    thing.append(minus)
 makeNumbers()
 
 blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5], colors[6]]
@@ -102,25 +104,33 @@ def render():
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
 
-                            
+
                         else:
                             factor = 1
                             divisor = 100
                             image = blockImages[block].copy()
-                            if y > layer:
-                                factor += (y - layer) / divisor
-                                # testing
-                              #  factor += factor/camera.centerTheCamera[0]
-                            if y < layer:
-                                factor -= (layer - y) / divisor
-                                # more testing
-                               # factor -= factor/camera.centerTheCamera[1]
+
+
+                            # a test
+                            factor += (y - layer) / divisor
+
+
+
+                            #if y > layer:
+                            #    factor += (y - layer) / divisor
+
+                            #if y < layer:
+                            #    factor -= (layer - y) / divisor
                             
                             
                             image = pygame.transform.scale_by(image, abs(factor * 1.1))
-                                            # multiply by 1.1 to remove gaps in blocks
+                                            # multiply by 1.1 to remove gaps in blocks            
+                            
+                            
                             xPos *= factor
                             zPos *= factor
+
+                            
 
 
                             position = (xPos, zPos)
@@ -136,8 +146,13 @@ def render():
        # when rendering anything that isn't a block, i'll probably
        # need to append it to whatever list it's layer corresponds to
     screen.blits(blockRenderData)
+
+     # pretty much just debug after this
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
-    
+
+    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.currentChunk)
+    thing = font.render(debugRenderingStuff, 0, (255, 0, 0))
+    screen.blit(thing, (400, 400))
 
     pygame.display.flip()
