@@ -11,8 +11,8 @@ keys = pygame.key.get_pressed()
 
 import math
 
-screenWidthInChunks = math.floor( screenWidth / totalChunkSize )
-screenHeightInChunks = math.floor( screenHeight / totalChunkSize)
+screenWidthInChunks = math.floor( screenWidth / totalChunkSize ) + 1
+screenHeightInChunks = math.floor( screenHeight / totalChunkSize ) + 1
 
 print(screenWidthInChunks)
 print(screenHeightInChunks)

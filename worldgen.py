@@ -1,4 +1,4 @@
-from widelyUsedVariables import chunkSize, chunks, blockSize
+from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize
 from controls import keysPressed
 import random
 import math
@@ -46,9 +46,9 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
             return False
 
 def getChunkCoord(x = 1, z = 1):
-    xPos = math.floor(x / blockSize)
-    zPos = math.floor(z / blockSize)
-
+    xPos = math.floor(x / totalChunkSize)
+    zPos = math.floor(z / totalChunkSize)
+    #print("camera x:" + str(x / blockSize / chunkSize[0]))
     chunkCoord = (xPos, zPos)
 
     return chunkCoord

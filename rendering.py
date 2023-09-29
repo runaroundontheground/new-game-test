@@ -61,10 +61,10 @@ def render():
 
     # get the chunks to be used for rendering
     chunkList = []
-
+    #print("camera's chunk: " + str(camera.currentChunk) + ", players position: " + str(player.x) + ", " + str(player.y) + ", " + str(player.z))
     cameraChunk = camera.currentChunk
-    for x in range(cameraChunk[0], cameraChunk[0] + screenWidthInChunks):
-        for z in range(cameraChunk[1], cameraChunk[1] + screenHeightInChunks):
+    for x in range(cameraChunk[0] - 1, cameraChunk[0] + screenWidthInChunks):
+        for z in range(cameraChunk[1] - 1, cameraChunk[1] + screenHeightInChunks):
             try:
                 chunks[(x, z)]
             except:
@@ -94,14 +94,15 @@ def render():
                         
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
+
+                        xPos -= camera.x
+                        zPos -= camera.z
                         
                         
                         if layer == y:
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
-                            # here's a test
-                            xPos += camera.x
-                            zPos += camera.z
+
                             
                         else:
                             factor = 1
@@ -122,9 +123,6 @@ def render():
                             xPos *= factor
                             zPos *= factor
 
-                            # here's a test
-                            xPos += camera.x
-                            zPos += camera.z
 
                             position = (xPos, zPos)
                             imageData = (image, position)
@@ -141,8 +139,8 @@ def render():
     screen.blits(blockRenderData)
     screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
     screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
-    print("camera x: " + str(camera.x) + ", camera z: " + str(camera.z))
-    print("player x: " + str(player.x) + ", player z: " + str(player.z))
+    #print("camera x: " + str(camera.x) + ", camera z: " + str(camera.z))
+    #print("player x: " + str(player.x) + ", player z: " + str(player.z))
     
 
     pygame.display.flip()
