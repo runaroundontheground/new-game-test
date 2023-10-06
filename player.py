@@ -16,7 +16,7 @@ class Player():
         self.zv = 0 # implementing velocity may be harder with 3 axis...
 
         self.moveSpeed = 5
-        self.normalJumpForce = 5
+        self.normalJumpForce = 20
 
         self.width = blockSize
         self.height = blockSize

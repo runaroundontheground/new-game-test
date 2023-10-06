@@ -108,8 +108,14 @@ def render():
                             image = blockImages[block].copy()
 
 
-                            # a test
-                            factor += (player.blockCoord[1] - y) / divisor
+                            """something needs to change here
+                            the center of where the perspective is in the top left corner
+                            of the screen, so it needs to change tehre
+                            when the player goes up higher, the blocks get bigger,
+                            which isn't right
+                            ok i fixed it
+                            """
+                            factor += (y - player.blockCoord[1]) / divisor
 
 
 
