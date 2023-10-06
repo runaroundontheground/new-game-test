@@ -51,10 +51,8 @@ blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5],
 
 
 
-layer = 5 
-"""layer will later be replaced with the player's y position"""
+
 def render():
-    global layer
     screen.fill((0, 0, 255))
     
     
@@ -111,15 +109,15 @@ def render():
 
 
                             # a test
-                            factor += (layer - y) / divisor
+                            factor += (player.blockCoord[1] - y) / divisor
 
 
 
-                            #if y > layer:
-                            #    factor += (y - layer) / divisor
+                            #if y > player.blockCoord[1]:
+                            #    factor += (y - player.blockCoord[1]) / divisor
 
-                            #if y < layer:
-                            #    factor -= (layer - y) / divisor
+                            #if y < player.blockCoord[1]:
+                            #    factor -= (player.blockCoord[1] - y) / divisor
                             
                             
                             image = pygame.transform.scale_by(image, abs(factor * 1.1))
@@ -136,22 +134,35 @@ def render():
                             imageData = (image, position)
                         
                         blocks[y].append(imageData)
-    blockRenderData = []
-    
+    renderingData = []
+    playerAddedToRendering = False
     for listOfBlocksIndex in range(chunkSize[1]):
-        blockRenderData += blocks[listOfBlocksIndex]
 
-     # so here's a problem:
-       # when rendering anything that isn't a block, i'll probably
-       # need to append it to whatever list it's layer corresponds to
-    screen.blits(blockRenderData)
+        if not playerAddedToRendering:
+            if player.y == listOfBlocksIndex:
+                playerAddedToRendering = True
+                blocks[player.blockCoord[1]].append(player.imageData)
+
+        renderingData += blocks[listOfBlocksIndex]
+
+    if not playerAddedToRendering:
+        renderingData.append(player.imageData)
+        
+
+
+    
+    screen.blits(renderingData)
 
      # pretty much just debug after this
-    screen.blit(numbers[layer], (mouse.x + 10, mouse.y))
-    screen.blit(playerColor, (player.x - camera.x, player.z - camera.z))
 
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
+    debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
+    debugRenderingStuff += " where player is rendered? " + str(player.imageData[1])
+    debugRenderingStuff2 = "player block position " + str(player.blockCoord)
+    debugRenderingStuff2 += "player yv " + str(player.yv)
     thing = font.render(debugRenderingStuff, 0, (255, 0, 0))
-    screen.blit(thing, (400, 400))
+    thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
+    screen.blit(thing, (100, 300))
+    screen.blit(thing2, (100, 200))
 
     pygame.display.flip()

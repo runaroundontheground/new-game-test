@@ -4,6 +4,8 @@ blockSize = 30 # pixels
 chunkSize = (10, 6) # chunkSize[0] is length and width
 totalChunkSize = chunkSize[0] * blockSize
 
+gravity = 0.3
+
 chunks = {}
 import pygame
 pygame.display.init()
