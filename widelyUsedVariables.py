@@ -17,11 +17,11 @@ screenHeightInChunks = math.floor( screenHeight / totalChunkSize )
 
 class Camera():
     def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.z = 0
         self.smoothness = 10
         self.centerTheCamera = (screenWidth/2, screenHeight/2)
+        self.x = -self.centerTheCamera[0]
+        self.y = 0
+        self.z = -self.centerTheCamera[1]
         self.currentChunk = (0, 0)
         # do i want to have camera shake later?
         # self.shakeStrength = 0
