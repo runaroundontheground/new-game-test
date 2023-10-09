@@ -37,11 +37,9 @@ def createChunk(chunkCoords = (0, 0)):
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
-    chunkX = math.floor(x / blockSize)
-    chunkZ = math.foor(z / blockSize)
-    chunkCoord = (chunkX, chunkZ)
+    chunkCoord = getChunkCoord(x, z)
 
-    blockCoord = (round(x), round(y), round(z))
+    blockCoord = getBlockCoord()
      # rounding might cause problems later, we'll see
     block = chunks[chunkCoord][blockCoord]
 
@@ -62,7 +60,7 @@ def getChunkCoord(x = 1, z = 1):
     return chunkCoord
 
 def getBlockCoord(x = 1, y = 1, z = 1):
-    
+    """use how it works from jumpy 2, but without the weird str()[-1] thing"""
     xPos = math.floor(x / blockSize)
     yPos = math.floor(y / blockSize)
     zPos = math.floor(z / blockSize)

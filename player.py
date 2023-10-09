@@ -1,6 +1,6 @@
 from widelyUsedVariables import camera, blockSize, gravity
 from controls import keysPressed, keys, mouse
-from worldgen import getChunkCoord, getBlockCoord
+from worldgen import getChunkCoord, getBlockCoord, findBlock
 import pygame
 
 
@@ -52,6 +52,9 @@ class Player():
         """
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
+
+        onGround = findBlock(self.x, self.y - blockSize, self.z)
+
          # add more checks to the movement later
          # x and z axis movement
         if right:
@@ -65,19 +68,18 @@ class Player():
 
          # y axis movement
          # replace self.blockcoord[1] with whether player is touching ground, but later
-        if space and self.blockCoord[1] <= 5:
+        if space and onGround:
             self.yv = self.normalJumpForce
             self.y += 1
 
 
          # do gravity, will need some variables to control whether it is used or not
          # and also other things like lower gravity, fun stuff like that
-        if self.y > blockSize * 5: # player isn't touching the ground
+        if not onGround: # player isn't touching the ground
             self.yv -= gravity
         else:
             # keep player from falling out of the world
             self.yv = 0
-            self.y = blockSize * 5
 
         self.position = (self.x, self.y, self.z)
 
