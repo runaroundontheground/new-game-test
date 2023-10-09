@@ -103,35 +103,32 @@ def render():
 
 
                         else:
-                            factor = 1
+                            sizeFactor = 1
                             divisor = 100
                             image = blockImages[block].copy()
 
+                            blockCoordInX = chunkCoord[0] * totalChunkSize
+                            blockCoordInX += blockCoord[0] * blockSize
 
                             """something needs to change here
                             the center of where the perspective is in the top left corner
                             of the screen, so it needs to change tehre
-                            when the player goes up higher, the blocks get bigger,
-                            which isn't right
-                            ok i fixed it
-                            """
                             factor += (y - player.blockCoord[1]) / divisor
-
-
-
-                            #if y > player.blockCoord[1]:
-                            #    factor += (y - player.blockCoord[1]) / divisor
-
-                            #if y < player.blockCoord[1]:
-                            #    factor -= (player.blockCoord[1] - y) / divisor
+                            that's how it worked a bit ago, below will be new testing stuff
+                            ok, idk how to fix this
+                            """
                             
+                            sizeFactor += (y - player.blockCoord[1]) / divisor
+                            posFactor = sizeFactor
+                            #if blockCoordInX < player.x:
+                            #    posFactor *= (player.x - blockCoordInX) / divisor
                             
-                            image = pygame.transform.scale_by(image, abs(factor * 1.1))
+                            image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
                                             # multiply by 1.1 to remove gaps in blocks            
-                            
-                            
-                            xPos *= factor
-                            zPos *= factor
+
+
+                            xPos *= posFactor
+                            zPos *= posFactor
 
                             
 
@@ -163,7 +160,6 @@ def render():
 
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
-    debugRenderingStuff += " where player is rendered? " + str(player.imageData[1])
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)
     debugRenderingStuff2 += "player yv " + str(player.yv)
     thing = font.render(debugRenderingStuff, 0, (255, 0, 0))
