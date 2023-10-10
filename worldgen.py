@@ -61,13 +61,24 @@ def getChunkCoord(x = 1, z = 1):
 
 def getBlockCoord(x = 1, y = 1, z = 1):
     """use how it works from jumpy 2, but without the weird str()[-1] thing"""
-    xPos = math.floor(x / blockSize)
-    yPos = math.floor(y / blockSize)
-    zPos = math.floor(z / blockSize)
+    x = math.floor(x / blockSize)
+    y = math.floor(y / blockSize)
+    z = math.floor(z / blockSize)
 
-    blockCoord = (xPos, yPos, zPos)
+
+    while x < 0:
+        x += chunkSize[0]
+    while x > chunkSize[0]:
+        x -= chunkSize[0]
+
+    while z < 0:
+        z += chunkSize[0]
+    while z > chunkSize[0]:
+        z -= chunkSize[0]
+    
+
+    blockCoord = (x, y, z)
 
     return blockCoord
-
 
 
