@@ -91,6 +91,17 @@ def render():
 
                 sizeFactor += (y - player.y / blockSize) / divisor
                 posFactor = sizeFactor
+
+                for index in range(len(blockImages)):
+                    pass
+                    # add in something that will scale the images so that it doens't 
+                    # do that for every single block
+                    # but wait, will that break if i try to make scaling centered on the player?
+
+
+
+             # don't render if it's above player
+             # will probably change to do something else, maybe transparancy?
             if player.blockCoord[1] < y:
                 break
 
