@@ -8,7 +8,7 @@ import pygame
 class Player():
     def __init__(self):
         self.x = 0
-        self.y = 0
+        self.y = 10 * blockSize
         self.z = 0
 
         self.xv = 0 # velocity
@@ -16,7 +16,7 @@ class Player():
         self.zv = 0 # implementing velocity may be harder with 3 axis...
 
         self.moveSpeed = 5
-        self.normalJumpForce = 20
+        self.normalJumpForce = 5
 
         self.width = blockSize
         self.height = blockSize
@@ -45,11 +45,7 @@ class Player():
         self.z += self.zv
 
         self.position = (self.x, self.y, self.z)
-        """VERY IMPORTANT
-        if the player's position is changed somewhere like to force them out of a wall,
-        make sure to change the position attribute or maybe i can put it at the end of
-        all the player's movement thingies, just in case
-        """
+        
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
@@ -70,15 +66,18 @@ class Player():
          # replace self.blockcoord[1] with whether player is touching ground, but later
         if space and onGround:
             self.yv = self.normalJumpForce
-            self.y += 1
+            
 
 
          # do gravity, will need some variables to control whether it is used or not
          # and also other things like lower gravity, fun stuff like that
         if not onGround: # player isn't touching the ground
             self.yv -= gravity
-        else:
-            # keep player from falling out of the world
+        elif self.yv < 0:
+            self.yv = 0
+
+        if self.y < 0:
+            self.y = 0
             self.yv = 0
 
         self.position = (self.x, self.y, self.z)

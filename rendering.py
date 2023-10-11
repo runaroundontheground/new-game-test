@@ -80,9 +80,24 @@ def render():
 
     for chunkListIndex in range(len(chunkList)):
         chunkCoord = chunkList[chunkListIndex]
-        for x in range(chunkSize[0]):
-            for y in range(chunkSize[1]):
+        for y in range(chunkSize[1]):
+            for x in range(chunkSize[0]):
+
+                doScaling = False
+                # let's fix something that probably is bad for performance
+                if not player.blockCoord[1] == y:
+                    doScaling = True
+                    posFactor = 1
+                    sizeFactor = 1
+                    divisor = 100
+
+                    sizeFactor += (y - player.y / blockSize) / divisor
+                    posFactor = sizeFactor
+
+
                 for z in range(chunkSize[0]):
+
+
                     blockCoord = (x, y, z)
                     block = chunks[chunkCoord][blockCoord]
 
@@ -97,18 +112,15 @@ def render():
                         zPos -= camera.z - player.fixCameraPos[1]
                         
                         
-                        if player.blockCoord[1] == y:
+                        if not doScaling:
                             position = (xPos, zPos)
                             imageData = (blockImages[block], position)
 
-
                         else:
-                            sizeFactor = 1
-                            divisor = 100
                             image = blockImages[block].copy()
 
-                            blockCoordInX = chunkCoord[0] * totalChunkSize
-                            blockCoordInX += blockCoord[0] * blockSize
+                            #blockCoordInX = chunkCoord[0] * totalChunkSize
+                            #blockCoordInX += blockCoord[0] * blockSize
 
                             """something needs to change here
                             the center of where the perspective is in the top left corner
@@ -118,20 +130,14 @@ def render():
                             ok, idk how to fix this
                             """
                             
-                            sizeFactor += (y - player.blockCoord[1]) / divisor
-                            posFactor = sizeFactor
+                            
                             #if blockCoordInX < player.x:
                             #    posFactor *= (player.x - blockCoordInX) / divisor
                             
                             image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
                                             # multiply by 1.1 to remove gaps in blocks            
-
-
                             xPos *= posFactor
                             zPos *= posFactor
-
-                            
-
 
                             position = (xPos, zPos)
                             imageData = (image, position)

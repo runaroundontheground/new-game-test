@@ -5,7 +5,7 @@ chunkSize = (10, 10) # chunkSize[0] is length and width
 
 totalChunkSize = chunkSize[0] * blockSize
 
-gravity = 0.3
+gravity = 1
 
 chunks = {}
 import pygame
