@@ -82,21 +82,20 @@ def render():
         chunkCoord = chunkList[chunkListIndex]
         for y in range(chunkSize[1]):
 
-            doScaling = False
-            if True:#player.blockCoord[1] - 1 != y:
-                doScaling = True
-                posFactor = 1
-                sizeFactor = 1
-                divisor = 100
-                thing = player.y / blockSize
-                sizeFactor += (y - thing) / divisor
-                posFactor = sizeFactor
+        
 
-                for index in range(len(blockImages)):
-                    pass
-                    # add in something that will scale the images so that it doens't 
-                    # do that for every single block
-                    # but wait, will that break if i try to make scaling centered on the player?
+            posFactor = 1
+            sizeFactor = 1
+            divisor = 100
+            thing = player.y / blockSize
+            sizeFactor += (y - thing) / divisor
+            posFactor = sizeFactor
+
+            for index in range(len(blockImages)):
+                pass
+                # add in something that will scale the images so that it doens't 
+                # do that for every single block
+                # but wait, will that break if i try to make scaling centered on the player?
 
 
 
@@ -121,22 +120,26 @@ def render():
                         BEFORE scaling, the scaling was centered around the camera
                         if the subtraction happens AFTER scaling, the scaling is centered
                         around the middle ( x = 0, z = 0)
+                        subtracting the player pos before scaling, then adding it back
+                        after scaling fixed the problem!!!
+                        that was hard to fix
+                        now i gotta do performance fixes
                         """
-                        
-                        
-                        
-                        if not doScaling:
-                            image = blockImages[block]
 
-                        else:
-                            image = blockImages[block].copy()
-                            image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
-                             # multiply by 1.1 to remove gaps in blocks            
-                            xPos *= posFactor
-                            zPos *= posFactor
-                            
-                        xPos -= camera.x
-                        zPos -= camera.z
+                        # testing
+                        xPos -= player.x
+                        zPos -= player.z
+                        
+                        
+                    
+                        image = blockImages[block].copy()
+                        image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
+                            # multiply by 1.1 to remove gaps in blocks            
+                        xPos *= posFactor
+                        zPos *= posFactor
+                        
+                        xPos -= camera.x - player.x
+                        zPos -= camera.z - player.z
                         position = (xPos, zPos)
                         imageData = (image, position)
                         blocks[y].append(imageData)
