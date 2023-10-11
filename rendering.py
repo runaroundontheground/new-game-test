@@ -83,13 +83,13 @@ def render():
         for y in range(chunkSize[1]):
 
             doScaling = False
-            if player.blockCoord[1] != y:
+            if True:#player.blockCoord[1] - 1 != y:
                 doScaling = True
                 posFactor = 1
                 sizeFactor = 1
                 divisor = 100
-
-                sizeFactor += (y - player.y / blockSize) / divisor
+                thing = player.y / blockSize
+                sizeFactor += (y - thing) / divisor
                 posFactor = sizeFactor
 
                 for index in range(len(blockImages)):
@@ -108,9 +108,7 @@ def render():
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):
 
-
-                    blockCoord = (x, y, z)
-                    block = chunks[chunkCoord][blockCoord]
+                    block = chunks[chunkCoord][(x, y, z)]
 
                     if block != 0:
                         xPos = x * blockSize
@@ -118,14 +116,17 @@ def render():
                         
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
-
-                        xPos -= camera.x
-                        zPos -= camera.z
+                        """
+                        when the camera x and z were subtracted from xpos and zpos
+                        BEFORE scaling, the scaling was centered around the camera
+                        if the subtraction happens AFTER scaling, the scaling is centered
+                        around the middle ( x = 0, z = 0)
+                        """
+                        
                         
                         
                         if not doScaling:
-                            position = (xPos, zPos)
-                            imageData = (blockImages[block], position)
+                            image = blockImages[block]
 
                         else:
                             image = blockImages[block].copy()
@@ -133,10 +134,11 @@ def render():
                              # multiply by 1.1 to remove gaps in blocks            
                             xPos *= posFactor
                             zPos *= posFactor
-
-                            position = (xPos, zPos)
-                            imageData = (image, position)
-                        
+                            
+                        xPos -= camera.x
+                        zPos -= camera.z
+                        position = (xPos, zPos)
+                        imageData = (image, position)
                         blocks[y].append(imageData)
     renderingData = []
     playerAddedToRendering = False

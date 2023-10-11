@@ -16,8 +16,7 @@ class Player():
         self.zv = 0 # implementing velocity may be harder with 3 axis...
 
         self.moveSpeed = 5
-        self.normalJumpForce = 5
-
+        self.normalJumpForce = 10
         self.width = blockSize - 5
         self.height = blockSize - 5
         self.image = pygame.surface.Surface((self.width, self.height))
