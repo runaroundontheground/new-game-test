@@ -81,20 +81,20 @@ def render():
     for chunkListIndex in range(len(chunkList)):
         chunkCoord = chunkList[chunkListIndex]
         for y in range(chunkSize[1]):
+
+            doScaling = False
+            if player.blockCoord[1] != y:
+                doScaling = True
+                posFactor = 1
+                sizeFactor = 1
+                divisor = 100
+
+                sizeFactor += (y - player.y / blockSize) / divisor
+                posFactor = sizeFactor
+            if player.blockCoord[1] < y:
+                break
+
             for x in range(chunkSize[0]):
-
-                doScaling = False
-                # let's fix something that probably is bad for performance
-                if not player.blockCoord[1] == y:
-                    doScaling = True
-                    posFactor = 1
-                    sizeFactor = 1
-                    divisor = 100
-
-                    sizeFactor += (y - player.y / blockSize) / divisor
-                    posFactor = sizeFactor
-
-
                 for z in range(chunkSize[0]):
 
 
@@ -108,8 +108,8 @@ def render():
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
 
-                        xPos -= camera.x - player.fixCameraPos[0]
-                        zPos -= camera.z - player.fixCameraPos[1]
+                        xPos -= camera.x
+                        zPos -= camera.z
                         
                         
                         if not doScaling:
@@ -118,24 +118,8 @@ def render():
 
                         else:
                             image = blockImages[block].copy()
-
-                            #blockCoordInX = chunkCoord[0] * totalChunkSize
-                            #blockCoordInX += blockCoord[0] * blockSize
-
-                            """something needs to change here
-                            the center of where the perspective is in the top left corner
-                            of the screen, so it needs to change tehre
-                            factor += (y - player.blockCoord[1]) / divisor
-                            that's how it worked a bit ago, below will be new testing stuff
-                            ok, idk how to fix this
-                            """
-                            
-                            
-                            #if blockCoordInX < player.x:
-                            #    posFactor *= (player.x - blockCoordInX) / divisor
-                            
                             image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
-                                            # multiply by 1.1 to remove gaps in blocks            
+                             # multiply by 1.1 to remove gaps in blocks            
                             xPos *= posFactor
                             zPos *= posFactor
 
@@ -148,14 +132,14 @@ def render():
     for listOfBlocksIndex in range(chunkSize[1]):
 
         if not playerAddedToRendering:
-            if player.y == listOfBlocksIndex:
+            if player.blockCoord[1] == listOfBlocksIndex:
                 playerAddedToRendering = True
-                blocks[player.blockCoord[1]].append(player.imageData)
+                blocks[listOfBlocksIndex].append(player.imageData)
 
         renderingData += blocks[listOfBlocksIndex]
 
-    if not playerAddedToRendering:
-        renderingData.append(player.imageData)
+    #if not playerAddedToRendering:
+    #    renderingData.append(player.imageData)
         
 
 

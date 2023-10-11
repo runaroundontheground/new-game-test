@@ -40,10 +40,15 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
     chunkCoord = getChunkCoord(x, z)
     blockCoord = getBlockCoord(x, y, z)
+    block = 0
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
         return False
-    
-    block = chunks[chunkCoord][blockCoord]
+    try:
+        chunks[chunkCoord][blockCoord]
+    except:
+        createChunk(chunkCoord)
+    else:
+        block = chunks[chunkCoord][blockCoord]
 
     if extraInfo:
         pass
@@ -79,7 +84,11 @@ def getBlockCoord(x = 1, y = 1, z = 1):
     if z > chunkSize[0]:
         while z > chunkSize[0]:
             z -= chunkSize[0]
-        
+    
+    if x == chunkSize[0]:
+        x -= 1
+    if z == chunkSize[0]:
+        z -= 1
 
     blockCoord = (x, y, z)
 

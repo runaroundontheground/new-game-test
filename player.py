@@ -18,14 +18,14 @@ class Player():
         self.moveSpeed = 5
         self.normalJumpForce = 5
 
-        self.width = blockSize
-        self.height = blockSize
+        self.width = blockSize - 5
+        self.height = blockSize - 5
         self.image = pygame.surface.Surface((self.width, self.height))
         # this is to make rendering work currently and should be removed later!
         self.image.fill((0, 255, 0))
         
         self.imageData = (self.image, (0, 0))
-        self.fixCameraPos = (self.width/2, self.height/2)
+        #self.fixCameraPos = (self.width/2, self.height/2)
 
         self.position = (self.x, self.y, self.z)
         self.chunkCoord = (0, 0)
@@ -38,28 +38,39 @@ class Player():
         up = keys[0][pygame.K_w]
         down = keys[0][pygame.K_s]
         space = keys[0][pygame.K_SPACE]
-
-
-        self.x += self.xv
-        self.y += self.yv
-        self.z += self.zv
-
-        self.position = (self.x, self.y, self.z)
         
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
-        onGround = findBlock(self.x, self.y - blockSize, self.z)
+        onGround = False
+        topLeft = findBlock(self.x, self.y - blockSize, self.z)
+        topRight = findBlock(self.x + self.width, self.y - blockSize, self.z)
+        bottomLeft = findBlock(self.x, self.y - blockSize, self.z + self.width)
+        bottomRight = findBlock(self.x + self.width, self.y - blockSize, self.z + self.width)
+        if topLeft or topRight or bottomLeft or bottomRight:
+            onGround = True
 
-         # add more checks to the movement later
+        blockToRight = False
+        topRight = findBlock(self.x + blockSize, self.y, self.z)
+        bottomRight = findBlock(self.x + blockSize, self.y, self.z + self.width)
+        if topRight or bottomRight:
+            blockToRight = True
+        
+        blockToLeft = findBlock(self.x - 3, self.y, self.z)
+        blockToUp = findBlock(self.x, self.y, self.z - 3)
+        blockToDown = findBlock(self.x, self.y, self.z + blockSize)
+
+
+
+
          # x and z axis movement
-        if right:
+        if right and not blockToRight:
             self.x += self.moveSpeed
-        if left:
+        if left and not blockToLeft:
             self.x -= self.moveSpeed
-        if up:
+        if up and not blockToUp:
             self.z -= self.moveSpeed
-        if down:
+        if down and not blockToDown:
             self.z += self.moveSpeed
 
          # y axis movement
@@ -80,12 +91,15 @@ class Player():
             self.y = 0
             self.yv = 0
 
+        self.x += self.xv
+        self.y += self.yv
+        self.z += self.zv
+
         self.position = (self.x, self.y, self.z)
 
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
-        # idk how smoothing should work for vertical, i'll figure it out later
         camera.y = self.y
         camera.z -= round((camera.z - self.z + camera.centerTheCamera[1]) / camera.smoothness)
         
