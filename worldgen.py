@@ -11,6 +11,7 @@ def createFirstChunk():
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
                 blockData = 5
+                if y > 6: blockData = 0
 
                 chunkData[(x, y, z)] = blockData
                 chunks[(0, 0)] = chunkData
@@ -28,7 +29,7 @@ def createChunk(chunkCoords = (0, 0)):
                 # hmmmmm i gotta figure out perlin noise...
                 if random.randint(0, 2) == 0: # this also needs to be removed, it just
                     blockData = 0 # makes a tile have a 1/3 chance to be air
-                
+                if y > 5: blockData = 0
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
@@ -38,9 +39,10 @@ def createChunk(chunkCoords = (0, 0)):
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
     chunkCoord = getChunkCoord(x, z)
-
-    blockCoord = getBlockCoord()
-     # rounding might cause problems later, we'll see
+    blockCoord = getBlockCoord(x, y, z)
+    if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1]:
+        return False
+    
     block = chunks[chunkCoord][blockCoord]
 
     if extraInfo:
@@ -60,22 +62,24 @@ def getChunkCoord(x = 1, z = 1):
     return chunkCoord
 
 def getBlockCoord(x = 1, y = 1, z = 1):
-    """use how it works from jumpy 2, but without the weird str()[-1] thing"""
+    
     x = math.floor(x / blockSize)
     y = math.floor(y / blockSize)
     z = math.floor(z / blockSize)
 
-
-    while x < 0:
-        x += chunkSize[0]
-    while x > chunkSize[0]:
-        x -= chunkSize[0]
-
-    while z < 0:
-        z += chunkSize[0]
-    while z > chunkSize[0]:
-        z -= chunkSize[0]
-    
+    if x < 0:
+        while x < 0:
+            x += chunkSize[0]
+    if x > chunkSize[0]:
+        while x > chunkSize[0]:
+            x -= chunkSize[0]
+    if z < 0:
+        while z < 0:
+            z += chunkSize[0]
+    if z > chunkSize[0]:
+        while z > chunkSize[0]:
+            z -= chunkSize[0]
+        
 
     blockCoord = (x, y, z)
 
