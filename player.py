@@ -54,22 +54,22 @@ class Player():
             blockBeneath = True
         
         blockAbove = False
-        topLeft = findBlock(self.x, self.y + 1, self.z)
-        topRight = findBlock(self.x + self.width, self.y + 1, self.z)
-        bottomLeft = findBlock(self.x, self.y + 1, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y + 1, self.z + self.width)
+        topLeft = findBlock(self.x, self.y, self.z)
+        topRight = findBlock(self.x + self.width, self.y, self.z)
+        bottomLeft = findBlock(self.x, self.y, self.z + self.width)
+        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockAbove = True
 
         blockToRight = False
         topRight = findBlock(self.x + self.width + 1, self.y, self.z)
-        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width + 1)
+        bottomRight = findBlock(self.x + self.width + 1, self.y, self.z + self.width)
         if topRight or bottomRight:
             blockToRight = True
         
         blockToLeft = False
         topLeft = findBlock(self.x - 1, self.y, self.z)
-        bottomLeft = findBlock(self.x - 1, self.y, self.z + self.width + 1)
+        bottomLeft = findBlock(self.x - 1, self.y, self.z + self.width)
         if topLeft or bottomLeft:
             blockToLeft = True
 
@@ -80,8 +80,8 @@ class Player():
             blockToUp = True
 
         blockToDown = False
-        bottomLeft = findBlock(self.x - 1, self.y, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
+        bottomLeft = findBlock(self.x, self.y, self.z + self.width + 1)
+        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width + 1)
         if bottomLeft or bottomRight:
             blockToDown = True
 

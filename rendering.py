@@ -101,9 +101,8 @@ def render():
                 
                 if image != 0:
                     image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
-                    # below code doesn't work? maybe? idk
-                    #if y > player.blockCoord[1]:
-                    #    image = image.set_alpha(230)
+                    if y > player.blockCoord[1]:
+                        break
 
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):

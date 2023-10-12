@@ -16,6 +16,8 @@ def createFirstChunk():
                 chunkData[(x, y, z)] = blockData
                 chunks[(0, 0)] = chunkData
 createFirstChunk()
+chunks[(0, 0)][(4, 6, 4)] = 6
+chunks[(0, 0)][(4, 6, 5)] = 6
 
 def createChunk(chunkCoords = (0, 0)):
     chunkData = {}
