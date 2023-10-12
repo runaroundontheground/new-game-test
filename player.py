@@ -134,11 +134,17 @@ class Player():
 
          # don't let player go through walls
          # unless it's a non collidable? add later maybe
-        if blockToRight or blockToLeft:
-            self.x -= self.xv
+        if blockToRight:
+            self.x -= abs(self.xv)
             self.xv = 0
-        if blockToUp or blockToDown:
-            self.z -= self.zv
+        if blockToLeft:
+            self.x += abs(self.xv)
+            self.xv = 0
+        if blockToUp:
+            self.z += abs(self.zv)
+            self.zv = 0
+        if blockToDown:
+            self.z -= abs(self.zv)
             self.zv = 0
 
          # do friction
