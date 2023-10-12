@@ -5,9 +5,6 @@ import pygame
 
 pygame.init()
 
- 
-
-
 clock = pygame.time.Clock()
 FPS = 60
 
@@ -18,12 +15,12 @@ def gameLoop():
         
         updateKeys()
         updateMouse()
-
-        player.doStuff()
         
         for event in pygame.event.get():
             if event.type == exit:
                 pygame.quit()
+
+        player.doStuff()
         
 
         render()

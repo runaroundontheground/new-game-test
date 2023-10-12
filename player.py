@@ -1,6 +1,7 @@
-from widelyUsedVariables import camera, blockSize, gravity
-from controls import keysPressed, keys, mouse
+from widelyUsedVariables import camera, blockSize, gravity, chunkSize
 from worldgen import getChunkCoord, getBlockCoord, findBlock
+from controls import keysPressed, keys, mouse
+
 import pygame
 
 
@@ -8,7 +9,7 @@ import pygame
 class Player():
     def __init__(self):
         self.x = 0
-        self.y = 10 * blockSize
+        self.y = chunkSize[1] * blockSize
         self.z = 0
 
         self.xv = 0 # velocity

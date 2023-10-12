@@ -53,9 +53,9 @@ blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5],
 
 
 def render():
+
+
     screen.fill((0, 0, 255))
-    
-    
 
     # get the chunks to be used for rendering
     chunkList = []
@@ -91,18 +91,17 @@ def render():
             sizeFactor += (y - thing) / divisor
             posFactor = sizeFactor
 
-            for index in range(len(blockImages)):
-                pass
-                # add in something that will scale the images so that it doens't 
-                # do that for every single block
-                # but wait, will that break if i try to make scaling centered on the player?
+            scaledImages = blockImages.copy()
 
+            for item in scaledImages:
+                
+                image = item
+                
+                if image != 0:
+                    image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
 
-
-             # don't render if it's above player
-             # will probably change to do something else, maybe transparancy?
-            if player.blockCoord[1] < y:
-                break
+                if y > player.blockCoord[1]:
+                    image
 
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):
@@ -126,22 +125,21 @@ def render():
                         now i gotta do performance fixes
                         """
 
-                        # testing
+                        
                         xPos -= player.x
                         zPos -= player.z
                         
-                        
-                    
-                        image = blockImages[block].copy()
-                        image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
-                            # multiply by 1.1 to remove gaps in blocks            
+                        image = scaledImages[block]
+
                         xPos *= posFactor
                         zPos *= posFactor
                         
                         xPos -= camera.x - player.x
                         zPos -= camera.z - player.z
+
                         position = (xPos, zPos)
                         imageData = (image, position)
+
                         blocks[y].append(imageData)
     renderingData = []
     playerAddedToRendering = False
