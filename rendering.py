@@ -83,10 +83,12 @@ def render():
         for y in range(chunkSize[1]):
 
         
-
+             # scale everything besides position outside of the x and z loops
+             # this runs soooo much faster than it does without it
             posFactor = 1
             sizeFactor = 1
             divisor = 100
+             # scale smoother when using exact position rather than player's block coord
             thing = player.y / blockSize
             sizeFactor += (y - thing) / divisor
             posFactor = sizeFactor
@@ -99,9 +101,9 @@ def render():
                 
                 if image != 0:
                     image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
-
-                if y > player.blockCoord[1]:
-                    image
+                    # below code doesn't work? maybe? idk
+                    #if y > player.blockCoord[1]:
+                    #    image = image.set_alpha(230)
 
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):

@@ -22,6 +22,7 @@ def createChunk(chunkCoords = (0, 0)):
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
+                # by default, the tile will be air
                 blockData = 0 # air
                 blockData = y + 1 
                 # change above line once i actually add textures and better worldgen
