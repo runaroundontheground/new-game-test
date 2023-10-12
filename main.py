@@ -35,21 +35,8 @@ pygame.quit()
 """
 the plan
 first:
-    somewhat setup player controlling and camera
-    test some things for the zoomed rendering
-worlgen and height things:
-    top down game, randomly generated using perlin noise to create a map of heights
-    implement 3 axis somehow: x, y, z
-
-    change the zoom of everything around the player, default zoom for stuff that's the same height,
-    lower zoom for stuff that's lower down, and higher zoom for higher stuff
-    make tiles transparent if the player is under them
-
-    here's a potential performance thing:
-        when rendering stuff, instead of copying and scaling a block's image
-        for every single block, do it once for a specific image, and if the renderer
-        asks for a different image that hasn't been scaled yet, scale it and add it
-        to a temporary list for using on the rest of that layer
+    hooray! the rendering and scaling work fine
+    but now i need perlin noise generation to happen
     
     infinite world or finite, pre-generated? maybe add option for both
     save player/world files into txt or something

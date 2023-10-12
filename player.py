@@ -14,10 +14,14 @@ class Player():
 
         self.xv = 0 # velocity
         self.yv = 0
-        self.zv = 0 # implementing velocity may be harder with 3 axis...
+        self.zv = 0
 
-        self.moveSpeed = 5
+        self.acceleration = 0.3
+        self.maxHorizontalSpeed = 5
+        self.slipperyness = 10
         self.normalJumpForce = 10
+
+
         self.width = blockSize - 5
         self.height = blockSize - 5
         self.image = pygame.surface.Surface((self.width, self.height))
@@ -25,7 +29,6 @@ class Player():
         self.image.fill((0, 255, 0))
         
         self.imageData = (self.image, (0, 0))
-        #self.fixCameraPos = (self.width/2, self.height/2)
 
         self.position = (self.x, self.y, self.z)
         self.chunkCoord = (0, 0)
@@ -43,55 +46,44 @@ class Player():
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
         blockBeneath = False
+        topLeft = findBlock(self.x, self.y - blockSize, self.z)
+        topRight = findBlock(self.x + self.width, self.y - blockSize, self.z)
+        bottomLeft = findBlock(self.x, self.y - blockSize, self.z + self.width)
+        bottomRight = findBlock(self.x + self.width, self.y - blockSize, self.z + self.width)
+        if topLeft or topRight or bottomLeft or bottomRight:
+            blockBeneath = True
+        
         blockAbove = False
-        blockToLeft = False
+        topLeft = findBlock(self.x, self.y + 3, self.z)
+        topRight = findBlock(self.x + self.width, self.y + 3, self.z)
+        bottomLeft = findBlock(self.x, self.y + 3, self.z + self.width)
+        bottomRight = findBlock(self.x + self.width, self.y + 3, self.z + self.width)
+        if topLeft or topRight or bottomLeft or bottomRight:
+            blockAbove = True
+
         blockToRight = False
-        blockToDown = False
+        topRight = findBlock(self.x + self.width + 3, self.y, self.z)
+        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width + 3)
+        if topRight or bottomRight:
+            blockToRight = True
+        
+        blockToLeft = False
+        topLeft = findBlock(self.x - 3, self.y, self.z)
+        bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width + 3)
+        if topLeft or bottomLeft:
+            blockToLeft = True
+
         blockToUp = False
+        topLeft = findBlock(self.x, self.y, self.z - 3)
+        topRight = findBlock(self.x + self.width, self.y, self.z - 3)
+        if topLeft or topRight:
+            blockToUp = True
 
-        def collisionDetection():
-            global blockBeneath, blockAbove, blockToLeft, blockToRight
-            global blockToDown, blockToUp
-
-            blockBeneath = False
-            topLeft = findBlock(self.x, self.y - blockSize, self.z)
-            topRight = findBlock(self.x + self.width, self.y - blockSize, self.z)
-            bottomLeft = findBlock(self.x, self.y - blockSize, self.z + self.width)
-            bottomRight = findBlock(self.x + self.width, self.y - blockSize, self.z + self.width)
-            if topLeft or topRight or bottomLeft or bottomRight:
-                blockBeneath = True
-            
-            blockAbove = False #  ADD THE LOGIC THINGS LATER
-            topLeft = findBlock()
-            topRight = findBlock()
-            bottomLeft = findBlock()
-            bottomRight = findBlock()
-            if topLeft or topRight or bottomLeft or bottomRight:
-                blockAbove = True
-
-            blockToRight = False
-            topRight = findBlock(self.x + self.width + 3, self.y, self.z)
-            bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width + 3)
-            if topRight or bottomRight:
-                blockToRight = True
-            
-            blockToLeft = False
-            topLeft = findBlock(self.x - 3, self.y, self.z)
-            bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width + 3)
-            if topLeft or bottomLeft:
-                blockToLeft = True
-
-            blockToUp = False
-            topLeft = findBlock(self.x, self.y, self.z - 3)
-            topRight = findBlock(self.x + self.width, self.y, self.z - 3)
-            if topLeft or topRight:
-                blockToUp = True
-
-            blockToDown = False
-            bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width)
-            bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
-            if bottomLeft or bottomRight:
-                blockToDown = True
+        blockToDown = False
+        bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width)
+        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
+        if bottomLeft or bottomRight:
+            blockToDown = True
         
 
 
@@ -99,28 +91,58 @@ class Player():
 
          # x and z axis movement
         if right and not blockToRight:
-            self.x += self.moveSpeed
+            if self.xv < self.maxHorizontalSpeed:
+                self.xv += self.acceleration
+
         if left and not blockToLeft:
-            self.x -= self.moveSpeed
+            if self.xv > -self.maxHorizontalSpeed:
+                self.xv -= self.acceleration
+
         if up and not blockToUp:
-            self.z -= self.moveSpeed
+            if self.zv > -self.maxHorizontalSpeed:
+                self.zv -= self.acceleration
+
         if down and not blockToDown:
-            self.z += self.moveSpeed
+            if self.zv < self.maxHorizontalSpeed:
+                self.zv += self.acceleration
 
          # y axis movement
         if space and blockBeneath:
             self.yv = self.normalJumpForce
             
+
+
          # do gravity
-         # shouldn't this be after all the player's movement?
         if not blockBeneath:
             self.yv -= gravity
         elif self.yv < 0:
             self.yv = 0
+            self.y = self.blockCoord[1] * blockSize
          # don't let player fall out of the world
         if self.y < blockSize:
             self.y = blockSize + 3
             self.yv = 0
+
+         # do ground friction
+        if blockBeneath:
+            if self.xv > self.maxHorizontalSpeed:
+                self.xv = self.maxHorizontalSpeed
+            if self.xv < -self.maxHorizontalSpeed:
+                self.xv = -self.maxHorizontalSpeed
+            if self.zv > self.maxHorizontalSpeed:
+                self.zv = self.maxHorizontalSpeed
+            if self.zv < -self.maxHorizontalSpeed:
+                self.zv = -self.maxHorizontalSpeed
+
+            if (not left and not right) or (left and right):
+                if self.xv > -0.1 and self.xv < 0.1:
+                    self.xv = 0
+            if (not up and not down) or (up and down):
+                if self.zv > -0.1 and self.zv < 0.1:
+                    self.zv = 0
+            
+            self.xv -= self.xv / self.slipperyness
+            self.zv -= self.zv / self.slipperyness
 
 
          # do all the position updates that other things use
