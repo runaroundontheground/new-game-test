@@ -52,7 +52,8 @@ class Player():
         bottomRight = findBlock(self.x + self.width, self.y - self.height, self.z + self.width)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockBeneath = True
-        
+        # need to make it so that all the left right up down things check with the
+        # y value of self.y + self.height / 2
         blockAbove = False
         topLeft = findBlock(self.x, self.y, self.z)
         topRight = findBlock(self.x + self.width, self.y, self.z)
