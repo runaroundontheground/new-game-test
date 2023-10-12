@@ -87,7 +87,7 @@ def render():
              # this runs soooo much faster than it does without it
             posFactor = 1
             sizeFactor = 1
-            divisor = 100
+            divisor = 75 # normally 100
              # scale smoother when using exact position rather than player's block coord
             thing = player.y / blockSize
             sizeFactor += (y - thing) / divisor
@@ -101,8 +101,6 @@ def render():
                 
                 if image != 0:
                     image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
-                    if y > player.blockCoord[1]:
-                        break
 
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):

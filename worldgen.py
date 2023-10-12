@@ -15,9 +15,15 @@ def createFirstChunk():
 
                 chunkData[(x, y, z)] = blockData
                 chunks[(0, 0)] = chunkData
+    
+    thing = chunks[(0, 0)]
+    thing[(4, 6, 4)] = 6
+    thing[(4, 6, 5)] = 6
+    thing[(4, 6, 6)] = 6
+    thing[(3, 6, 6)] = 6
+    chunks[(0, 0)] = thing
 createFirstChunk()
-chunks[(0, 0)][(4, 6, 4)] = 6
-chunks[(0, 0)][(4, 6, 5)] = 6
+
 
 def createChunk(chunkCoords = (0, 0)):
     chunkData = {}
@@ -89,9 +95,9 @@ def getBlockCoord(x = 1, y = 1, z = 1):
             z -= chunkSize[0]
     
     if x == chunkSize[0]:
-        x -= 1
+        x = 0
     if z == chunkSize[0]:
-        z -= 1
+        z = 0
 
     blockCoord = (x, y, z)
 
