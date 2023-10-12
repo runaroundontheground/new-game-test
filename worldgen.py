@@ -11,7 +11,7 @@ def createFirstChunk():
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
                 blockData = 5
-                if y > 6: blockData = 0
+                if y > 5: blockData = 0
 
                 chunkData[(x, y, z)] = blockData
                 chunks[(0, 0)] = chunkData
@@ -22,14 +22,14 @@ def createChunk(chunkCoords = (0, 0)):
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
-                blockData = 0
-                
-                blockData = y + 1 # this will need to be changed later when 
-                # i add more height or something
+                blockData = 0 # air
+                blockData = y + 1 
+                # change above line once i actually add textures and better worldgen
                 # hmmmmm i gotta figure out perlin noise...
                 if random.randint(0, 2) == 0: # this also needs to be removed, it just
                     blockData = 0 # makes a tile have a 1/3 chance to be air
                 if y > 5: blockData = 0
+                if y == 0: blockData = 1
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
