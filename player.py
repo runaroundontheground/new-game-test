@@ -42,45 +42,56 @@ class Player():
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
-        blockToUnder = False
-        topLeft = findBlock(self.x, self.y - blockSize, self.z)
-        topRight = findBlock(self.x + self.width, self.y - blockSize, self.z)
-        bottomLeft = findBlock(self.x, self.y - blockSize, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y - blockSize, self.z + self.width)
-        if topLeft or topRight or bottomLeft or bottomRight:
-            blockToUnder = True
-        
-        blockToAbove = False #  ADD THE LOGIC THINGS LATER
-        topLeft = findBlock()
-        topRight = findBlock()
-        bottomLeft = findBlock()
-        bottomRight = findBlock()
-        if topLeft or topRight or bottomLeft or bottomRight:
-            blockToAbove = True
-
-        blockToRight = False
-        topRight = findBlock(self.x + self.width, self.y, self.z)
-        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
-        if topRight or bottomRight:
-            blockToRight = True
-        
+        blockBeneath = False
+        blockAbove = False
         blockToLeft = False
-        topLeft = findBlock(self.x - 3, self.y, self.z)
-        bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width)
-        if topLeft or bottomLeft:
-            blockToLeft = True
-
-        blockToUp = False
-        topLeft = findBlock(self.x, self.y, self.z - 3)
-        topRight = findBlock(self.x + self.width, self.y, self.z - 3)
-        if topLeft or topRight:
-            blockToUp = True
-
+        blockToRight = False
         blockToDown = False
-        bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
-        if bottomLeft or bottomRight:
-            blockToDown = True
+        blockToUp = False
+
+        def collisionDetection():
+            global blockBeneath, blockAbove, blockToLeft, blockToRight
+            global blockToDown, blockToUp
+
+            blockBeneath = False
+            topLeft = findBlock(self.x, self.y - blockSize, self.z)
+            topRight = findBlock(self.x + self.width, self.y - blockSize, self.z)
+            bottomLeft = findBlock(self.x, self.y - blockSize, self.z + self.width)
+            bottomRight = findBlock(self.x + self.width, self.y - blockSize, self.z + self.width)
+            if topLeft or topRight or bottomLeft or bottomRight:
+                blockBeneath = True
+            
+            blockAbove = False #  ADD THE LOGIC THINGS LATER
+            topLeft = findBlock()
+            topRight = findBlock()
+            bottomLeft = findBlock()
+            bottomRight = findBlock()
+            if topLeft or topRight or bottomLeft or bottomRight:
+                blockAbove = True
+
+            blockToRight = False
+            topRight = findBlock(self.x + self.width + 3, self.y, self.z)
+            bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width + 3)
+            if topRight or bottomRight:
+                blockToRight = True
+            
+            blockToLeft = False
+            topLeft = findBlock(self.x - 3, self.y, self.z)
+            bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width + 3)
+            if topLeft or bottomLeft:
+                blockToLeft = True
+
+            blockToUp = False
+            topLeft = findBlock(self.x, self.y, self.z - 3)
+            topRight = findBlock(self.x + self.width, self.y, self.z - 3)
+            if topLeft or topRight:
+                blockToUp = True
+
+            blockToDown = False
+            bottomLeft = findBlock(self.x - 3, self.y, self.z + self.width)
+            bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
+            if bottomLeft or bottomRight:
+                blockToDown = True
         
 
 
@@ -97,23 +108,22 @@ class Player():
             self.z += self.moveSpeed
 
          # y axis movement
-         # replace self.blockcoord[1] with whether player is touching ground, but later
-        if space and blockToUnder:
+        if space and blockBeneath:
             self.yv = self.normalJumpForce
             
-
-
-         # do gravity, will need some variables to control whether it is used or not
-         # and also other things like lower gravity, fun stuff like that
-        if not blockToUnder: # player isn't touching the ground
+         # do gravity
+         # shouldn't this be after all the player's movement?
+        if not blockBeneath:
             self.yv -= gravity
         elif self.yv < 0:
             self.yv = 0
-
-        if self.y < 0:
-            self.y = 0
+         # don't let player fall out of the world
+        if self.y < blockSize:
+            self.y = blockSize + 3
             self.yv = 0
 
+
+         # do all the position updates that other things use
         self.x += self.xv
         self.y += self.yv
         self.z += self.zv
