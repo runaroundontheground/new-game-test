@@ -100,7 +100,7 @@ def render():
                 image = item
                 
                 if image != 0:
-                    image = pygame.transform.scale_by(image, abs(sizeFactor * 1.1))
+                    image = pygame.transform.scale_by(image, abs(sizeFactor))
 
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):

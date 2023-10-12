@@ -21,6 +21,7 @@ def createFirstChunk():
     thing[(4, 6, 5)] = 6
     thing[(4, 6, 6)] = 6
     thing[(3, 6, 6)] = 6
+    thing[(5, 7, 4)] = 2
     chunks[(0, 0)] = thing
 createFirstChunk()
 

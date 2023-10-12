@@ -24,7 +24,7 @@ class Player():
 
         self.width = blockSize - 5
         self.height = blockSize - 5
-        self.image = pygame.surface.Surface((self.width, self.height))
+        self.image = pygame.surface.Surface((self.width, self.width))
         # this is to make rendering work currently and should be removed later!
         self.image.fill((0, 255, 0))
         
@@ -46,10 +46,10 @@ class Player():
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
         blockBeneath = False
-        topLeft = findBlock(self.x, self.y - blockSize, self.z)
-        topRight = findBlock(self.x + self.width, self.y - blockSize, self.z)
-        bottomLeft = findBlock(self.x, self.y - blockSize, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y - blockSize, self.z + self.width)
+        topLeft = findBlock(self.x, self.y - self.height, self.z)
+        topRight = findBlock(self.x + self.width, self.y - self.height, self.z)
+        bottomLeft = findBlock(self.x, self.y - self.height, self.z + self.width)
+        bottomRight = findBlock(self.x + self.width, self.y - self.height, self.z + self.width)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockBeneath = True
         
@@ -62,8 +62,8 @@ class Player():
             blockAbove = True
 
         blockToRight = False
-        topRight = findBlock(self.x + self.width + 1, self.y, self.z)
-        bottomRight = findBlock(self.x + self.width + 1, self.y, self.z + self.width)
+        topRight = findBlock(self.x + self.width + 1, self.y + self.height / 2, self.z)
+        bottomRight = findBlock(self.x + self.width + 1, self.y + self.height / 2, self.z + self.width)
         if topRight or bottomRight:
             blockToRight = True
         
