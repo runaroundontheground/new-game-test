@@ -1,8 +1,15 @@
 from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize
+from perlin_noise import PerlinNoise as noise
 from controls import keysPressed
 import random
 import math
 
+test = noise(40)
+thing = []
+for i in range(50):
+    for i2 in range(50):
+        thing.append(test((i/50, i2/50)))
+print(thing)
 
 
 def createFirstChunk():
