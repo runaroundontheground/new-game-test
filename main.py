@@ -1,14 +1,13 @@
 from controls import updateKeys, updateMouse
 from rendering import render
 from player import player
-import pygame
+import pygame, time
 
 pygame.init()
 
 clock = pygame.time.Clock()
 FPS = 60
 
-running = True
 
 """
 
@@ -18,9 +17,17 @@ that'll probably break caves and being able to do stuff with blocks
 
 why did adding it make it slower? also made stuff stop working
 
+
+add equivalent of time.deltatime to make stuff run better even when 
+my code isn't fast and is super laggy
+
+figure it out later
+
 """
 
 
+
+running = False
 def gameLoop():
     while running:
         
