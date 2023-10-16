@@ -1,15 +1,21 @@
 from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize
-from perlin_noise import PerlinNoise as noise
+from perlin_noise import PerlinNoise
 from controls import keysPressed
 import random
 import math
 
-test = noise(40)
-thing = []
-for i in range(50):
-    for i2 in range(50):
-        thing.append(test((i/50, i2/50)))
-print(thing)
+noise = PerlinNoise(octaves = 1)
+#thing = []
+#rangeThing = 100
+#for i in range(rangeThing):
+#    for i2 in range(rangeThing):
+#        i -= 50
+#        i2 -= 50
+#        newThing = noise(( i / rangeThing, i2 / rangeThing))
+#        newThing *= 100
+#        newThing = round(abs(newThing))
+#        thing.append(newThing)
+#print(thing)
 
 
 def createFirstChunk():
@@ -40,17 +46,32 @@ def createChunk(chunkCoords = (0, 0)):
             for z in range(chunkSize[0]):
                 # by default, the tile will be air
                 blockData = 0 # air
-                blockData = y + 1 
-                # change above line once i actually add textures and better worldgen
-                # hmmmmm i gotta figure out perlin noise...
-                if random.randint(0, 2) == 0: # this also needs to be removed, it just
-                    blockData = 0 # makes a tile have a 1/3 chance to be air
-                if y > 5: blockData = 0
-                if y == 0: blockData = 1
+                # now, how do i make perlin noise work?
+                noiseCoordinate = [x, z]
+                idkWhatToNameValue = 100
+
+                noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
+                noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
+
+                noiseCoordinate[0] /= idkWhatToNameValue
+                noiseCoordinate[1] /= idkWhatToNameValue
+
+                
+
+                noiseValue = noise(noiseCoordinate)
+                noiseValue = abs(round(noiseValue * idkWhatToNameValue))
+                
+
+                if y == noiseValue:
+                    blockData = "grass"
+                if y < noiseValue:
+                    blockData = "dirt"
+                
+
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
-
+createChunk()
 
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):

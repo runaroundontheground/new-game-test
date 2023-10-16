@@ -10,32 +10,17 @@ from controls import keysPressed, mouse
 pygame.font.init()
 
 font = pygame.font.Font(size = 24)
-
-
-
-
 screen = pygame.display.set_mode((screenWidth, screenHeight))
-
-playerColor = pygame.surface.Surface((30, 30))
-playerColor.fill((0, 255, 0))
-colors = [
-    0, # air
-    pygame.surface.Surface((blockSize, blockSize)), # gray
-    pygame.surface.Surface((blockSize, blockSize)), # lightGray
-    pygame.surface.Surface((blockSize, blockSize)), # lighter gray
-    pygame.surface.Surface((blockSize, blockSize)), # lighter lightgray
-    pygame.surface.Surface((blockSize, blockSize)), # dark white
-    pygame.surface.Surface((blockSize, blockSize)) # white
-]
-def fillColor(colorNum, colorValue):
-    colors[colorNum].fill(colorValue)
+imageSize = (blockSize, blockSize)
+blockImages = {
+    "air": 0,
+    "grass": pygame.surface.Surface(imageSize),
+    "dirt": pygame.surface.Surface(imageSize)
     
-fillColor(1, (0, 0, 0))
-fillColor(2, (50, 50, 50))
-fillColor(3, (100, 100, 100))
-fillColor(4, (150, 150, 150))
-fillColor(5, (200, 200, 200))
-fillColor(6, (255, 255, 255))
+}
+blockImages["grass"] = blockImages["grass"].fill(0, 255, 0)
+blockImages["dirt"].fill(150, 75, 0)
+
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
     for num in range(10):
@@ -45,7 +30,6 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
     thing.append(minus)
 makeNumbers()
 
-blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5], colors[6]]
 
 
 
@@ -55,7 +39,7 @@ blockImages = [colors[0], colors[1], colors[2], colors[3], colors[4], colors[5],
 def render():
 
 
-    screen.fill((0, 0, 255))
+    screen.fill((255, 100, 100))
 
     # get the chunks to be used for rendering
     chunkList = []
@@ -95,13 +79,6 @@ def render():
 
             scaledImages = blockImages.copy()
 
-            for item in scaledImages:
-                
-                image = item
-                
-                if image != 0:
-                    image = pygame.transform.scale_by(image, abs(sizeFactor))
-
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):
 
@@ -113,22 +90,15 @@ def render():
                         
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
-                        """
-                        when the camera x and z were subtracted from xpos and zpos
-                        BEFORE scaling, the scaling was centered around the camera
-                        if the subtraction happens AFTER scaling, the scaling is centered
-                        around the middle ( x = 0, z = 0)
-                        subtracting the player pos before scaling, then adding it back
-                        after scaling fixed the problem!!!
-                        that was hard to fix
-                        now i gotta do performance fixes
-                        """
 
                         
                         xPos -= player.x
                         zPos -= player.z
+
+                        if not scaledImages[block][1]: # image has not been scaled
+                            scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], abs(sizeFactor * 1.1))
                         
-                        image = scaledImages[block]
+                        image = scaledImages[block][0]
 
                         xPos *= posFactor
                         zPos *= posFactor
@@ -151,8 +121,8 @@ def render():
 
         renderingData += blocks[listOfBlocksIndex]
 
-    #if not playerAddedToRendering:
-    #    renderingData.append(player.imageData)
+    if not playerAddedToRendering:
+        renderingData.append(player.imageData)
         
 
 

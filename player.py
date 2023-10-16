@@ -26,7 +26,7 @@ class Player():
         self.height = blockSize - 5
         self.image = pygame.surface.Surface((self.width, self.width))
         # this is to make rendering work currently and should be removed later!
-        self.image.fill((0, 255, 0))
+        self.image.fill((255, 0, 0))
         
         self.imageData = (self.image, (0, 0))
 
