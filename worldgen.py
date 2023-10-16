@@ -23,18 +23,18 @@ def createFirstChunk():
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
-                blockData = 5
-                if y > 5: blockData = 0
+                blockData = "stone"
+                if y > 5: blockData = "air"
 
                 chunkData[(x, y, z)] = blockData
                 chunks[(0, 0)] = chunkData
     
     thing = chunks[(0, 0)]
-    thing[(4, 6, 4)] = 6
-    thing[(4, 6, 5)] = 6
-    thing[(4, 6, 6)] = 6
-    thing[(3, 6, 6)] = 6
-    thing[(5, 7, 4)] = 2
+    thing[(4, 6, 4)] = "grass"
+    thing[(4, 6, 5)] = "grass"
+    thing[(4, 6, 6)] = "grass"
+    thing[(3, 6, 6)] = "grass"
+    thing[(5, 7, 4)] = "dirt"
     chunks[(0, 0)] = thing
 createFirstChunk()
 

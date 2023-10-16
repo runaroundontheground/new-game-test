@@ -20,11 +20,13 @@ fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
 blockImages = {
     "air": [0, 0],
     "grass": [baseSurface.copy(), False],
-    "dirt": [baseSurface.copy(), False]
+    "dirt": [baseSurface.copy(), False],
+    "stone": [baseSurface.copy(), False]
     
 }
 blockImages["grass"][0].fill((0, 255, 0), fillingRect)
 blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
+blockImages["stone"][0].fill((50, 50, 50), fillingRect)
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -44,7 +46,7 @@ makeNumbers()
 def render():
 
 
-    screen.fill((255, 100, 100))
+    screen.fill((0, 0, 255))
 
     # get the chunks to be used for rendering
     chunkList = []
@@ -100,8 +102,8 @@ def render():
                             zPos *= blockSize
                             return findBlock(xPos, yPos, zPos)
 
-                        if not isBlockAir(x, y + 1, z):
-                            break
+                        #if not isBlockAir(x, y + 1, z):
+                        #    break
 
                         xPos = x * blockSize
                         zPos = z * blockSize
@@ -112,9 +114,10 @@ def render():
                         
                         xPos -= player.x
                         zPos -= player.z
-                        print(block)
+                        
                         if not scaledImages[block][1]: # image has not been scaled
                             scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], abs(sizeFactor * 1.1))
+                            scaledImages[block][1] = True
                         
                         image = scaledImages[block][0]
 

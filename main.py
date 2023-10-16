@@ -11,10 +11,11 @@ FPS = 60
 running = True
 
 """
-somewhat important idea:
-put a border around each block so that you can see what stuff has been scaled when the
-blocks are the same color
-
+very important idea
+put a border around the edge of blocks, that is a color that makes sense for the block
+stone: slightly darker
+grass: use the dirt color for the sides
+dirt: use a slightly darker version of the dirt color
 
 """
 
