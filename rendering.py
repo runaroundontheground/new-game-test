@@ -14,12 +14,13 @@ screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 imageSize = (blockSize, blockSize)
 baseSurface = pygame.surface.Surface(imageSize)
-baseSurface.fill((100, 100, 100))
 fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
+grassBase = baseSurface.copy()
+grassBase.fill((150, 75, 0))
 
 blockImages = {
     "air": [0, 0],
-    "grass": [baseSurface.copy(), False],
+    "grass": [grassBase, False],
     "dirt": [baseSurface.copy(), False],
     "stone": [baseSurface.copy(), False]
     
