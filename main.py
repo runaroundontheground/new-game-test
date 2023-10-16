@@ -17,6 +17,10 @@ stone: slightly darker
 grass: use the dirt color for the sides
 dirt: use a slightly darker version of the dirt color
 
+once i've fixed the find block function and anything related, add a performance
+fix that is caused by not rendering any blocks that have another block directly above them
+that'll probably break caves and being able to do stuff with blocks
+
 """
 
 
