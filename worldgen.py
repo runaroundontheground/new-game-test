@@ -48,18 +48,18 @@ def createChunk(chunkCoords = (0, 0)):
                 blockData = "air"
                 # now, how do i make perlin noise work?
                 noiseCoordinate = [x, z]
-                idkWhatToNameValue = 100
+                noiseIntensity = 100 # is this a good name?
 
                 noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
                 noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
 
-                noiseCoordinate[0] /= idkWhatToNameValue
-                noiseCoordinate[1] /= idkWhatToNameValue
+                noiseCoordinate[0] /= noiseIntensity
+                noiseCoordinate[1] /= noiseIntensity
 
                 
 
                 noiseValue = noise(noiseCoordinate)
-                noiseValue = round( abs( noiseValue * idkWhatToNameValue))
+                noiseValue = round( abs( noiseValue * noiseIntensity))
                 
 
                 if y == noiseValue:
@@ -78,7 +78,7 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
     chunkCoord = getChunkCoord(x, z)
     blockCoord = getBlockCoord(x, y, z)
-    block = 0
+    block = "air"
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
         return False
     try:
@@ -91,7 +91,7 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     if extraInfo:
         pass
     else:
-        if block != 0:
+        if block != "air":
             return True
         else:
             return False

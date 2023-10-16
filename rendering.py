@@ -17,17 +17,21 @@ baseSurface = pygame.surface.Surface(imageSize)
 fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
 grassBase = baseSurface.copy()
 grassBase.fill((150, 75, 0))
+dirtBase = baseSurface.copy()
+dirtBase.fill((130, 45, 0))
+stoneBase = baseSurface.copy()
+stoneBase.fill((50, 50, 50))
 
 blockImages = {
     "air": [0, 0],
     "grass": [grassBase, False],
-    "dirt": [baseSurface.copy(), False],
-    "stone": [baseSurface.copy(), False]
+    "dirt": [dirtBase, False],
+    "stone": [stoneBase, False]
     
 }
 blockImages["grass"][0].fill((0, 255, 0), fillingRect)
 blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
-blockImages["stone"][0].fill((50, 50, 50), fillingRect)
+blockImages["stone"][0].fill((75, 75, 75), fillingRect)
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -73,7 +77,14 @@ def render():
     for chunkListIndex in range(len(chunkList)):
         chunkCoord = chunkList[chunkListIndex]
         for y in range(chunkSize[1]):
+            def isBlock(x, y, z):
+                xPos = x + (chunkSize[0] * chunkCoord[0])
+                zPos = z + (chunkSize[0] * chunkCoord[1])
 
+                xPos *= blockSize
+                yPos = y * blockSize
+                zPos *= blockSize
+                return findBlock(xPos, yPos, zPos)
         
              # scale everything besides position outside of the x and z loops
              # this runs soooo much faster than it does without it
@@ -94,17 +105,9 @@ def render():
                     block = chunks[chunkCoord][(x, y, z)]
 
                     if block != "air":
-                        def isBlockAir(x, y, z):
-                            xPos = x + (chunkSize[0] * chunkCoord[0])
-                            zPos = z + (chunkSize[0] * chunkCoord[1])
+                        
 
-                            xPos *= blockSize
-                            yPos = y * blockSize
-                            zPos *= blockSize
-                            return findBlock(xPos, yPos, zPos)
-
-                        #if not isBlockAir(x, y + 1, z):
-                        #    break
+                    
 
                         xPos = x * blockSize
                         zPos = z * blockSize

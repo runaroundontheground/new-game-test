@@ -11,15 +11,12 @@ FPS = 60
 running = True
 
 """
-very important idea
-put a border around the edge of blocks, that is a color that makes sense for the block
-stone: slightly darker
-grass: use the dirt color for the sides
-dirt: use a slightly darker version of the dirt color
 
-once i've fixed the find block function and anything related, add a performance
+add a performance
 fix that is caused by not rendering any blocks that have another block directly above them
 that'll probably break caves and being able to do stuff with blocks
+
+why did adding it make it slower? also made stuff stop working
 
 """
 
