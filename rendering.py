@@ -1,7 +1,7 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 from widelyUsedVariables import camera
-from worldgen import createChunk
+from worldgen import createChunk, findBlock
 from player import player
 import pygame
 
@@ -11,15 +11,20 @@ pygame.font.init()
 
 font = pygame.font.Font(size = 24)
 screen = pygame.display.set_mode((screenWidth, screenHeight))
+
 imageSize = (blockSize, blockSize)
+baseSurface = pygame.surface.Surface(imageSize)
+baseSurface.fill((100, 100, 100))
+fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
+
 blockImages = {
-    "air": 0,
-    "grass": pygame.surface.Surface(imageSize),
-    "dirt": pygame.surface.Surface(imageSize)
+    "air": [0, 0],
+    "grass": [baseSurface.copy(), False],
+    "dirt": [baseSurface.copy(), False]
     
 }
-blockImages["grass"] = blockImages["grass"].fill(0, 255, 0)
-blockImages["dirt"].fill(150, 75, 0)
+blockImages["grass"][0].fill((0, 255, 0), fillingRect)
+blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -78,13 +83,26 @@ def render():
             posFactor = sizeFactor
 
             scaledImages = blockImages.copy()
+            
 
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):
 
                     block = chunks[chunkCoord][(x, y, z)]
 
-                    if block != 0:
+                    if block != "air":
+                        def isBlockAir(x, y, z):
+                            xPos = x + (chunkSize[0] * chunkCoord[0])
+                            zPos = z + (chunkSize[0] * chunkCoord[1])
+
+                            xPos *= blockSize
+                            yPos = y * blockSize
+                            zPos *= blockSize
+                            return findBlock(xPos, yPos, zPos)
+
+                        if not isBlockAir(x, y + 1, z):
+                            break
+
                         xPos = x * blockSize
                         zPos = z * blockSize
                         
@@ -94,7 +112,7 @@ def render():
                         
                         xPos -= player.x
                         zPos -= player.z
-
+                        print(block)
                         if not scaledImages[block][1]: # image has not been scaled
                             scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], abs(sizeFactor * 1.1))
                         

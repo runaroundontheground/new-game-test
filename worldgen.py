@@ -17,7 +17,7 @@ noise = PerlinNoise(octaves = 1)
 #        thing.append(newThing)
 #print(thing)
 
-
+"""FIX THIS! NEED TO MAKE IT USE AIR AND STUFF"""
 def createFirstChunk():
     chunkData = {}
     for x in range(chunkSize[0]):
@@ -44,8 +44,8 @@ def createChunk(chunkCoords = (0, 0)):
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
-                # by default, the tile will be air
-                blockData = 0 # air
+                
+                blockData = "air"
                 # now, how do i make perlin noise work?
                 noiseCoordinate = [x, z]
                 idkWhatToNameValue = 100
@@ -59,7 +59,7 @@ def createChunk(chunkCoords = (0, 0)):
                 
 
                 noiseValue = noise(noiseCoordinate)
-                noiseValue = abs(round(noiseValue * idkWhatToNameValue))
+                noiseValue = round( abs( noiseValue * idkWhatToNameValue))
                 
 
                 if y == noiseValue:
@@ -71,7 +71,7 @@ def createChunk(chunkCoords = (0, 0)):
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
-createChunk()
+
 
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):

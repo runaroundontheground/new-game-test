@@ -10,6 +10,15 @@ FPS = 60
 
 running = True
 
+"""
+somewhat important idea:
+put a border around each block so that you can see what stuff has been scaled when the
+blocks are the same color
+
+
+"""
+
+
 def gameLoop():
     while running:
         
