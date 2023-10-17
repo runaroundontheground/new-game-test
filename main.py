@@ -11,19 +11,9 @@ FPS = 60
 
 
 """
-
-add a performance
-fix that is caused by not rendering any blocks that have another block directly above them
-that'll probably break caves and being able to do stuff with blocks
-
-why did adding it make it slower? also made stuff stop working
-
-
-add equivalent of time.deltatime to make stuff run better even when 
-my code isn't fast and is super laggy
-
-figure it out later
-
+find some way to fix rendering, it looks weird, on one side only though
+because of the way it's scaled (it will always end up expanding to down and right
+when it gets scaled)
 """
 
 
