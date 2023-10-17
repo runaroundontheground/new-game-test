@@ -125,7 +125,7 @@ def render(deltaTime):
             sizeFactor += (y - thing) / divisor
             posFactor = sizeFactor
 
-            sizeFactor = abs(sizeFactor * (1.1 / sizeFactor))
+            sizeFactor = abs(sizeFactor * (1 / sizeFactor))
 
             scaledImages = blockImages.copy()
             
@@ -137,10 +137,10 @@ def render(deltaTime):
                     renderThisBlock = False
 
                     if block != "air":
-                        renderThisBlock = True
+                        #renderThisBlock = True
                         
-                        #if not isBlock(x, y + 1, z):
-                        #    renderThisBlock = True
+                        if not isBlock(x, y + 5, z):
+                            renderThisBlock = True
                                 
                         """
                             if not isBlock(x + 1, y + 1, z + 1):

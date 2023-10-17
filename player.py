@@ -17,8 +17,8 @@ class Player():
         self.yv = 0
         self.zv = 0
 
-        self.acceleration = 0.3
-        self.maxHorizontalSpeed = 5
+        self.acceleration = 0.6
+        self.maxHorizontalSpeed = 10
         self.slipperyness = 10
         self.normalJumpForce = 10
 

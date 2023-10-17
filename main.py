@@ -50,8 +50,8 @@ def gameLoop():
         clock.tick(FPS)
 
         newCurrentTime = time.time()
-
-        deltaTime = (newCurrentTime - currentTime) * 10 + 1
+        
+        deltaTime = (newCurrentTime - currentTime) + 1
 
 
 gameLoop()
