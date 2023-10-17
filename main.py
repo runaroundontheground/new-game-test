@@ -27,7 +27,7 @@ figure it out later
 
 
 
-running = False
+running = True
 def gameLoop():
     while running:
         

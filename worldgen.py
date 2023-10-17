@@ -4,7 +4,7 @@ from controls import keysPressed
 import random
 import math
 
-noise = PerlinNoise(octaves = 1)
+noise = PerlinNoise(octaves = 0.1)
 #thing = []
 #rangeThing = 100
 #for i in range(rangeThing):
@@ -64,6 +64,10 @@ def createChunk(chunkCoords = (0, 0)):
 
                 if y == noiseValue:
                     blockData = "grass"
+                    if y > 8:
+                        blockData = "snowy dirt"
+                    if y > 12:
+                        blockData = "snowy stone"
                 if y < noiseValue:
                     blockData = "dirt"
                 
@@ -132,4 +136,9 @@ def getBlockCoord(x = 1, y = 1, z = 1):
 
     return blockCoord
 
+def testChunk(chunkCoord):
+    try:
+        chunks[chunkCoord]
+    except:
+        createChunk(chunkCoord)
 

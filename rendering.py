@@ -1,7 +1,7 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
+from worldgen import createChunk, findBlock, testChunk
 from widelyUsedVariables import camera
-from worldgen import createChunk, findBlock
 from player import player
 import pygame
 
@@ -20,18 +20,24 @@ grassBase.fill((150, 75, 0))
 dirtBase = baseSurface.copy()
 dirtBase.fill((130, 45, 0))
 stoneBase = baseSurface.copy()
-stoneBase.fill((50, 50, 50))
+stoneBase.fill((100, 100, 100))
+snowyDirtBase = dirtBase.copy()
+snowyStoneBase = stoneBase.copy()
 
 blockImages = {
     "air": [0, 0],
     "grass": [grassBase, False],
     "dirt": [dirtBase, False],
-    "stone": [stoneBase, False]
+    "stone": [stoneBase, False],
+    "snowy dirt": [snowyDirtBase, False],
+    "snowy stone": [snowyStoneBase, False]
     
 }
-blockImages["grass"][0].fill((0, 255, 0), fillingRect)
+blockImages["grass"][0].fill((0, 200, 0), fillingRect)
 blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
-blockImages["stone"][0].fill((75, 75, 75), fillingRect)
+blockImages["stone"][0].fill((125, 125, 125), fillingRect)
+blockImages["snowy dirt"][0].fill((220, 220, 220), fillingRect)
+blockImages["snowy stone"][0].fill((220, 220, 220), fillingRect)
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -77,14 +83,37 @@ def render():
     for chunkListIndex in range(len(chunkList)):
         chunkCoord = chunkList[chunkListIndex]
         for y in range(chunkSize[1]):
-            def isBlock(x, y, z):
-                xPos = x + (chunkSize[0] * chunkCoord[0])
-                zPos = z + (chunkSize[0] * chunkCoord[1])
+            def isBlock(xPos, yPos, zPos):
+                chunkCoordForThis = [chunkCoord[0], chunkCoord[1]]
+                x = xPos
+                y = yPos
+                z = zPos
 
-                xPos *= blockSize
-                yPos = y * blockSize
-                zPos *= blockSize
-                return findBlock(xPos, yPos, zPos)
+                if y >= chunkSize[1]:
+                    y = chunkSize[1] - 1
+                elif y < 0:
+                    y = 0
+
+                if x < 0:
+                    x += chunkSize[0]
+                    chunkCoordForThis[0] -= 1
+                elif x >= chunkSize[0]:
+                    x -= chunkSize[0]
+                    chunkCoordForThis[0] += 1
+
+                if z < 0:
+                    z += chunkSize[0]
+                    chunkCoordForThis[1] -= 1
+                elif z >= chunkSize[0]:
+                    z -= chunkSize[0]
+                    chunkCoordForThis[1] += 1
+                
+                newChunkCoord = (chunkCoordForThis[0], chunkCoordForThis[1])
+                testChunk(newChunkCoord)
+                block = chunks[newChunkCoord][(x, y, z)]
+                
+                if block != "air":
+                    return True
         
              # scale everything besides position outside of the x and z loops
              # this runs soooo much faster than it does without it
@@ -96,6 +125,8 @@ def render():
             sizeFactor += (y - thing) / divisor
             posFactor = sizeFactor
 
+            sizeFactor = abs(sizeFactor * 1.1)
+
             scaledImages = blockImages.copy()
             
 
@@ -103,12 +134,35 @@ def render():
                 for z in range(chunkSize[0]):
 
                     block = chunks[chunkCoord][(x, y, z)]
+                    renderThisBlock = False
 
                     if block != "air":
+                        renderThisBlock = True
+                        
+                        #if not isBlock(x, y + 1, z):
+                        #    renderThisBlock = True
+                                
+                        """
+                            if not isBlock(x + 1, y + 1, z + 1):
+                                renderThisBlock = True
+                                break
+                            if not isBlock(x - 1, y + 1, z - 1):
+                                renderThisBlock = True
+                                break
+                            if not isBlock(x - 1, y + 1, z + 1):
+                                renderThisBlock = True
+                                break
+                            if not isBlock(x + 1, y + 1, z - 1):
+                                renderThisBlock = True
+                                break
+                            break
+                        """
+                        
                         
 
-                    
 
+                    
+                    if renderThisBlock:
                         xPos = x * blockSize
                         zPos = z * blockSize
                         
@@ -120,7 +174,7 @@ def render():
                         zPos -= player.z
                         
                         if not scaledImages[block][1]: # image has not been scaled
-                            scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], abs(sizeFactor * 1.1))
+                            scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], sizeFactor)
                             scaledImages[block][1] = True
                         
                         image = scaledImages[block][0]
@@ -135,6 +189,7 @@ def render():
                         imageData = (image, position)
 
                         blocks[y].append(imageData)
+
     renderingData = []
     playerAddedToRendering = False
     for listOfBlocksIndex in range(chunkSize[1]):
