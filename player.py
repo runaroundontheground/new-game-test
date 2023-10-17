@@ -2,6 +2,7 @@ from widelyUsedVariables import camera, blockSize, gravity, chunkSize
 from worldgen import getChunkCoord, getBlockCoord, findBlock
 from controls import keysPressed, keys, mouse
 
+
 import pygame
 
 
@@ -34,7 +35,7 @@ class Player():
         self.chunkCoord = (0, 0)
         self.blockCoord = (0, 0, 0)
 
-    def generalMovement(self):
+    def generalMovement(self, deltaTime):
 
         left = keys[0][pygame.K_a]
         right = keys[0][pygame.K_d]
@@ -174,11 +175,12 @@ class Player():
         if insideABlock:
             self.y += 5
 
-
+        
          # do all the position updates that other things use
-        self.x += self.xv
-        self.y += self.yv
-        self.z += self.zv
+        self.x += self.xv * deltaTime
+        self.y += self.yv * deltaTime
+        self.z += self.zv * deltaTime
+        
 
         self.position = (self.x, self.y, self.z)
 
@@ -197,9 +199,9 @@ class Player():
         coordinate = (imageX, imageY)
         self.imageData = (self.image, coordinate)
 
-    def doStuff(self):
+    def doStuff(self, deltaTime):
         
-        self.generalMovement()
+        self.generalMovement(deltaTime)
         
         self.updateCamera()
 

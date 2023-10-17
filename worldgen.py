@@ -4,20 +4,8 @@ from controls import keysPressed
 import random
 import math
 
-noise = PerlinNoise(octaves = 0.1)
-#thing = []
-#rangeThing = 100
-#for i in range(rangeThing):
-#    for i2 in range(rangeThing):
-#        i -= 50
-#        i2 -= 50
-#        newThing = noise(( i / rangeThing, i2 / rangeThing))
-#        newThing *= 100
-#        newThing = round(abs(newThing))
-#        thing.append(newThing)
-#print(thing)
+noise = PerlinNoise(octaves = 1)
 
-"""FIX THIS! NEED TO MAKE IT USE AIR AND STUFF"""
 def createFirstChunk():
     chunkData = {}
     for x in range(chunkSize[0]):
@@ -46,7 +34,7 @@ def createChunk(chunkCoords = (0, 0)):
             for z in range(chunkSize[0]):
                 
                 blockData = "air"
-                # now, how do i make perlin noise work?
+                
                 noiseCoordinate = [x, z]
                 noiseIntensity = 100 # is this a good name?
 
@@ -62,14 +50,20 @@ def createChunk(chunkCoords = (0, 0)):
                 noiseValue = round( abs( noiseValue * noiseIntensity))
                 
 
-                if y == noiseValue:
-                    blockData = "grass"
-                    if y > 8:
-                        blockData = "snowy dirt"
-                    if y > 12:
-                        blockData = "snowy stone"
                 if y < noiseValue:
-                    blockData = "dirt"
+                    if y < 8:
+                        blockData = "dirt"
+                    if y >= 8:
+                        blockData = "stone"
+
+                if y == noiseValue: # this is the top layer of the world
+                    blockData = "grass"
+                    if y >= 8:
+                        blockData = "stone"
+                    if y > 15:
+                        blockData = "snowy stone"
+
+                
                 
 
                 chunkData[(x, y, z)] = blockData

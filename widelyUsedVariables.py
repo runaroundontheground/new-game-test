@@ -1,7 +1,7 @@
 screenWidth, screenHeight = 1000, 500
 
 blockSize = 30 # pixels
-chunkSize = (10, 10) # chunkSize[0] is length and width
+chunkSize = (10, 30) # chunkSize[0] is length and width
 
 totalChunkSize = chunkSize[0] * blockSize
 
@@ -11,6 +11,7 @@ chunks = {}
 import pygame
 pygame.display.init()
 keys = pygame.key.get_pressed()
+deltaTime = 1
 
 import math
 

@@ -54,7 +54,7 @@ makeNumbers()
 
 
 
-def render():
+def render(deltaTime):
 
 
     screen.fill((0, 0, 255))
@@ -125,7 +125,7 @@ def render():
             sizeFactor += (y - thing) / divisor
             posFactor = sizeFactor
 
-            sizeFactor = abs(sizeFactor * 1.1)
+            sizeFactor = abs(sizeFactor * (1.1 / sizeFactor))
 
             scaledImages = blockImages.copy()
             

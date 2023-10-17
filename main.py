@@ -1,3 +1,4 @@
+from widelyUsedVariables import deltaTime
 from controls import updateKeys, updateMouse
 from rendering import render
 from player import player
@@ -28,9 +29,12 @@ figure it out later
 
 
 running = True
+
 def gameLoop():
+    global deltaTime
     while running:
-        
+        currentTime = time.time()
+
         updateKeys()
         updateMouse()
         
@@ -38,12 +42,16 @@ def gameLoop():
             if event.type == exit:
                 pygame.quit()
 
-        player.doStuff()
+        player.doStuff(deltaTime)
         
 
-        render()
+        render(deltaTime)
         
         clock.tick(FPS)
+
+        newCurrentTime = time.time()
+
+        deltaTime = (newCurrentTime - currentTime) * 10 + 1
 
 
 gameLoop()
