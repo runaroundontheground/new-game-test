@@ -111,20 +111,15 @@ def getBlockCoord(x = 1, y = 1, z = 1):
     if x < 0:
         while x < 0:
             x += chunkSize[0]
-    if x > chunkSize[0]:
+    if x >= chunkSize[0]:
         while x > chunkSize[0]:
             x -= chunkSize[0]
     if z < 0:
         while z < 0:
             z += chunkSize[0]
-    if z > chunkSize[0]:
+    if z >= chunkSize[0]:
         while z > chunkSize[0]:
             z -= chunkSize[0]
-    
-    if x == chunkSize[0]:
-        x = 0
-    if z == chunkSize[0]:
-        z = 0
 
     blockCoord = (x, y, z)
 

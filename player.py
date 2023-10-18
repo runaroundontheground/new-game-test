@@ -1,9 +1,7 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize
 from worldgen import getChunkCoord, getBlockCoord, findBlock
 from controls import keysPressed, keys, mouse
-
-
-import pygame
+import pygame, math
 
 
 
@@ -18,8 +16,8 @@ class Player():
         self.zv = 0
 
         self.acceleration = 0.6
-        self.maxHorizontalSpeed = 10
-        self.slipperyness = 10
+        self.maxHorizontalSpeed = 5
+        self.slipperyness = 5
         self.normalJumpForce = 10
 
 
@@ -46,49 +44,53 @@ class Player():
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
+
+        rightSide = self.x + self.width
+        bottomSide = self.z + self.width
+        beneathSide = self.y - self.height
+
         blockBeneath = False
-        topLeft = findBlock(self.x, self.y - self.height, self.z)
-        topRight = findBlock(self.x + self.width, self.y - self.height, self.z)
-        bottomLeft = findBlock(self.x, self.y - self.height, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y - self.height, self.z + self.width)
+        topLeft = findBlock(self.x, beneathSide, self.z)
+        topRight = findBlock(rightSide, beneathSide, self.z)
+        bottomLeft = findBlock(self.x, beneathSide, bottomSide)
+        bottomRight = findBlock(rightSide, beneathSide, bottomSide)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockBeneath = True
-        # need to make it so that all the left right up down things check with the
-        # y value of self.y + self.height / 2
+        
         blockAbove = False
         topLeft = findBlock(self.x, self.y, self.z)
-        topRight = findBlock(self.x + self.width, self.y, self.z)
-        bottomLeft = findBlock(self.x, self.y, self.z + self.width)
-        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width)
+        topRight = findBlock(rightSide, self.y, self.z)
+        bottomLeft = findBlock(self.x, self.y, bottomSide)
+        bottomRight = findBlock(rightSide, self.y, bottomSide)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockAbove = True
 
         blockToRight = False
-        topRight = findBlock(self.x + self.width + 1, self.y + self.height / 2, self.z)
-        bottomRight = findBlock(self.x + self.width + 1, self.y + self.height / 2, self.z + self.width)
-        if topRight or bottomRight:
+        aboveTopRight = findBlock(rightSide + 1, self.y, self.z)
+        aboveBottomRight = findBlock(rightSide + 1, self.y, bottomSide)
+        if aboveTopRight or aboveBottomRight:
             blockToRight = True
         
         blockToLeft = False
         topLeft = findBlock(self.x - 1, self.y, self.z)
-        bottomLeft = findBlock(self.x - 1, self.y, self.z + self.width)
+        bottomLeft = findBlock(self.x - 1, self.y, bottomSide)
         if topLeft or bottomLeft:
             blockToLeft = True
 
         blockToUp = False
         topLeft = findBlock(self.x, self.y, self.z - 1)
-        topRight = findBlock(self.x + self.width, self.y, self.z - 1)
+        topRight = findBlock(rightSide, self.y, self.z - 1)
         if topLeft or topRight:
             blockToUp = True
 
         blockToDown = False
-        bottomLeft = findBlock(self.x, self.y, self.z + self.width + 1)
-        bottomRight = findBlock(self.x + self.width, self.y, self.z + self.width + 1)
+        bottomLeft = findBlock(self.x, self.y, bottomSide + 1)
+        bottomRight = findBlock(rightSide, self.y, bottomSide + 1)
         if bottomLeft or bottomRight:
             blockToDown = True
 
         insideABlock = False
-        center = findBlock(self.x + self.width / 2, self.y, self.z + self.width / 2)
+        center = findBlock(rightSide / 2, self.y, bottomSide / 2)
         if center:
             insideABlock = True
 
@@ -149,7 +151,7 @@ class Player():
             self.z -= abs(self.zv)
             self.zv = 0
 
-         # do friction
+         
     
         if self.xv > self.maxHorizontalSpeed:
             self.xv = self.maxHorizontalSpeed
@@ -159,16 +161,16 @@ class Player():
             self.zv = self.maxHorizontalSpeed
         if self.zv < -self.maxHorizontalSpeed:
             self.zv = -self.maxHorizontalSpeed
-
+         # friction is handled below
         if (not left and not right) or (left and right):
+            self.xv -= self.xv / self.slipperyness
             if self.xv > -0.1 and self.xv < 0.1:
                 self.xv = 0
         if (not up and not down) or (up and down):
+            self.zv -= self.zv / self.slipperyness
             if self.zv > -0.1 and self.zv < 0.1:
                 self.zv = 0
         
-        self.xv -= self.xv / self.slipperyness
-        self.zv -= self.zv / self.slipperyness
 
 
          # don't let player get stuck inside of blocks

@@ -10,7 +10,12 @@ clock = pygame.time.Clock()
 FPS = 60
 
 
-"""a
+"""
+ok currently:
+fix player's wall collision by check both top of player on the side and bottom of
+player on the side, that way the player can't slip through stuff
+
+
 find some way to fix rendering, it looks weird, on one side only though
 because of the way it's scaled (it will always end up expanding to down and right
 when it gets scaled)
@@ -31,6 +36,7 @@ running = True
 
 def gameLoop():
     global deltaTime
+    render(deltaTime)
     while running:
         currentTime = time.time()
 

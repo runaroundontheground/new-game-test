@@ -3,7 +3,7 @@ from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInCh
 from worldgen import createChunk, findBlock, testChunk
 from widelyUsedVariables import camera
 from player import player
-import pygame
+import pygame, random
 
 from controls import keysPressed, mouse
 
@@ -11,6 +11,11 @@ pygame.font.init()
 
 font = pygame.font.Font(size = 24)
 screen = pygame.display.set_mode((screenWidth, screenHeight))
+screen.fill((0, 0, 0))
+position = (screenWidth/2, screenHeight/2)
+temporaryText = font.render("generating world", 0, (255, 255, 255))
+screen.blit(temporaryText, position)
+pygame.display.flip()
 
 imageSize = (blockSize, blockSize)
 baseSurface = pygame.surface.Surface(imageSize)
@@ -49,28 +54,32 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
 makeNumbers()
 
 
-
-
-
-
-
 def render(deltaTime):
 
 
-    screen.fill((0, 0, 255))
+    screen.fill((0, 0, 0))
 
     # get the chunks to be used for rendering
     chunkList = []
     cameraChunk = camera.currentChunk
     screenExtension = 1
-    for x in range(cameraChunk[0] - screenExtension, cameraChunk[0] + screenWidthInChunks + screenExtension + 1):
-        for z in range(cameraChunk[1] - screenExtension, cameraChunk[1] + screenHeightInChunks + screenExtension + 1):
+
+    xRange = cameraChunk[0] - screenExtension
+    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension
+    zRange = cameraChunk[1] - screenExtension
+    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension
+
+    # make sure all the chunks plus a lil bit actually exist
+    for x in range(xRange - 1, maxXRange + 2):
+        for z in range(zRange - 1, maxZRange + 2):
             try:
                 chunks[(x, z)]
             except:
                 createChunk((x, z))
-            else:
-                chunkList.append((x, z))
+
+    for x in range(xRange, maxXRange + 1):
+        for z in range(zRange, maxZRange + 1):
+            chunkList.append((x, z))
 
 
 
@@ -109,7 +118,6 @@ def render(deltaTime):
                     chunkCoordForThis[1] += 1
                 
                 newChunkCoord = (chunkCoordForThis[0], chunkCoordForThis[1])
-                testChunk(newChunkCoord)
                 block = chunks[newChunkCoord][(x, y, z)]
                 
                 if block != "air":
@@ -122,10 +130,12 @@ def render(deltaTime):
             divisor = 75 # normally 100
              # scale smoother when using exact position rather than player's block coord
             thing = player.y / blockSize
-            posFactor += (y - thing) / divisor
-            sizeFactor = posFactor
+            thing2 = y - thing
+            posFactor += thing2 / divisor
 
-            sizeFactor *= 2
+           # sizeFactor *= sizeFactor
+
+            
 
 
             scaledImages = blockImages.copy()
@@ -140,7 +150,7 @@ def render(deltaTime):
                     if block != "air":
                         #renderThisBlock = True
                         
-                        if not isBlock(x, y + 5, z):
+                        if not isBlock(x, y + 1, z):
                             renderThisBlock = True
                                 
                         """
@@ -175,7 +185,8 @@ def render(deltaTime):
                         zPos -= player.z
                         
                         if not scaledImages[block][1]: # image has not been scaled
-                            scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], sizeFactor)
+                            if sizeFactor != 1:
+                                scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], sizeFactor)
                             scaledImages[block][1] = True
                         
                         image = scaledImages[block][0]
