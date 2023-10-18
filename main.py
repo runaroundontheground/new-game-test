@@ -10,7 +10,7 @@ clock = pygame.time.Clock()
 FPS = 60
 
 
-"""
+"""a
 find some way to fix rendering, it looks weird, on one side only though
 because of the way it's scaled (it will always end up expanding to down and right
 when it gets scaled)
