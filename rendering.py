@@ -122,10 +122,11 @@ def render(deltaTime):
             divisor = 75 # normally 100
              # scale smoother when using exact position rather than player's block coord
             thing = player.y / blockSize
-            sizeFactor += (y - thing) / divisor
-            posFactor = sizeFactor
+            posFactor += (y - thing) / divisor
+            sizeFactor = posFactor
 
-            sizeFactor = abs(sizeFactor * (1 / sizeFactor))
+            sizeFactor *= 2
+
 
             scaledImages = blockImages.copy()
             

@@ -14,6 +14,15 @@ FPS = 60
 find some way to fix rendering, it looks weird, on one side only though
 because of the way it's scaled (it will always end up expanding to down and right
 when it gets scaled)
+
+well apparently the images weren't getting scaled the way it was happening before,
+because it only ever ended up with the size factor being 1
+so something went wrong there
+
+idea to fix it:
+change the position for blitting of the surface by some factor to make it so that
+when things get scaled the middle of the block when blitted visually doesn't change
+wonder if it'll work
 """
 
 
