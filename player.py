@@ -44,7 +44,7 @@ class Player():
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
-
+         # faster? access to variables that need to be used a lot in collision
         rightSide = self.x + self.width
         bottomSide = self.z + self.width
         underSide = self.y - self.height
@@ -146,7 +146,7 @@ class Player():
             self.y = self.blockCoord[1] * blockSize + self.height
          # don't let player fall out of the world
         if self.y < blockSize:
-            self.y = blockSize + 3
+            self.y = chunkSize * blockSize + self.height
             self.yv = 0
 
          # don't let player go through ceilings
