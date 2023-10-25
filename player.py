@@ -47,15 +47,15 @@ class Player():
 
         rightSide = self.x + self.width
         bottomSide = self.z + self.width
-        beneathSide = self.y - self.height
+        underSide = self.y - self.height
 
-        blockBeneath = False
-        topLeft = findBlock(self.x, beneathSide, self.z)
-        topRight = findBlock(rightSide, beneathSide, self.z)
-        bottomLeft = findBlock(self.x, beneathSide, bottomSide)
-        bottomRight = findBlock(rightSide, beneathSide, bottomSide)
+        blockBelow = False
+        topLeft = findBlock(self.x, underSide, self.z)
+        topRight = findBlock(rightSide, underSide, self.z)
+        bottomLeft = findBlock(self.x, underSide, bottomSide)
+        bottomRight = findBlock(rightSide, underSide, bottomSide)
         if topLeft or topRight or bottomLeft or bottomRight:
-            blockBeneath = True
+            blockBelow = True
         
         blockAbove = False
         topLeft = findBlock(self.x, self.y, self.z)
@@ -64,16 +64,34 @@ class Player():
         bottomRight = findBlock(rightSide, self.y, bottomSide)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockAbove = True
-
+         # so this mess of if statements may or may not be faster?
+         # it'll skip all the other operations if it finds one first
         blockToRight = False
-        aboveTopRight = findBlock(rightSide + 1, self.y, self.z)
-        aboveBottomRight = findBlock(rightSide + 1, self.y, bottomSide)
-        if aboveTopRight or aboveBottomRight:
+        temporaryNumber = rightSide + 1
+        aboveTopRight = findBlock(temporaryNumber, self.y, self.z)
+        if not aboveTopRight:
+            aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide)
+            if not aboveBottomRight:
+                belowBottomRight = findBlock(temporaryNumber, underSide + 3, bottomSide)
+                if not belowBottomRight:
+                    belowTopRight = findBlock(temporaryNumber, underSide + 3, self.z)
+                    if belowTopRight:
+                        blockToRight = True
+                else:
+                    blockToRight = True
+            else:
+                blockToRight = True
+        else:
             blockToRight = True
+                    
+                
         
         blockToLeft = False
-        topLeft = findBlock(self.x - 1, self.y, self.z)
-        bottomLeft = findBlock(self.x - 1, self.y, bottomSide)
+        temporaryNumber = self.x - 1
+        aboveTopLeft = findBlock(temporaryNumber, self.y, self.z)
+        aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide)
+        belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide)
+        belowTopLeft = findBlock(temporaryNumber, underSide, self.z)
         if topLeft or bottomLeft:
             blockToLeft = True
 
@@ -115,17 +133,17 @@ class Player():
                 self.zv += self.acceleration
 
          # y axis movement
-        if space and blockBeneath:
+        if space and blockBelow:
             self.yv = self.normalJumpForce
             
 
 
          # do gravity
-        if not blockBeneath:
+        if not blockBelow:
             self.yv -= gravity
         elif self.yv < 0:
             self.yv = 0
-            self.y = self.blockCoord[1] * blockSize
+            self.y = self.blockCoord[1] * blockSize + self.height
          # don't let player fall out of the world
         if self.y < blockSize:
             self.y = blockSize + 3
