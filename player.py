@@ -115,7 +115,7 @@ class Player():
             blockToDown = True
 
         insideABlock = False
-        center = findBlock(rightSide / 2, self.y, bottomSide / 2)
+        center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z - self.width/2)
         if center:
             insideABlock = True
 
@@ -148,12 +148,12 @@ class Player():
          # do gravity
         if not blockBelow:
             self.yv -= gravity
-        elif self.yv < 0:
+        elif self.yv < 0 and not insideABlock:
             self.yv = 0
             self.y = self.blockCoord[1] * blockSize + self.height
          # don't let player fall out of the world
         if self.y < blockSize:
-            self.y = chunkSize * blockSize + self.height
+            self.y = chunkSize[1] * blockSize + self.height
             self.yv = 0
 
          # don't let player go through ceilings
