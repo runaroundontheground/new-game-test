@@ -30,6 +30,9 @@ snowyDirtBase = dirtBase.copy()
 snowyStoneBase = stoneBase.copy()
 waterBase = baseSurface.copy()
 waterBase.fill((0, 0, 255))
+sandBase = baseSurface.copy()
+sandBase.fill((242, 238, 128, 255))
+sandBase.convert_alpha()
 
 blockImages = {
     "air": [0, 0],
@@ -38,7 +41,8 @@ blockImages = {
     "stone": [stoneBase, False],
     "snowy dirt": [snowyDirtBase, False],
     "snowy stone": [snowyStoneBase, False],
-    "water": [waterBase, False]
+    "water": [waterBase, False],
+    "sand": [sandBase, False]
     
 }
 blockImages["grass"][0].fill((0, 200, 0), fillingRect)
@@ -46,7 +50,7 @@ blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
 blockImages["stone"][0].fill((125, 125, 125), fillingRect)
 blockImages["snowy dirt"][0].fill((220, 220, 220), fillingRect)
 blockImages["snowy stone"][0].fill((220, 220, 220), fillingRect)
-blockImages["water"][0].fill((0, 0, 230), fillingRect)
+blockImages["sand"][0].fill((232, 228, 118), fillingRect)
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -129,16 +133,16 @@ def render(deltaTime):
                     return True
         
              # scale everything besides position outside of the x and z loops
-             # this runs soooo much faster than it does without it
+             # it runs faster that way
             posFactor = 1
             sizeFactor = 1
-            divisor = 75 # normally 100
+            divisor = 50 # keep in intervals of 25
              # scale smoother when using exact position rather than player's block coord
             thing = player.y / blockSize
             thing2 = y - thing
             posFactor += thing2 / divisor
 
-           # sizeFactor *= sizeFactor
+           
 
             
 
@@ -156,6 +160,8 @@ def render(deltaTime):
                         #renderThisBlock = True
                         
                         if not isBlock(x, y + 3, z):
+                            renderThisBlock = True
+                        if y < 5 and block == "dirt" or block == "sand":
                             renderThisBlock = True
                                 
                         """

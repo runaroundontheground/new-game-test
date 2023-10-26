@@ -36,7 +36,7 @@ def createChunk(chunkCoords = (0, 0)):
                 blockData = "air"
                 
                 noiseCoordinate = [x, z]
-                noiseIntensity = 100 # is this a good name?
+                noiseIntensity = 70 # is this a good name?
 
                 noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
                 noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
@@ -52,7 +52,7 @@ def createChunk(chunkCoords = (0, 0)):
                 if y > noiseValue:
                     if y < 5:
                         blockData = "water"
-
+                
                 if y < noiseValue:
                     if y < 8:
                         blockData = "dirt"
@@ -61,8 +61,10 @@ def createChunk(chunkCoords = (0, 0)):
 
                 if y == noiseValue: # this is the top layer of the world
                     blockData = "grass"
-                    if y < 5:
+                    if y < 3:
                         blockData = "dirt"
+                    if y < 6:
+                        blockData = "sand"
                     if y >= 8:
                         blockData = "stone"
                     if y > 15:
@@ -84,12 +86,12 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     block = "air"
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
         return False
-    try:
-        chunks[chunkCoord][blockCoord]
-    except:
-        createChunk(chunkCoord)
-    else:
-        block = chunks[chunkCoord][blockCoord]
+    #try:
+    #    chunks[chunkCoord][blockCoord]
+    #except:
+    #    createChunk(chunkCoord)
+    #else:
+    block = chunks[chunkCoord][blockCoord]
 
     if extraInfo:
         pass
@@ -117,13 +119,13 @@ def getBlockCoord(x = 1, y = 1, z = 1):
         while x < 0:
             x += chunkSize[0]
     if x >= chunkSize[0]:
-        while x > chunkSize[0]:
+        while x >= chunkSize[0]:
             x -= chunkSize[0]
     if z < 0:
         while z < 0:
             z += chunkSize[0]
     if z >= chunkSize[0]:
-        while z > chunkSize[0]:
+        while z >= chunkSize[0]:
             z -= chunkSize[0]
 
     blockCoord = (x, y, z)

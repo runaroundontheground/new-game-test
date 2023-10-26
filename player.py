@@ -8,10 +8,17 @@ import pygame, math
 class Player():
     def __init__(self):
         self.x = 0
-        self.y = chunkSize[1] * blockSize
+        self.y = 0
         self.z = 0
-
-        self.xv = 0 # velocity
+        y = chunkSize[1] + 1
+        while y > 0:
+            thing = findBlock(0, y, 0)
+            if thing:
+                self.y = y * blockSize + blockSize
+                break
+            y -= 1
+         # velocity
+        self.xv = 0
         self.yv = 0
         self.zv = 0
 
@@ -50,10 +57,10 @@ class Player():
         underSide = self.y - self.height
 
         blockBelow = False
-        topLeft = findBlock(self.x, underSide - 1, self.z)
-        topRight = findBlock(rightSide, underSide - 1, self.z)
-        bottomLeft = findBlock(self.x, underSide - 1, bottomSide)
-        bottomRight = findBlock(rightSide, underSide - 1, bottomSide)
+        topLeft = findBlock(self.x, underSide + 3, self.z)
+        topRight = findBlock(rightSide, underSide + 3, self.z)
+        bottomLeft = findBlock(self.x, underSide + 3, bottomSide)
+        bottomRight = findBlock(rightSide, underSide + 3, bottomSide)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockBelow = True
         
