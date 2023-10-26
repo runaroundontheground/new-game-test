@@ -12,9 +12,8 @@ FPS = 60
 
 """
 ok currently:
-apparently the player's y is just barely above blocks, which causes the player
-to not have wall collision work so that needs to be fixed
-subtract 1 to the blockBelow in order to not make player bounce up and down
+water works
+no special physics though
 
 fix player's wall collision by check both top of player on the side and bottom of
 player on the side, that way the player can't slip through stuff

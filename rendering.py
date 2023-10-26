@@ -28,6 +28,8 @@ stoneBase = baseSurface.copy()
 stoneBase.fill((100, 100, 100))
 snowyDirtBase = dirtBase.copy()
 snowyStoneBase = stoneBase.copy()
+waterBase = baseSurface.copy()
+waterBase.fill((0, 0, 255))
 
 blockImages = {
     "air": [0, 0],
@@ -35,7 +37,8 @@ blockImages = {
     "dirt": [dirtBase, False],
     "stone": [stoneBase, False],
     "snowy dirt": [snowyDirtBase, False],
-    "snowy stone": [snowyStoneBase, False]
+    "snowy stone": [snowyStoneBase, False],
+    "water": [waterBase, False]
     
 }
 blockImages["grass"][0].fill((0, 200, 0), fillingRect)
@@ -43,6 +46,7 @@ blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
 blockImages["stone"][0].fill((125, 125, 125), fillingRect)
 blockImages["snowy dirt"][0].fill((220, 220, 220), fillingRect)
 blockImages["snowy stone"][0].fill((220, 220, 220), fillingRect)
+blockImages["water"][0].fill((0, 0, 230), fillingRect)
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -52,6 +56,7 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
     minus = font.render("-", 0, (255, 0, 0))
     thing.append(minus)
 makeNumbers()
+
 
 
 def render(deltaTime):
@@ -150,7 +155,7 @@ def render(deltaTime):
                     if block != "air":
                         #renderThisBlock = True
                         
-                        if not isBlock(x, y + 1, z):
+                        if not isBlock(x, y + 3, z):
                             renderThisBlock = True
                                 
                         """

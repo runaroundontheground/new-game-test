@@ -49,6 +49,9 @@ def createChunk(chunkCoords = (0, 0)):
                 noiseValue = noise(noiseCoordinate)
                 noiseValue = round( abs( noiseValue * noiseIntensity))
                 
+                if y > noiseValue:
+                    if y < 5:
+                        blockData = "water"
 
                 if y < noiseValue:
                     if y < 8:
@@ -58,6 +61,8 @@ def createChunk(chunkCoords = (0, 0)):
 
                 if y == noiseValue: # this is the top layer of the world
                     blockData = "grass"
+                    if y < 5:
+                        blockData = "dirt"
                     if y >= 8:
                         blockData = "stone"
                     if y > 15:
