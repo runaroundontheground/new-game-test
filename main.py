@@ -15,6 +15,8 @@ ok currently:
 water works
 no special physics though
 
+is the scale factor still 1? idk
+
 fix player's wall collision by check both top of player on the side and bottom of
 player on the side, that way the player can't slip through stuff
 

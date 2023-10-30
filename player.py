@@ -57,10 +57,10 @@ class Player():
         underSide = self.y - self.height
 
         blockBelow = False
-        topLeft = findBlock(self.x, underSide + 3, self.z)
-        topRight = findBlock(rightSide, underSide + 3, self.z)
-        bottomLeft = findBlock(self.x, underSide + 3, bottomSide)
-        bottomRight = findBlock(rightSide, underSide + 3, bottomSide)
+        topLeft = findBlock(self.x, underSide - 3, self.z)
+        topRight = findBlock(rightSide, underSide - 3, self.z)
+        bottomLeft = findBlock(self.x, underSide - 3, bottomSide)
+        bottomRight = findBlock(rightSide, underSide - 3, bottomSide)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockBelow = True
         
@@ -150,7 +150,7 @@ class Player():
             self.yv -= gravity
         elif self.yv < 0 and not insideABlock:
             self.yv = 0
-            self.y = self.blockCoord[1] * blockSize + self.height
+            self.y = self.blockCoord[1] * blockSize + self.height - 1
          # don't let player fall out of the world
         if self.y < blockSize:
             self.y = chunkSize[1] * blockSize + self.height

@@ -30,9 +30,9 @@ snowyDirtBase = dirtBase.copy()
 snowyStoneBase = stoneBase.copy()
 waterBase = baseSurface.copy()
 waterBase.fill((0, 0, 255))
+waterBase.set_alpha(100)
 sandBase = baseSurface.copy()
-sandBase.fill((242, 238, 128, 255))
-sandBase.convert_alpha()
+sandBase.fill((242, 238, 128))
 
 blockImages = {
     "air": [0, 0],
@@ -141,6 +141,7 @@ def render(deltaTime):
             thing = player.y / blockSize
             thing2 = y - thing
             posFactor += thing2 / divisor
+            sizeFactor = posFactor * 3
 
            
 
