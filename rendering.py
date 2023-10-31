@@ -136,12 +136,14 @@ def render(deltaTime):
              # it runs faster that way
             posFactor = 1
             sizeFactor = 1
-            divisor = 50 # keep in intervals of 25
+            divisor = 100 # keep in intervals of 25
              # scale smoother when using exact position rather than player's block coord
             thing = player.y / blockSize
             thing2 = y - thing
             posFactor += thing2 / divisor
-            sizeFactor = posFactor * 3
+            
+            sizeFactor = 1
+            # i need to brainstorm how to make the scale factor actually work
 
            
 
@@ -160,7 +162,7 @@ def render(deltaTime):
                     if block != "air":
                         #renderThisBlock = True
                         
-                        if not isBlock(x, y + 3, z):
+                        if not isBlock(x, y + 1, z):
                             renderThisBlock = True
                         if y < 5 and block == "dirt" or block == "sand":
                             renderThisBlock = True
