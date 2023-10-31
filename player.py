@@ -79,9 +79,9 @@ class Player():
         if not aboveTopRight:
             aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide)
             if not aboveBottomRight:
-                belowBottomRight = findBlock(temporaryNumber, underSide + 3, bottomSide)
+                belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide)
                 if not belowBottomRight:
-                    belowTopRight = findBlock(temporaryNumber, underSide + 3, self.z)
+                    belowTopRight = findBlock(temporaryNumber, underSide, self.z)
                     if belowTopRight:
                         blockToRight = True
                 else:
@@ -99,19 +99,23 @@ class Player():
         aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide)
         belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide)
         belowTopLeft = findBlock(temporaryNumber, underSide, self.z)
-        if topLeft or bottomLeft:
+        if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
             blockToLeft = True
 
         blockToUp = False
-        topLeft = findBlock(self.x, self.y, self.z - 1)
-        topRight = findBlock(rightSide, self.y, self.z - 1)
-        if topLeft or topRight:
+        aboveTopLeft = findBlock(self.x, self.y, self.z - 1)
+        aboveTopRight = findBlock(rightSide, self.y, self.z - 1)
+        belowTopRight = findBlock(rightSide, underSide, self.z - 1)
+        belowTopLeft = findBlock(self.x, underSide, self.z - 1)
+        if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
             blockToUp = True
 
         blockToDown = False
-        bottomLeft = findBlock(self.x, self.y, bottomSide + 1)
-        bottomRight = findBlock(rightSide, self.y, bottomSide + 1)
-        if bottomLeft or bottomRight:
+        aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1)
+        aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1)
+        belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1)
+        belowBottomLeft = findBlock(self.x, underSide, bottomSide + 1)
+        if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
             blockToDown = True
 
         insideABlock = False
