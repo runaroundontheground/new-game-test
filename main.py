@@ -15,29 +15,12 @@ ok currently:
 water works
 no special physics though
 
+player's collision is maybe fixed?
 
-
-fix player's wall collision by check both top of player on the side and bottom of
-player on the side, that way the player can't slip through stuff
-
-also make rendering faster but still not leave holes in world
-if there isn't a block 2 blocks above but there is one 1 block above
-only then check for blocks to the side to see if it should be rendered
-lets try it
-
-
-find some way to fix rendering, it looks weird, on one side only though
-because of the way it's scaled (it will always end up expanding to down and right
-when it gets scaled)
-
-well apparently the images weren't getting scaled the way it was happening before,
-because it only ever ended up with the size factor being 1
-so something went wrong there
-
-idea to fix it:
-change the position for blitting of the surface by some factor to make it so that
-when things get scaled the middle of the block when blitted visually doesn't change
-wonder if it'll work
+rendering:
+figure out some math stuff to actually have a scale factor value so that
+the images get smaller/bigger depending on height compared to the player
+got nothing for now though
 """
 
 
@@ -46,7 +29,11 @@ running = True
 
 def gameLoop():
     global deltaTime
+
     render(deltaTime)
+    # render is called in order to generate starting area
+    # yeah, maybe it shouldn't be in there but it is anyway
+
     while running:
         currentTime = time.time()
 

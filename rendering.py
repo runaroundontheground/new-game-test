@@ -17,40 +17,53 @@ temporaryText = font.render("generating world", 0, (255, 255, 255))
 screen.blit(temporaryText, position)
 pygame.display.flip()
 
-imageSize = (blockSize, blockSize)
-baseSurface = pygame.surface.Surface(imageSize)
-fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
-grassBase = baseSurface.copy()
-grassBase.fill((150, 75, 0))
-dirtBase = baseSurface.copy()
-dirtBase.fill((130, 45, 0))
-stoneBase = baseSurface.copy()
-stoneBase.fill((100, 100, 100))
-snowyDirtBase = dirtBase.copy()
-snowyStoneBase = stoneBase.copy()
-waterBase = baseSurface.copy()
-waterBase.fill((0, 0, 255))
-waterBase.set_alpha(100)
-sandBase = baseSurface.copy()
-sandBase.fill((242, 238, 128))
-
 blockImages = {
-    "air": [0, 0],
-    "grass": [grassBase, False],
-    "dirt": [dirtBase, False],
-    "stone": [stoneBase, False],
-    "snowy dirt": [snowyDirtBase, False],
-    "snowy stone": [snowyStoneBase, False],
-    "water": [waterBase, False],
-    "sand": [sandBase, False]
-    
+    "air": [0, 0]
 }
-blockImages["grass"][0].fill((0, 200, 0), fillingRect)
-blockImages["dirt"][0].fill((150, 75, 0), fillingRect)
-blockImages["stone"][0].fill((125, 125, 125), fillingRect)
-blockImages["snowy dirt"][0].fill((220, 220, 220), fillingRect)
-blockImages["snowy stone"][0].fill((220, 220, 220), fillingRect)
-blockImages["sand"][0].fill((232, 228, 118), fillingRect)
+
+def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
+              hasAlpha = False, alphaValue = 0):
+    imageSize = (blockSize, blockSize)
+    baseSurface = pygame.surface.Surface(imageSize)
+    fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
+
+    block = baseSurface.copy()
+    
+
+    if blockBorderColor == "unassigned":
+        red = blockColor[0] - 10
+        if red < 0:
+            red = 0
+        green = blockColor[1] - 10
+        if green < 0:
+            green = 0
+        blue = blockColor[2] - 10
+        if blue < 0:
+            blue = 0
+        #if hasAlpha:
+        #    borderColor = (red, green, blue, alphaValue)
+        #else:
+        borderColor = (red, green, blue)
+    else:
+        borderColor = blockBorderColor
+
+    block.fill(borderColor)
+    block.fill(blockColor, fillingRect)
+    if hasAlpha:
+        block.set_alpha(alphaValue)
+    
+    blockImages[blockName] = [block, False]
+
+addABlock("grass", (0, 200, 0), (150, 75, 0))
+addABlock("dirt", (150, 75, 0))
+addABlock("stone", (125, 125, 125))
+addABlock("snowy dirt", (220, 220, 220), (150, 75, 0))
+addABlock("snowy stone", (220, 220, 220), (125, 125, 125))
+addABlock("sand", (232, 228, 118))
+addABlock("clay", (196, 152, 94))
+addABlock("gravel", (150, 150, 150))
+addABlock("water", (0, 0, 255), (0, 0, 255), True, 100)
+addABlock("bedrock", (25, 25, 25))
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):

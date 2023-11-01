@@ -8,15 +8,8 @@ import pygame, math
 class Player():
     def __init__(self):
         self.x = 0
-        self.y = 0
+        self.y = chunkSize[1] * blockSize
         self.z = 0
-        y = chunkSize[1] + 1
-        while y > 0:
-            thing = findBlock(0, y, 0)
-            if thing:
-                self.y = y * blockSize + blockSize
-                break
-            y -= 1
          # velocity
         self.xv = 0
         self.yv = 0

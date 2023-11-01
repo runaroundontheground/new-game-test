@@ -24,8 +24,9 @@ def createFirstChunk():
     thing[(3, 6, 6)] = "grass"
     thing[(5, 7, 4)] = "dirt"
     chunks[(0, 0)] = thing
-createFirstChunk()
+#createFirstChunk()
 
+waterHeight = 4
 
 def createChunk(chunkCoords = (0, 0)):
     chunkData = {}
@@ -49,26 +50,36 @@ def createChunk(chunkCoords = (0, 0)):
                 noiseValue = noise(noiseCoordinate)
                 noiseValue = round( abs( noiseValue * noiseIntensity))
                 
-                if y > noiseValue:
-                    if y < 5:
+                if y > noiseValue: # above ground
+                    if y <= waterHeight:
                         blockData = "water"
                 
-                if y < noiseValue:
+                if y < noiseValue: # underground
                     if y < 8:
                         blockData = "dirt"
                     if y >= 8:
                         blockData = "stone"
 
-                if y == noiseValue: # this is the top layer of the world
+                if y == noiseValue: # surface level
                     blockData = "grass"
-                    if y < 3:
-                        blockData = "dirt"
                     if y < 6:
                         blockData = "sand"
+                        if y < waterHeight:
+                            randomNumber = random.randint(0, 2)
+                            if randomNumber == 0:
+                                blockData = "sand"
+                            elif randomNumber == 1:
+                                blockData = "clay"
+                            elif randomNumber == 2:
+                                blockData = "gravel"
                     if y >= 8:
                         blockData = "stone"
                     if y > 15:
                         blockData = "snowy stone"
+                
+                # bottom layer of world, at least have something
+                if y == 0:
+                    blockData = "bedrock"
 
                 
                 
