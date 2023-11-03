@@ -142,7 +142,7 @@ def render(deltaTime):
                 newChunkCoord = (chunkCoordForThis[0], chunkCoordForThis[1])
                 block = chunks[newChunkCoord][(x, y, z)]
                 
-                if block != "air":
+                if block[0] != "air":
                     return True
         
              # scale everything besides position outside of the x and z loops
@@ -170,35 +170,7 @@ def render(deltaTime):
                 for z in range(chunkSize[0]):
 
                     block = chunks[chunkCoord][(x, y, z)]
-                    renderThisBlock = False
-
-                    if block != "air":
-                        #renderThisBlock = True
-                        
-                        if not isBlock(x, y + 1, z):
-                            renderThisBlock = True
-                        if y < 5 and block == "dirt" or block == "sand":
-                            renderThisBlock = True
-                                
-                        """
-                            if not isBlock(x + 1, y + 1, z + 1):
-                                renderThisBlock = True
-                                break
-                            if not isBlock(x - 1, y + 1, z - 1):
-                                renderThisBlock = True
-                                break
-                            if not isBlock(x - 1, y + 1, z + 1):
-                                renderThisBlock = True
-                                break
-                            if not isBlock(x + 1, y + 1, z - 1):
-                                renderThisBlock = True
-                                break
-                            break
-                        """
-                        
-                        
-
-
+                    renderThisBlock = block[1]
                     
                     if renderThisBlock:
                         xPos = x * blockSize
@@ -211,12 +183,12 @@ def render(deltaTime):
                         xPos -= player.x
                         zPos -= player.z
                         
-                        if not scaledImages[block][1]: # image has not been scaled
+                        if not scaledImages[block[0]][1]: # image has not been scaled
                             if sizeFactor != 1:
-                                scaledImages[block][0] = pygame.transform.scale_by(scaledImages[block][0], sizeFactor)
-                            scaledImages[block][1] = True
+                                scaledImages[block[0]][0] = pygame.transform.scale_by(scaledImages[block[0]][0], sizeFactor)
+                            scaledImages[block[0]][1] = True
                         
-                        image = scaledImages[block][0]
+                        image = scaledImages[block[0]][0]
 
                         xPos *= posFactor
                         zPos *= posFactor

@@ -33,8 +33,9 @@ def createChunk(chunkCoords = (0, 0)):
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
-                
-                blockData = "air"
+                # blockData[1] is whether this block should be rendered
+                # according to block updates
+                blockData = ["air", False]
                 
                 noiseCoordinate = [x, z]
                 noiseIntensity = 70 # is this a good name?
@@ -52,34 +53,34 @@ def createChunk(chunkCoords = (0, 0)):
                 
                 if y > noiseValue: # above ground
                     if y <= waterHeight:
-                        blockData = "water"
+                        blockData[0] = "water"
                 
                 if y < noiseValue: # underground
                     if y < 8:
-                        blockData = "dirt"
+                        blockData[0] = "dirt"
                     if y >= 8:
-                        blockData = "stone"
+                        blockData[0] = "stone"
 
                 if y == noiseValue: # surface level
-                    blockData = "grass"
+                    blockData[0] = "grass"
                     if y < 6:
-                        blockData = "sand"
+                        blockData[0] = "sand"
                         if y < waterHeight:
                             randomNumber = random.randint(0, 2)
                             if randomNumber == 0:
-                                blockData = "sand"
+                                blockData[0] = "sand"
                             elif randomNumber == 1:
-                                blockData = "clay"
+                                blockData[0] = "clay"
                             elif randomNumber == 2:
-                                blockData = "gravel"
+                                blockData[0] = "gravel"
                     if y >= 8:
-                        blockData = "stone"
+                        blockData[0] = "stone"
                     if y > 15:
-                        blockData = "snowy stone"
+                        blockData[0] = "snowy stone"
                 
                 # bottom layer of world, at least have something
                 if y == 0:
-                    blockData = "bedrock"
+                    blockData[0] = "bedrock"
 
                 
                 
@@ -87,14 +88,11 @@ def createChunk(chunkCoords = (0, 0)):
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
-
-
-
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
     chunkCoord = getChunkCoord(x, z)
     blockCoord = getBlockCoord(x, y, z)
-    block = "air"
+    block = ["air", False]
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
         return False
     #try:
@@ -107,7 +105,7 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     if extraInfo:
         pass
     else:
-        if block != "air":
+        if block[0] != "air":
             return True
         else:
             return False
@@ -149,3 +147,18 @@ def testChunk(chunkCoord):
     except:
         createChunk(chunkCoord)
 
+def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
+    for x in range(chunkSize[0]):
+        for y in range(chunkSize[1]):
+            for z in range(chunkSize[0]):
+                block = chunks[chunkCoord][(x, y, z)]
+                if block[0] != "air":
+                    # do some stuff to see if the block should be rendered
+                    pass
+                    """
+                    check if there's any blocks above, if there is then
+                    check for blocks to the sides,
+                    if there's a block on every side besides underneath
+                    then don't set it to true for rendering, since it's
+                    false by default
+                    """
