@@ -17,6 +17,14 @@ no special physics though
 
 player's collision is maybe fixed?
 
+another idea
+block updates:
+while generating the world, decide whether a block should be rendered based 
+on blocks nearby (maybe loop through blocks after they've been generated)
+once i actually add placing and breaking blocks, when a block is updated after something
+happens near it, update whether blocks should be rendered or not in the nearby 
+area that was updated
+
 rendering:
 figure out some math stuff to actually have a scale factor value so that
 the images get smaller/bigger depending on height compared to the player
