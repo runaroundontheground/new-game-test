@@ -88,6 +88,8 @@ def createChunk(chunkCoords = (0, 0)):
                 chunkData[(x, y, z)] = blockData
                 chunks[chunkCoords] = chunkData
 
+    runBlockUpdatesAfterGeneration(chunkCoords)
+
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
     chunkCoord = getChunkCoord(x, z)
@@ -109,6 +111,36 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
             return True
         else:
             return False
+
+def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoords = (0, 0)):
+    try:
+        chunks[chunkCoords][(x, y, z)]
+    except:
+        return ["air", False]
+
+    x = xPos
+    y = yPos
+    z = zPos
+    chunkX = chunkCoords[0]
+    chunkZ = chunkCoords[1]
+
+    if x >= chunkSize[0]:
+        x -= chunkSize[0]
+        chunkX += 1
+    if x < 0:
+        x += chunkSize[0]
+        chunkX -= 1
+    if y >= chunkSize[1] or y < 0:
+        return ["air", False]
+    if z >= chunkSize[0]:
+        z -= chunkSize[0]
+        chunkZ += 1
+    if z < 0:
+        z += chunkSize[0]
+        chunkZ -= 1
+
+    chunkCoord = (x, z)
+    return chunks[chunkCoord][(x, y, z)]
 
 def getChunkCoord(x = 1, z = 1):
     xPos = math.floor(x / totalChunkSize)
@@ -154,11 +186,18 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                 block = chunks[chunkCoord][(x, y, z)]
                 if block[0] != "air":
                     # do some stuff to see if the block should be rendered
-                    pass
                     """
                     check if there's any blocks above, if there is then
                     check for blocks to the sides,
                     if there's a block on every side besides underneath
                     then don't set it to true for rendering, since it's
                     false by default
+                    when i add blocks being able to be placed without anything under them
+                    it'll have to check below
+                    if there isn't a block below it and there is a block above it
+                    don't render it, even if there is air to the sides
+                    ignore that rule for the bottom layer of the world though
                     """
+                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
+                    if not blockAbove:
+                        block[1] = True
