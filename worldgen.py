@@ -185,7 +185,6 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
             for z in range(chunkSize[0]):
                 block = chunks[chunkCoord][(x, y, z)]
                 if block[0] != "air":
-                    # do some stuff to see if the block should be rendered
                     """
                     check if there's any blocks above, if there is then
                     check for blocks to the sides,
@@ -201,3 +200,17 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
                     if not blockAbove:
                         block[1] = True
+                    else: # there is a block above current one
+                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
+                        if not blockBelow:
+                            block[1] = True
+                        else: # there is a block below current one
+                            topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
+                            rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
+                            bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
+                            leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
+                            if not (topSide and rightSide and bottomSide and leftSide):
+                                 # current block has at least 1 air block next to it
+                                block[1] = True
+                            
+                            
