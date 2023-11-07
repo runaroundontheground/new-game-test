@@ -89,6 +89,7 @@ def createChunk(chunkCoords = (0, 0)):
                 chunks[chunkCoords] = chunkData
 
     runBlockUpdatesAfterGeneration(chunkCoords)
+    
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     
@@ -113,10 +114,6 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
             return False
 
 def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoords = (0, 0)):
-    try:
-        chunks[chunkCoords][(x, y, z)]
-    except:
-        return ["air", False]
 
     x = xPos
     y = yPos
@@ -131,16 +128,22 @@ def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoords = (0,
         x += chunkSize[0]
         chunkX -= 1
     if y >= chunkSize[1] or y < 0:
-        return ["air", False]
+        False
     if z >= chunkSize[0]:
         z -= chunkSize[0]
         chunkZ += 1
     if z < 0:
         z += chunkSize[0]
         chunkZ -= 1
-
-    chunkCoord = (x, z)
-    return chunks[chunkCoord][(x, y, z)]
+    
+    chunkCoord = (chunkX, chunkZ)
+    try:
+        block = chunks[chunkCoord][(x, y, z)]
+    except:
+        return False
+    else:
+        if block[0] != "air" and block[0] != "water":
+            return True
 
 def getChunkCoord(x = 1, z = 1):
     xPos = math.floor(x / totalChunkSize)
@@ -197,20 +200,22 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     don't render it, even if there is air to the sides
                     ignore that rule for the bottom layer of the world though
                     """
+                    
                     blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
                     if not blockAbove:
                         block[1] = True
                     else: # there is a block above current one
-                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
-                        if not blockBelow:
-                            block[1] = True
-                        else: # there is a block below current one
-                            topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
-                            rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
-                            bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
-                            leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
-                            if not (topSide and rightSide and bottomSide and leftSide):
-                                 # current block has at least 1 air block next to it
+                        if True:#y != 0:
+                            blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
+                            if not blockBelow:
                                 block[1] = True
+                            else: # there is a block below current one
+                                topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
+                                rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
+                                bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
+                                leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
+                                if not (topSide and rightSide and bottomSide and leftSide):
+                                    # current block has at least 1 air block next to it
+                                    block[1] = True
                             
                             

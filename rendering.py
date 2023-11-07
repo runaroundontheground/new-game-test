@@ -63,7 +63,7 @@ addABlock("sand", (232, 228, 118))
 addABlock("clay", (196, 152, 94))
 addABlock("gravel", (150, 150, 150))
 addABlock("water", (0, 0, 255), (0, 0, 255), True, 100)
-addABlock("bedrock", (255, 150, 150))
+addABlock("bedrock", (0, 255, 255))
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
@@ -147,6 +147,7 @@ def render(deltaTime):
         
              # scale everything besides position outside of the x and z loops
              # it runs faster that way
+            
             posFactor = 1
             sizeFactor = 1
             divisor = 100 # keep in intervals of 25
