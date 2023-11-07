@@ -33,9 +33,10 @@ running = True
 
 def gameLoop():
     global deltaTime
+    # hopefully i did deltatime correctly
 
     render(deltaTime)
-    # render is called in order to generate starting area
+    # call render in order to generate spawn area
     # yeah, maybe it shouldn't be in there but it is anyway
 
     while running:

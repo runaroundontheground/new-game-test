@@ -152,15 +152,20 @@ def render(deltaTime):
             sizeFactor = 1
             divisor = 100 # keep in intervals of 25
              # scale smoother when using exact position rather than player's block coord
-            thing = player.y / blockSize
-            thing2 = y - thing
+            playerYInBlocks = player.y / blockSize
+            thing2 = y - playerYInBlocks
             posFactor += thing2 / divisor
             
             sizeFactor = 1
             # i need to brainstorm how to make the scale factor actually work
 
            
-
+            """
+            if player's block y is 5
+            find some way to make sure that either the block with y = 5 or y = 4
+            is rendered at no scaling
+            
+            """
             
 
 
