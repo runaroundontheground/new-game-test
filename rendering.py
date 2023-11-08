@@ -142,7 +142,7 @@ def render(deltaTime):
                 newChunkCoord = (chunkCoordForThis[0], chunkCoordForThis[1])
                 block = chunks[newChunkCoord][(x, y, z)]
                 
-                if block[0] != "air":
+                if block["type"] != "air":
                     return True
         
              # scale everything besides position outside of the x and z loops
@@ -156,7 +156,10 @@ def render(deltaTime):
             thing2 = y - playerYInBlocks
             posFactor += thing2 / divisor
             
-            sizeFactor = 1
+            sizeFactor += thing2 / (divisor / 2)
+
+            if sizeFactor < 0.1:
+                sizeFactor = 0.1
             # i need to brainstorm how to make the scale factor actually work
 
            
@@ -176,9 +179,8 @@ def render(deltaTime):
                 for z in range(chunkSize[0]):
 
                     block = chunks[chunkCoord][(x, y, z)]
-                    renderThisBlock = block[1]
                     
-                    if renderThisBlock:
+                    if block["render"]:
                         xPos = x * blockSize
                         zPos = z * blockSize
                         
@@ -189,12 +191,12 @@ def render(deltaTime):
                         xPos -= player.x
                         zPos -= player.z
                         
-                        if not scaledImages[block[0]][1]: # image has not been scaled
+                        if not scaledImages[ block["type"] ] [1]: # image has not been scaled
                             if sizeFactor != 1:
-                                scaledImages[block[0]][0] = pygame.transform.scale_by(scaledImages[block[0]][0], sizeFactor)
-                            scaledImages[block[0]][1] = True
+                                scaledImages[ block["type"] ] [0] = pygame.transform.scale_by(scaledImages[block["type"]][0], sizeFactor)
+                            scaledImages[ block["type"] ] [1] = True
                         
-                        image = scaledImages[block[0]][0]
+                        image = scaledImages[block["type"]][0]
 
                         xPos *= posFactor
                         zPos *= posFactor

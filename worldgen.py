@@ -33,9 +33,10 @@ def createChunk(chunkCoords = (0, 0)):
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
-                # blockData[1] is whether this block should be rendered
-                # according to block updates
-                blockData = ["air", False]
+                blockData = {
+                    "type": "air",
+                    "render": False
+                }
                 
                 noiseCoordinate = [x, z]
                 noiseIntensity = 70 # is this a good name?
@@ -53,40 +54,46 @@ def createChunk(chunkCoords = (0, 0)):
                 
                 if y > noiseValue: # above ground
                     if y <= waterHeight:
-                        blockData[0] = "water"
+                        blockData["type"] = "water"
                 
                 if y < noiseValue: # underground
                     if y < 8:
-                        blockData[0] = "dirt"
+                        blockData["type"] = "dirt"
                     if y >= 8:
-                        blockData[0] = "stone"
+                        blockData["type"] = "stone"
 
                 if y == noiseValue: # surface level
-                    blockData[0] = "grass"
+                    blockData["type"] = "grass"
                     if y < 6:
-                        blockData[0] = "sand"
+                        blockData["type"] = "sand"
                         if y < waterHeight:
                             randomNumber = random.randint(0, 2)
                             if randomNumber == 0:
-                                blockData[0] = "sand"
+                                blockData["type"] = "sand"
                             elif randomNumber == 1:
-                                blockData[0] = "clay"
+                                blockData["type"] = "clay"
                             elif randomNumber == 2:
-                                blockData[0] = "gravel"
+                                blockData["type"] = "gravel"
                     if y >= 8:
-                        blockData[0] = "stone"
+                        blockData["type"] = "stone"
                     if y > 15:
-                        blockData[0] = "snowy stone"
+                        blockData["type"] = "snowy stone"
                 
                 # bottom layer of world, at least have something
                 if y == 0:
-                    blockData[0] = "bedrock"
+                    blockData["type"] = "bedrock"
+
+
+                if blockData["type"] != "air":
+                    blockData["render"] = True
 
                 
                 
 
                 chunkData[(x, y, z)] = blockData
-                chunks[chunkCoords] = chunkData
+                
+    chunks[chunkCoords]["data"] = chunkData
+    chunks[chunkCoords]["hasBeenGenerated"] = True
 
     runBlockUpdatesAfterGeneration(chunkCoords)
     
@@ -98,52 +105,56 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
     block = ["air", False]
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
         return False
-    #try:
-    #    chunks[chunkCoord][blockCoord]
-    #except:
-    #    createChunk(chunkCoord)
-    #else:
-    block = chunks[chunkCoord][blockCoord]
-
-    if extraInfo:
-        pass
+    try:
+        chunks[chunkCoord]["data"][blockCoord]
+    except:
+        createChunk(chunkCoord)
     else:
-        if block[0] != "air":
-            return True
-        else:
-            return False
+        block = chunks[chunkCoord]["data"][blockCoord]
 
-def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoords = (0, 0)):
+        if extraInfo:
+            pass
+        else:
+            if block["type"] != "air":
+                return True
+            else:
+                return False
+
+def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1):
 
     x = xPos
     y = yPos
     z = zPos
-    chunkX = chunkCoords[0]
-    chunkZ = chunkCoords[1]
 
-    if x >= chunkSize[0]:
-        x -= chunkSize[0]
-        chunkX += 1
     if x < 0:
-        x += chunkSize[0]
-        chunkX -= 1
-    if y >= chunkSize[1] or y < 0:
-        False
-    if z >= chunkSize[0]:
-        z -= chunkSize[0]
-        chunkZ += 1
+        while x < 0:
+            x += chunkSize[0]
+    if x >= chunkSize[0]:
+        while x >= chunkSize[0]:
+            x -= chunkSize[0]
     if z < 0:
-        z += chunkSize[0]
-        chunkZ -= 1
-    
-    chunkCoord = (chunkX, chunkZ)
+        while z < 0:
+            z += chunkSize[0]
+    if z >= chunkSize[0]:
+        while z >= chunkSize[0]:
+            z -= chunkSize[0]
+
+    chunkCoord = getChunkCoord(x * blockSize, z * blockSize)
+    thisBlockExists = False
     try:
-        block = chunks[chunkCoord][(x, y, z)]
+        chunks[chunkCoord][(x, y, z)]
     except:
-        return False
+        #createChunk(chunkCoord)
+        print("whoops, that failed!")
     else:
-        if block[0] != "air" and block[0] != "water":
-            return True
+        block = chunks[chunkCoord][x, y, z]
+
+        if block["type"] != "air" and block["type"] != "water":
+            thisBlockExists = True
+    
+    return thisBlockExists
+        
+    
 
 def getChunkCoord(x = 1, z = 1):
     xPos = math.floor(x / totalChunkSize)
@@ -187,35 +198,26 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
                 block = chunks[chunkCoord][(x, y, z)]
-                if block[0] != "air":
-                    """
-                    check if there's any blocks above, if there is then
-                    check for blocks to the sides,
-                    if there's a block on every side besides underneath
-                    then don't set it to true for rendering, since it's
-                    false by default
-                    when i add blocks being able to be placed without anything under them
-                    it'll have to check below
-                    if there isn't a block below it and there is a block above it
-                    don't render it, even if there is air to the sides
-                    ignore that rule for the bottom layer of the world though
-                    """
+                if block["type"] != "air":
                     
-                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
+                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z)
                     if not blockAbove:
-                        block[1] = True
+                        block["render"] = True
                     else: # there is a block above current one
-                        if True:#y != 0:
-                            blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
-                            if not blockBelow:
-                                block[1] = True
-                            else: # there is a block below current one
-                                topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
-                                rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
-                                bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
-                                leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
-                                if not (topSide and rightSide and bottomSide and leftSide):
-                                    # current block has at least 1 air block next to it
-                                    block[1] = True
+                    
+                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z)
+                        if not blockBelow and y != 0:
+                            block["render"] = True
+                        else: # there is a block below current one
+                            topSide = findBlock(x * 30, y * 30, (z - 1) * 30)
+                            rightSide = findBlock((x + 1) * 30, y * 30, z * 30)
+                            bottomSide = findBlock(x * 30, y * 30, (z + 1) * 30)
+                            leftSide = findBlock((x - 1) * 30, y * 30, z * 30)
+                            surrounded = False
+                            if topSide and rightSide and leftSide and bottomSide:
+                                surrounded = True
+                            if not surrounded:
+                                # current block has at least 1 air block next to it
+                                block["render"] = True
                             
                             
