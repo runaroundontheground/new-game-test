@@ -125,42 +125,42 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
             else:
                 return False
 
-def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoord = (0, 0)):
+def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoordInput = (0, 0)):
 
     x = xPos
     y = yPos
     z = zPos
-    chunkX = chunkCoord[0]
-    chunkZ = chunkCoord[1]
-    if x < 0:
-        while x < 0:
-            x += chunkSize[0]
-            chunkX -= 1
-    if x >= chunkSize[0]:
-        while x >= chunkSize[0]:
-            x -= chunkSize[0]
-            chunkX += 1
-    if z < 0:
-        while z < 0:
-            z += chunkSize[0]
-            chunkZ -= 1
-    if z >= chunkSize[0]:
-        while z >= chunkSize[0]:
-            z -= chunkSize[0]
-            chunkZ += 1
+    chunkX = chunkCoordInput[0]
+    chunkZ = chunkCoordInput[1]
 
+    if x < 0:
+        x += chunkSize[0]
+        chunkX -= 1
+    if x >= chunkSize[0]:
+        x -= chunkSize[0]
+        chunkX += 1
+
+    if y < 0 or y >= chunkSize[1]:
+        return False
+
+    if z < 0:
+        z += chunkSize[0]
+        chunkZ -= 1
+    if z >= chunkSize[0]:
+        z -= chunkSize[0]
+        chunkZ += 1
+
+    chunkCoord = (chunkX, chunkZ)
 
     try:
-        chunks[chunkCoord]["data"][(x, y, z)]
+        chunks[chunkCoord]
     except:
-        #createChunk(chunkCoord)
-        print("whoops, that failed!")
-        return False
-    else:
-        block = chunks[chunkCoord]["data"][x, y, z]
+        createChunk(chunkCoord)
+    
+    block = chunks[chunkCoord]["data"][x, y, z]
 
-        if block["type"] != "air" and block["type"] != "water":
-            return True
+    if block["type"] != "air" and block["type"] != "water":
+        return True
         
     
 
@@ -202,6 +202,7 @@ def testChunk(chunkCoord):
         createChunk(chunkCoord)
 
 def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
+
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
@@ -211,11 +212,13 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
                     if not blockAbove:
                         block["render"] = True
+                    """
                     else: # there is a block above current one
                     
                         blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
-                        if not blockBelow and y != 0:
+                        if not blockBelow:
                             block["render"] = True
+                        
                         else: # there is a block below current one
                             topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
                             rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
@@ -227,5 +230,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             if not surrounded:
                                 # current block has at least 1 air block next to it
                                 block["render"] = True
+                    """
+    chunks[chunkCoord]["blocksUpdated"] = True
                             
                             

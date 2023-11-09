@@ -180,7 +180,7 @@ def render(deltaTime):
             for x in range(chunkSize[0]):
                 for z in range(chunkSize[0]):
 
-                    block = chunks[chunkCoord][(x, y, z)]
+                    block = chunks[chunkCoord]["data"][(x, y, z)]
                     
                     if block["render"]:
                         xPos = x * blockSize
