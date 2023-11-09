@@ -1,6 +1,6 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
-from worldgen import createChunk, findBlock, testChunk
+from worldgen import createChunk, findBlock, testChunk, runBlockUpdatesAfterGeneration
 from widelyUsedVariables import camera
 from player import player
 import pygame, random
@@ -102,6 +102,8 @@ def render(deltaTime):
     for x in range(xRange, maxXRange + 1):
         for z in range(zRange, maxZRange + 1):
             chunkList.append((x, z))
+            if not chunks[(x, z)]["blocksUpdated"]:
+                runBlockUpdatesAfterGeneration((x, z))
 
 
 

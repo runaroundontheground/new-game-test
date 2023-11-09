@@ -1,4 +1,5 @@
-from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize
+from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
+from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks
 from perlin_noise import PerlinNoise
 from controls import keysPressed
 import random
@@ -30,6 +31,7 @@ waterHeight = 4
 
 def createChunk(chunkCoords = (0, 0)):
     chunkData = {}
+
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
@@ -91,11 +93,14 @@ def createChunk(chunkCoords = (0, 0)):
                 
 
                 chunkData[(x, y, z)] = blockData
-                
-    chunks[chunkCoords]["data"] = chunkData
-    chunks[chunkCoords]["hasBeenGenerated"] = True
+    
+    
 
-    runBlockUpdatesAfterGeneration(chunkCoords)
+
+    chunks[chunkCoords] = {
+        "data": chunkData,
+        "blocksUpdated": False
+    }
     
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
@@ -120,39 +125,42 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
             else:
                 return False
 
-def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1):
+def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoord = (0, 0)):
 
     x = xPos
     y = yPos
     z = zPos
-
+    chunkX = chunkCoord[0]
+    chunkZ = chunkCoord[1]
     if x < 0:
         while x < 0:
             x += chunkSize[0]
+            chunkX -= 1
     if x >= chunkSize[0]:
         while x >= chunkSize[0]:
             x -= chunkSize[0]
+            chunkX += 1
     if z < 0:
         while z < 0:
             z += chunkSize[0]
+            chunkZ -= 1
     if z >= chunkSize[0]:
         while z >= chunkSize[0]:
             z -= chunkSize[0]
+            chunkZ += 1
 
-    chunkCoord = getChunkCoord(x * blockSize, z * blockSize)
-    thisBlockExists = False
+
     try:
-        chunks[chunkCoord][(x, y, z)]
+        chunks[chunkCoord]["data"][(x, y, z)]
     except:
         #createChunk(chunkCoord)
         print("whoops, that failed!")
+        return False
     else:
-        block = chunks[chunkCoord][x, y, z]
+        block = chunks[chunkCoord]["data"][x, y, z]
 
         if block["type"] != "air" and block["type"] != "water":
-            thisBlockExists = True
-    
-    return thisBlockExists
+            return True
         
     
 
@@ -197,22 +205,22 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
     for x in range(chunkSize[0]):
         for y in range(chunkSize[1]):
             for z in range(chunkSize[0]):
-                block = chunks[chunkCoord][(x, y, z)]
+                block = chunks[chunkCoord]["data"][(x, y, z)]
                 if block["type"] != "air":
                     
-                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z)
+                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
                     if not blockAbove:
                         block["render"] = True
                     else: # there is a block above current one
                     
-                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z)
+                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
                         if not blockBelow and y != 0:
                             block["render"] = True
                         else: # there is a block below current one
-                            topSide = findBlock(x * 30, y * 30, (z - 1) * 30)
-                            rightSide = findBlock((x + 1) * 30, y * 30, z * 30)
-                            bottomSide = findBlock(x * 30, y * 30, (z + 1) * 30)
-                            leftSide = findBlock((x - 1) * 30, y * 30, z * 30)
+                            topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
+                            rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
+                            bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
+                            leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
                             surrounded = False
                             if topSide and rightSide and leftSide and bottomSide:
                                 surrounded = True
