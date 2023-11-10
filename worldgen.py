@@ -53,6 +53,9 @@ def createChunk(chunkCoords = (0, 0)):
 
                 noiseValue = noise(noiseCoordinate)
                 noiseValue = round( abs( noiseValue * noiseIntensity))
+                noiseValue += 1 # make bottom layer be bedrock
+
+                
                 
                 if y > noiseValue: # above ground
                     if y <= waterHeight:
@@ -84,13 +87,6 @@ def createChunk(chunkCoords = (0, 0)):
                 # bottom layer of world, at least have something
                 if y == 0:
                     blockData["type"] = "bedrock"
-
-
-                if blockData["type"] != "air":
-                    blockData["render"] = True
-
-                
-                
 
                 chunkData[(x, y, z)] = blockData
     
@@ -153,11 +149,11 @@ def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoordInput =
     chunkCoord = (chunkX, chunkZ)
 
     try:
-        chunks[chunkCoord]
+        chunks[chunkCoord]["data"][(x, y, z)]
     except:
         createChunk(chunkCoord)
     
-    block = chunks[chunkCoord]["data"][x, y, z]
+    block = chunks[chunkCoord]["data"][(x, y, z)]
 
     if block["type"] != "air" and block["type"] != "water":
         return True
@@ -212,12 +208,13 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
                     if not blockAbove:
                         block["render"] = True
-                    """
+                    
                     else: # there is a block above current one
                     
                         blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
                         if not blockBelow:
-                            block["render"] = True
+                            if y != 0:
+                                block["render"] = True
                         
                         else: # there is a block below current one
                             topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
@@ -230,7 +227,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             if not surrounded:
                                 # current block has at least 1 air block next to it
                                 block["render"] = True
-                    """
+                    
     chunks[chunkCoord]["blocksUpdated"] = True
                             
                             

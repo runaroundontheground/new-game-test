@@ -25,7 +25,7 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 0):
     imageSize = (blockSize, blockSize)
     baseSurface = pygame.surface.Surface(imageSize)
-    fillingRect = pygame.rect.Rect(1, 1, blockSize - 2, blockSize - 2)
+    fillingRect = pygame.rect.Rect(2, 2, blockSize - 4, blockSize - 4)
 
     block = baseSurface.copy()
     
@@ -158,7 +158,7 @@ def render(deltaTime):
             thing2 = y - playerYInBlocks
             posFactor += thing2 / divisor
             
-            sizeFactor += thing2 / (divisor / 2)
+            sizeFactor = posFactor * 1.5
 
             if sizeFactor < 0.1:
                 sizeFactor = 0.1
