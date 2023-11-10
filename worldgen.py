@@ -99,27 +99,29 @@ def createChunk(chunkCoords = (0, 0)):
     }
     
 
-def findBlock(x = 1, y = 1, z = 1, extraInfo = False):
+def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
     
     chunkCoord = getChunkCoord(x, z)
     blockCoord = getBlockCoord(x, y, z)
     block = ["air", False]
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
+        if extraInfo:
+            return block
         return False
     try:
         chunks[chunkCoord]["data"][blockCoord]
     except:
         createChunk(chunkCoord)
-    else:
-        block = chunks[chunkCoord]["data"][blockCoord]
 
-        if extraInfo:
-            pass
+    block = chunks[chunkCoord]["data"][blockCoord]
+
+    if extraInfo:
+        return block
+    else:
+        if block["type"] != "air" and not ignoreWater:
+            return True
         else:
-            if block["type"] != "air":
-                return True
-            else:
-                return False
+            return False
 
 def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoordInput = (0, 0)):
 

@@ -32,6 +32,7 @@ class Player():
         self.position = (self.x, self.y, self.z)
         self.chunkCoord = (0, 0)
         self.blockCoord = (0, 0, 0)
+        self.insideOfBlock = "air"
 
     def generalMovement(self, deltaTime):
 
@@ -50,31 +51,31 @@ class Player():
         underSide = self.y - self.height
 
         blockBelow = False
-        topLeft = findBlock(self.x, underSide - 3, self.z)
-        topRight = findBlock(rightSide, underSide - 3, self.z)
-        bottomLeft = findBlock(self.x, underSide - 3, bottomSide)
-        bottomRight = findBlock(rightSide, underSide - 3, bottomSide)
+        topLeft = findBlock(self.x, underSide - 3, self.z, ignoreWater = True)
+        topRight = findBlock(rightSide, underSide - 3, self.z, ignoreWater = True)
+        bottomLeft = findBlock(self.x, underSide - 3, bottomSide, ignoreWater = True)
+        bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = True)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockBelow = True
         
         blockAbove = False
-        topLeft = findBlock(self.x, self.y, self.z)
-        topRight = findBlock(rightSide, self.y, self.z)
-        bottomLeft = findBlock(self.x, self.y, bottomSide)
-        bottomRight = findBlock(rightSide, self.y, bottomSide)
+        topLeft = findBlock(self.x, self.y, self.z, ignoreWater = True)
+        topRight = findBlock(rightSide, self.y, self.z, ignoreWater = True)
+        bottomLeft = findBlock(self.x, self.y, bottomSide, ignoreWater = True)
+        bottomRight = findBlock(rightSide, self.y, bottomSide, ignoreWater = True)
         if topLeft or topRight or bottomLeft or bottomRight:
             blockAbove = True
          # so this mess of if statements may or may not be faster?
          # it'll skip all the other operations if it finds one first
         blockToRight = False
         temporaryNumber = rightSide + 1
-        aboveTopRight = findBlock(temporaryNumber, self.y, self.z)
+        aboveTopRight = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
         if not aboveTopRight:
-            aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide)
+            aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
             if not aboveBottomRight:
-                belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide)
+                belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
                 if not belowBottomRight:
-                    belowTopRight = findBlock(temporaryNumber, underSide, self.z)
+                    belowTopRight = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
                     if belowTopRight:
                         blockToRight = True
                 else:
@@ -88,33 +89,32 @@ class Player():
         
         blockToLeft = False
         temporaryNumber = self.x - 1
-        aboveTopLeft = findBlock(temporaryNumber, self.y, self.z)
-        aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide)
-        belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide)
-        belowTopLeft = findBlock(temporaryNumber, underSide, self.z)
+        aboveTopLeft = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
+        aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
+        belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
+        belowTopLeft = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
         if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
             blockToLeft = True
 
         blockToUp = False
-        aboveTopLeft = findBlock(self.x, self.y, self.z - 1)
-        aboveTopRight = findBlock(rightSide, self.y, self.z - 1)
-        belowTopRight = findBlock(rightSide, underSide, self.z - 1)
-        belowTopLeft = findBlock(self.x, underSide, self.z - 1)
+        aboveTopLeft = findBlock(self.x, self.y, self.z - 1, ignoreWater = True)
+        aboveTopRight = findBlock(rightSide, self.y, self.z - 1, ignoreWater = True)
+        belowTopRight = findBlock(rightSide, underSide, self.z - 1, ignoreWater = True)
+        belowTopLeft = findBlock(self.x, underSide, self.z - 1, ignoreWater = True)
         if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
             blockToUp = True
 
         blockToDown = False
-        aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1)
-        aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1)
-        belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1)
-        belowBottomLeft = findBlock(self.x, underSide, bottomSide + 1)
+        aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1, ignoreWater = True)
+        aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1, ignoreWater = True)
+        belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = True)
+        belowBottomLeft = findBlock(self.x, underSide, bottomSide + 1, ignoreWater = True)
         if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
             blockToDown = True
 
-        insideABlock = False
-        center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2)
-        if center:
-            insideABlock = True
+        center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
+        if center["type"] != "air":
+            self.insideOfBlock = center["type"]
 
 
 
@@ -138,14 +138,22 @@ class Player():
 
          # y axis movement
         if space and blockBelow:
-            self.yv = self.normalJumpForce
+            jumpForce = self.normalJumpForce
+
+            if self.insideOfBlock == "water":
+                jumpForce /= 5
+
+            self.yv = jumpForce
             
 
 
          # do gravity
         if not blockBelow:
-            self.yv -= gravity
-        elif self.yv < 0:# and not insideABlock:
+            yvChange = gravity
+            if self.insideOfBlock == "water":
+                yvChange /= 5
+            self.yv -= yvChange
+        elif self.yv < 0:
             self.yv = 0
             self.y = self.blockCoord[1] * blockSize + self.height
          # don't let player fall out of the world
@@ -195,7 +203,7 @@ class Player():
 
 
          # don't let player get stuck inside of blocks
-        if insideABlock:
+        if self.insideOfBlock != "air" and self.insideOfBlock != "water":
             self.y += 5
 
         
