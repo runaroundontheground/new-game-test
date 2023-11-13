@@ -12,14 +12,10 @@ FPS = 60
 
 """
 ok currently:
-water works
-no special physics though
 
-player's collision is maybe fixed?
+working on adding water-based movement for the player
 
-block updates:
-well, the rendering works, just gotta fix scale factor to see if i actually need
-to check for any blocks to the side
+figured out block updates doing weird stuff, was a set of missing ()
 
 rendering:
 figure out some math stuff to actually have a scale factor value so that

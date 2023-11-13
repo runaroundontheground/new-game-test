@@ -113,6 +113,7 @@ class Player():
             blockToDown = True
 
         center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
+        
         if center["type"] != "air":
             self.insideOfBlock = center["type"]
 
@@ -137,13 +138,15 @@ class Player():
                 self.zv += self.acceleration
 
          # y axis movement
-        if space and blockBelow:
-            jumpForce = self.normalJumpForce
-
+        if space:
             if self.insideOfBlock == "water":
-                jumpForce /= 5
+                # do water stuff
+                jumpForce = self.normalJumpForce / 5
+            elif blockBelow:
+                # do jump stuff
+                jumpForce = self.normalJumpForce
 
-            self.yv = jumpForce
+                self.yv = jumpForce
             
 
 
@@ -181,15 +184,17 @@ class Player():
             self.zv = 0
 
          
-    
+        # force player speed cap
         if self.xv > self.maxHorizontalSpeed:
             self.xv = self.maxHorizontalSpeed
         if self.xv < -self.maxHorizontalSpeed:
             self.xv = -self.maxHorizontalSpeed
+
         if self.zv > self.maxHorizontalSpeed:
             self.zv = self.maxHorizontalSpeed
         if self.zv < -self.maxHorizontalSpeed:
             self.zv = -self.maxHorizontalSpeed
+        
          # friction is handled below
         if (not left and not right) or (left and right):
             self.xv -= self.xv / self.slipperyness
@@ -203,14 +208,17 @@ class Player():
 
 
          # don't let player get stuck inside of blocks
-        if self.insideOfBlock != "air" and self.insideOfBlock != "water":
-            self.y += 5
+        if self.insideOfBlock != "air":
+            if self.insideOfBlock != "water":
+                self.y += 5
 
-        
+        velocityThing = 1
+        if self.insideOfBlock == "water":
+            velocityThing = 3
          # do all the position updates that other things use
-        self.x += self.xv * deltaTime
-        self.y += self.yv * deltaTime
-        self.z += self.zv * deltaTime
+        self.x += (self.xv * deltaTime) / velocityThing
+        self.y += (self.yv * deltaTime)# / velocityThing
+        self.z += (self.zv * deltaTime) / velocityThing
         
 
         self.position = (self.x, self.y, self.z)

@@ -103,10 +103,13 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
     
     chunkCoord = getChunkCoord(x, z)
     blockCoord = getBlockCoord(x, y, z)
-    block = ["air", False]
+    
     if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
         if extraInfo:
-            return block
+            return {
+                "type": "air",
+                "render": False
+            }
         return False
     try:
         chunks[chunkCoord]["data"][blockCoord]
@@ -118,7 +121,9 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
     if extraInfo:
         return block
     else:
-        if block["type"] != "air" and not ignoreWater:
+        if block["type"] != "air":
+            if block["type"] == "water" and ignoreWater:
+                return False
             return True
         else:
             return False
