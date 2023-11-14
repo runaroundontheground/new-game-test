@@ -13,9 +13,10 @@ FPS = 60
 """
 ok currently:
 
-working on adding water-based movement for the player
-
-figured out block updates doing weird stuff, was a set of missing ()
+player's water physics work i think
+new idea:
+player can 'step up' blocks, if it's a 1 block height then the player just
+goes right up it i guess
 
 rendering:
 figure out some math stuff to actually have a scale factor value so that

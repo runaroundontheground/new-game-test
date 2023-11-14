@@ -66,8 +66,6 @@ def createChunk(chunkCoords = (0, 0)):
                         blockData["type"] = "dirt"
                     if y >= 8:
                         blockData["type"] = "stone"
-                        if y < 12:
-                            blockData["type"] = "dirt"
 
                 if y == noiseValue: # surface level
                     blockData["type"] = "grass"
@@ -83,6 +81,8 @@ def createChunk(chunkCoords = (0, 0)):
                                 blockData["type"] = "gravel"
                     if y >= 8:
                         blockData["type"] = "stone"
+                        if y < 10:
+                            blockData["type"] = "dirt"
                     if y > 15:
                         blockData["type"] = "snowy stone"
                 

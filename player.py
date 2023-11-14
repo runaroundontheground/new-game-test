@@ -45,75 +45,98 @@ class Player():
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
 
-         # faster? access to variables that need to be used a lot in collision
-        rightSide = self.x + self.width
-        bottomSide = self.z + self.width
-        underSide = self.y - self.height
-
         blockBelow = False
-        topLeft = findBlock(self.x, underSide - 3, self.z, ignoreWater = True)
-        topRight = findBlock(rightSide, underSide - 3, self.z, ignoreWater = True)
-        bottomLeft = findBlock(self.x, underSide - 3, bottomSide, ignoreWater = True)
-        bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = True)
-        if topLeft or topRight or bottomLeft or bottomRight:
-            blockBelow = True
-        
         blockAbove = False
-        topLeft = findBlock(self.x, self.y, self.z, ignoreWater = True)
-        topRight = findBlock(rightSide, self.y, self.z, ignoreWater = True)
-        bottomLeft = findBlock(self.x, self.y, bottomSide, ignoreWater = True)
-        bottomRight = findBlock(rightSide, self.y, bottomSide, ignoreWater = True)
-        if topLeft or topRight or bottomLeft or bottomRight:
-            blockAbove = True
-         # so this mess of if statements may or may not be faster?
-         # it'll skip all the other operations if it finds one first
+
         blockToRight = False
-        temporaryNumber = rightSide + 1
-        aboveTopRight = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
-        if not aboveTopRight:
-            aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
-            if not aboveBottomRight:
-                belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
-                if not belowBottomRight:
-                    belowTopRight = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
-                    if belowTopRight:
+        blockToLeft = False
+        blockToDown = False
+        blockToUp = False
+
+        blockAboveToRight = False
+        blockAboveToLeft = False
+        blockAboveToUp = False
+        blockAboveToDown = False
+
+        def doPlayerCollision():
+            global blockBelow, blockToRight, blockAbove, blockToDown
+            global blockToLeft, blockToUp
+
+            global blockAboveToRight, blockAboveToDown
+            global blockAboveToLeft, blockAboveToUp
+         # faster? access to variables that need to be used a lot in collision
+            rightSide = self.x + self.width
+            bottomSide = self.z + self.width
+            underSide = self.y - self.height
+
+            topLeft = findBlock(self.x, underSide - 3, self.z, ignoreWater = True)
+            topRight = findBlock(rightSide, underSide - 3, self.z, ignoreWater = True)
+            bottomLeft = findBlock(self.x, underSide - 3, bottomSide, ignoreWater = True)
+            bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = True)
+            if topLeft or topRight or bottomLeft or bottomRight:
+                blockBelow = True
+            
+            topLeft = findBlock(self.x, self.y, self.z, ignoreWater = True)
+            topRight = findBlock(rightSide, self.y, self.z, ignoreWater = True)
+            bottomLeft = findBlock(self.x, self.y, bottomSide, ignoreWater = True)
+            bottomRight = findBlock(rightSide, self.y, bottomSide, ignoreWater = True)
+            if topLeft or topRight or bottomLeft or bottomRight:
+                blockAbove = True
+            # so this mess of if statements may or may not be faster?
+            # it'll skip all the other operations if it finds one first
+            temporaryNumber = rightSide + 1
+            aboveTopRight = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
+            if not aboveTopRight:
+                aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
+                if not aboveBottomRight:
+                    belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
+                    if not belowBottomRight:
+                        belowTopRight = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
+                        if belowTopRight:
+                            blockToRight = True
+                    else:
                         blockToRight = True
                 else:
                     blockToRight = True
             else:
                 blockToRight = True
-        else:
-            blockToRight = True
+                        
                     
-                
-        
-        blockToLeft = False
-        temporaryNumber = self.x - 1
-        aboveTopLeft = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
-        aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
-        belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
-        belowTopLeft = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
-        if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
-            blockToLeft = True
+            
+            temporaryNumber = self.x - 1
+            aboveTopLeft = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
+            aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
+            belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
+            belowTopLeft = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
+            if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
+                blockToLeft = True
 
-        blockToUp = False
-        aboveTopLeft = findBlock(self.x, self.y, self.z - 1, ignoreWater = True)
-        aboveTopRight = findBlock(rightSide, self.y, self.z - 1, ignoreWater = True)
-        belowTopRight = findBlock(rightSide, underSide, self.z - 1, ignoreWater = True)
-        belowTopLeft = findBlock(self.x, underSide, self.z - 1, ignoreWater = True)
-        if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
-            blockToUp = True
+            aboveTopLeft = findBlock(self.x, self.y, self.z - 1, ignoreWater = True)
+            aboveTopRight = findBlock(rightSide, self.y, self.z - 1, ignoreWater = True)
+            belowTopRight = findBlock(rightSide, underSide, self.z - 1, ignoreWater = True)
+            belowTopLeft = findBlock(self.x, underSide, self.z - 1, ignoreWater = True)
+            if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
+                blockToUp = True
 
-        blockToDown = False
-        aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1, ignoreWater = True)
-        aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1, ignoreWater = True)
-        belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = True)
-        belowBottomLeft = findBlock(self.x, underSide, bottomSide + 1, ignoreWater = True)
-        if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
-            blockToDown = True
+            aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1, ignoreWater = True)
+            aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1, ignoreWater = True)
+            belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = True)
+            belowBottomLeft = findBlock(self.x, underSide, bottomSide + 1, ignoreWater = True)
+            if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
+                blockToDown = True
 
-        center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
-        self.insideOfBlock = center["type"]
+            center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
+            self.insideOfBlock = center["type"]
+
+
+            aboveToTopRight = findBlock(rightSide + 3, self.y + 3, self.z, ignoreWater = True)
+            aboveToBottomRight = findBlock(rightSide + 3, self.y + 3, bottomSide, ignoreWater = True)
+            if aboveToTopRight or aboveToBottomRight:
+                blockAboveToRight = True
+
+
+
+        doPlayerCollision()
 
         currentMaxHorizontalSpeed = self.maxHorizontalSpeed
         if self.insideOfBlock == "water":
