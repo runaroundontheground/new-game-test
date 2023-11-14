@@ -158,7 +158,7 @@ def render(deltaTime):
             thing2 = y - playerYInBlocks
             posFactor += thing2 / divisor
             
-            sizeFactor = posFactor * 1.5
+            sizeFactor = posFactor * 1.1
 
             if sizeFactor < 0.1:
                 sizeFactor = 0.1

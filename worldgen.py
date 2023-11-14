@@ -5,7 +5,7 @@ from controls import keysPressed
 import random
 import math
 
-noise = PerlinNoise(octaves = 1)
+noise = PerlinNoise(octaves = 0.5)
 
 def createFirstChunk():
     chunkData = {}
@@ -66,6 +66,8 @@ def createChunk(chunkCoords = (0, 0)):
                         blockData["type"] = "dirt"
                     if y >= 8:
                         blockData["type"] = "stone"
+                        if y < 12:
+                            blockData["type"] = "dirt"
 
                 if y == noiseValue: # surface level
                     blockData["type"] = "grass"

@@ -113,40 +113,42 @@ class Player():
             blockToDown = True
 
         center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
-        
-        if center["type"] != "air":
-            self.insideOfBlock = center["type"]
+        self.insideOfBlock = center["type"]
 
-
-
+        currentMaxHorizontalSpeed = self.maxHorizontalSpeed
+        if self.insideOfBlock == "water":
+            currentMaxHorizontalSpeed = self.maxHorizontalSpeed / 2
 
          # x and z axis movement
         if right and not blockToRight:
-            if self.xv < self.maxHorizontalSpeed:
+            if self.xv < currentMaxHorizontalSpeed:
                 self.xv += self.acceleration
 
         if left and not blockToLeft:
-            if self.xv > -self.maxHorizontalSpeed:
+            if self.xv > -currentMaxHorizontalSpeed:
                 self.xv -= self.acceleration
 
         if up and not blockToUp:
-            if self.zv > -self.maxHorizontalSpeed:
+            if self.zv > -currentMaxHorizontalSpeed:
                 self.zv -= self.acceleration
 
         if down and not blockToDown:
-            if self.zv < self.maxHorizontalSpeed:
+            if self.zv < currentMaxHorizontalSpeed:
                 self.zv += self.acceleration
 
          # y axis movement
         if space:
             if self.insideOfBlock == "water":
                 # do water stuff
-                jumpForce = self.normalJumpForce / 5
-            elif blockBelow:
-                # do jump stuff
-                jumpForce = self.normalJumpForce
+                jumpForce = self.normalJumpForce / 3
 
                 self.yv = jumpForce
+            else:
+                if blockBelow:
+                    # do jump stuff
+                    jumpForce = self.normalJumpForce
+
+                    self.yv = jumpForce
             
 
 
@@ -185,24 +187,24 @@ class Player():
 
          
         # force player speed cap
-        if self.xv > self.maxHorizontalSpeed:
-            self.xv = self.maxHorizontalSpeed
-        if self.xv < -self.maxHorizontalSpeed:
-            self.xv = -self.maxHorizontalSpeed
+        if self.xv > currentMaxHorizontalSpeed:
+            self.xv = currentMaxHorizontalSpeed
+        if self.xv < -currentMaxHorizontalSpeed:
+            self.xv = -currentMaxHorizontalSpeed
 
-        if self.zv > self.maxHorizontalSpeed:
-            self.zv = self.maxHorizontalSpeed
-        if self.zv < -self.maxHorizontalSpeed:
-            self.zv = -self.maxHorizontalSpeed
+        if self.zv > currentMaxHorizontalSpeed:
+            self.zv = currentMaxHorizontalSpeed
+        if self.zv < -currentMaxHorizontalSpeed:
+            self.zv = -currentMaxHorizontalSpeed
         
          # friction is handled below
         if (not left and not right) or (left and right):
             self.xv -= self.xv / self.slipperyness
-            if self.xv > -0.1 and self.xv < 0.1:
+            if self.xv > -0.01 and self.xv < 0.01:
                 self.xv = 0
         if (not up and not down) or (up and down):
             self.zv -= self.zv / self.slipperyness
-            if self.zv > -0.1 and self.zv < 0.1:
+            if self.zv > -0.01 and self.zv < 0.01:
                 self.zv = 0
         
 
@@ -212,13 +214,16 @@ class Player():
             if self.insideOfBlock != "water":
                 self.y += 5
 
-        velocityThing = 1
-        if self.insideOfBlock == "water":
-            velocityThing = 3
          # do all the position updates that other things use
-        self.x += (self.xv * deltaTime) / velocityThing
-        self.y += (self.yv * deltaTime)# / velocityThing
-        self.z += (self.zv * deltaTime) / velocityThing
+        self.xv = round(self.xv * 100) / 100
+        self.yv = round(self.yv * 100) / 100
+        self.zv = round(self.zv * 100) / 100
+
+        self.x += (self.xv * deltaTime)
+        self.y += (self.yv * deltaTime)
+        self.z += (self.zv * deltaTime)
+
+        
         
 
         self.position = (self.x, self.y, self.z)
