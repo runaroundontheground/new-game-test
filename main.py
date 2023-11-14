@@ -12,6 +12,17 @@ FPS = 60
 
 """
 ok currently:
+fix rendering
+player block step up
+later plans:
+trees
+add breaking/placing blocks
+wayyy later:
+potentially naturally generated caves
+crafting
+lighting
+enemies
+day/night cycle
 
 player's water physics work i think
 new idea:
