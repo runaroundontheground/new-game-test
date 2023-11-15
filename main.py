@@ -13,6 +13,7 @@ FPS = 60
 """
 ok currently:
 fix rendering
+    specifically, block render size scaling
 player block step up
 later plans:
 trees

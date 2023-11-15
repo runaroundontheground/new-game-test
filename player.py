@@ -210,15 +210,17 @@ class Player():
          # wall collision
          # and block step up (go up blocks without jumping)
         if self.collision["right"]:
-            if self.collision["aboveRight"]:
+            if not self.collision["aboveRight"]:
+                if right and self.collision["below"]:
+                    self.y += blockSize
+            else:
                 self.x -= abs(self.xv)
                 self.xv = 0
-            else:
-                # player's running into a wall, and no block above that one
-                if right:
-                    self.y += blockSize
         if self.collision["left"] and self.collision["aboveLeft"]:
-            if self.collision["aboveLeft"]:
+            if not self.collision["aboveLeft"]:
+                if left and self.collision["below"]:
+                    self.y += blockSize
+            else:
                 self.x += abs(self.xv)
                 self.xv = 0
         if self.collision["up"] and self.collision["aboveUp"]:

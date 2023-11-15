@@ -154,16 +154,21 @@ def render(deltaTime):
             sizeFactor = 1
             divisor = 100 # keep in intervals of 25
              # scale smoother when using exact position rather than player's block coord
-            playerYInBlocks = round((player.y / blockSize) * 10) / 10
+            playerYInBlocks = player.y / blockSize
             thing2 = y - playerYInBlocks
             posFactor += thing2 / divisor
             
+            divisor = 600
+
             if y > playerYInBlocks:
                 thing = y - playerYInBlocks
-                divisor = 50
                 thing /= divisor
                 sizeFactor += thing
-
+            if y < playerYInBlocks:
+                thing = playerYInBlocks - y
+                thing /= divisor
+                sizeFactor -= thing
+                
 
             if sizeFactor < 0.1:
                 sizeFactor = 0.1
