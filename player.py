@@ -210,39 +210,37 @@ class Player():
          # wall collision
          # and block step up (go up blocks without jumping)
 
-        def blockStepUp(velocityType, side):
-            aboveSide = "above" + #use capitalize function here
+        def blockStepUpAndWallCollision(velocity = "xv", side = "right", playerInput = right,
+                        directionalPushback = "negative"):
+            aboveSide = "above" + side.capitalize()
+            axis = velocity[0]
+            
             if self.collision[side]:
-                if not self.collision
+                if not self.collision[aboveSide]:
+                    if playerInput and self.collision["below"]:
+                        self.y += blockSize
+                         # slow down player a bit while going up hills
+                        vel = getattr(self, velocity)
+                        setattr(self, velocity, (vel / 1.1))
+                else:    
+                    if directionalPushback == "negative":
+                        pushback = abs(getattr(self, velocity))
+                        thing = getattr(self, axis)
+                        setattr(self, axis, (thing - pushback))
+                        setattr(self, velocity, 0)
 
-        if self.collision["right"]:
-            if not self.collision["aboveRight"]:
-                if right and self.collision["below"]:
-                    self.y += blockSize
-            else:
-                self.x -= abs(self.xv)
-                self.xv = 0
-        if self.collision["left"]:
-            if not self.collision["aboveLeft"]:
-                if left and self.collision["below"]:
-                    self.y += blockSize
-            else:
-                self.x += abs(self.xv)
-                self.xv = 0
-        if self.collision["up"]:
-            if not self.collision["aboveUp"]:
-                if up and self.collision["below"]:
-                    self.y += blockSize
-            else:
-                self.z += abs(self.zv)
-                self.zv = 0
-        if self.collision["down"]:
-            if not self.collision["aboveDown"]:
-                if down and self.collision["below"]:
-                    self.y += blockSize
-            else:    
-                self.z -= abs(self.zv)
-                self.zv = 0
+                    if directionalPushback == "positive":
+                        pushback = abs(getattr(self, velocity))
+                        thing = getattr(self, axis)
+                        setattr(self, axis, (thing + pushback))
+                        setattr(self, velocity, 0)
+
+
+         # call function for each side
+        blockStepUpAndWallCollision("xv", "right", right, "negative")
+        blockStepUpAndWallCollision("xv", "left", left, "positive")
+        blockStepUpAndWallCollision("zv", "up", up, "positive")
+        blockStepUpAndWallCollision("zv", "down", down, "negative")
 
 
          
