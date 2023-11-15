@@ -152,35 +152,26 @@ def render(deltaTime):
             
             posFactor = 1
             sizeFactor = 1
-            divisor = 100 # keep in intervals of 25
+            zoom = 25
              # scale smoother when using exact position rather than player's block coord
             playerYInBlocks = player.y / blockSize
             thing2 = y - playerYInBlocks
-            posFactor += thing2 / divisor
-            
-            divisor = 600
+            posFactor += thing2 / zoom
+            # dunno if zoom is the right name, but that's what it does maybe
+            zoom *= 7
 
             if y > playerYInBlocks:
                 thing = y - playerYInBlocks
-                thing /= divisor
+                thing /= zoom
                 sizeFactor += thing
             if y < playerYInBlocks:
                 thing = playerYInBlocks - y
-                thing /= divisor
+                thing /= zoom
                 sizeFactor -= thing
                 
 
             if sizeFactor < 0.1:
                 sizeFactor = 0.1
-            # i need to brainstorm how to make the scale factor actually work
-
-           
-            """
-            if player's block y is 5
-            find some way to make sure that either the block with y = 5 or y = 4
-            is rendered at no scaling
-            
-            """
             
 
 

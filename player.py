@@ -20,6 +20,10 @@ class Player():
         self.slipperyness = 5
         self.normalJumpForce = 10
 
+        self.booleans = {
+            "blockStepUsed": False
+        }
+
 
         self.width = blockSize - 5
         self.height = blockSize - 5
@@ -216,12 +220,13 @@ class Player():
             axis = velocity[0]
             
             if self.collision[side]:
-                if not self.collision[aboveSide]:
+                if not self.collision[aboveSide] and not self.booleans["blockStepUsed"]:
                     if playerInput and self.collision["below"]:
                         self.y += blockSize
                          # slow down player a bit while going up hills
                         vel = getattr(self, velocity)
                         setattr(self, velocity, (vel / 1.1))
+                        self.booleans["blockStepUsed"] = True
                 else:    
                     if directionalPushback == "negative":
                         pushback = abs(getattr(self, velocity))
@@ -237,6 +242,7 @@ class Player():
 
 
          # call function for each side
+        self.booleans["blockStepUsed"] = False
         blockStepUpAndWallCollision("xv", "right", right, "negative")
         blockStepUpAndWallCollision("xv", "left", left, "positive")
         blockStepUpAndWallCollision("zv", "up", up, "positive")
