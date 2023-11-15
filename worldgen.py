@@ -51,23 +51,23 @@ def createChunk(chunkCoords = (0, 0)):
 
                 
 
-                noiseValue = noise(noiseCoordinate)
-                noiseValue = round( abs( noiseValue * noiseIntensity))
-                noiseValue += 1 # make bottom layer be bedrock
+                surfaceYLevel = noise(noiseCoordinate)
+                surfaceYLevel = round( abs( surfaceYLevel * noiseIntensity))
+                surfaceYLevel += 1 # make bottom layer be bedrock
 
                 
                 
-                if y > noiseValue: # above ground
+                if y > surfaceYLevel: # above ground
                     if y <= waterHeight:
                         blockData["type"] = "water"
                 
-                if y < noiseValue: # underground
+                if y < surfaceYLevel: # underground
                     if y < 8:
                         blockData["type"] = "dirt"
                     if y >= 8:
                         blockData["type"] = "stone"
 
-                if y == noiseValue: # surface level
+                if y == surfaceYLevel: # surface level
                     blockData["type"] = "grass"
                     if y < 6:
                         blockData["type"] = "sand"

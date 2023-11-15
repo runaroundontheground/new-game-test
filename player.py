@@ -209,6 +209,12 @@ class Player():
 
          # wall collision
          # and block step up (go up blocks without jumping)
+
+        def blockStepUp(velocityType, side):
+            aboveSide = "above" + #use capitalize function here
+            if self.collision[side]:
+                if not self.collision
+
         if self.collision["right"]:
             if not self.collision["aboveRight"]:
                 if right and self.collision["below"]:
@@ -216,19 +222,27 @@ class Player():
             else:
                 self.x -= abs(self.xv)
                 self.xv = 0
-        if self.collision["left"] and self.collision["aboveLeft"]:
+        if self.collision["left"]:
             if not self.collision["aboveLeft"]:
                 if left and self.collision["below"]:
                     self.y += blockSize
             else:
                 self.x += abs(self.xv)
                 self.xv = 0
-        if self.collision["up"] and self.collision["aboveUp"]:
-            self.z += abs(self.zv)
-            self.zv = 0
-        if self.collision["down"] and self.collision["aboveDown"]:
-            self.z -= abs(self.zv)
-            self.zv = 0
+        if self.collision["up"]:
+            if not self.collision["aboveUp"]:
+                if up and self.collision["below"]:
+                    self.y += blockSize
+            else:
+                self.z += abs(self.zv)
+                self.zv = 0
+        if self.collision["down"]:
+            if not self.collision["aboveDown"]:
+                if down and self.collision["below"]:
+                    self.y += blockSize
+            else:    
+                self.z -= abs(self.zv)
+                self.zv = 0
 
 
          

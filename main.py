@@ -14,10 +14,14 @@ FPS = 60
 ok currently:
 fix rendering
     specifically, block render size scaling
-player block step up
+player block step-up
+    add a small velocity decrease, since you're "stepping" up stuff
 later plans:
 trees
 add breaking/placing blocks
+    idea for that
+    have a selector go on the mouse, or use arrow keys to select the block to break
+    use scroll wheel to change y level, maybe < or > for y level using keyboard
 wayyy later:
 potentially naturally generated caves
 crafting
