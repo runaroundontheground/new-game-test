@@ -9,24 +9,26 @@ noise = PerlinNoise(octaves = 0.5)
 
 
 structures = {
-    "tree 1": {
-        
-        # 5 x 5 x 5 size for this tree
-        # base of tree
-        (2, 0, 2): {"type": "log", "render": False},
-        (2, 1, 2): {"type": "log", "render": False},
-        (2, 2, 2): {"type": "log", "render": False}
-        
-        
-    }
+    "tree 1": {}
 }
 
-# add some stuff more easily to the first tree
-for x in range(5):
-    for z in range(5):
-        structures["tree 1"][(x, 3, z)] = {"type": "leaves", "render": True}
-        structures["tree 1"][(x, 4, z)] = {"type": "leaves", "render": True}
-structures["tree 1"][(2, 3, 2)] = {"type": "log", "render": False}
+def makeTree1():
+    for x in range(5):
+        for z in range(5):
+            structures["tree 1"][(x, 3, z)] = {"type": "leaves", "render": True}
+            structures["tree 1"][(x, 4, z)] = {"type": "leaves", "render": True}
+
+    structures["tree 1"][(2, 3, 2)] = {"type": "log", "render": False}
+    structures["tree 1"][(2, 0, 2)] = {"type": "log", "render": False}
+    structures["tree 1"][(2, 1, 2)] = {"type": "log", "render": False}
+    structures["tree 1"][(2, 2, 2)] = {"type": "log", "render": False}
+makeTree1()
+
+
+
+
+
+
 
 waterHeight = 4
 

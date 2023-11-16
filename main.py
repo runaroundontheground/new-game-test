@@ -16,12 +16,26 @@ fix rendering
     specifically, block render size scaling
 player block step-up
     add a small velocity decrease, since you're "stepping" up stuff
+
+ok new idea:
+    when generating stuff that will definitely result with an overhang (player can go under)
+    then have a different thingy that sees if player is within a certain range of it
+    (player x < thing and player x > thing) if that's true
+    then make the above block somewhat transparent so the player can see under it
+    use some kind of system within where scaling happens to also make things do that
+    or maybe not, instead i could only apply that to blocks that don't have any blocks
+    under them, that's detected in chunk generation, but i'd need to check it while adding
+    structures too
+
+
 later plans:
 trees
 add breaking/placing blocks
     idea for that
     have a selector go on the mouse, or use arrow keys to select the block to break
     use scroll wheel to change y level, maybe < or > for y level using keyboard
+
+
 wayyy later:
 potentially naturally generated caves
 crafting
@@ -29,15 +43,8 @@ lighting
 enemies
 day/night cycle
 
-player's water physics work i think
-new idea:
-player can 'step up' blocks, if it's a 1 block height then the player just
-goes right up it i guess
 
-rendering:
-figure out some math stuff to actually have a scale factor value so that
-the images get smaller/bigger depending on height compared to the player
-got nothing for now though
+
 """
 
 
