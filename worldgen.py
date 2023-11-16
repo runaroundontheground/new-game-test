@@ -15,8 +15,9 @@ structures = {
 def makeTree1():
     for x in range(5):
         for z in range(5):
-            structures["tree 1"][(x, 3, z)] = {"type": "leaves", "render": True}
-            structures["tree 1"][(x, 4, z)] = {"type": "leaves", "render": True}
+            structures["tree 1"][(x, 3, z)] = {"type": "leaves", "render": False}
+            if x != 0 and x != 4 and z != 0 and z != 4:
+                structures["tree 1"][(x, 4, z)] = {"type": "leaves", "render": False}
 
     structures["tree 1"][(2, 3, 2)] = {"type": "log", "render": False}
     structures["tree 1"][(2, 0, 2)] = {"type": "log", "render": False}

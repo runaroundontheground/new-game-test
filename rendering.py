@@ -64,7 +64,7 @@ addABlock("clay", (196, 152, 94))
 addABlock("gravel", (150, 150, 150))
 addABlock("water", (0, 0, 255), (0, 0, 255), True, 100)
 addABlock("bedrock", (0, 255, 255))
-addABlock("log", (110, 79, 38))
+addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("leaves", (29, 64, 17))
 
 numbers = []
@@ -154,21 +154,22 @@ def render(deltaTime):
             
             posFactor = 1
             sizeFactor = 1
-            zoom = 25
+            divisor = 50
              # scale smoother when using exact position rather than player's block coord
             playerYInBlocks = player.y / blockSize
             thing2 = y - playerYInBlocks
-            posFactor += thing2 / zoom
-            # dunno if zoom is the right name, but that's what it does maybe
-            zoom *= 7
+            posFactor += thing2 / divisor
+
+
+            divisor = 3
 
             if y > playerYInBlocks:
                 thing = y - playerYInBlocks
-                thing /= zoom
+                thing /= divisor
                 sizeFactor += thing
             if y < playerYInBlocks:
                 thing = playerYInBlocks - y
-                thing /= zoom
+                thing /= divisor
                 sizeFactor -= thing
                 
 
