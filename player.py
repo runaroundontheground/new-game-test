@@ -221,7 +221,7 @@ class Player():
             
             if self.collision[side]:
                 if not self.collision[aboveSide] and not self.booleans["blockStepUsed"]:
-                    if playerInput and self.collision["below"]:
+                    if playerInput and self.collision["below"] and not self.collision["above"]:
                         self.y += blockSize
                          # slow down player a bit while going up hills
                         vel = getattr(self, velocity)

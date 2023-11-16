@@ -26,6 +26,9 @@ ok new idea:
     or maybe not, instead i could only apply that to blocks that don't have any blocks
     under them, that's detected in chunk generation, but i'd need to check it while adding
     structures too
+    actually, if structures are done before the chunk has its blocks rendered,
+    i won't need to worry about any special things for structures, i'll just have to
+    change what the block rendering/updates do
 
 
 later plans:

@@ -35,68 +35,99 @@ waterHeight = 4
 def createChunk(chunkCoords = (0, 0)):
     chunkData = {}
 
-    for x in range(chunkSize[0]):
-        for y in range(chunkSize[1]):
-            for z in range(chunkSize[0]):
-                blockData = {
-                    "type": "air",
-                    "render": False
-                }
-                
-                noiseCoordinate = [x, z]
-                noiseIntensity = 70 # is this a good name?
+    def initialTerrainGeneration():
 
-                noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
-                noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
+        for x in range(chunkSize[0]):
+            for y in range(chunkSize[1]):
+                for z in range(chunkSize[0]):
+                    blockData = {
+                        "type": "air",
+                        "render": False
+                    }
+                    
+                    noiseCoordinate = [x, z]
+                    noiseIntensity = 70 # is this a good name?
 
-                noiseCoordinate[0] /= noiseIntensity
-                noiseCoordinate[1] /= noiseIntensity
+                    noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
+                    noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
 
-                
+                    noiseCoordinate[0] /= noiseIntensity
+                    noiseCoordinate[1] /= noiseIntensity
 
-                surfaceYLevel = noise(noiseCoordinate)
-                surfaceYLevel = round( abs( surfaceYLevel * noiseIntensity))
-                surfaceYLevel += 1 # make bottom layer be bedrock
+                    
 
-                
-                
-                if y > surfaceYLevel: # above ground
-                    if y <= waterHeight:
-                        blockData["type"] = "water"
-                
-                if y < surfaceYLevel: # underground
-                    if y < 8:
-                        blockData["type"] = "dirt"
-                    if y >= 8:
-                        blockData["type"] = "stone"
+                    surfaceYLevel = noise(noiseCoordinate)
+                    surfaceYLevel = round( abs( surfaceYLevel * noiseIntensity))
+                    surfaceYLevel += 1 # make bottom layer be bedrock
 
-                if y == surfaceYLevel: # surface level
-                    blockData["type"] = "grass"
-                    if y < 6:
-                        blockData["type"] = "sand"
-                        if y < waterHeight:
-                            randomNumber = random.randint(0, 2)
-                            if randomNumber == 0:
-                                blockData["type"] = "sand"
-                            elif randomNumber == 1:
-                                blockData["type"] = "clay"
-                            elif randomNumber == 2:
-                                blockData["type"] = "gravel"
-                    if y >= 8:
-                        blockData["type"] = "stone"
-                        if y < 10:
+                    
+                    
+                    if y > surfaceYLevel: # above ground
+                        if y <= waterHeight:
+                            blockData["type"] = "water"
+                    
+                    if y < surfaceYLevel: # underground
+                        if y < 8:
                             blockData["type"] = "dirt"
-                    if y > 15:
-                        blockData["type"] = "snowy stone"
-                
-                # bottom layer of world, at least have something
-                if y == 0:
-                    blockData["type"] = "bedrock"
+                        if y >= 8:
+                            blockData["type"] = "stone"
 
-                chunkData[(x, y, z)] = blockData
-    
-    
+                    if y == surfaceYLevel: # surface level
+                        blockData["type"] = "grass"
+                        if y < 6:
+                            blockData["type"] = "sand"
+                            if y < waterHeight:
+                                randomNumber = random.randint(0, 2)
+                                if randomNumber == 0:
+                                    blockData["type"] = "sand"
+                                elif randomNumber == 1:
+                                    blockData["type"] = "clay"
+                                elif randomNumber == 2:
+                                    blockData["type"] = "gravel"
+                        if y >= 8:
+                            blockData["type"] = "stone"
+                            if y < 10:
+                                blockData["type"] = "dirt"
+                        if y > 15:
+                            blockData["type"] = "snowy stone"
+                    
+                    # bottom layer of world, at least have something
+                    if y == 0:
+                        blockData["type"] = "bedrock"
 
+                    chunkData[(x, y, z)] = blockData
+    initialTerrainGeneration()
+    
+    def generateStructures():
+
+        def generateStructure(structureName, blockCoord):
+            for structureBlockCoord, block in structures[structureName].items():
+                pass
+                # do a few checks, but replace the blocks in the way with the structure
+                # issues can arise with chunks that are adjacent
+                # maybe assign the data to the block, and when that chunk actually gets generated
+                # it ignores that block in generation
+                x = blockCoord[0] + structureBlockCoord[0]
+                y = blockCoord[1] + structureBlockCoord[1]
+                z = blockCoord[2] + structureBlockCoord[2]
+                # add checks to that to change the chunk coordinate
+                newBlockCoord = (x, y, z)
+
+                chunkData[newBlockCoord] = block
+
+
+        for x in range(chunkSize[0]):
+            for y in range(chunkSize[1]):
+                for z in range(chunkSize[0]):
+                    block = chunkData[(x, y, z)]
+                    blockCoord = (x, y, z)
+
+                    if block["type"] == "grass":
+                        if random.randint(0, 20) == 0:
+                            generateStructure("tree 1", blockCoord)
+
+
+    generateStructures()
 
     chunks[chunkCoords] = {
         "data": chunkData,
