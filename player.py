@@ -225,7 +225,7 @@ class Player():
                         self.y += blockSize
                          # slow down player a bit while going up hills
                         vel = getattr(self, velocity)
-                        setattr(self, velocity, (vel / 1.1))
+                        setattr(self, velocity, (vel / 2))
                         self.booleans["blockStepUsed"] = True
                 else:    
                     if directionalPushback == "negative":

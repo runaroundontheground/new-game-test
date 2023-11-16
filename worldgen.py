@@ -7,25 +7,26 @@ import math
 
 noise = PerlinNoise(octaves = 0.5)
 
-def createFirstChunk():
-    chunkData = {}
-    for x in range(chunkSize[0]):
-        for y in range(chunkSize[1]):
-            for z in range(chunkSize[0]):
-                blockData = "stone"
-                if y > 5: blockData = "air"
 
-                chunkData[(x, y, z)] = blockData
-                chunks[(0, 0)] = chunkData
-    
-    thing = chunks[(0, 0)]
-    thing[(4, 6, 4)] = "grass"
-    thing[(4, 6, 5)] = "grass"
-    thing[(4, 6, 6)] = "grass"
-    thing[(3, 6, 6)] = "grass"
-    thing[(5, 7, 4)] = "dirt"
-    chunks[(0, 0)] = thing
-#createFirstChunk()
+structures = {
+    "tree 1": {
+        
+        # 5 x 5 x 5 size for this tree
+        # base of tree
+        (2, 0, 2): {"type": "log", "render": False},
+        (2, 1, 2): {"type": "log", "render": False},
+        (2, 2, 2): {"type": "log", "render": False}
+        
+        
+    }
+}
+
+# add some stuff more easily to the first tree
+for x in range(5):
+    for z in range(5):
+        structures["tree 1"][(x, 3, z)] = {"type": "leaves", "render": True}
+        structures["tree 1"][(x, 4, z)] = {"type": "leaves", "render": True}
+structures["tree 1"][(2, 3, 2)] = {"type": "log", "render": False}
 
 waterHeight = 4
 

@@ -64,6 +64,8 @@ addABlock("clay", (196, 152, 94))
 addABlock("gravel", (150, 150, 150))
 addABlock("water", (0, 0, 255), (0, 0, 255), True, 100)
 addABlock("bedrock", (0, 255, 255))
+addABlock("log", (110, 79, 38))
+addABlock("leaves", (29, 64, 17))
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):
