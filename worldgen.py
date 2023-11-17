@@ -31,7 +31,7 @@ def fixStructuresData():
         for key, block in structures[structureName].items():
             
             structures[structureName][key]["render"] = False
-            structures[structureName][key]["noBlockBelow"] = False
+            structures[structureName][key]["usesAlpha"] = False
 fixStructuresData()
 
 
@@ -48,7 +48,7 @@ def createChunk(chunkCoords = (0, 0)):
                     blockData = {
                         "type": "air",
                         "render": False,
-                        "noBlockBelow": False
+                        "usesAlpha": False
                     }
                     
                     noiseCoordinate = [x, z]
@@ -257,12 +257,16 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
                     if not blockAbove:
                         block["render"] = True
+                        if y != 0:
+                            blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
+                            if blockBelowThisOne["usesAlpha"]:
+                                block["usesAlpha"] = True
                     
                     else: # there is a block above current one
                     
                         blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
                         if not blockBelow:
-                            block["noBlockBelow"] = True
+                            block["usesAlpha"] = True
                             if y != 0:
                                 block["render"] = True
                         
@@ -277,6 +281,10 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             if not surrounded:
                                 # current block has at least 1 air block next to it
                                 block["render"] = True
+                                blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
+                                if blockBelowThisOne["usesAlpha"]:
+                                    block["usesAlpha"] = True
+                            
                     
     chunks[chunkCoord]["blocksUpdated"] = True
                             

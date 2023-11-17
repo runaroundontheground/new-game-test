@@ -15,25 +15,18 @@ ok currently:
 fix rendering
     specifically, block render size scaling
 
+transparency on blocks with nothing below them
+    actually almost working all the way, but it needs to check if the block
+    below it doesn't have a block below it, in order to make that block
+    have alpha so the player can see while under blocks
+
 
 trees
 
 
 
 
-ok new idea:
-    things like trees
-    when generating stuff that will definitely result with an overhang (player can go under)
-    then have a different thingy that sees if player is within a certain range of it
-    (player x < thing and player x > thing) if that's true
-    then make the above block somewhat transparent so the player can see under it
-    use some kind of system within where scaling happens to also make things do that
-    or maybe not, instead i could only apply that to blocks that don't have any blocks
-    under them, that's detected in chunk generation, but i'd need to check it while adding
-    structures too
-    actually, if structures are done before the chunk has its blocks rendered,
-    i won't need to worry about any special things for structures, i'll just have to
-    change what the block rendering/updates do
+
 
 
 later plans:

@@ -279,10 +279,10 @@ class Player():
 
 
          # don't let player get stuck inside of blocks
-        #if self.collision["insideOfBlock"] != "air":
-        #    if self.collision["insideOfBlock"] != "water":
-        #        self.y += 5 testing if this is the cause of block step
-        # not working
+        if self.collision["insideOfBlock"] != "air":
+            if self.collision["insideOfBlock"] != "water":
+                self.y += 5
+        
 
          # do all the position updates that other things use
         self.xv = round(self.xv * 100) / 100

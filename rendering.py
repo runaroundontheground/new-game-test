@@ -18,7 +18,7 @@ screen.blit(temporaryText, position)
 pygame.display.flip()
 
 blockImages = {
-    "air": {"data": 0, "scaled": False, "data with alpha": 0}
+    "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
 }
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
@@ -55,7 +55,7 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
     blockImages[blockName] = {
         "data": block,
         "scaled": False,
-        "data with alpha": block,
+        "dataWithAlpha": block,
         "alpha'd": False
     }
 
@@ -228,7 +228,7 @@ def render(deltaTime):
 
                         thisBlockHasAlpha = False
                         
-                        if block["noBlockBelow"]:
+                        if block["usesAlpha"]:
                             if xPos - (5*blockSize) < player.x and xPos + (5*blockSize) > player.x:
                                 if zPos - (5*blockSize) < player.z and zPos + (5*blockSize) > player.z:
                                     thisBlockHasAlpha = True
@@ -253,9 +253,9 @@ def render(deltaTime):
                                 image = scaledImages[block["type"]]["data"].copy()
                                 image.set_alpha(150)
                                 scaledImages[block["type"]]["alpha'd"] = True
-                                scaledImages[block["type"]]["data with alpha"] = image
+                                scaledImages[block["type"]]["dataWithAlpha"] = image
                             else:
-                                image = scaledImages[block["type"]]["data with alpha"]
+                                image = scaledImages[block["type"]]["dataWithAlpha"]
                         else:
                             image = scaledImages[block["type"]]["data"]
 
