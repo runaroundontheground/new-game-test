@@ -8,7 +8,7 @@ import pygame, math
 class Player():
     def __init__(self):
         self.x = 0
-        self.y = chunkSize[1] * blockSize
+        self.y = 0
         self.z = 0
          # velocity
         self.xv = 0
@@ -274,9 +274,10 @@ class Player():
 
 
          # don't let player get stuck inside of blocks
-        if self.collision["insideOfBlock"] != "air":
-            if self.collision["insideOfBlock"] != "water":
-                self.y += 5
+        #if self.collision["insideOfBlock"] != "air":
+        #    if self.collision["insideOfBlock"] != "water":
+        #        self.y += 5 testing if this is the cause of block step
+        # not working
 
          # do all the position updates that other things use
         self.xv = round(self.xv * 100) / 100
@@ -314,6 +315,15 @@ class Player():
         self.updateCamera()
 
         self.updateImageThings()
+
+    def positionInSpawnArea(self):
+        for y in range(chunkSize[1] - 1):
+            if findBlock(0, y * blockSize, 0):
+                if not findBlock(0, (y + 1) * blockSize, 0):
+                    self.y = (y * blockSize) + self.height
+                    break
+            else:
+                self.y = chunkSize[1] * blockSize
 
 
 

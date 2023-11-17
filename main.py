@@ -1,6 +1,6 @@
 from widelyUsedVariables import deltaTime
 from controls import updateKeys, updateMouse
-from rendering import render
+from rendering import render, generateSpawnArea
 from player import player
 import pygame, time
 
@@ -16,6 +16,17 @@ fix rendering
     specifically, block render size scaling
 player block step-up
     add a small velocity decrease, since you're "stepping" up stuff
+
+uhhhhh
+need to actually spawn player on a block instead of randomly in the air
+maybe do that inside of render where it generates stuff    
+
+
+
+
+
+
+
 
 ok new idea:
     when generating stuff that will definitely result with an overhang (player can go under)
@@ -58,9 +69,8 @@ def gameLoop():
     global deltaTime
     # hopefully i did deltatime correctly
 
-    render(deltaTime)
-    # call render in order to generate spawn area
-    # yeah, maybe it shouldn't be in there but it is anyway
+    generateSpawnArea()
+    player.positionInSpawnArea()
 
     while running:
         currentTime = time.time()

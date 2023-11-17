@@ -28,9 +28,6 @@ makeTree1()
 
 
 
-
-
-
 waterHeight = 4
 
 def createChunk(chunkCoords = (0, 0)):

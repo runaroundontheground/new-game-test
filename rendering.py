@@ -76,6 +76,33 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
     thing.append(minus)
 makeNumbers()
 
+def generateSpawnArea():
+    chunkList = []
+    cameraChunk = camera.currentChunk
+    screenExtension = 1
+
+    xRange = cameraChunk[0] - screenExtension
+    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension
+    zRange = cameraChunk[1] - screenExtension
+    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension
+
+    # make sure all the chunks plus a lil bit actually exist
+    for x in range(xRange - 1, maxXRange + 2):
+        for z in range(zRange - 1, maxZRange + 2):
+            try:
+                chunks[(x, z)]
+            except:
+                createChunk((x, z))
+
+    for x in range(xRange, maxXRange + 1):
+        for z in range(zRange, maxZRange + 1):
+            chunkList.append((x, z))
+            if not chunks[(x, z)]["blocksUpdated"]:
+                runBlockUpdatesAfterGeneration((x, z))
+    
+
+
+
 
 
 def render(deltaTime):
