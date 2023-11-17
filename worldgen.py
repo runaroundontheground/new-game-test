@@ -32,8 +32,6 @@ def fixStructuresData():
             
             structures[structureName][key]["render"] = False
             structures[structureName][key]["noBlockBelow"] = False
-
-
 fixStructuresData()
 
 

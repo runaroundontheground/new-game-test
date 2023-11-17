@@ -18,7 +18,7 @@ screen.blit(temporaryText, position)
 pygame.display.flip()
 
 blockImages = {
-    "air": [0, 0]
+    "air": {"data": 0, "scaled": False, "data with alpha": 0}
 }
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
@@ -52,7 +52,12 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
     if hasAlpha:
         block.set_alpha(alphaValue)
     
-    blockImages[blockName] = [block, False]
+    blockImages[blockName] = {
+        "data": block,
+        "scaled": False,
+        "data with alpha": block,
+        "alpha'd": False
+    }
 
 addABlock("grass", (0, 200, 0), (150, 75, 0))
 addABlock("dirt", (150, 75, 0))
@@ -227,26 +232,41 @@ def render(deltaTime):
                             if xPos - (5*blockSize) < player.x and xPos + (5*blockSize) > player.x:
                                 if zPos - (5*blockSize) < player.z and zPos + (5*blockSize) > player.z:
                                     thisBlockHasAlpha = True
+                                    
 
                         
                         xPos -= player.x
                         zPos -= player.z
                         
-                        if not scaledImages[ block["type"] ] [1]: # image has not been scaled
+                        if not scaledImages[block["type"]]["scaled"]: # image has not been scaled
                             if sizeFactor != 1:
-                                scaledImages[ block["type"] ] [0] = pygame.transform.scale_by(scaledImages[block["type"]][0], sizeFactor)
-                            scaledImages[ block["type"] ] [1] = True
+
+                                newImageData = scaledImages[block["type"]]["data"]
+                                newImageData = pygame.transform.scale_by(newImageData, sizeFactor)
+                                scaledImages[block["type"]]["data"] = newImageData
+                                
+                            scaledImages[block["type"]]["scaled"] = True
+
+                        if thisBlockHasAlpha:
+
+                            if not scaledImages[block["type"]]["alpha'd"]:
+                                image = scaledImages[block["type"]]["data"].copy()
+                                image.set_alpha(150)
+                                scaledImages[block["type"]]["alpha'd"] = True
+                                scaledImages[block["type"]]["data with alpha"] = image
+                            else:
+                                image = scaledImages[block["type"]]["data with alpha"]
+                        else:
+                            image = scaledImages[block["type"]]["data"]
+
                         
-                        image = scaledImages[block["type"]][0]
+                        
 
                         xPos *= posFactor
                         zPos *= posFactor
                         
                         xPos -= camera.x - player.x
                         zPos -= camera.z - player.z
-
-                        if thisBlockHasAlpha:
-                            imageData[0].set_alpha(100)
 
                         position = (xPos, zPos)
                         imageData = (image, position)
