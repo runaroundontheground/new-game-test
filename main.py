@@ -14,21 +14,15 @@ FPS = 60
 ok currently:
 fix rendering
     specifically, block render size scaling
-player block step-up
-    add a small velocity decrease, since you're "stepping" up stuff
-
-uhhhhh
-need to actually spawn player on a block instead of randomly in the air
-maybe do that inside of render where it generates stuff    
 
 
-
-
+trees
 
 
 
 
 ok new idea:
+    things like trees
     when generating stuff that will definitely result with an overhang (player can go under)
     then have a different thingy that sees if player is within a certain range of it
     (player x < thing and player x > thing) if that's true
@@ -43,7 +37,6 @@ ok new idea:
 
 
 later plans:
-trees
 add breaking/placing blocks
     idea for that
     have a selector go on the mouse, or use arrow keys to select the block to break

@@ -214,19 +214,24 @@ class Player():
          # wall collision
          # and block step up (go up blocks without jumping)
 
-        def blockStepUpAndWallCollision(velocity = "xv", side = "right", playerInput = right,
-                        directionalPushback = "negative"):
+        def blockStepUpAndWallCollision(velocity = "xv", side = "right", 
+                                        playerInput = right, directionalPushback = "negative"):
+            
             aboveSide = "above" + side.capitalize()
             axis = velocity[0]
             
             if self.collision[side]:
-                if not self.collision[aboveSide] and not self.booleans["blockStepUsed"]:
-                    if playerInput and self.collision["below"] and not self.collision["above"]:
-                        self.y += blockSize
-                         # slow down player a bit while going up hills
-                        vel = getattr(self, velocity)
-                        setattr(self, velocity, (vel / 2))
-                        self.booleans["blockStepUsed"] = True
+                condition1 = self.collision["below"]
+                condition2 = self.collision["above"]
+                condition3 = self.collision[aboveSide]
+                condition4 = playerInput
+                condition5 = self.booleans["blockStepUsed"]
+                
+                if condition1 and not condition2 and not condition3 and condition4 and not condition5:
+                    
+                    self.y += blockSize
+                    
+                    self.booleans["blockStepUsed"] = True
                 else:    
                     if directionalPushback == "negative":
                         pushback = abs(getattr(self, velocity))

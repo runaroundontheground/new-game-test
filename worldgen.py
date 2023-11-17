@@ -15,17 +15,26 @@ structures = {
 def makeTree1():
     for x in range(5):
         for z in range(5):
-            structures["tree 1"][(x, 3, z)] = {"type": "leaves", "render": False}
+            structures["tree 1"][(x, 3, z)] = {"type": "leaves"}
             if x != 0 and x != 4 and z != 0 and z != 4:
-                structures["tree 1"][(x, 4, z)] = {"type": "leaves", "render": False}
+                structures["tree 1"][(x, 4, z)] = {"type": "leaves"}
 
-    structures["tree 1"][(2, 3, 2)] = {"type": "log", "render": False}
-    structures["tree 1"][(2, 0, 2)] = {"type": "log", "render": False}
-    structures["tree 1"][(2, 1, 2)] = {"type": "log", "render": False}
-    structures["tree 1"][(2, 2, 2)] = {"type": "log", "render": False}
+    structures["tree 1"][(2, 3, 2)] = {"type": "log"}
+    structures["tree 1"][(2, 0, 2)] = {"type": "log"}
+    structures["tree 1"][(2, 1, 2)] = {"type": "log"}
+    structures["tree 1"][(2, 2, 2)] = {"type": "log"}
 makeTree1()
+# add any additional things that all blocks require in their data automatically
+# such as: render, and noBlockBelow
+def fixStructuresData():
+    for structureName, structureData in structures.items():
+        for key, block in structures[structureName].items():
+            
+            structures[structureName][key]["render"] = False
+            structures[structureName][key]["noBlockBelow"] = False
 
 
+fixStructuresData()
 
 
 waterHeight = 4
@@ -40,7 +49,8 @@ def createChunk(chunkCoords = (0, 0)):
                 for z in range(chunkSize[0]):
                     blockData = {
                         "type": "air",
-                        "render": False
+                        "render": False,
+                        "noBlockBelow": False
                     }
                     
                     noiseCoordinate = [x, z]
@@ -254,6 +264,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     
                         blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
                         if not blockBelow:
+                            block["noBlockBelow"] = True
                             if y != 0:
                                 block["render"] = True
                         

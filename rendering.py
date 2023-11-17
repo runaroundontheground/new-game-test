@@ -221,6 +221,13 @@ def render(deltaTime):
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
 
+                        thisBlockHasAlpha = False
+                        
+                        if block["noBlockBelow"]:
+                            if xPos - (5*blockSize) < player.x and xPos + (5*blockSize) > player.x:
+                                if zPos - (5*blockSize) < player.z and zPos + (5*blockSize) > player.z:
+                                    thisBlockHasAlpha = True
+
                         
                         xPos -= player.x
                         zPos -= player.z
@@ -237,6 +244,9 @@ def render(deltaTime):
                         
                         xPos -= camera.x - player.x
                         zPos -= camera.z - player.z
+
+                        if thisBlockHasAlpha:
+                            imageData[0].set_alpha(100)
 
                         position = (xPos, zPos)
                         imageData = (image, position)
