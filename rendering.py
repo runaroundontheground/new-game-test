@@ -161,15 +161,16 @@ def render(deltaTime):
             posFactor += thing2 / divisor
 
 
-            divisor = 3
+            divisor *= 2
 
             if y > playerYInBlocks:
                 thing = y - playerYInBlocks
-                thing /= divisor
+                thing /= (divisor)
                 sizeFactor += thing
+
             if y < playerYInBlocks:
                 thing = playerYInBlocks - y
-                thing /= divisor
+                thing /= (divisor * 2)
                 sizeFactor -= thing
                 
 
