@@ -106,19 +106,20 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
   
     chunks[chunkCoords] = {
         "data": chunkData,
-        "blocksUpdated": False
+        "blocksUpdated": False,
+        "structuresGenerated": False
     }
 
 def generateChunkStructures(inputChunkCoord = (0, 0)):
 
     def generateStructures():
-        global chunkX, chunkZ
-        chunkX = inputChunkCoord[0]
-        chunkZ = inputChunkCoord[1]
 
         def generateStructure(structureName, blockCoord):
             
             for structureBlockCoord, block in structures[structureName].items():
+
+                chunkX = inputChunkCoord[0]
+                chunkZ = inputChunkCoord[1]
                 
                 x = blockCoord[0] + structureBlockCoord[0]
                 y = blockCoord[1] + structureBlockCoord[1]
@@ -141,18 +142,19 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
                 newBlockCoord = (x, y, z)
                 chunkCoord = (chunkX, chunkZ)
 
-                chunks[chunkCoord][newBlockCoord] = block
+                chunks[chunkCoord]["data"][newBlockCoord] = block
 
 
         for x in range(chunkSize[0]):
             for y in range(chunkSize[1]):
                 for z in range(chunkSize[0]):
-                    block = chunks[inputChunkCoord][(x, y, z)]
+                    block = chunks[inputChunkCoord]["data"][(x, y, z)]
                     blockCoord = (x, y, z)
 
                     if block["type"] == "grass":
                         if random.randint(0, 20) == 0:
                             generateStructure("tree 1", blockCoord)
+        chunks[inputChunkCoord]["structuresGenerated"] = True
     generateStructures()
 
 def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
@@ -175,9 +177,9 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     
                         blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
                         if not blockBelow:
-                            block["usesAlpha"] = True
                             if y != 0:
                                 block["render"] = True
+                                block["usesAlpha"] = True
                         
                         else: # there is a block below current one
                             topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)

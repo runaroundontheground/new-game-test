@@ -1,6 +1,7 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 from worldgen import generateChunkTerrain, findBlock, testChunk, runBlockUpdatesAfterGeneration
+from worldgen import generateChunkStructures
 from widelyUsedVariables import camera
 from player import player
 import pygame, random
@@ -29,7 +30,6 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
 
     block = baseSurface.copy()
     
-
     if blockBorderColor == "unassigned":
         red = blockColor[0] - 10
         if red < 0:
@@ -40,15 +40,14 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
         blue = blockColor[2] - 10
         if blue < 0:
             blue = 0
-        #if hasAlpha:
-        #    borderColor = (red, green, blue, alphaValue)
-        #else:
         borderColor = (red, green, blue)
     else:
         borderColor = blockBorderColor
 
     block.fill(borderColor)
+    
     block.fill(blockColor, fillingRect)
+
     if hasAlpha:
         block.set_alpha(alphaValue)
     
@@ -98,6 +97,13 @@ def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
                 chunks[(x, z)]
             except:
                 generateChunkTerrain((x, z))
+
+    # generate structures
+    for x in range(xRange, maxXRange):
+        for z in range(xRange, maxXRange):
+            if not chunks[(x, z)]["structuresGenerated"]:
+                generateChunkStructures((x, z))
+
     # prepare the chunks for being rendered when all generation is (probably) done
     for x in range(xRange, maxXRange):
         for z in range(zRange, maxZRange):
@@ -110,7 +116,7 @@ def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
 
 
 def generateSpawnArea():
-    generateNearbyAreas(rangeOfGeneration = 25)
+    generateNearbyAreas(rangeOfGeneration = 3)
     # that might cause some lag...
     
 
@@ -124,7 +130,7 @@ def render(deltaTime):
     screen.fill((0, 0, 0))
 
     # get the chunks to be used for rendering
-    chunkList = generateNearbyAreas(1, True)
+    chunkList = generateNearbyAreas(2, True)
 
 
     # need to separate which layers of the blocks get rendered at once, so
@@ -155,7 +161,7 @@ def render(deltaTime):
 
             if y > playerYInBlocks:
                 thing = y - playerYInBlocks
-                thing /= (divisor)
+                thing /= (divisor / 1.1)
                 sizeFactor += thing
 
             if y < playerYInBlocks:
@@ -187,9 +193,10 @@ def render(deltaTime):
                         thisBlockHasAlpha = False
                         
                         if block["usesAlpha"]:
-                            if xPos - (5*blockSize) < player.x and xPos + (5*blockSize) > player.x:
-                                if zPos - (5*blockSize) < player.z and zPos + (5*blockSize) > player.z:
-                                    thisBlockHasAlpha = True
+                            if player.blockCoord[1] <= y:
+                                if xPos - (5*blockSize) < player.x and xPos + (5*blockSize) > player.x:
+                                    if zPos - (5*blockSize) < player.z and zPos + (5*blockSize) > player.z:
+                                        thisBlockHasAlpha = True
                                     
 
                         
@@ -209,7 +216,7 @@ def render(deltaTime):
 
                             if not scaledImages[block["type"]]["alpha'd"]:
                                 image = scaledImages[block["type"]]["data"].copy()
-                                image.set_alpha(150)
+                                image.set_alpha(200)
                                 scaledImages[block["type"]]["alpha'd"] = True
                                 scaledImages[block["type"]]["dataWithAlpha"] = image
                             else:
