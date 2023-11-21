@@ -15,7 +15,7 @@ class Mouse():
 mouse = Mouse()
 
 
-def updateKeys():
+def updateMouseAndKeys():
     
     tempKeys = pygame.key.get_pressed()
         

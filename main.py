@@ -1,5 +1,5 @@
 from widelyUsedVariables import deltaTime
-from controls import updateKeys, updateMouse
+from controls import updateMouseAndKeys, updateMouse
 from rendering import render, generateSpawnArea
 from player import player
 import pygame, time
@@ -87,7 +87,7 @@ def gameLoop():
     while running:
         currentTime = time.time()
 
-        updateKeys()
+        updateMouseAndKeys()
         updateMouse()
         
         for event in pygame.event.get():
