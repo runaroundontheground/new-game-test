@@ -12,8 +12,15 @@ FPS = 60
 
 """
 ok currently:
-fix rendering
-    specifically, block render size scaling
+
+
+problem that can happen with current implementation of structure gen
+if a structure is too big, then it'll break out of the fix i made to fix that
+(like a village or something)
+solution?
+    probably to generate the terrain of any chunks that the structure overlaps with
+    if that chunk doesn't exist already
+    hooray, more try else things
 
 
 in order to make placing/breaking blocks work, i'll probably need some form of
