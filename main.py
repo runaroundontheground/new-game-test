@@ -15,32 +15,38 @@ ok currently:
 fix rendering
     specifically, block render size scaling
 
+trees, make generation actually work
+also, make the world have a lower intensity (bigger oceans, grassy areas, mountains, etc)
+
 transparency on blocks with nothing below them
     actually almost working all the way, but it needs to check if the block
     below it doesn't have a block below it, in order to make that block
     have alpha so the player can see while under blocks
+    most obviously broken with trees
+    trees are also the only way to show this, as there's no caves currently
+    or block modification
 
 
-trees
-
-
-
-
-
-
-
-later plans:
 add breaking/placing blocks
     idea for that
     have a selector go on the mouse, or use arrow keys to select the block to break
     use scroll wheel to change y level, maybe < or > for y level using keyboard
+    have a selector that 'frames' the blocks, maybe green if valid for break/place
+    red if not valid for those
+    should block swap exist: no
 
 
 wayyy later:
 potentially naturally generated caves
 crafting
+    probably copy mc, wonder how i'll make adding recipes annoying to do
+    shapeless, shaped
 lighting
+    idea for general lighting based on time of day
+    render a really big rectangle black rectangle that covers the screen and has
+    varying alpha levels
 enemies
+    probably a simple ai, similar to terraria's run towards player and jump over things
 day/night cycle
 
 
@@ -87,9 +93,7 @@ pygame.quit()
 """
 the plan
 first:
-    hooray! the rendering and scaling work fine
-    but now i need perlin noise generation to happen
-    
+   
     infinite world or finite, pre-generated? maybe add option for both
     save player/world files into txt or something
     block types:
@@ -112,9 +116,10 @@ animation ideas:
         save different colorable things as separate surfaces so they can be recolored]1
 
 lighting system ideas:
-    use something similar to minecraft's lighting, light emmitting stuff has a light level,
+    use something similar to minecraft's lighting, light emitting stuff has a light level,
     light decays over distance, more so through walls, daytime has a high light level
     use pygame coloring stuff to change block's lighting
+    read the text block that's before the game loop for diff info
 
 crafting system:
     copy minecraft?

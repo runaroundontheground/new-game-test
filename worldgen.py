@@ -52,7 +52,7 @@ def createChunk(chunkCoords = (0, 0)):
                     }
                     
                     noiseCoordinate = [x, z]
-                    noiseIntensity = 70 # is this a good name?
+                    noiseIntensity = 25 # is this a good name?
 
                     noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
                     noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
@@ -108,8 +108,6 @@ def createChunk(chunkCoords = (0, 0)):
 
         def generateStructure(structureName, blockCoord):
             for structureBlockCoord, block in structures[structureName].items():
-                pass
-                # do a few checks, but replace the blocks in the way with the structure
                 # issues can arise with chunks that are adjacent
                 # maybe assign the data to the block, and when that chunk actually gets generated
                 # it ignores that block in generation
@@ -131,8 +129,6 @@ def createChunk(chunkCoords = (0, 0)):
                     if block["type"] == "grass":
                         if random.randint(0, 20) == 0:
                             generateStructure("tree 1", blockCoord)
-
-
     generateStructures()
 
     chunks[chunkCoords] = {

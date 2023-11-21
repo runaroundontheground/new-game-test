@@ -132,23 +132,23 @@ class Player():
 
             temporaryNumber = self.y + (blockSize - self.height + 3)
 
-            aboveToTopRight = findBlock(rightSide + 1, temporaryNumber, self.z, ignoreWater = True)
-            aboveToBottomRight = findBlock(rightSide + 1, temporaryNumber, bottomSide, ignoreWater = True)
+            aboveToTopRight = findBlock(rightSide + self.xv + 3, temporaryNumber, self.z, ignoreWater = True)
+            aboveToBottomRight = findBlock(rightSide + self.xv + 3, temporaryNumber, bottomSide, ignoreWater = True)
             if aboveToTopRight or aboveToBottomRight:
                 self.collision["aboveRight"] = True
 
-            aboveToTopLeft = findBlock(self.x - 3, temporaryNumber, self.z, ignoreWater = True)
-            aboveToBottomLeft = findBlock(self.x - 3, temporaryNumber, bottomSide, ignoreWater = True)
+            aboveToTopLeft = findBlock(self.x + self.xv - 3, temporaryNumber, self.z, ignoreWater = True)
+            aboveToBottomLeft = findBlock(self.x + self.xv - 3, temporaryNumber, bottomSide, ignoreWater = True)
             if aboveToTopLeft or aboveToBottomLeft:
                 self.collision["aboveLeft"] = True
 
-            aboveToLeftUp = findBlock(self.x, temporaryNumber, self.z - 3, ignoreWater = True)
-            aboveToRightUp = findBlock(rightSide, temporaryNumber, self.z - 3, ignoreWater = True)
+            aboveToLeftUp = findBlock(self.x, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
+            aboveToRightUp = findBlock(rightSide, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
             if aboveToLeftUp or aboveToRightUp:
                 self.collision["aboveUp"] = True
             
-            aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + 3, ignoreWater = True)
-            aboveToLeftDown = findBlock(self.x, temporaryNumber, bottomSide + 3, ignoreWater = True)
+            aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
+            aboveToLeftDown = findBlock(self.x, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
             if aboveToLeftDown or aboveToRightDown:
                 self.collision["aboveDown"] = True
 
