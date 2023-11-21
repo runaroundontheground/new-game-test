@@ -16,7 +16,8 @@ fix rendering
     specifically, block render size scaling
 
 trees, make generation actually work
-also, make the world have a lower intensity (bigger oceans, grassy areas, mountains, etc)
+    pre-generate terrain in a decent radius around player?
+    then within another radius, generate structures, and then do block updates
 
 transparency on blocks with nothing below them
     actually almost working all the way, but it needs to check if the block

@@ -1,6 +1,6 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
-from worldgen import createChunk, findBlock, testChunk, runBlockUpdatesAfterGeneration
+from worldgen import generateChunkTerrain, findBlock, testChunk, runBlockUpdatesAfterGeneration
 from widelyUsedVariables import camera
 from player import player
 import pygame, random
@@ -81,29 +81,37 @@ def makeNumbers(thing = numbers, color = (200, 200, 200)):
     thing.append(minus)
 makeNumbers()
 
-def generateSpawnArea():
+def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
     chunkList = []
     cameraChunk = camera.currentChunk
     screenExtension = 1
 
     xRange = cameraChunk[0] - screenExtension
-    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension
+    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension + 1
     zRange = cameraChunk[1] - screenExtension
-    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension
+    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension + 1
 
-    # make sure all the chunks plus a lil bit actually exist
-    for x in range(xRange - 1, maxXRange + 2):
-        for z in range(zRange - 1, maxZRange + 2):
+    # initial generation in a larger area
+    for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
+        for z in range(zRange - rangeOfGeneration, maxZRange + rangeOfGeneration):
             try:
                 chunks[(x, z)]
             except:
-                createChunk((x, z))
-
-    for x in range(xRange, maxXRange + 1):
-        for z in range(zRange, maxZRange + 1):
+                generateChunkTerrain((x, z))
+    # prepare the chunks for being rendered when all generation is (probably) done
+    for x in range(xRange, maxXRange):
+        for z in range(zRange, maxZRange):
             chunkList.append((x, z))
             if not chunks[(x, z)]["blocksUpdated"]:
                 runBlockUpdatesAfterGeneration((x, z))
+
+    if returnChunkList:
+        return chunkList
+
+
+def generateSpawnArea():
+    generateNearbyAreas(rangeOfGeneration = 25)
+    # that might cause some lag...
     
 
 
@@ -116,29 +124,7 @@ def render(deltaTime):
     screen.fill((0, 0, 0))
 
     # get the chunks to be used for rendering
-    chunkList = []
-    cameraChunk = camera.currentChunk
-    screenExtension = 1
-
-    xRange = cameraChunk[0] - screenExtension
-    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension
-    zRange = cameraChunk[1] - screenExtension
-    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension
-
-    # make sure all the chunks plus a lil bit actually exist
-    for x in range(xRange - 1, maxXRange + 2):
-        for z in range(zRange - 1, maxZRange + 2):
-            try:
-                chunks[(x, z)]
-            except:
-                createChunk((x, z))
-
-    for x in range(xRange, maxXRange + 1):
-        for z in range(zRange, maxZRange + 1):
-            chunkList.append((x, z))
-            if not chunks[(x, z)]["blocksUpdated"]:
-                runBlockUpdatesAfterGeneration((x, z))
-
+    chunkList = generateNearbyAreas(1, True)
 
 
     # need to separate which layers of the blocks get rendered at once, so
@@ -147,47 +133,19 @@ def render(deltaTime):
     for i in range(chunkSize[1]):
         blocks.append( [] )
 
-    for chunkListIndex in range(len(chunkList)):
-        chunkCoord = chunkList[chunkListIndex]
+    
+
+    for chunkCoord in chunkList:
         for y in range(chunkSize[1]):
-            def isBlock(xPos, yPos, zPos):
-                chunkCoordForThis = [chunkCoord[0], chunkCoord[1]]
-                x = xPos
-                y = yPos
-                z = zPos
-
-                if y >= chunkSize[1]:
-                    y = chunkSize[1] - 1
-                elif y < 0:
-                    y = 0
-
-                if x < 0:
-                    x += chunkSize[0]
-                    chunkCoordForThis[0] -= 1
-                elif x >= chunkSize[0]:
-                    x -= chunkSize[0]
-                    chunkCoordForThis[0] += 1
-
-                if z < 0:
-                    z += chunkSize[0]
-                    chunkCoordForThis[1] -= 1
-                elif z >= chunkSize[0]:
-                    z -= chunkSize[0]
-                    chunkCoordForThis[1] += 1
-                
-                newChunkCoord = (chunkCoordForThis[0], chunkCoordForThis[1])
-                block = chunks[newChunkCoord][(x, y, z)]
-                
-                if block["type"] != "air":
-                    return True
+            
         
-             # scale everything besides position outside of the x and z loops
-             # it runs faster that way
+            # scale everything besides position outside of the x and z loops
+            # it runs faster that way
             
             posFactor = 1
             sizeFactor = 1
             divisor = 50
-             # scale smoother when using exact position rather than player's block coord
+            # scale smoother when using exact position rather than player's block coord
             playerYInBlocks = player.y / blockSize
             thing2 = y - playerYInBlocks
             posFactor += thing2 / divisor

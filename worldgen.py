@@ -37,7 +37,7 @@ fixStructuresData()
 
 waterHeight = 4
 
-def createChunk(chunkCoords = (0, 0)):
+def generateChunkTerrain(chunkCoords = (0, 0)):
     chunkData = {}
 
     def initialTerrainGeneration():
@@ -103,27 +103,51 @@ def createChunk(chunkCoords = (0, 0)):
 
                     chunkData[(x, y, z)] = blockData
     initialTerrainGeneration()
-    
+  
+    chunks[chunkCoords] = {
+        "data": chunkData,
+        "blocksUpdated": False
+    }
+
+def generateChunkStructures(inputChunkCoord = (0, 0)):
+
     def generateStructures():
+        global chunkX, chunkZ
+        chunkX = inputChunkCoord[0]
+        chunkZ = inputChunkCoord[1]
 
         def generateStructure(structureName, blockCoord):
+            
             for structureBlockCoord, block in structures[structureName].items():
-                # issues can arise with chunks that are adjacent
-                # maybe assign the data to the block, and when that chunk actually gets generated
-                # it ignores that block in generation
+                
                 x = blockCoord[0] + structureBlockCoord[0]
                 y = blockCoord[1] + structureBlockCoord[1]
                 z = blockCoord[2] + structureBlockCoord[2]
-                # add checks to that to change the chunk coordinate
-                newBlockCoord = (x, y, z)
 
-                chunkData[newBlockCoord] = block
+                while x >= chunkSize[0]:
+                    x -= chunkSize[0]
+                    chunkX += 1
+                while x < 0:
+                    x += chunkSize[0]
+                    chunkX -= 1
+
+                while z >= chunkSize[0]:
+                    z -= chunkSize[0]
+                    chunkZ += 1
+                while z < 0:
+                    z += chunkSize[0]
+                    chunkZ -= 1
+
+                newBlockCoord = (x, y, z)
+                chunkCoord = (chunkX, chunkZ)
+
+                chunks[chunkCoord][newBlockCoord] = block
 
 
         for x in range(chunkSize[0]):
             for y in range(chunkSize[1]):
                 for z in range(chunkSize[0]):
-                    block = chunkData[(x, y, z)]
+                    block = chunks[inputChunkCoord][(x, y, z)]
                     blockCoord = (x, y, z)
 
                     if block["type"] == "grass":
@@ -131,11 +155,49 @@ def createChunk(chunkCoords = (0, 0)):
                             generateStructure("tree 1", blockCoord)
     generateStructures()
 
-    chunks[chunkCoords] = {
-        "data": chunkData,
-        "blocksUpdated": False
-    }
-    
+def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
+
+    for x in range(chunkSize[0]):
+        for y in range(chunkSize[1]):
+            for z in range(chunkSize[0]):
+                block = chunks[chunkCoord]["data"][(x, y, z)]
+                if block["type"] != "air":
+                    
+                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
+                    if not blockAbove:
+                        block["render"] = True
+                        if y != 0:
+                            blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
+                            if blockBelowThisOne["usesAlpha"]:
+                                block["usesAlpha"] = True
+                    
+                    else: # there is a block above current one
+                    
+                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
+                        if not blockBelow:
+                            block["usesAlpha"] = True
+                            if y != 0:
+                                block["render"] = True
+                        
+                        else: # there is a block below current one
+                            topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
+                            rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
+                            bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
+                            leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
+                            surrounded = False
+                            if topSide and rightSide and leftSide and bottomSide:
+                                surrounded = True
+                            if not surrounded:
+                                # current block has at least 1 air block next to it
+                                block["render"] = True
+                                blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
+                                if blockBelowThisOne["usesAlpha"]:
+                                    block["usesAlpha"] = True
+                            
+                    
+    chunks[chunkCoord]["blocksUpdated"] = True    
+
+
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
     
@@ -152,7 +214,7 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
     try:
         chunks[chunkCoord]["data"][blockCoord]
     except:
-        createChunk(chunkCoord)
+        generateChunkTerrain(chunkCoord)
 
     block = chunks[chunkCoord]["data"][blockCoord]
 
@@ -196,15 +258,13 @@ def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoordInput =
     try:
         chunks[chunkCoord]["data"][(x, y, z)]
     except:
-        createChunk(chunkCoord)
+        generateChunkTerrain(chunkCoord)
     
     block = chunks[chunkCoord]["data"][(x, y, z)]
 
     if block["type"] != "air" and block["type"] != "water":
         return True
         
-    
-
 def getChunkCoord(x = 1, z = 1):
     xPos = math.floor(x / totalChunkSize)
     zPos = math.floor(z / totalChunkSize)
@@ -240,48 +300,8 @@ def testChunk(chunkCoord):
     try:
         chunks[chunkCoord]
     except:
-        createChunk(chunkCoord)
+        generateChunkTerrain(chunkCoord)
 
-def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
 
-    for x in range(chunkSize[0]):
-        for y in range(chunkSize[1]):
-            for z in range(chunkSize[0]):
-                block = chunks[chunkCoord]["data"][(x, y, z)]
-                if block["type"] != "air":
-                    
-                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
-                    if not blockAbove:
-                        block["render"] = True
-                        if y != 0:
-                            blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
-                            if blockBelowThisOne["usesAlpha"]:
-                                block["usesAlpha"] = True
-                    
-                    else: # there is a block above current one
-                    
-                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
-                        if not blockBelow:
-                            block["usesAlpha"] = True
-                            if y != 0:
-                                block["render"] = True
-                        
-                        else: # there is a block below current one
-                            topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
-                            rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
-                            bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
-                            leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
-                            surrounded = False
-                            if topSide and rightSide and leftSide and bottomSide:
-                                surrounded = True
-                            if not surrounded:
-                                # current block has at least 1 air block next to it
-                                block["render"] = True
-                                blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
-                                if blockBelowThisOne["usesAlpha"]:
-                                    block["usesAlpha"] = True
-                            
-                    
-    chunks[chunkCoord]["blocksUpdated"] = True
                             
                             
