@@ -101,6 +101,11 @@ def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
     # generate structures
     for x in range(xRange, maxXRange):
         for z in range(xRange, maxXRange):
+            #try:
+            #    chunks[(x, z)]
+            #except:
+            #    generateChunkTerrain(x, z)
+            
             if not chunks[(x, z)]["structuresGenerated"]:
                 generateChunkStructures((x, z))
 
@@ -216,7 +221,7 @@ def render(deltaTime):
 
                             if not scaledImages[block["type"]]["alpha'd"]:
                                 image = scaledImages[block["type"]]["data"].copy()
-                                image.set_alpha(200)
+                                image.set_alpha(block["alphaValue"])
                                 scaledImages[block["type"]]["alpha'd"] = True
                                 scaledImages[block["type"]]["dataWithAlpha"] = image
                             else:

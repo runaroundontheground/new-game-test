@@ -31,6 +31,7 @@ item system ideas:
     a base class for items: Item
     has some parameters, like name, and what kind of item it is
     subclasses for different item types?
+    need to research how to use subclasses, since i forgor
 
 
 inventory ideas:

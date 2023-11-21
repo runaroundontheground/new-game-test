@@ -139,8 +139,18 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
                     z += chunkSize[0]
                     chunkZ -= 1
 
+                if y <= 0:
+                    y = 1
+                if y >= chunkSize[1]:
+                    y = chunkSize[1] - 1
+
                 newBlockCoord = (x, y, z)
                 chunkCoord = (chunkX, chunkZ)
+
+                try:
+                    chunks[chunkCoord]["data"]
+                except:
+                    generateChunkTerrain(chunkCoord)
 
                 chunks[chunkCoord]["data"][newBlockCoord] = block
 
@@ -172,6 +182,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
                             if blockBelowThisOne["usesAlpha"]:
                                 block["usesAlpha"] = True
+                                block["alphaValue"] = 250
                     
                     else: # there is a block above current one
                     
@@ -180,6 +191,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             if y != 0:
                                 block["render"] = True
                                 block["usesAlpha"] = True
+                                block["alphaValue"] = 200
                         
                         else: # there is a block below current one
                             topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
@@ -195,6 +207,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                                 blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
                                 if blockBelowThisOne["usesAlpha"]:
                                     block["usesAlpha"] = True
+                                    block["alphaValue"] = 250
                             
                     
     chunks[chunkCoord]["blocksUpdated"] = True    
