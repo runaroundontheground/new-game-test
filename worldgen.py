@@ -200,6 +200,13 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
     chunks[chunkCoord]["blocksUpdated"] = True    
 
 
+def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
+    # this is what will fix rendering and stuff when the player breaks/places blocks
+    # it's a smaller scale version of runblockupdatesaftergeneration
+    # we'll see how this goes
+    
+    pass
+
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
     

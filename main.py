@@ -15,18 +15,28 @@ ok currently:
 fix rendering
     specifically, block render size scaling
 
-trees, make generation actually work
-    pre-generate terrain in a decent radius around player?
-    then within another radius, generate structures, and then do block updates
 
-transparency on blocks with nothing below them
-    actually almost working all the way, but it needs to check if the block
-    below it doesn't have a block below it, in order to make that block
-    have alpha so the player can see while under blocks
-    most obviously broken with trees
-    trees are also the only way to show this, as there's no caves currently
-    or block modification
+in order to make placing/breaking blocks work, i'll probably need some form of
+inventory, so i guess that's up next
 
+which also means items need to exist
+item system ideas:
+    a base class for items: Item
+    has some parameters, like name, and what kind of item it is
+    subclasses for different item types?
+
+
+inventory ideas:
+    make something similar to mc inventory
+    render a rectangle that's big, and then render small squares which are
+    the inventory slots, and then inside of those, render whatever item is supposed
+    to be there
+    rendering an item that's in the player's inventory:
+        the item probably has an image called itemIcon.png or something
+        that's whats rendered in the box, will probably automatically resize those
+        to be whatever the inventory slot size should be
+    the inventory is a class, with built in functions like adding an item
+    removing an item, anything else that i might add
 
 add breaking/placing blocks
     idea for that
@@ -35,6 +45,7 @@ add breaking/placing blocks
     have a selector that 'frames' the blocks, maybe green if valid for break/place
     red if not valid for those
     should block swap exist: no
+    
 
 
 wayyy later:

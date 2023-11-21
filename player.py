@@ -1,5 +1,5 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize
-from worldgen import getChunkCoord, getBlockCoord, findBlock
+from worldgen import getChunkCoord, getBlockCoord, findBlock, smallScaleBlockUpdates
 from controls import keysPressed, keys, mouse
 import pygame, math
 
