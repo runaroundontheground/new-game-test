@@ -1,4 +1,4 @@
-from widelyUsedVariables import camera, blockSize, gravity, chunkSize, screenWidth
+from widelyUsedVariables import camera, blockSize, gravity, chunkSize, screenWidth, screenHeight
 from worldgen import getChunkCoord, getBlockCoord, findBlock, smallScaleBlockUpdates
 from controls import keysPressed, keys, mouse
 import pygame, math
@@ -70,44 +70,73 @@ class Player():
         inventoryWidthInPixels = screenWidth / 3
         slotSizeInPixels = inventoryWidthInPixels / widthOfInventoryInSlots
 
-        gapBetweenSlots = round(slotSizeInPixels / 5)
-
-        inventorySlot = {
-            "contents": "empty", # this is where itemData goes
-        }
+        gapBetweenSlots = slotSizeInPixels / 5
 
         backgroundColor = (150, 150, 150)
         slotColor = (125, 125, 125)
 
         inventoryWidthInPixels += gapBetweenSlots * (widthOfInventoryInSlots + 1)
-        size = (inventoryWidthInPixels, inventoryWidthInPixels)
 
-        inventoryBackground = pygame.surface.Surface(size)
+        inventoryHeightInPixels = (slotSizeInPixels * heightOfInventoryInSlots)
+        inventoryHeightInPixels += gapBetweenSlots * (heightOfInventoryInSlots + 1)
+
+        inventorySizeInPixels = (round(inventoryWidthInPixels), round(inventoryHeightInPixels))
+
+        inventoryBackground = pygame.surface.Surface(inventorySizeInPixels)
         inventoryBackground.fill(backgroundColor)
 
-        slotSurface = pygame.surface.Surface(slotSizeInPixels)
+        slotSurface = pygame.surface.Surface(round(slotSizeInPixels))
         slotSurface.fill(slotColor)
+
+        hotbarSizeInPixels = (round(inventorySizeInPixels[0]), round(slotSizeInPixels + (gapBetweenSlots * 2)))
+        hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
+        hotbarSurface.fill(backgroundColor)
+
+        inventoryXForBlit = (screenWidth - inventoryWidthInPixels) / 2
+        inventoryYForBlit = (screenHeight - inventoryHeightInPixels) / 2
+
+        hotbarXForBlit = inventoryXForBlit
+        hotbarYForBlit = (screenHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
+
+        inventorySlot = {
+            "contents": "empty", # this is where itemData goes
+            "slotPositionOnScreen": (0, 0)
+        }
+
+        self.inventory = []
+        self.hotbar = []
 
         for x in range(widthOfInventoryInSlots):
             for y in range(heightOfInventoryInSlots):
                 slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                 slotY = (y * slotSizeInPixels) + ((y + 1) * gapBetweenSlots)
 
+                inventoryBackground.blit(slotSurface, (slotX, slotY))
+
+                renderX = inventoryXForBlit + x
+                renderY = inventoryYForBlit + y
+                inventorySlot["slotPositionOnScreen"] = (renderX, renderY)
+
+                self.inventory.append(inventorySlot)
+
+        inventorySurface = inventoryBackground
+
         self.otherInventoryData = {
-            "widthInSlots": widthOfInventoryInSlots,
-            "heightInSlots": heightOfInventoryInSlots,
-            "gapBetweenSlots": gapBetweenSlots
+            "inventoryRenderPosition": (inventoryXForBlit, inventoryYForBlit),
+            "slotSize": slotSizeInPixels,
+            "inventorySurface": inventorySurface
         }
 
-        self.inventory = []
-        self.hotbar = []
-        # create inventory
-        for x in range(widthOfInventoryInSlots):
-            for y in range(heightOfInventoryInSlots):
-                self.inventory.append(inventorySlot)
+                
     
-        # create hotbar
+        # create hotbar data
         for x in range(widthOfInventoryInSlots):
+
+            slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
+            slotY = # whatever the hotbar itself's y was, + gap between slots
+
+            hotbarSurface.blit(slotSurface, (slotX, slotY))
+
             self.hotbar.append(inventorySlot)
 
 
