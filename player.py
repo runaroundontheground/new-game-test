@@ -209,6 +209,7 @@ class Player():
          # don't let player go through ceilings
         if self.collision["above"]:
             if self.yv > 0:
+                self.y -= self.yv
                 self.yv = 0
 
          # wall collision
