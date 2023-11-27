@@ -22,6 +22,8 @@ solution?
     if that chunk doesn't exist already
     hooray, more try else things
 
+    that doesn't matter until i have bigger structures though...
+
 
 in order to make placing/breaking blocks work, i'll probably need some form of
 inventory, so i guess that's up next
@@ -45,6 +47,9 @@ inventory ideas:
         to be whatever the inventory slot size should be
     the inventory is a class, with built in functions like adding an item
     removing an item, anything else that i might add
+    slot sorting things:
+        same inv size as mc, top left slot is slot id 0, right 1 is slot id 1, so on
+        once it reaches 9, it'll go to the middle left slot, and so on
 
 add breaking/placing blocks
     idea for that

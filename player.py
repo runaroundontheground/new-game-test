@@ -7,6 +7,8 @@ import pygame, math
 
 class Player():
     def __init__(self):
+        # player's actual coordinate is
+        # top left and above corner
         self.x = 0
         self.y = 0
         self.z = 0
@@ -59,6 +61,18 @@ class Player():
             
             "insideOfBlock": "air"
         }
+
+        # hooray, inventory time!
+        widthOfInventoryInSlots = 9
+        heightOfInventoryInSlots = 3
+        hotbarWidthInSlots = 9
+
+        inventorySlot = {
+            "contents": "empty", # this is where itemData goes
+        }
+
+        self.inventory = []
+
 
     def generalMovement(self, deltaTime):
 
