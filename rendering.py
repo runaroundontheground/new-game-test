@@ -257,7 +257,10 @@ def render(deltaTime):
     if not playerAddedToRendering:
         renderingData.append(player.imageData)
         
-
+    # figure out some stuff for inventory
+    if player.inventoryOpen:
+        pass
+        # figure out rendering the player's inventory
 
     
     screen.blits(renderingData)

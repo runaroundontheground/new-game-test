@@ -1,4 +1,4 @@
-from widelyUsedVariables import camera, blockSize, gravity, chunkSize
+from widelyUsedVariables import camera, blockSize, gravity, chunkSize, screenWidth
 from worldgen import getChunkCoord, getBlockCoord, findBlock, smallScaleBlockUpdates
 from controls import keysPressed, keys, mouse
 import pygame, math
@@ -65,13 +65,50 @@ class Player():
         # hooray, inventory time!
         widthOfInventoryInSlots = 9
         heightOfInventoryInSlots = 3
-        hotbarWidthInSlots = 9
+    
+        # width and height/length?
+        inventoryWidthInPixels = screenWidth / 3
+        slotSizeInPixels = inventoryWidthInPixels / widthOfInventoryInSlots
+
+        gapBetweenSlots = round(slotSizeInPixels / 5)
 
         inventorySlot = {
             "contents": "empty", # this is where itemData goes
         }
 
+        backgroundColor = (150, 150, 150)
+        slotColor = (125, 125, 125)
+
+        inventoryWidthInPixels += gapBetweenSlots * (widthOfInventoryInSlots + 1)
+        size = (inventoryWidthInPixels, inventoryWidthInPixels)
+
+        inventoryBackground = pygame.surface.Surface(size)
+        inventoryBackground.fill(backgroundColor)
+
+        slotSurface = pygame.surface.Surface(slotSizeInPixels)
+        slotSurface.fill(slotColor)
+
+        for x in range(widthOfInventoryInSlots):
+            for y in range(heightOfInventoryInSlots):
+                slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
+                slotY = (y * slotSizeInPixels) + ((y + 1) * gapBetweenSlots)
+
+        self.otherInventoryData = {
+            "widthInSlots": widthOfInventoryInSlots,
+            "heightInSlots": heightOfInventoryInSlots,
+            "gapBetweenSlots": gapBetweenSlots
+        }
+
         self.inventory = []
+        self.hotbar = []
+        # create inventory
+        for x in range(widthOfInventoryInSlots):
+            for y in range(heightOfInventoryInSlots):
+                self.inventory.append(inventorySlot)
+    
+        # create hotbar
+        for x in range(widthOfInventoryInSlots):
+            self.hotbar.append(inventorySlot)
 
 
     def generalMovement(self, deltaTime):
