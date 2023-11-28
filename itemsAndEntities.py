@@ -1,4 +1,4 @@
-from widelyUsedVariables import entities, items, chunks
+from widelyUsedVariables import entities, items, chunks, listOfBlockItems
 from worldgen import findBlock, getChunkCoord, getBlockCoord
 
 
@@ -6,9 +6,9 @@ from worldgen import findBlock, getChunkCoord, getBlockCoord
 
 # basic item, default values to make it exist in player inventory properly
 class Item():
-    def __init__(self, itemData = {"name": "air"}, slotId = 0):
-        self.itemData = itemData
-        self.slotId = slotId
+    def __init__(self, name = "air"):
+        self.name = name
+        self.slotId = 0
     
     # drop/throw this item out as an entity
     def drop(self, x = 0, y = 0, z = 0, throwItem = False):
@@ -25,13 +25,13 @@ class Item():
 
 # an item that can be placed, like wood or something
 class PlaceableItem(Item):
-    def __init__(self, itemData):
+    def __init__(self, name):
+        super().__init__(name)
         # IMPORTANT NOTE!
         # the name of any item that can be placed MUST correspond to an existing block
         # otherwise, game will break (maybe add a check for if the block exists?)
         # if it doesn't exist, place nothing or air i guess
-        self.itemData = itemData
-        self.placedItem = self.itemData["name"]
+        self.placedItem = self.name
 
     def placeItem(self, x, y, z):
         
@@ -58,12 +58,9 @@ class Entity():
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
-    def __init__(self, itemData = {"name": "air"}, x = 0, y = 0, z = 0):
-        
-        self.itemData = itemData
-        self.x = x
-        self.y = y
-        self.z = z
+    def __init__(self, x, y, z, name = "air"):
+        super().__init__(x, y, z)
+        self.name = name
 
     def runSelf(self):
         # all the logic for an item on the ground
@@ -72,19 +69,15 @@ class ItemEntity(Entity):
 
 # adding items to the game
 def addItem(name = "air", itemType = "none"):
-    
-    
-    itemData = {
-        "name": name
-    }
 
     if itemType == "placeable":
-        item = PlaceableItem(itemData)
+        item = PlaceableItem(name)
     
     if itemType == "tool":
         pass
 
     items[name] = item
 
-items["air"] = Item()
-addItem("log", "placeable")
+def makeItemsExist():
+    for itemName in listOfBlockItems:
+        addItem(itemName, "placeable")

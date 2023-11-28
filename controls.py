@@ -25,8 +25,5 @@ def updateMouseAndKeys():
             keysPressed[keyID] = True
     keys[0] = tempKeys
 
-    
-
-def updateMouse():
     mouse.pos = pygame.mouse.get_pos()
     mouse.x, mouse.y = mouse.pos[0], mouse.pos[1]

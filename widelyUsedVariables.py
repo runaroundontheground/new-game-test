@@ -28,6 +28,12 @@ entities = []
 items = {}
 itemIcons = {}
 
+listOfBlockItems = [
+    "air", "grass", "dirt", "snowy dirt", "stone", "snowy stone", "sand",
+    "clay", "gravel", "water", "bedrock", "log", "leaves"
+]
+
+
 class Camera():
     def __init__(self):
         self.smoothness = 10

@@ -1,10 +1,10 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
-from worldgen import generateChunkTerrain, findBlock, testChunk, runBlockUpdatesAfterGeneration
+from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures
 from widelyUsedVariables import camera, itemIcons
 from player import player
-import pygame, random
+import pygame
 
 from controls import keysPressed, mouse
 
@@ -13,7 +13,7 @@ pygame.font.init()
 font = pygame.font.Font(size = 24)
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
-gapBetweenItemIconAndEdgeOfInventorySlotInPixels = 3
+
 
 screen.fill((0, 0, 0))
 position = (screenWidth/3, screenHeight/2)
@@ -66,10 +66,11 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
     slotSize = player.otherInventoryData["slotSize"]
     blockIcon = block.copy()
     # definitely a very short variable name lol
-    targetSize = slotSize - gapBetweenItemIconAndEdgeOfInventorySlotInPixels
+    targetSize = slotSize - player.otherInventoryData["itemIconShift"] * 2
 
-    scale = abs(blockSize - targetSize)
-    print(scale)
+    scale = abs(targetSize / blockSize)
+
+    blockIcon = pygame.transform.scale_by(blockIcon, scale)
 
     itemIcons[blockName] = blockIcon
 
@@ -278,6 +279,12 @@ def render(deltaTime):
 
     if not playerAddedToRendering:
         renderingData.append(player.imageData)
+
+    # render the player's hotbar (make hotbar transparent?)
+    image = player.otherInventoryData["hotbarSurface"]
+    position = player.otherInventoryData["hotbarRenderPosition"]
+    imageData = (image, position)
+    renderingData.append(imageData)
         
     # figure out some stuff for inventory
     if player.otherInventoryData["open"]:
@@ -286,12 +293,20 @@ def render(deltaTime):
         imageData = (image, position)
 
         renderingData.append(imageData)
+
+        for slot in player.inventory:
+            item = slot["contents"]
+            
+            if item != "empty":
+                
+                image = itemIcons[item.name]
+                position = slot["renderPosition"]
+                imageData = (image, position)
+
+                renderingData.append(imageData)
     
-    # render the player's hotbar (make hotbar transparent?)
-    image = player.otherInventoryData["hotbarSurface"]
-    position = player.otherInventoryData["hotbarRenderPosition"]
-    imageData = (image, position)
-    renderingData.append(imageData)
+
+
 
     screen.blits(renderingData)
 

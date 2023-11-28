@@ -1,7 +1,9 @@
-from widelyUsedVariables import deltaTime
-from controls import updateMouseAndKeys, updateMouse
+from widelyUsedVariables import deltaTime, items
+from itemsAndEntities import makeItemsExist
+from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea
 from player import player
+
 import pygame, time
 
 pygame.init()
@@ -67,12 +69,14 @@ def gameLoop():
 
     generateSpawnArea()
     player.positionInSpawnArea()
+    makeItemsExist()
+    player.inventory[4]["contents"] = items["log"]
 
     while running:
         currentTime = time.time()
 
         updateMouseAndKeys()
-        updateMouse()
+        
         
         for event in pygame.event.get():
             if event.type == exit:

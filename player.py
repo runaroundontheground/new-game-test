@@ -78,6 +78,10 @@ class Player():
         slotColor = (125, 125, 125)
         alphaForUI = 0
 
+        emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
+
+        itemIconShift = emptySpaceBetweenItemAndSlotBorder
+
         inventoryWidthInPixels += gapBetweenSlots * (widthOfInventoryInSlots + 1)
 
         inventoryHeightInPixels = (slotSizeInPixels * heightOfInventoryInSlots)
@@ -109,24 +113,27 @@ class Player():
         inventorySlot = {
             "contents": "empty", # this is where itemData goes
             "itemCount": 0, # how many of x item is in this slot
-            "slotPositionOnScreen": (0, 0)
+            "renderPosition": (0, 0)
         }
-
+        
         self.inventory = []
         self.hotbar = []
 
-        for x in range(widthOfInventoryInSlots):
-            for y in range(heightOfInventoryInSlots):
+        for y in range(heightOfInventoryInSlots):
+            for x in range(widthOfInventoryInSlots):
                 slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                 slotY = (y * slotSizeInPixels) + ((y + 1) * gapBetweenSlots)
 
                 inventoryBackground.blit(slotSurface, (slotX, slotY))
 
-                renderX = inventoryXForBlit + slotX
-                renderY = inventoryYForBlit + slotY
-                inventorySlot["slotPositionOnScreen"] = (renderX, renderY)
+                renderX = inventoryXForBlit + slotX + itemIconShift
+                renderY = inventoryYForBlit + slotY + itemIconShift
 
-                self.inventory.append(inventorySlot)
+                updatedInventorySlot = inventorySlot.copy()
+
+                updatedInventorySlot["renderPosition"] = (renderX, renderY)
+
+                self.inventory.append(updatedInventorySlot)
 
         inventorySurface = inventoryBackground        
     
@@ -136,10 +143,10 @@ class Player():
             slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
             slotY = gapBetweenSlots
 
-            renderX = hotbarXForBlit + slotX
-            renderY = hotbarYForBlit + slotY
+            renderX = hotbarXForBlit + slotX + itemIconShift
+            renderY = hotbarYForBlit + slotY + itemIconShift
 
-            inventorySlot["slotPositionOnScreen"] = (renderX, renderY)
+            inventorySlot["renderPosition"] = (renderX, renderY)
 
             hotbarSurface.blit(slotSurface, (slotX, slotY))
 
@@ -151,12 +158,11 @@ class Player():
             "slotSize": slotSizeInPixels,
             "inventorySurface": inventorySurface,
             "hotbarSurface": hotbarSurface,
+            "itemIconShift": itemIconShift,
             "open": False
         }
 
 
-        # testing inventory, remove later!
-        self.inventory[3] = items["log"]
 
 
     def generalMovement(self, deltaTime):
