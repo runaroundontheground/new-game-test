@@ -2,7 +2,7 @@ from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, block
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 from worldgen import generateChunkTerrain, findBlock, testChunk, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures
-from widelyUsedVariables import camera
+from widelyUsedVariables import camera, itemIcons
 from player import player
 import pygame, random
 
@@ -12,6 +12,9 @@ pygame.font.init()
 
 font = pygame.font.Font(size = 24)
 screen = pygame.display.set_mode((screenWidth, screenHeight))
+
+gapBetweenItemIconAndEdgeOfInventorySlotInPixels = 3
+
 screen.fill((0, 0, 0))
 position = (screenWidth/3, screenHeight/2)
 temporaryText = font.render("generating world", 0, (255, 255, 255))
@@ -58,6 +61,18 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
         "alpha'd": False
     }
 
+    # adding item icons for blocks specifically
+
+    slotSize = player.otherInventoryData["slotSize"]
+    blockIcon = block.copy()
+    # definitely a very short variable name lol
+    targetSize = slotSize - gapBetweenItemIconAndEdgeOfInventorySlotInPixels
+
+    scale = abs(blockSize - targetSize)
+    print(scale)
+
+    itemIcons[blockName] = blockIcon
+
 addABlock("grass", (0, 200, 0), (150, 75, 0))
 addABlock("dirt", (150, 75, 0))
 addABlock("stone", (125, 125, 125))
@@ -70,6 +85,10 @@ addABlock("water", (0, 0, 255), (0, 0, 255), True, 100)
 addABlock("bedrock", (0, 255, 255))
 addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("leaves", (29, 64, 17))
+
+
+def addAnItemIcon():
+    pass
 
 numbers = []
 def makeNumbers(thing = numbers, color = (200, 200, 200)):

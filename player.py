@@ -1,4 +1,5 @@
-from widelyUsedVariables import camera, blockSize, gravity, chunkSize, screenWidth, screenHeight
+from widelyUsedVariables import camera, blockSize, gravity, chunkSize
+from widelyUsedVariables import screenWidth, screenHeight, items
 from worldgen import getChunkCoord, getBlockCoord, findBlock, smallScaleBlockUpdates
 from controls import keysPressed, keys, mouse
 import pygame, math
@@ -107,6 +108,7 @@ class Player():
 
         inventorySlot = {
             "contents": "empty", # this is where itemData goes
+            "itemCount": 0, # how many of x item is in this slot
             "slotPositionOnScreen": (0, 0)
         }
 
@@ -151,6 +153,10 @@ class Player():
             "hotbarSurface": hotbarSurface,
             "open": False
         }
+
+
+        # testing inventory, remove later!
+        self.inventory[3] = items["log"]
 
 
     def generalMovement(self, deltaTime):
@@ -392,6 +398,14 @@ class Player():
 
         self.position = (self.x, self.y, self.z)
 
+    def doInventoryThings(self):
+        e = pygame.K_e
+        # everything for player inventory goes here now, hooray
+        if keysPressed[e]:
+            if self.otherInventoryData["open"]:
+                self.otherInventoryData["open"] = False
+            else:
+                self.otherInventoryData["open"] = True
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
@@ -410,9 +424,9 @@ class Player():
     def doStuff(self, deltaTime):
         
         self.generalMovement(deltaTime)
+        self.doInventoryThings()
         
         self.updateCamera()
-
         self.updateImageThings()
 
     def positionInSpawnArea(self):

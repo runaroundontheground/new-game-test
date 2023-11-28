@@ -25,31 +25,10 @@ solution?
     that doesn't matter until i have bigger structures though...
 
 
-in order to make placing/breaking blocks work, i'll probably need some form of
-inventory, so i guess that's up next
-
-which also means items need to exist
-item system ideas:
-    a base class for items: Item
-    has some parameters, like name, and what kind of item it is
-    subclasses for different item types?
-    need to research how to use subclasses, since i forgor
-
-
-inventory ideas:
-    make something similar to mc inventory
-    render a rectangle that's big, and then render small squares which are
-    the inventory slots, and then inside of those, render whatever item is supposed
-    to be there
-    rendering an item that's in the player's inventory:
-        the item probably has an image called itemIcon.png or something
-        that's whats rendered in the box, will probably automatically resize those
-        to be whatever the inventory slot size should be
-    the inventory is a class, with built in functions like adding an item
-    removing an item, anything else that i might add
-    slot sorting things:
-        same inv size as mc, top left slot is slot id 0, right 1 is slot id 1, so on
-        once it reaches 9, it'll go to the middle left slot, and so on
+inventory:
+    need to test player interaction with inventory, also add mouse interaction and stuff
+    two different mouse coordinates, one is relative to camera, one is relative to
+    the display/screen of the game, for UI and stuff
 
 add breaking/placing blocks
     idea for that

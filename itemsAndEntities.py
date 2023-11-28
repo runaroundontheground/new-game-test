@@ -1,11 +1,12 @@
-from widelyUsedVariables import entities, items
+from widelyUsedVariables import entities, items, chunks
+from worldgen import findBlock, getChunkCoord, getBlockCoord
+
+
+
 
 # basic item, default values to make it exist in player inventory properly
 class Item():
-    def __init__(self, itemData = {
-        "name": "air",
-        "id": 0
-    }, slotId = 0):
+    def __init__(self, itemData = {"name": "air"}, slotId = 0):
         self.itemData = itemData
         self.slotId = slotId
     
@@ -15,31 +16,35 @@ class Item():
 
         entities.append(droppedItem)
         
-        # set player's inventory slot that is this item to "empty" or something
+        """
+        TO DO:
+            on player's side, check for what the count of the item
+            is for this slot, if it's one when you drop it, set the slot contents
+            to "empty", otherwise just drop it and subtract one from the item count
+        """
 
 # an item that can be placed, like wood or something
 class PlaceableItem(Item):
-    def __init__(self):
+    def __init__(self, itemData):
         # IMPORTANT NOTE!
         # the name of any item that can be placed MUST correspond to an existing block
         # otherwise, game will break (maybe add a check for if the block exists?)
         # if it doesn't exist, place nothing or air i guess
+        self.itemData = itemData
         self.placedItem = self.itemData["name"]
 
-def addItem(name = "air"):
-    
-    id = len(items) - 1
-    itemData = {
-        "name": name,
-        "id": id
-    }
+    def placeItem(self, x, y, z):
+        
+        blockInPlacementSpot = findBlock(x, y, z, True)
+        print(blockInPlacementSpot)
+        chunkCoord = getChunkCoord(x, z)
+        blockCoord = getBlockCoord(x, y, z)
 
-    item = Item(itemData, id)
+        chunks[chunkCoord]["data"][blockCoord] = self.placedItem
 
-    items.append(item)
+        
 
-airItem = Item()
-items.append(airItem)
+
 # basic entity, no ai or anything
 class Entity():
     def __init__(self, x = 0, y = 0, z = 0):
@@ -53,10 +58,7 @@ class Entity():
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
-    def __init__(self, itemData = {
-        "name": "air",
-        "id": 0
-    }, x = 0, y = 0, z = 0):
+    def __init__(self, itemData = {"name": "air"}, x = 0, y = 0, z = 0):
         
         self.itemData = itemData
         self.x = x
@@ -66,3 +68,23 @@ class ItemEntity(Entity):
     def runSelf(self):
         # all the logic for an item on the ground
         pass
+
+
+# adding items to the game
+def addItem(name = "air", itemType = "none"):
+    
+    
+    itemData = {
+        "name": name
+    }
+
+    if itemType == "placeable":
+        item = PlaceableItem(itemData)
+    
+    if itemType == "tool":
+        pass
+
+    items[name] = item
+
+items["air"] = Item()
+addItem("log", "placeable")
