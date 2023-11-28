@@ -244,6 +244,9 @@ def render(deltaTime):
                         blocks[y].append(imageData)
 
     renderingData = []
+
+    # do special player things for rendering
+    # inventory, player itself, whatever
     playerAddedToRendering = False
     for listOfBlocksIndex in range(chunkSize[1]):
 
@@ -258,11 +261,19 @@ def render(deltaTime):
         renderingData.append(player.imageData)
         
     # figure out some stuff for inventory
-    if player.inventoryOpen:
-        pass
-        # figure out rendering the player's inventory
+    if player.otherInventoryData["open"]:
+        image = player.otherInventoryData["inventorySurface"]
+        position = player.otherInventoryData["inventoryRenderPosition"]
+        imageData = (image, position)
 
+        renderingData.append(imageData)
     
+    # render the player's hotbar (make hotbar transparent?)
+    image = player.otherInventoryData["hotbarSurface"]
+    position = player.otherInventoryData["hotbarRenderPosition"]
+    imageData = (image, position)
+    renderingData.append(imageData)
+
     screen.blits(renderingData)
 
      # pretty much just debug after this

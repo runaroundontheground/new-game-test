@@ -24,6 +24,9 @@ screenHeightInChunks = math.floor( screenHeight / totalChunkSize )
 # like entity.runSelf(deltaTime) or something
 entities = []
 
+# list of all items
+items = []
+
 class Camera():
     def __init__(self):
         self.smoothness = 10
