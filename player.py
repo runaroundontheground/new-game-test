@@ -146,11 +146,13 @@ class Player():
             renderX = hotbarXForBlit + slotX + itemIconShift
             renderY = hotbarYForBlit + slotY + itemIconShift
 
-            inventorySlot["renderPosition"] = (renderX, renderY)
+            updatedInventorySlot = inventorySlot.copy()
+
+            updatedInventorySlot["renderPosition"] = (renderX, renderY)
 
             hotbarSurface.blit(slotSurface, (slotX, slotY))
 
-            self.hotbar.append(inventorySlot)
+            self.hotbar.append(updatedInventorySlot)
 
         self.otherInventoryData = {
             "inventoryRenderPosition": (inventoryXForBlit, inventoryYForBlit),

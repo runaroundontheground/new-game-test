@@ -28,9 +28,9 @@ solution?
 
 
 inventory:
-    need to test player interaction with inventory, also add mouse interaction and stuff
-    two different mouse coordinates, one is relative to camera, one is relative to
-    the display/screen of the game, for UI and stuff
+    rendering of the inventory (probably) works, now i have to add in mouse
+    functionality to the inventory, or possible using arrow keys to select a slot
+    and then pick up the item with space or something (player can't jump while doing that)
 
 add breaking/placing blocks
     idea for that
@@ -71,6 +71,7 @@ def gameLoop():
     player.positionInSpawnArea()
     makeItemsExist()
     player.inventory[4]["contents"] = items["log"]
+    player.inventory[9]["contents"] = items["grass"]
 
     while running:
         currentTime = time.time()
