@@ -76,6 +76,7 @@ class Player():
 
         backgroundColor = (150, 150, 150)
         slotColor = (125, 125, 125)
+        selectedSlotColor = (175, 175, 175, 0)
         alphaForUI = 0
 
         emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
@@ -94,6 +95,14 @@ class Player():
         
         slotSurface = pygame.surface.Surface((slotSizeInPixels, slotSizeInPixels))
         slotSurface.fill(slotColor)
+
+        size = (slotSizeInPixels + gapBetweenSlots, slotSizeInPixels + gapBetweenSlots)
+        selectedSlotSurface = pygame.surface.Surface(size, pygame.SRCALPHA)
+        selectedSlotSurface.fill((selectedSlotColor))
+        selectedSlotSurface.set_alpha(0)
+
+        fillRect = pygame.rect.Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels - gapBetweenSlots, slotSizeInPixels - gapBetweenSlots)
+        selectedSlotSurface.fill((255, 255, 255, 100), fillRect)
 
         hotbarSizeInPixels = (round(inventorySizeInPixels[0]), round(slotSizeInPixels + (gapBetweenSlots * 2)))
         hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
@@ -161,6 +170,7 @@ class Player():
             "inventorySurface": inventorySurface,
             "hotbarSurface": hotbarSurface,
             "itemIconShift": itemIconShift,
+            "selectedSlotSurface": selectedSlotSurface,
             "open": False
         }
 

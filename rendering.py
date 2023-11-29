@@ -305,12 +305,17 @@ def render(deltaTime):
 
                 renderingData.append(imageData)
     
-
+    # DUBUG THING
+    thing = player.otherInventoryData["selectedSlotSurface"]
+    
+    
 
 
     screen.blits(renderingData)
 
      # pretty much just debug after this
+
+    screen.blit(thing, (300, 300))
 
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))

@@ -15,6 +15,45 @@ FPS = 60
 """
 ok currently:
 
+since i need to add mouse interaction, gotta work on getting data from mouse
+need to add mouse position, relative to camera and actual pos
+
+mouse interaction with inventory:
+    use a collidepoint with a rect that is the same size and pos as inventory
+    if that collides, then check for collision with rects for every slot
+    do the same thing for the hotbar, hotbar can only have stuff moved around
+    while the inventory is open
+
+inventory:
+    selected slot:
+        a square surface that has a border with thickness of gapbetweenslots
+        blit the slot image into it or find some other way to set the pixels
+        where the slot would be to have 100% alpha
+        that way you can see items and stuff in it
+        
+        make sure the surface uses SRCALPHA flag
+        how do i do that?? idk i'll figure it out
+
+        now for interaction of that:
+            when mouse over an slot in inventory, highlight it
+            also highlight the selected hotbar slot
+    rendering of the inventory (probably) works, now i have to add in mouse
+    functionality to the inventory, or possible using arrow keys to select a slot
+    and then pick up the item with space or something
+    in order to keep things from breaking, player can't jump while the inv is open
+    if the player tries to close their inventory while there's an item in the cursor,
+    copy minecraft's implementation:
+        loop through hotbar, if any of the slots are empty, put it there, then break
+        loop through inventory, if any slots are empty, put there, break
+
+add breaking/placing blocks
+    idea for that
+    have a selector go on the mouse, or use arrow keys to select the block to break
+    use scroll wheel to change y level, maybe < or > for y level using keyboard
+    have a selector that 'frames' the blocks, maybe green if valid for break/place
+    red if not valid for those
+    should block swap exist: no
+    
 
 problem that can happen with current implementation of structure gen
 if a structure is too big, then it'll break out of the fix i made to fix that
@@ -27,22 +66,13 @@ solution?
     that doesn't matter until i have bigger structures though...
 
 
-inventory:
-    rendering of the inventory (probably) works, now i have to add in mouse
-    functionality to the inventory, or possible using arrow keys to select a slot
-    and then pick up the item with space or something (player can't jump while doing that)
-
-add breaking/placing blocks
-    idea for that
-    have a selector go on the mouse, or use arrow keys to select the block to break
-    use scroll wheel to change y level, maybe < or > for y level using keyboard
-    have a selector that 'frames' the blocks, maybe green if valid for break/place
-    red if not valid for those
-    should block swap exist: no
-    
 
 
-wayyy later:
+
+later:
+animations
+    DON'T BE COMPLICATED
+    why do i always overcomplicate these...
 potentially naturally generated caves
 crafting
     probably copy mc, wonder how i'll make adding recipes annoying to do
