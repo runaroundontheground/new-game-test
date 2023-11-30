@@ -26,13 +26,7 @@ mouse interaction with inventory:
 
 inventory:
     selected slot:
-        a square surface that has a border with thickness of gapbetweenslots
-        blit the slot image into it or find some other way to set the pixels
-        where the slot would be to have 100% alpha
-        that way you can see items and stuff in it
-        
-        make sure the surface uses SRCALPHA flag
-        how do i do that?? idk i'll figure it out
+        slot surface has been made
 
         now for interaction of that:
             when mouse over an slot in inventory, highlight it

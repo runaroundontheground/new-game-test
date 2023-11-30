@@ -97,12 +97,12 @@ class Player():
         slotSurface.fill(slotColor)
 
         size = (slotSizeInPixels + gapBetweenSlots, slotSizeInPixels + gapBetweenSlots)
-        selectedSlotSurface = pygame.surface.Surface(size, pygame.SRCALPHA)
+        selectedSlotSurface = pygame.surface.Surface(size)
         selectedSlotSurface.fill((selectedSlotColor))
-        selectedSlotSurface.set_alpha(0)
 
         fillRect = pygame.rect.Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels - gapBetweenSlots, slotSizeInPixels - gapBetweenSlots)
-        selectedSlotSurface.fill((255, 255, 255, 100), fillRect)
+        selectedSlotSurface.fill((255, 255, 255), fillRect)
+        selectedSlotSurface.set_colorkey((255, 255, 255))
 
         hotbarSizeInPixels = (round(inventorySizeInPixels[0]), round(slotSizeInPixels + (gapBetweenSlots * 2)))
         hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
