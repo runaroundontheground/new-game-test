@@ -12,6 +12,9 @@ class Mouse():
         self.x = 0
         self.y = 0
         self.pos = (0, 0)
+        self.cameraRelativeX = 0
+        self.cameraRelativeZ = 0
+        self.cameraRelativePos = (0, 0)
 
 mouse = Mouse()
 
@@ -29,5 +32,4 @@ def updateMouseAndKeys():
     mouse.pos = pygame.mouse.get_pos()
     mouse.x, mouse.y = mouse.pos[0], mouse.pos[1]
 
-    mouse.cameraRelativeX = mouse.x - camera.x
-    mouse.cameraRelativeZ = mouse.y - camera.z
+

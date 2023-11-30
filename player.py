@@ -440,6 +440,10 @@ class Player():
         self.imageData = (self.image, coordinate)
 
     def doStuff(self, deltaTime):
+        # need to update mouse's camera relative things here, don't want circular imports
+        mouse.cameraRelativeX = round((self.x + mouse.x) - screenWidth/2)
+        mouse.cameraRelativeZ = round((self.z + mouse.y) - screenHeight/2)
+        mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ)
         
         self.generalMovement(deltaTime)
         self.doInventoryThings()

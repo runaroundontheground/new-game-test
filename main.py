@@ -15,9 +15,6 @@ FPS = 60
 """
 ok currently:
 
-since i need to add mouse interaction, gotta work on getting data from mouse
-need to add mouse position, relative to camera and actual pos
-
 mouse interaction with inventory:
     use a collidepoint with a rect that is the same size and pos as inventory
     if that collides, then check for collision with rects for every slot
