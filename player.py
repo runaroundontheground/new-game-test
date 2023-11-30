@@ -69,9 +69,9 @@ class Player():
     
         # width and height
         inventoryWidthInPixels = screenWidth / 3
-        slotSizeInPixels = inventoryWidthInPixels / widthOfInventoryInSlots
+        slotSizeInPixels = round(inventoryWidthInPixels / widthOfInventoryInSlots)
 
-        gapBetweenSlots = slotSizeInPixels / 5
+        gapBetweenSlots = round(slotSizeInPixels / 5)
 
 
         backgroundColor = (150, 150, 150)
@@ -96,11 +96,11 @@ class Player():
         slotSurface = pygame.surface.Surface((slotSizeInPixels, slotSizeInPixels))
         slotSurface.fill(slotColor)
 
-        size = (slotSizeInPixels + gapBetweenSlots, slotSizeInPixels + gapBetweenSlots)
+        size = (slotSizeInPixels + gapBetweenSlots * 2, slotSizeInPixels + gapBetweenSlots * 2)
         selectedSlotSurface = pygame.surface.Surface(size)
         selectedSlotSurface.fill((selectedSlotColor))
 
-        fillRect = pygame.rect.Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels - gapBetweenSlots, slotSizeInPixels - gapBetweenSlots)
+        fillRect = pygame.rect.Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels, slotSizeInPixels)
         selectedSlotSurface.fill((255, 255, 255), fillRect)
         selectedSlotSurface.set_colorkey((255, 255, 255))
 
@@ -122,7 +122,9 @@ class Player():
         inventorySlot = {
             "contents": "empty", # this is where itemData goes
             "itemCount": 0, # how many of x item is in this slot
-            "renderPosition": (0, 0)
+            "renderPosition": (0, 0),
+            "selectedSlotRenderPosition": (0, 0),
+            "rect": pygame.Rect(0, 0, 0, 0) # used for mouse collision
         }
         
         self.inventory = []
@@ -138,9 +140,16 @@ class Player():
                 renderX = inventoryXForBlit + slotX + itemIconShift
                 renderY = inventoryYForBlit + slotY + itemIconShift
 
+                rectX = renderX - itemIconShift
+                rectY = renderY - itemIconShift
+
                 updatedInventorySlot = inventorySlot.copy()
 
                 updatedInventorySlot["renderPosition"] = (renderX, renderY)
+                updatedInventorySlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots,
+                                                                      rectY - gapBetweenSlots)
+                updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
+                                                           slotSizeInPixels, slotSizeInPixels)
 
                 self.inventory.append(updatedInventorySlot)
 
@@ -155,20 +164,35 @@ class Player():
             renderX = hotbarXForBlit + slotX + itemIconShift
             renderY = hotbarYForBlit + slotY + itemIconShift
 
+            rectX = renderX - itemIconShift
+            rectY = renderY - itemIconShift
+
             updatedInventorySlot = inventorySlot.copy()
 
             updatedInventorySlot["renderPosition"] = (renderX, renderY)
+            updatedInventorySlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots,
+                                                                  rectY - gapBetweenSlots)
+            updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
+                                                       slotSizeInPixels, slotSizeInPixels)
 
             hotbarSurface.blit(slotSurface, (slotX, slotY))
 
             self.hotbar.append(updatedInventorySlot)
+        
+        inventoryRect = pygame.Rect(inventoryXForBlit, inventoryYForBlit,
+                                    inventoryWidthInPixels, inventoryHeightInPixels)
+        
+        hotbarRect = pygame.Rect(hotbarXForBlit, hotbarYForBlit,
+                                 inventoryWidthInPixels, hotbarSizeInPixels[1])
 
         self.otherInventoryData = {
             "inventoryRenderPosition": (inventoryXForBlit, inventoryYForBlit),
             "hotbarRenderPosition": (hotbarXForBlit, hotbarYForBlit),
             "slotSize": slotSizeInPixels,
             "inventorySurface": inventorySurface,
+            "inventoryRect": inventoryRect,
             "hotbarSurface": hotbarSurface,
+            "hotbarRect": hotbarRect,
             "itemIconShift": itemIconShift,
             "selectedSlotSurface": selectedSlotSurface,
             "open": False

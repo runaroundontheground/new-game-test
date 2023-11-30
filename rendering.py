@@ -279,22 +279,34 @@ def render(deltaTime):
     if not playerAddedToRendering:
         renderingData.append(player.imageData)
 
-    # render the player's hotbar (make hotbar transparent?)
     image = player.otherInventoryData["hotbarSurface"]
     position = player.otherInventoryData["hotbarRenderPosition"]
     imageData = (image, position)
     renderingData.append(imageData)
         
-    # figure out some stuff for inventory
+    # run inventory rendering and mouse interaction
     if player.otherInventoryData["open"]:
         image = player.otherInventoryData["inventorySurface"]
         position = player.otherInventoryData["inventoryRenderPosition"]
         imageData = (image, position)
 
         renderingData.append(imageData)
+        
+
+        mouseInInventory = player.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
+        mouseInHotbar = player.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
 
         for slot in player.inventory:
             item = slot["contents"]
+
+            if mouseInInventory:
+                
+                if slot["rect"].collidepoint(mouse.x, mouse.y):
+                    position = slot["selectedSlotRenderPosition"]
+                    image = player.otherInventoryData["selectedSlotSurface"]
+                    imageData = (image, position)
+
+                    renderingData.append(imageData)
             
             if item != "empty":
                 
@@ -303,6 +315,23 @@ def render(deltaTime):
                 imageData = (image, position)
 
                 renderingData.append(imageData)
+        for slot in player.hotbar:
+
+            if mouseInHotbar:
+                if slot["rect"].collidepoint(mouse.x, mouse.y):
+                    position = slot["selectedSlotRenderPosition"]
+                    image = player.otherInventoryData["selectedSlotSurface"]
+                    imageData = (image, position)
+
+                    renderingData.append(imageData)
+
+    # run hotbar rendering and mouse interaction
+    for slot in player.hotbar:
+        item = slot["contents"]
+        if item != "empty":
+            image = item.icon
+    
+    # run mouse's held item rendering and interaction
     
     
     
@@ -312,21 +341,18 @@ def render(deltaTime):
 
      # pretty much just debug after this
 
-    thing = pygame.Surface((30, 30))
-    thing.fill((0, 255, 0))    
-
-    screen.blit(thing, mouse.pos)
-    
-
     
 
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)
-    debugRenderingStuff2 += "player yv " + str(player.yv) + " mouse pos: " + str(mouse.cameraRelativePos)
+    debugRenderingStuff2 += "player yv " + str(player.yv)
+    debugRenderingStuff3 = "mouse pos: " + str(mouse.pos) + ", mouseRelativePos: " + str(mouse.cameraRelativePos)
     thing = font.render(debugRenderingStuff, 0, (255, 0, 0))
     thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
+    thing3 = font.render(debugRenderingStuff3, 0, (255, 0, 0))
     screen.blit(thing, (100, 300))
     screen.blit(thing2, (100, 200))
+    screen.blit(thing3, (100, 100))
 
     pygame.display.flip()
