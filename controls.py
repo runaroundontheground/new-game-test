@@ -1,3 +1,4 @@
+from widelyUsedVariables import camera
 import pygame
 pygame.display.init()
 keys = []
@@ -27,3 +28,6 @@ def updateMouseAndKeys():
 
     mouse.pos = pygame.mouse.get_pos()
     mouse.x, mouse.y = mouse.pos[0], mouse.pos[1]
+
+    mouse.cameraRelativeX = mouse.x - camera.x
+    mouse.cameraRelativeZ = mouse.y - camera.z

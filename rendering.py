@@ -305,8 +305,6 @@ def render(deltaTime):
 
                 renderingData.append(imageData)
     
-    # DUBUG THING
-    thing = player.otherInventoryData["selectedSlotSurface"]
     
     
 
