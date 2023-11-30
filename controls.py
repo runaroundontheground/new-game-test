@@ -16,6 +16,17 @@ class Mouse():
         self.cameraRelativeZ = 0
         self.cameraRelativePos = (0, 0)
 
+        self.buttons = {
+            "left": False,
+            "middle": False,
+            "right": False,
+            "pressed": {
+                "left": False,
+                "middle": False,
+                "right": False
+            }
+        }
+
 mouse = Mouse()
 
 
@@ -31,5 +42,31 @@ def updateMouseAndKeys():
 
     mouse.pos = pygame.mouse.get_pos()
     mouse.x, mouse.y = mouse.pos[0], mouse.pos[1]
+
+    mouse.buttons["pressed"]["left"] = False
+    mouse.buttons["pressed"]["middle"] = False
+    mouse.buttons["pressed"]["right"] = False
+
+    mouseButtons = pygame.mouse.get_pressed()
+
+    if not mouse.buttons["left"]:
+        if not mouseButtons[0]:
+            mouse.buttons["pressed"]["left"] = True
+    if not mouse.buttons["middle"]:
+        if not mouseButtons[1]:
+            mouse.buttons["pressed"]["middle"] = True
+    if not mouse.buttons["right"]:
+        if not mouseButtons[2]:
+            mouse.buttons["pressed"]["right"] = True
+
+    mouse.buttons["left"] = mouseButtons[0]
+    mouse.buttons["middle"] = mouseButtons[1]
+    mouse.buttons["right"] = mouseButtons[2]
+
+
+
+
+
+    
 
 
