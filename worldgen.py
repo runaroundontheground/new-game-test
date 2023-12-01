@@ -112,60 +112,58 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
 
 def generateChunkStructures(inputChunkCoord = (0, 0)):
 
-    def generateStructures():
+    def generateStructure(structureName, blockCoord):
+        
+        for structureBlockCoord, block in structures[structureName].items():
 
-        def generateStructure(structureName, blockCoord):
+            chunkX = inputChunkCoord[0]
+            chunkZ = inputChunkCoord[1]
             
-            for structureBlockCoord, block in structures[structureName].items():
+            x = blockCoord[0] + structureBlockCoord[0]
+            y = blockCoord[1] + structureBlockCoord[1]
+            z = blockCoord[2] + structureBlockCoord[2]
 
-                chunkX = inputChunkCoord[0]
-                chunkZ = inputChunkCoord[1]
-                
-                x = blockCoord[0] + structureBlockCoord[0]
-                y = blockCoord[1] + structureBlockCoord[1]
-                z = blockCoord[2] + structureBlockCoord[2]
+            while x >= chunkSize[0]:
+                x -= chunkSize[0]
+                chunkX += 1
+            while x < 0:
+                x += chunkSize[0]
+                chunkX -= 1
 
-                while x >= chunkSize[0]:
-                    x -= chunkSize[0]
-                    chunkX += 1
-                while x < 0:
-                    x += chunkSize[0]
-                    chunkX -= 1
+            while z >= chunkSize[0]:
+                z -= chunkSize[0]
+                chunkZ += 1
+            while z < 0:
+                z += chunkSize[0]
+                chunkZ -= 1
 
-                while z >= chunkSize[0]:
-                    z -= chunkSize[0]
-                    chunkZ += 1
-                while z < 0:
-                    z += chunkSize[0]
-                    chunkZ -= 1
+            if y <= 0:
+                y = 1
+            if y >= chunkSize[1]:
+                y = chunkSize[1] - 1
 
-                if y <= 0:
-                    y = 1
-                if y >= chunkSize[1]:
-                    y = chunkSize[1] - 1
+            newBlockCoord = (x, y, z)
+            chunkCoord = (chunkX, chunkZ)
 
-                newBlockCoord = (x, y, z)
-                chunkCoord = (chunkX, chunkZ)
+            try:
+                chunks[chunkCoord]["data"]
+            except:
+                generateChunkTerrain(chunkCoord)
 
-                try:
-                    chunks[chunkCoord]["data"]
-                except:
-                    generateChunkTerrain(chunkCoord)
-
-                chunks[chunkCoord]["data"][newBlockCoord] = block
+            chunks[chunkCoord]["data"][newBlockCoord] = block
 
 
-        for x in range(chunkSize[0]):
-            for y in range(chunkSize[1]):
-                for z in range(chunkSize[0]):
-                    block = chunks[inputChunkCoord]["data"][(x, y, z)]
-                    blockCoord = (x, y, z)
+    for x in range(chunkSize[0]):
+        for y in range(chunkSize[1]):
+            for z in range(chunkSize[0]):
+                block = chunks[inputChunkCoord]["data"][(x, y, z)]
+                blockCoord = (x, y, z)
 
-                    if block["type"] == "grass":
-                        if random.randint(0, 20) == 0:
-                            generateStructure("tree 1", blockCoord)
-        chunks[inputChunkCoord]["structuresGenerated"] = True
-    generateStructures()
+                if block["type"] == "grass":
+                    if random.randint(0, 20) == 0:
+                        generateStructure("tree 1", blockCoord)
+    chunks[inputChunkCoord]["structuresGenerated"] = True
+
 
 def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
 

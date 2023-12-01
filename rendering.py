@@ -92,26 +92,73 @@ addABlock("leaves", (29, 64, 17))
 
 
  # 
-text = {
-    "a":
-}
+characters = {}
+
 defaultTextColor = (255, 255, 255)
 def addACharacter(character):
-    text[character] = {
+    characters[character] = {
         "text": font.render(character, 0, defaultTextColor),
         "size": font.size(character)
     }
 def addMostCharacters():
-    chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+    letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
              "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-             ".", "-", "_", ",", "<", ">", "/", "?", ":", ";", "'", '"'
     ]
+    otherChars = [
+             ".", "-", "_", ",", "<", ">", "/", "?", ":", ";", "'", '"', " ",
+             "(", ")", "[", "]", "{", "}", "+", "="
+    ]
+
     for numericalCharacter in range(10):
         addACharacter(str(numericalCharacter))
-    
 
+    for letter in letters:
+        characters[letter] = {
+            "text": font.render(letter, 0, defaultTextColor),
+            "size": font.size(letter)
+        }
+        characters[letter.upper()] = {
+            "text": font.render(letter.upper(), 0, defaultTextColor),
+            "size": font.size(letter.upper())
+        }
+    for character in otherChars:
+        characters[character] = {
+            "text": font.render(character, 0, defaultTextColor),
+            "size": font.size(character)
+        }
 addMostCharacters()
 
+def convertTextToStrAndRender(textValue, position, centeredOnPosition = False,
+                              renderingData = []):
+    text = str(textValue)
+
+    x = 0
+    y = 0
+    
+    for character in text:
+        size = characters[character]["size"]
+        x += size[0]
+        if size[1] > y:
+            y = size[1]
+
+    temporarySurface = pygame.Surface((x, y))
+    temporarySurface.fill((0, 0, 0))
+    temporarySurface.set_colorkey((0, 0, 0))
+    
+    if centeredOnPosition:
+        for character in text:
+            pass
+    else:
+        x = 0
+        for character in text:
+            renderedText = characters[character]["text"]
+            temporarySurface.blit(renderedText, (x, 0))
+
+            x += characters[character]["size"][0]
+        imageData = (temporarySurface, position)
+        
+        renderingData.append(imageData)
+        
 
 def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
     chunkList = []
@@ -134,13 +181,13 @@ def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
     # generate structures
     for x in range(xRange, maxXRange):
         for z in range(xRange, maxXRange):
-            #try:
-            #    chunks[(x, z)]
-            #except:
-            #    generateChunkTerrain(x, z)
-            
-            if not chunks[(x, z)]["structuresGenerated"]:
-                generateChunkStructures((x, z))
+            try:
+                chunks[(x, z)]
+            except:
+                generateChunkTerrain((x, z))
+            else:
+                if not chunks[(x, z)]["structuresGenerated"]:
+                    generateChunkStructures((x, z))
 
     # prepare the chunks for being rendered when all generation is (probably) done
     for x in range(xRange, maxXRange):
@@ -232,8 +279,9 @@ def render(deltaTime):
                         
                         if block["usesAlpha"]:
                             if player.blockCoord[1] <= y:
-                                if xPos - (5*blockSize) < player.x and xPos + (5*blockSize) > player.x:
-                                    if zPos - (5*blockSize) < player.z and zPos + (5*blockSize) > player.z:
+                                fiveBlocks = 5 * blockSize
+                                if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
+                                    if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
                                         thisBlockHasAlpha = True
                                     
 
@@ -343,8 +391,8 @@ def render(deltaTime):
     for index, slot in enumerate(player.hotbar):
         item = slot["contents"]
         currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
-
-        if index == player.hotbar[currentHotbarSlot]:
+        
+        if index == currentHotbarSlot:
             image = player.otherInventoryData["selectedSlotSurface"]
             position = slot["selectedSlotRenderPosition"]
             imageData = (image, position)
@@ -361,8 +409,10 @@ def render(deltaTime):
     # run mouse's held item rendering and interaction
     
     
-    
-
+    # debug rendering
+    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
+    debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
+    convertTextToStrAndRender(debugRenderingStuff, (100, 300), renderingData = renderingData)
 
     screen.blits(renderingData)
 
@@ -370,15 +420,14 @@ def render(deltaTime):
 
     
 
-    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
-    debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
+    
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)
     debugRenderingStuff2 += "player yv " + str(player.yv)
     debugRenderingStuff3 = "mouse pos: " + str(mouse.pos) + ", mouseRelativePos: " + str(mouse.cameraRelativePos)
-    thing = font.render(debugRenderingStuff, 0, (255, 0, 0))
+    
     thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
     thing3 = font.render(debugRenderingStuff3, 0, (255, 0, 0))
-    screen.blit(thing, (100, 300))
+    
     screen.blit(thing2, (100, 200))
     screen.blit(thing3, (100, 100))
 
