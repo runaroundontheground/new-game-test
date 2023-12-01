@@ -4,7 +4,7 @@ pygame.display.init()
 keys = []
 keys.append(pygame.key.get_pressed())
 keysPressed = []
-for num in range(len(keys[0])):
+for index, num in enumerate(keys[0]):
     keysPressed.append(False)
 
 class Mouse():
@@ -15,6 +15,12 @@ class Mouse():
         self.cameraRelativeX = 0
         self.cameraRelativeZ = 0
         self.cameraRelativePos = (0, 0)
+
+        # needs to have these two in order to tranfer item data properly
+        self.heldItem = {
+            "contents": "empty",
+            "itemCount": 0
+        }
 
         self.buttons = {
             "left": False,
@@ -34,7 +40,7 @@ def updateMouseAndKeys():
     
     tempKeys = pygame.key.get_pressed()
         
-    for keyID in range(len(tempKeys)):
+    for keyID, thing in enumerate(tempKeys):
         keysPressed[keyID] = False
         if not keys[0][keyID] and tempKeys[keyID]:
             keysPressed[keyID] = True

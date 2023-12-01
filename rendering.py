@@ -24,6 +24,9 @@ blockImages = {
     "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
 }
 
+def addAnItemIcon():
+    pass
+
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 0):
     imageSize = (blockSize, blockSize)
@@ -87,17 +90,28 @@ addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("leaves", (29, 64, 17))
 
 
-def addAnItemIcon():
-    pass
 
-numbers = []
-def makeNumbers(thing = numbers, color = (200, 200, 200)):
-    for num in range(10):
-        number = font.render(str(num), 0, color)
-        thing.append(number)
-    minus = font.render("-", 0, (255, 0, 0))
-    thing.append(minus)
-makeNumbers()
+ # 
+text = {
+    "a":
+}
+defaultTextColor = (255, 255, 255)
+def addACharacter(character):
+    text[character] = {
+        "text": font.render(character, 0, defaultTextColor),
+        "size": font.size(character)
+    }
+def addMostCharacters():
+    chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+             ".", "-", "_", ",", "<", ">", "/", "?", 
+    ]
+    for numericalCharacter in range(10):
+        addACharacter(str(numericalCharacter))
+    
+
+addMostCharacters()
+
 
 def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
     chunkList = []
@@ -325,11 +339,24 @@ def render(deltaTime):
 
                     renderingData.append(imageData)
 
-    # run hotbar rendering and mouse interaction
-    for slot in player.hotbar:
+    # run hotbar rendering
+    for index, slot in enumerate(player.hotbar):
         item = slot["contents"]
+        currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
+
+        if index == player.hotbar[currentHotbarSlot]:
+            image = player.otherInventoryData["selectedSlotSurface"]
+            position = slot["selectedSlotRenderPosition"]
+            imageData = (image, position)
+
+            renderingData.append(imageData)
+
         if item != "empty":
             image = item.icon
+            position = slot["renderPosition"]
+            imageData = (image, position)
+
+            renderingData.append(imageData)
     
     # run mouse's held item rendering and interaction
     

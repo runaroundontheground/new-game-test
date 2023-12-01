@@ -193,6 +193,7 @@ class Player():
             "inventoryRect": inventoryRect,
             "hotbarSurface": hotbarSurface,
             "hotbarRect": hotbarRect,
+            "currentHotbarSlotSelected": 0, # id/index of the slot in the hotbar
             "itemIconShift": itemIconShift,
             "selectedSlotSurface": selectedSlotSurface,
             "open": False
@@ -442,12 +443,29 @@ class Player():
 
     def doInventoryThings(self):
         e = pygame.K_e
+
         # everything for player inventory goes here now, hooray
         if keysPressed[e]:
             if self.otherInventoryData["open"]:
                 self.otherInventoryData["open"] = False
             else:
                 self.otherInventoryData["open"] = True
+
+        def changeSelectedHotbarSlot(keyboardInput, slotId):
+            if keysPressed[keyboardInput]:
+                self.otherInventoryData["currentHotbarSlotSelected"] = slotId
+        # there's gotta be a way to do this in a loop with less code, but
+        # idk how to do that with the key codes so eh
+        changeSelectedHotbarSlot(pygame.K_1, 0)
+        changeSelectedHotbarSlot(pygame.K_2, 1)
+        changeSelectedHotbarSlot(pygame.K_3, 2)
+        changeSelectedHotbarSlot(pygame.K_4, 3)
+        changeSelectedHotbarSlot(pygame.K_5, 4)
+        changeSelectedHotbarSlot(pygame.K_6, 5)
+        changeSelectedHotbarSlot(pygame.K_7, 6)
+        changeSelectedHotbarSlot(pygame.K_8, 7)
+        changeSelectedHotbarSlot(pygame.K_9, 8)
+
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
