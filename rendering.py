@@ -358,7 +358,7 @@ def render(deltaTime):
         mouseInInventory = player.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
         mouseInHotbar = player.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
 
-        for slot in player.inventory:
+        for slotId, slot in enumerate(player.inventory):
             item = slot["contents"]
 
             if mouseInInventory:
@@ -369,6 +369,14 @@ def render(deltaTime):
                     imageData = (image, position)
 
                     renderingData.append(imageData)
+                    # interaction for moving around items and stuff
+                    if mouse.buttons["pressed"]["left"]:
+                        playerItem = player.inventory[slotId]["contents"]
+                        playerItemCount = player.inventory[slotId]["count"]
+                        player.inventory[slotId]["contents"] = mouse.heldItem["contents"]
+                        player.inventory[slotId]["count"] = mouse.heldItem["count"]
+                        mouse.heldItem["contents"] = playerItem
+                        mouse.heldItem["count"] = playerItemCount
             
             if item != "empty":
                 
@@ -377,7 +385,7 @@ def render(deltaTime):
                 imageData = (image, position)
 
                 renderingData.append(imageData)
-        for slot in player.hotbar:
+        for slotId, slot in enumerate(player.hotbar):
 
             if mouseInHotbar:
                 if slot["rect"].collidepoint(mouse.x, mouse.y):
@@ -386,6 +394,14 @@ def render(deltaTime):
                     imageData = (image, position)
 
                     renderingData.append(imageData)
+
+                    if mouse.buttons["pressed"]["left"]:
+                        playerItem = player.hotbar[slotId]["contents"]
+                        playerItemCount = player.hotbar[slotId]["count"]
+                        player.hotbar[slotId]["contents"] = mouse.heldItem["contents"]
+                        player.hotbar[slotId]["count"] = mouse.heldItem["count"]
+                        mouse.heldItem["contents"] = playerItem
+                        mouse.heldItem["count"] = playerItemCount
 
     # run hotbar rendering
     for index, slot in enumerate(player.hotbar):
@@ -400,14 +416,20 @@ def render(deltaTime):
             renderingData.append(imageData)
 
         if item != "empty":
-            image = item.icon
+            image = itemIcons[item.name]
             position = slot["renderPosition"]
             imageData = (image, position)
 
             renderingData.append(imageData)
     
-    # run mouse's held item rendering and interaction
+    # run mouse's held item rendering
     
+    if mouse.heldItem["contents"] != "empty":
+        image = itemIcons[mouse.heldItem["contents"].name]
+        position = (mouse.x + 5, mouse.y + 5)
+        imageData = (image, position)
+
+        renderingData.append(imageData)
     
     # debug rendering
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)

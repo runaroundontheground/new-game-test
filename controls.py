@@ -19,7 +19,7 @@ class Mouse():
         # needs to have these two in order to tranfer item data properly
         self.heldItem = {
             "contents": "empty",
-            "itemCount": 0
+            "count": 0
         }
 
         self.buttons = {
@@ -56,13 +56,13 @@ def updateMouseAndKeys():
     mouseButtons = pygame.mouse.get_pressed()
 
     if not mouse.buttons["left"]:
-        if not mouseButtons[0]:
+        if mouseButtons[0]:
             mouse.buttons["pressed"]["left"] = True
     if not mouse.buttons["middle"]:
-        if not mouseButtons[1]:
+        if mouseButtons[1]:
             mouse.buttons["pressed"]["middle"] = True
     if not mouse.buttons["right"]:
-        if not mouseButtons[2]:
+        if mouseButtons[2]:
             mouse.buttons["pressed"]["right"] = True
 
     mouse.buttons["left"] = mouseButtons[0]

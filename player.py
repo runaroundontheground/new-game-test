@@ -121,7 +121,7 @@ class Player():
 
         inventorySlot = {
             "contents": "empty", # this is where itemData goes
-            "itemCount": 0, # how many of x item is in this slot
+            "count": 0, # how many of x item is in this slot
             "renderPosition": (0, 0),
             "selectedSlotRenderPosition": (0, 0),
             "rect": pygame.Rect(0, 0, 0, 0) # used for mouse collision
@@ -466,6 +466,24 @@ class Player():
         changeSelectedHotbarSlot(pygame.K_8, 7)
         changeSelectedHotbarSlot(pygame.K_9, 8)
 
+        def hotbarHeldItemStuff():
+            if not self.otherInventoryData["open"]:
+                index = self.otherInventoryData["currentHotbarSlotSelected"]
+                slotData = self.hotbar[index]
+                item = slotData["contents"]
+
+                if item != "empty":
+                    if mouse.buttons["held"]["left"]:
+                        item.LMBHeldAction()
+                    if mouse.buttons["pressed"]["left"]:
+                        item.LMBPressedAction()
+                else:
+                    # no item in hand, break items with fist very slowly
+                    pass
+
+
+
+        hotbarHeldItemStuff()
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)

@@ -1,5 +1,6 @@
-from widelyUsedVariables import entities, items, chunks, listOfBlockItems
+from widelyUsedVariables import entities, items, chunks, listOfBlockItems, blockSize
 from worldgen import findBlock, getChunkCoord, getBlockCoord
+from controls import mouse
 
 
 
@@ -33,14 +34,30 @@ class PlaceableItem(Item):
         # if it doesn't exist, place nothing or air i guess
         self.placedItem = self.name
 
-    def placeItem(self, x, y, z):
-        
-        blockInPlacementSpot = findBlock(x, y, z, True)
-        print(blockInPlacementSpot)
-        chunkCoord = getChunkCoord(x, z)
-        blockCoord = getBlockCoord(x, y, z)
+    def placeItem(self):
 
-        chunks[chunkCoord]["data"][blockCoord] = self.placedItem
+        x = mouse.cameraRelativeX
+        y = mouse.selectedY * blockSize
+        z = mouse.cameraRelativeZ
+        
+        blockInPlacementSpot = findBlock(x, y, z)
+        
+        if not blockInPlacementSpot:
+            chunkCoord = getChunkCoord(x, z)
+            blockCoord = getBlockCoord(x, y, z)
+
+            chunks[chunkCoord]["data"][blockCoord] = self.placedItem
+
+    """
+    add an action for lmbheld, lmbpressed, and same for rmb, so that stuff automatically
+    happens there
+    """
+
+    def LMBHeldAction(self):
+        pass
+
+    def LMBPressedAction(self):
+        pass
 
         
 
