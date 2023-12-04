@@ -1,4 +1,5 @@
-from widelyUsedVariables import camera
+from worldgen import getBlockCoord, getChunkCoord, generateChunkTerrain
+from widelyUsedVariables import chunks
 import pygame
 pygame.display.init()
 keys = []
@@ -81,6 +82,22 @@ def updateMouseAndKeys():
     mouse.buttons["left"] = mouseButtons[0]
     mouse.buttons["middle"] = mouseButtons[1]
     mouse.buttons["right"] = mouseButtons[2]
+
+    x = mouse.cameraRelativeX
+    y = mouse.selectedY
+    z = mouse.cameraRelativeZ
+    chunkCoord = getChunkCoord(x, z)
+    blockCoord = getBlockCoord(x, y, z)
+    try:
+        chunks[chunkCoord]["data"][blockCoord]
+    except:
+        generateChunkTerrain(chunkCoord)
+    print(mouse.selectedY)
+    mouse.hoveredBlock["block"] = chunks[chunkCoord]["data"][blockCoord]
+    mouse.hoveredBlock["chunkCoord"] = chunkCoord
+    mouse.hoveredBlock["blockCoord"] = blockCoord
+    
+    
 
 
 

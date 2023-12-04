@@ -433,30 +433,29 @@ def render(deltaTime):
     # run mouse's held item rendering
     # also figure out selecting a block in the world, highlighting it, ect
     if not player.otherInventoryData["open"]:
-        # make stuff actually render over a block
         x = math.floor(mouse.cameraRelativeX / blockSize)
         z = math.floor(mouse.cameraRelativeZ / blockSize)
         x *= blockSize
         z *= blockSize
 
-        if x < player.x + player.horizontalBlockReach * blockSize:
-            if x > player.x - player.horizontalBlockReach * blockSize:
-                if z < player.z + player.horizontalBlockReach * blockSize:
-                    if z > player.z - player.horizontalBlockReach * blockSize:
+        if x < player.x + (player.horizontalBlockReach * blockSize):
+            if x > player.x - (player.horizontalBlockReach * blockSize):
+                if z < player.z + (player.horizontalBlockReach * blockSize):
+                    if z > player.z - (player.horizontalBlockReach * blockSize):
                         x -= camera.x
                         z -= camera.z
 
                         position = (x, z)
-                        block = findBlock(x, mouse.selectedY, z, True)
 
                         renderingData.append((blockHighlightSurface, position))
 
                         # do stuff so it displays the mouse's y selection and 
                         # the block that the mouse is theoretically currently
                         # selecting
+                        position = (mouse.x, mouse.y + blockSize * 1.5)
 
-                        convertTextToStrAndRender()
-
+                        convertTextToStrAndRender(mouse.hoveredBlock["block"], position, renderingData)
+                        #print(str(mouse.hoveredBlock))
 
 
     

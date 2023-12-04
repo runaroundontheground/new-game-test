@@ -1,7 +1,6 @@
 from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
 from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks
 from perlin_noise import PerlinNoise
-from controls import keysPressed
 import random
 import math
 
@@ -212,18 +211,15 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
     chunks[chunkCoord]["blocksUpdated"] = True    
 
 
-def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0), blockType = "air"):
+def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
     # this is what will fix rendering and stuff when the player breaks/places blocks
     # it's a smaller scale version of runblockupdatesaftergeneration
     # we'll see how this goes
     x = blockCoord[0]
     y = blockCoord[1]
     z = blockCoord[2]
-    block = {
-        "type": blockType,
-        "render": False,
-        "usesAlpha": False
-    }
+
+    block = chunks[chunkCoord]["data"][blockCoord]
 
     blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
     blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
@@ -260,7 +256,8 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
         if extraInfo:
             return {
                 "type": "air",
-                "render": False
+                "render": False,
+                "usesAlpha": False
             }
         return False
     try:
@@ -325,11 +322,11 @@ def getChunkCoord(x = 1, z = 1):
 
     return chunkCoord
 
-def getBlockCoord(x = 1, y = 1, z = 1):
+def getBlockCoord(xPos = 1, yPos = 1, zPos = 1):
     
-    x = math.floor(x / blockSize)
-    y = math.floor(y / blockSize)
-    z = math.floor(z / blockSize)
+    x = math.floor(xPos / blockSize)
+    y = math.floor(yPos / blockSize)
+    z = math.floor(zPos / blockSize)
 
     if x < 0:
         while x < 0:

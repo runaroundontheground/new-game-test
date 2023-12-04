@@ -41,18 +41,15 @@ class PlaceableItem(Item):
 
     def placeItem(self):
 
-        x = mouse.cameraRelativeX
-        y = mouse.selectedY
-        z = mouse.cameraRelativeZ
         
-        blockInPlacementSpot = findBlock(x, y, z)
-        print(blockInPlacementSpot)
         
-        if not blockInPlacementSpot:
-            chunkCoord = getChunkCoord(x, z)
-            blockCoord = getBlockCoord(x, y, z)
+        if mouse.hoveredBlock["block"]["type"] == "air":
+            chunkCoord = mouse.hoveredBlock["chunkCoord"]
+            blockCoord = mouse.hoveredBlock["blockCoord"]
 
-            smallScaleBlockUpdates(chunkCoord, blockCoord, self.placedBlock)
+            chunks[chunkCoord]["data"][blockCoord] = self.placedBlock
+
+            smallScaleBlockUpdates(chunkCoord, blockCoord)
 
 
 

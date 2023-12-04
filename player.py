@@ -1,6 +1,6 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize
-from widelyUsedVariables import screenWidth, screenHeight, items
-from worldgen import getChunkCoord, getBlockCoord, findBlock, smallScaleBlockUpdates
+from widelyUsedVariables import screenWidth, screenHeight
+from worldgen import getChunkCoord, getBlockCoord, findBlock
 from controls import keysPressed, keys, mouse
 import pygame, math
 
@@ -471,6 +471,7 @@ class Player():
                 mouse.selectedYChange -= 1
 
         mouse.selectedY += mouse.selectedYChange * blockSize
+        
 
         if mouse.selectedY <= 0:
             mouse.selectedY = blockSize
@@ -508,7 +509,6 @@ class Player():
 
                     if mouse.buttons["pressed"]["right"]:
                         item.RMBPressedAction()
-                        print("rmb pressed item use")
                     elif mouse.buttons["right"]:
                         item.RMBAction()
                 else:
