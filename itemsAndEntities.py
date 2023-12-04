@@ -1,5 +1,5 @@
 from widelyUsedVariables import entities, items, chunks, listOfBlockItems, blockSize
-from worldgen import findBlock, getChunkCoord, getBlockCoord
+from worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from controls import mouse
 from player import player
 
@@ -33,7 +33,11 @@ class PlaceableItem(Item):
         # the name of any item that can be placed MUST correspond to an existing block
         # otherwise, game will break (maybe add a check for if the block exists?)
         # if it doesn't exist, place nothing or air i guess
-        self.placedItem = self.name
+        self.placedBlock = {
+            "type": self.name,
+            "render": False,
+            "usesAlpha": False
+        }
 
     def placeItem(self):
 
@@ -42,12 +46,14 @@ class PlaceableItem(Item):
         z = mouse.cameraRelativeZ
         
         blockInPlacementSpot = findBlock(x, y, z)
+        print(blockInPlacementSpot)
         
         if not blockInPlacementSpot:
             chunkCoord = getChunkCoord(x, z)
             blockCoord = getBlockCoord(x, y, z)
 
-            chunks[chunkCoord]["data"][blockCoord] = self.placedItem
+            smallScaleBlockUpdates(chunkCoord, blockCoord, self.placedBlock)
+
 
 
     def LMBAction(self):
@@ -57,17 +63,11 @@ class PlaceableItem(Item):
         pass
 
     def RMBAction(self):
-        if player.timers["blockPlacement"] == 0:
-            self.placeItem()
-            player.timers["blockPlacement"] = 10
-        # automatic placement delay, no spamming w/o spamming click
+        pass
         
 
     def RMBPressedAction(self):
-        if player.timers["blockPlacement"] == 0:
-            self.placeItem()
-        # if you spam click, blocks are placed faster
-        player.timers["blockPlacement"] = 1
+        self.placeItem()
 
         
 

@@ -471,7 +471,7 @@ class Player():
                 mouse.selectedYChange -= 1
 
         mouse.selectedY += mouse.selectedYChange * blockSize
-        
+
         if mouse.selectedY <= 0:
             mouse.selectedY = blockSize
         if mouse.selectedY >= chunkSize[1]:
@@ -508,6 +508,7 @@ class Player():
 
                     if mouse.buttons["pressed"]["right"]:
                         item.RMBPressedAction()
+                        print("rmb pressed item use")
                     elif mouse.buttons["right"]:
                         item.RMBAction()
                 else:
@@ -524,6 +525,8 @@ class Player():
                 timerValue -= 1
             if timerValue < 0:
                 timerValue += 1
+            if timerValue != 0:
+                print(str(key) + " " + str(timerValue))
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)

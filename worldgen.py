@@ -8,6 +8,7 @@ import math
 noise = PerlinNoise(octaves = 0.5)
 
 
+
 structures = {
     "tree 1": {}
 }
@@ -211,12 +212,43 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
     chunks[chunkCoord]["blocksUpdated"] = True    
 
 
-def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
+def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0), blockType = "air"):
     # this is what will fix rendering and stuff when the player breaks/places blocks
     # it's a smaller scale version of runblockupdatesaftergeneration
     # we'll see how this goes
+    x = blockCoord[0]
+    y = blockCoord[1]
+    z = blockCoord[2]
+    block = {
+        "type": blockType,
+        "render": False,
+        "usesAlpha": False
+    }
+
+    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
+    blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
+    blockToRight = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
+    blockToLeft = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
+    blockToUp = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
+    blockToDown = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
     
-    pass
+    if not blockAbove:
+        block["render"] = True
+        if blockBelow:
+            # do things to the block under this one
+            thatBlock = chunks[chunkCoord]["data"][(x, y - 1, z)]
+            if thatBlock["usesAlpha"]:
+                block["usesAlpha"] = True
+                block["alphaValue"] = 200
+            else:
+                thatBlock["render"] = False
+                chunks[chunkCoord]["data"][(x, y - 1, z)] = thatBlock
+    # later, add some checks for blocks to the side that should be hidden, since
+    # there'd be no air blocks next to them
+    
+    
+
+    chunks[chunkCoord]["data"][blockCoord] = block
 
 
 def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):

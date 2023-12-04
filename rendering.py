@@ -1,13 +1,13 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
-from worldgen import generateChunkStructures, getBlockCoord
+from worldgen import generateChunkStructures, findBlock
 from widelyUsedVariables import camera, itemIcons
 from controls import mouse
 from player import player
 import pygame, math
 
-pygame.font.init()
+pygame.init()
 
 font = pygame.font.Font(size = 24)
 screen = pygame.display.set_mode((screenWidth, screenHeight))
@@ -24,16 +24,12 @@ blockImages = {
     "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
 }
 
-validBlockSelectorSurface = pygame.Surface((blockSize, blockSize))
-invalidBlockSelectorSurface = validBlockSelectorSurface.copy()
-rect = pygame.Rect(blockSize + 5, blockSize + 5, blockSize - 10, blockSize - 10)
-validBlockSelectorSurface.fill((0, 255, 0))
-validBlockSelectorSurface.fill((255, 255, 255), rect)
-validBlockSelectorSurface.set_colorkey((255, 255, 255))
+blockHighlightSurface = pygame.Surface((blockSize, blockSize))
+blockHighlightSurface.fill((255, 255, 0)) # yellow?
 
-invalidBlockSelectorSurface.fill((255, 0, 0))
-invalidBlockSelectorSurface.fill((255, 255, 255), rect)
-invalidBlockSelectorSurface.set_colorkey((255, 255, 255))
+rect = pygame.Rect(5, 5, blockSize - 10, blockSize - 10)
+blockHighlightSurface.fill((255, 255, 255), rect)
+blockHighlightSurface.set_colorkey((255, 255, 255))
 
 
 def addAnItemIcon():
@@ -444,15 +440,22 @@ def render(deltaTime):
         z *= blockSize
 
         if x < player.x + player.horizontalBlockReach * blockSize:
-            pass
-        # make checks so that it only renders the selection if it's within the player's
-        # interaction range
-        x -= camera.x
-        z -= camera.z
+            if x > player.x - player.horizontalBlockReach * blockSize:
+                if z < player.z + player.horizontalBlockReach * blockSize:
+                    if z > player.z - player.horizontalBlockReach * blockSize:
+                        x -= camera.x
+                        z -= camera.z
 
-        position = (x, z)
+                        position = (x, z)
+                        block = findBlock(x, mouse.selectedY, z, True)
 
-        renderingData.append((validBlockSelectorSurface, position))
+                        renderingData.append((blockHighlightSurface, position))
+
+                        # do stuff so it displays the mouse's y selection and 
+                        # the block that the mouse is theoretically currently
+                        # selecting
+
+                        convertTextToStrAndRender()
 
 
 
