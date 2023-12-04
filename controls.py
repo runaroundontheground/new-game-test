@@ -18,6 +18,8 @@ class Mouse():
         # block height for mining / placing
         self.selectedY = 0
         self.selectedYChange = 0
+        # detection for blocks and stuff
+        self.hoveredBlock = {}
 
         # needs to have these two in order to tranfer item data properly
         self.heldItem = {
@@ -79,6 +81,7 @@ def updateMouseAndKeys():
     mouse.buttons["left"] = mouseButtons[0]
     mouse.buttons["middle"] = mouseButtons[1]
     mouse.buttons["right"] = mouseButtons[2]
+
 
 
 

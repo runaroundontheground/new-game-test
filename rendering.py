@@ -1,11 +1,11 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
-from worldgen import generateChunkStructures
+from worldgen import generateChunkStructures, getBlockCoord
 from widelyUsedVariables import camera, itemIcons
 from controls import mouse
 from player import player
-import pygame
+import pygame, math
 
 pygame.font.init()
 
@@ -23,6 +23,18 @@ pygame.display.flip()
 blockImages = {
     "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
 }
+
+validBlockSelectorSurface = pygame.Surface((blockSize, blockSize))
+invalidBlockSelectorSurface = validBlockSelectorSurface.copy()
+rect = pygame.Rect(blockSize + 5, blockSize + 5, blockSize - 10, blockSize - 10)
+validBlockSelectorSurface.fill((0, 255, 0))
+validBlockSelectorSurface.fill((255, 255, 255), rect)
+validBlockSelectorSurface.set_colorkey((255, 255, 255))
+
+invalidBlockSelectorSurface.fill((255, 0, 0))
+invalidBlockSelectorSurface.fill((255, 255, 255), rect)
+invalidBlockSelectorSurface.set_colorkey((255, 255, 255))
+
 
 def addAnItemIcon():
     pass
@@ -91,7 +103,7 @@ addABlock("leaves", (29, 64, 17))
 
 
 
- # 
+
 characters = {}
 
 defaultTextColor = (255, 255, 255)
@@ -424,6 +436,26 @@ def render(deltaTime):
     
     # run mouse's held item rendering
     # also figure out selecting a block in the world, highlighting it, ect
+    if not player.otherInventoryData["open"]:
+        # make stuff actually render over a block
+        x = math.floor(mouse.cameraRelativeX / blockSize)
+        z = math.floor(mouse.cameraRelativeZ / blockSize)
+        x *= blockSize
+        z *= blockSize
+
+        if x < player.x + player.horizontalBlockReach * blockSize:
+            pass
+        # make checks so that it only renders the selection if it's within the player's
+        # interaction range
+        x -= camera.x
+        z -= camera.z
+
+        position = (x, z)
+
+        renderingData.append((validBlockSelectorSurface, position))
+
+
+
     
     if mouse.heldItem["contents"] != "empty":
         image = itemIcons[mouse.heldItem["contents"].name]
@@ -432,7 +464,8 @@ def render(deltaTime):
 
         renderingData.append(imageData)
     
-    # debug rendering
+
+    # debug things
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
     convertTextToStrAndRender(debugRenderingStuff, (100, 300), renderingData = renderingData)

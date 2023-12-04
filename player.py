@@ -471,6 +471,11 @@ class Player():
                 mouse.selectedYChange -= 1
 
         mouse.selectedY += mouse.selectedYChange * blockSize
+        
+        if mouse.selectedY <= 0:
+            mouse.selectedY = blockSize
+        if mouse.selectedY >= chunkSize[1]:
+            mouse.selectedY = chunkSize[1] - blockSize
 
         def changeSelectedHotbarSlot(keyboardInput, slotId):
             if keysPressed[keyboardInput]:
