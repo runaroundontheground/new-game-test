@@ -423,6 +423,7 @@ def render(deltaTime):
             renderingData.append(imageData)
     
     # run mouse's held item rendering
+    # also figure out selecting a block in the world, highlighting it, ect
     
     if mouse.heldItem["contents"] != "empty":
         image = itemIcons[mouse.heldItem["contents"].name]

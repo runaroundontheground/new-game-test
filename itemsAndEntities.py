@@ -1,6 +1,7 @@
 from widelyUsedVariables import entities, items, chunks, listOfBlockItems, blockSize
 from worldgen import findBlock, getChunkCoord, getBlockCoord
 from controls import mouse
+from player import player
 
 
 
@@ -37,7 +38,7 @@ class PlaceableItem(Item):
     def placeItem(self):
 
         x = mouse.cameraRelativeX
-        y = mouse.selectedY * blockSize
+        y = mouse.selectedY
         z = mouse.cameraRelativeZ
         
         blockInPlacementSpot = findBlock(x, y, z)
@@ -48,16 +49,25 @@ class PlaceableItem(Item):
 
             chunks[chunkCoord]["data"][blockCoord] = self.placedItem
 
-    """
-    add an action for lmbheld, lmbpressed, and same for rmb, so that stuff automatically
-    happens there
-    """
 
-    def LMBHeldAction(self):
+    def LMBAction(self):
         pass
 
     def LMBPressedAction(self):
         pass
+
+    def RMBAction(self):
+        if player.timers["blockPlacement"] == 0:
+            self.placeItem()
+            player.timers["blockPlacement"] = 10
+        # automatic placement delay, no spamming w/o spamming click
+        
+
+    def RMBPressedAction(self):
+        if player.timers["blockPlacement"] == 0:
+            self.placeItem()
+        # if you spam click, blocks are placed faster
+        player.timers["blockPlacement"] = 1
 
         
 

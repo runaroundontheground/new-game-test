@@ -15,6 +15,9 @@ class Mouse():
         self.cameraRelativeX = 0
         self.cameraRelativeZ = 0
         self.cameraRelativePos = (0, 0)
+        # block height for mining / placing
+        self.selectedY = 0
+        self.selectedYChange = 0
 
         # needs to have these two in order to tranfer item data properly
         self.heldItem = {
@@ -27,6 +30,11 @@ class Mouse():
             "middle": False,
             "right": False,
             "pressed": {
+                "left": False,
+                "middle": False,
+                "right": False
+            },
+            "held": {
                 "left": False,
                 "middle": False,
                 "right": False
@@ -53,14 +61,17 @@ def updateMouseAndKeys():
     mouse.buttons["pressed"]["middle"] = False
     mouse.buttons["pressed"]["right"] = False
 
+
     mouseButtons = pygame.mouse.get_pressed()
 
     if not mouse.buttons["left"]:
         if mouseButtons[0]:
             mouse.buttons["pressed"]["left"] = True
+
     if not mouse.buttons["middle"]:
         if mouseButtons[1]:
             mouse.buttons["pressed"]["middle"] = True
+
     if not mouse.buttons["right"]:
         if mouseButtons[2]:
             mouse.buttons["pressed"]["right"] = True

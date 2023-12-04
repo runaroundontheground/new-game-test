@@ -199,6 +199,14 @@ class Player():
             "open": False
         }
 
+        self.timers = {
+            # timer for how long to wait when holding RMB when placing blocks
+            "blockPlacement": 0
+        }
+        # x blocks up AND down of reach
+        self.verticalBlockReach = 3
+        self.horizontalBlockReach = 3
+
 
 
 
@@ -451,6 +459,19 @@ class Player():
             else:
                 self.otherInventoryData["open"] = True
 
+        # change the selected height of the mouse
+        mouse.selectedY = self.y
+
+        if keysPressed[pygame.K_PERIOD]:
+            if mouse.selectedYChange < self.verticalBlockReach:
+                mouse.selectedYChange += 1
+            
+        if keysPressed[pygame.K_COMMA]:
+            if mouse.selectedYChange > -self.verticalBlockReach:
+                mouse.selectedYChange -= 1
+
+        mouse.selectedY += mouse.selectedYChange * blockSize
+
         def changeSelectedHotbarSlot(keyboardInput, slotId):
             if keysPressed[keyboardInput]:
                 self.otherInventoryData["currentHotbarSlotSelected"] = slotId
@@ -473,10 +494,17 @@ class Player():
                 item = slotData["contents"]
 
                 if item != "empty":
-                    if mouse.buttons["held"]["left"]:
-                        item.LMBHeldAction()
+                    # also allow breaking items with fist speed, but
+                    # the item will have a breaking speed? or pickaxe power? ect
                     if mouse.buttons["pressed"]["left"]:
                         item.LMBPressedAction()
+                    elif mouse.buttons["left"]:
+                        item.LMBAction()
+
+                    if mouse.buttons["pressed"]["right"]:
+                        item.RMBPressedAction()
+                    elif mouse.buttons["right"]:
+                        item.RMBAction()
                 else:
                     # no item in hand, break items with fist very slowly
                     pass
@@ -484,6 +512,13 @@ class Player():
 
 
         hotbarHeldItemStuff()
+
+    def handleTimers(self):
+        for key, timerValue in self.timers.items():
+            if timerValue > 0:
+                timerValue -= 1
+            if timerValue < 0:
+                timerValue += 1
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
@@ -507,6 +542,8 @@ class Player():
         
         self.generalMovement(deltaTime)
         self.doInventoryThings()
+        
+        self.handleTimers()
         
         self.updateCamera()
         self.updateImageThings()
