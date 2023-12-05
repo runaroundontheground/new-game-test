@@ -1,6 +1,6 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize
-from widelyUsedVariables import screenWidth, screenHeight
-from worldgen import getChunkCoord, getBlockCoord, findBlock
+from widelyUsedVariables import screenWidth, screenHeight, chunks
+from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain
 from controls import keysPressed, keys, mouse
 import pygame, math
 
@@ -460,6 +460,21 @@ class Player():
                 self.otherInventoryData["open"] = True
 
         # change the selected height of the mouse
+        def updateMouseBecauseItDoesntWorkInControlsForSomeReason():
+            x = mouse.cameraRelativeX
+            y = mouse.selectedY
+            z = mouse.cameraRelativeZ
+            chunkCoord = getChunkCoord(x, z)
+            blockCoord = getBlockCoord(x, y, z)
+            try:
+                chunks[chunkCoord]["data"][blockCoord]
+            except:
+                generateChunkTerrain(chunkCoord)
+            mouse.hoveredBlock["block"] = chunks[chunkCoord]["data"][blockCoord]
+            mouse.hoveredBlock["chunkCoord"] = chunkCoord
+            mouse.hoveredBlock["blockCoord"] = blockCoord
+        updateMouseBecauseItDoesntWorkInControlsForSomeReason()
+
         mouse.selectedY = self.y
 
         if keysPressed[pygame.K_PERIOD]:
