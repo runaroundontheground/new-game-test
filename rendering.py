@@ -453,8 +453,8 @@ def render(deltaTime):
                         # the block that the mouse is theoretically currently
                         # selecting
                         position = (mouse.x, mouse.y + blockSize * 1.5)
-                        print(mouse.hoveredBlock["blockCoord"])
-                        convertTextToStrAndRender(mouse.hoveredBlock["block"], position, renderingData)
+                        
+                        convertTextToStrAndRender(mouse.hoveredBlock["block"]["type"], position, renderingData = renderingData)
                         
 
 

@@ -459,21 +459,6 @@ class Player():
             else:
                 self.otherInventoryData["open"] = True
 
-        
-        def updateMouseBecauseItDoesntWorkInControlsForSomeReason():
-            x = mouse.cameraRelativeX
-            y = mouse.selectedY
-            z = mouse.cameraRelativeZ
-            chunkCoord = getChunkCoord(x, z)
-            blockCoord = getBlockCoord(x, y, z)
-            try:
-                chunks[chunkCoord]["data"][blockCoord]
-            except:
-                generateChunkTerrain(chunkCoord)
-            mouse.hoveredBlock["block"] = chunks[chunkCoord]["data"][blockCoord]
-            mouse.hoveredBlock["chunkCoord"] = chunkCoord
-            mouse.hoveredBlock["blockCoord"] = blockCoord
-        updateMouseBecauseItDoesntWorkInControlsForSomeReason()
 
         # change the selected height of the mouse
         mouse.selectedY = self.y
@@ -491,8 +476,8 @@ class Player():
 
         if mouse.selectedY <= 0:
             mouse.selectedY = blockSize
-        if mouse.selectedY >= chunkSize[1]:
-            mouse.selectedY = chunkSize[1] - blockSize
+        if mouse.selectedY >= chunkSize[1] * blockSize:
+            mouse.selectedY = chunkSize[1] * (blockSize - 1)
 
         def changeSelectedHotbarSlot(keyboardInput, slotId):
             if keysPressed[keyboardInput]:
