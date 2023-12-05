@@ -459,7 +459,7 @@ class Player():
             else:
                 self.otherInventoryData["open"] = True
 
-        # change the selected height of the mouse
+        
         def updateMouseBecauseItDoesntWorkInControlsForSomeReason():
             x = mouse.cameraRelativeX
             y = mouse.selectedY
@@ -475,6 +475,7 @@ class Player():
             mouse.hoveredBlock["blockCoord"] = blockCoord
         updateMouseBecauseItDoesntWorkInControlsForSomeReason()
 
+        # change the selected height of the mouse
         mouse.selectedY = self.y
 
         if keysPressed[pygame.K_PERIOD]:

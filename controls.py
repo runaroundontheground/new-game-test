@@ -82,8 +82,6 @@ def updateMouseAndKeys():
     mouse.buttons["left"] = mouseButtons[0]
     mouse.buttons["middle"] = mouseButtons[1]
     mouse.buttons["right"] = mouseButtons[2]
-
-    
     
     
 
