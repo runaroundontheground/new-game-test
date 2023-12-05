@@ -354,7 +354,7 @@ def render(deltaTime):
     imageData = (image, position)
     renderingData.append(imageData)
         
-    # run inventory rendering and mouse interaction
+    # run inventory rendering
     if player.otherInventoryData["open"]:
         image = player.otherInventoryData["inventorySurface"]
         position = player.otherInventoryData["inventoryRenderPosition"]
@@ -362,62 +362,37 @@ def render(deltaTime):
 
         renderingData.append(imageData)
         
+        """
+        need a complete rework here, so that interaction is actually
+        handled in the player's code
+        get a bit of information from the player/mouse to render the
+        highlighted slot
+        from the mouse, get position for the selected slot
+        get positions from the player inside of this file
+        
+        render the selected slot surface
 
-        mouseInInventory = player.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
-        mouseInHotbar = player.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
-
+        check for inventory being open
         for slotId, slot in enumerate(player.inventory):
-            item = slot["contents"]
+            check the slot for items, then render the items if any
+            and their count if it's not 1
 
-            if mouseInInventory:
-                
-                if slot["rect"].collidepoint(mouse.x, mouse.y):
-                    position = slot["selectedSlotRenderPosition"]
-                    image = player.otherInventoryData["selectedSlotSurface"]
-                    imageData = (image, position)
+        
+        """
 
-                    renderingData.append(imageData)
-                    # interaction for moving around items and stuff
-                    if mouse.buttons["pressed"]["left"]:
-                        playerItem = player.inventory[slotId]["contents"]
-                        playerItemCount = player.inventory[slotId]["count"]
-                        player.inventory[slotId]["contents"] = mouse.heldItem["contents"]
-                        player.inventory[slotId]["count"] = mouse.heldItem["count"]
-                        mouse.heldItem["contents"] = playerItem
-                        mouse.heldItem["count"] = playerItemCount
-            
-            if item != "empty":
-                
-                image = itemIcons[item.name]
-                position = slot["renderPosition"]
-                imageData = (image, position)
-
-                renderingData.append(imageData)
-        for slotId, slot in enumerate(player.hotbar):
-
-            if mouseInHotbar:
-                if slot["rect"].collidepoint(mouse.x, mouse.y):
-                    position = slot["selectedSlotRenderPosition"]
-                    image = player.otherInventoryData["selectedSlotSurface"]
-                    imageData = (image, position)
-
-                    renderingData.append(imageData)
-
-                    if mouse.buttons["pressed"]["left"]:
-                        playerItem = player.hotbar[slotId]["contents"]
-                        playerItemCount = player.hotbar[slotId]["count"]
-                        player.hotbar[slotId]["contents"] = mouse.heldItem["contents"]
-                        player.hotbar[slotId]["count"] = mouse.heldItem["count"]
-                        mouse.heldItem["contents"] = playerItem
-                        mouse.heldItem["count"] = playerItemCount
+        
 
     # run hotbar rendering
     for index, slot in enumerate(player.hotbar):
+        """
+        player.otherInventoryData sepearated into that and also
+        player.inventoryRenderingData, update names to use that properly
+        """
         item = slot["contents"]
         currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
         
         if index == currentHotbarSlot:
-            image = player.otherInventoryData["selectedSlotSurface"]
+            image = player.inventoryRenderingData["selectedSlotSurface"]
             position = slot["selectedSlotRenderPosition"]
             imageData = (image, position)
 

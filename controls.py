@@ -22,6 +22,8 @@ class Mouse():
         # detection for blocks and stuff
         self.hoveredBlock = {}
 
+        self.inPlayerInventory = False
+        self.inPlayerHotbar = False
         # needs to have these two in order to tranfer item data properly
         self.heldItem = {
             "contents": "empty",

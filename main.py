@@ -15,6 +15,18 @@ FPS = 60
 """
 ok currently:
 
+order of doing stuff:
+    separate things from rendering into where they should go, like mouse interaction
+    with the inventory, that should go in player.py
+    display an item count in the bottom right corner of inv slots that have items
+    add/make sure item entities actually work and give player their 
+    make sure picking up the items can stack properly, and other stuff
+    once that's done ish
+    do the inventory looping when closing the inventory with something in 
+    mouse.helditem, because if the inv is full, can't place the item, so it has to
+    be dropped
+
+
 inventory:
     need to make it so that while looping through the player's inventory, it also
     sets the item in the slot to have the slotId of that slot, so that the item
@@ -30,6 +42,10 @@ inventory:
 add breaking/placing blocks
     placing blocks has been implemented, but you can't break them, and it doesn't
     track item count
+
+oh. welp, uhh dropped items and other entites need to be scaled based on
+height from the player and stuff
+that could be annoying
 
     
 
