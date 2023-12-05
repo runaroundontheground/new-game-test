@@ -452,12 +452,16 @@ class Player():
     def doInventoryThings(self):
         e = pygame.K_e
 
-        # everything for player inventory goes here now, hooray
+        # mostly for player inventory goes here now, hooray
         if keysPressed[e]:
             if self.otherInventoryData["open"]:
                 self.otherInventoryData["open"] = False
             else:
                 self.otherInventoryData["open"] = True
+
+        for slotId, slot in enumerate(self.inventory):
+            if slot["contents"] != "empty":
+                slot["contents"].slotId = slotId
 
 
         # change the selected height of the mouse

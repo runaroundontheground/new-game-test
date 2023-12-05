@@ -14,15 +14,13 @@ class Item():
     
     # drop/throw this item out as an entity
     def drop(self, x = 0, y = 0, z = 0, throwItem = False):
-        droppedItem = ItemEntity(self.itemData, x, y, z)
+        droppedItem = ItemEntity(self, x, y, z)
 
         entities.append(droppedItem)
         
         """
         TO DO:
-            on player's side, check for what the count of the item
-            is for this slot, if it's one when you drop it, set the slot contents
-            to "empty", otherwise just drop it and subtract one from the item count
+            from this side, remove an item using self's slotId
         """
 
 # an item that can be placed, like wood or something
@@ -82,9 +80,9 @@ class Entity():
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
-    def __init__(self, x, y, z, name = "air"):
+    def __init__(self, itemDataAsAnObject, x, y, z):
         super().__init__(x, y, z)
-        self.name = name
+        self = itemDataAsAnObject
 
     def runSelf(self):
         # all the logic for an item on the ground
