@@ -15,35 +15,22 @@ FPS = 60
 """
 ok currently:
 
-mouse interaction with inventory:
-    use a collidepoint with a rect that is the same size and pos as inventory
-    if that collides, then check for collision with rects for every slot
-    do the same thing for the hotbar, hotbar can only have stuff moved around
-    while the inventory is open
-
 inventory:
-    selected slot:
-        slot surface has been made
-
-        now for interaction of that:
-            when mouse over an slot in inventory, highlight it
-            also highlight the selected hotbar slot
-    rendering of the inventory (probably) works, now i have to add in mouse
-    functionality to the inventory, or possible using arrow keys to select a slot
-    and then pick up the item with space or something
+    need to make it so that while looping through the player's inventory, it also
+    sets the item in the slot to have the slotId of that slot, so that the item
+    can modify the player's inventory from the item code, instead of manual things
+    in the player's code
     in order to keep things from breaking, player can't jump while the inv is open
     if the player tries to close their inventory while there's an item in the cursor,
     copy minecraft's implementation:
         loop through hotbar, if any of the slots are empty, put it there, then break
         loop through inventory, if any slots are empty, put there, break
+    
 
 add breaking/placing blocks
-    idea for that
-    have a selector go on the mouse, or use arrow keys to select the block to break
-    use scroll wheel to change y level, maybe < or > for y level using keyboard
-    have a selector that 'frames' the blocks, maybe green if valid for break/place
-    red if not valid for those
-    should block swap exist: no
+    placing blocks has been implemented, but you can't break them, and it doesn't
+    track item count
+
     
 
 problem that can happen with current implementation of structure gen
