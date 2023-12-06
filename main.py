@@ -17,8 +17,7 @@ ok currently:
 
 to do list but in order:
     
-    
-    display an item count in the bottom right corner of inv slots that have items
+    figure out why alpha on the trees don't work sometimes
     make sure placing blocks actually removes 1 from the count
     add/make sure item entities actually work and give player their 
     make sure picking up the items can stack properly, and other stuff
@@ -26,18 +25,6 @@ to do list but in order:
     do the inventory looping when closing the inventory with something in 
     mouse.helditem, because if the inv is full, can't place the item, so it has to
     be dropped
-
-
-inventory:
-    need to make it so that while looping through the player's inventory, it also
-    sets the item in the slot to have the slotId of that slot, so that the item
-    can modify the player's inventory from the item code, instead of manual things
-    in the player's code
-    in order to keep things from breaking, player can't jump while the inv is open
-    if the player tries to close their inventory while there's an item in the cursor,
-    copy minecraft's implementation:
-        loop through hotbar, if any of the slots are empty, put it there, then break
-        loop through inventory, if any slots are empty, put there, break
     
 
 add breaking/placing blocks
@@ -96,7 +83,9 @@ def gameLoop():
     player.positionInSpawnArea()
     makeItemsExist()
     player.inventory[4]["contents"] = items["log"]
+    player.inventory[4]["count"] = 3
     player.inventory[9]["contents"] = items["grass"]
+    player.inventory[9]["count"] = 1
 
     while running:
         currentTime = time.time()

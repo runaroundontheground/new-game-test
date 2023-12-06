@@ -37,8 +37,8 @@ class PlaceableItem(Item):
     def placeItem(self):
 
         
-        
-        if mouse.hoveredBlock["block"]["type"] == "air":
+        blockType = mouse.hoveredBlock["block"]["type"]
+        if blockType == "air" or blockType == "water":
             chunkCoord = mouse.hoveredBlock["chunkCoord"]
             blockCoord = mouse.hoveredBlock["blockCoord"]
 

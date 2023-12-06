@@ -2,14 +2,13 @@ from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, block
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
-from widelyUsedVariables import camera, itemIcons
+from widelyUsedVariables import camera, itemIcons, font
 from controls import mouse
 from player import player
 import pygame, math
 
 pygame.init()
 
-font = pygame.font.Font(size = 24)
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 
@@ -136,8 +135,7 @@ def addMostCharacters():
         }
 addMostCharacters()
 
-def convertTextToStrAndRender(textValue, position, centeredOnPosition = False,
-                              renderingData = []):
+def convertTextToImageData(textValue, position, centeredOnPosition = False,):
     text = str(textValue)
 
     x = 0
@@ -165,7 +163,7 @@ def convertTextToStrAndRender(textValue, position, centeredOnPosition = False,
             x += characters[character]["size"][0]
         imageData = (temporarySurface, position)
         
-        renderingData.append(imageData)
+        return imageData
         
 
 def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
@@ -366,6 +364,14 @@ def render(deltaTime):
 
         renderingData.append(imageData)
 
+        if mouse.inPlayerInventory and mouse.inASlot:
+                image = player.inventoryRenderingData["selectedSlotSurface"]
+                slot = player.inventory[mouse.hoveredSlotId]
+                position = slot["selectedSlotRenderPosition"]
+                
+                imageData = (image, position)
+                renderingData.append(imageData)
+
         for slot in player.inventory:
             if slot["contents"] != "empty":
                 image = itemIcons[slot["contents"].name]
@@ -374,13 +380,11 @@ def render(deltaTime):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
-        if mouse.inPlayerInventory and mouse.inASlot:
-                image = player.inventoryRenderingData["selectedSlotSurface"]
-                slot = player.inventory[mouse.hoveredSlotId]
-                position = slot["selectedSlotRenderPosition"]
-                
-                imageData = (image, position)
-                renderingData.append(imageData)
+                if slot["count"] > 1:
+                    imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                    renderingData.append(imageData)
+
+        
             
         
 
@@ -414,6 +418,10 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
+            if slot["count"] > 1:
+                imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                renderingData.append(imageData)
+
     
     # run mouse's held item rendering
     # also figure out selecting a block in the world, highlighting it, ect
@@ -439,7 +447,8 @@ def render(deltaTime):
                         # selecting
                         position = (mouse.x, mouse.y + blockSize * 1.5)
                         
-                        convertTextToStrAndRender(mouse.hoveredBlock["block"]["type"], position, renderingData = renderingData)
+                        imageData = convertTextToImageData(mouse.hoveredBlock["block"]["type"], position)
+                        renderingData.append(imageData)
                         
 
 
@@ -455,7 +464,8 @@ def render(deltaTime):
     # debug things
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
-    convertTextToStrAndRender(debugRenderingStuff, (100, 300), renderingData = renderingData)
+    imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
+    renderingData.append(imageData)
 
     screen.blits(renderingData)
 

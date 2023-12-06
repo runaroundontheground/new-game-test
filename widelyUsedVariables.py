@@ -1,7 +1,10 @@
 import pygame, math
 pygame.display.init()
+pygame.font.init()
 
 screenWidth, screenHeight = 1000, 500
+
+font = pygame.font.Font(size = 24)
 
 blockSize = 30 # pixels
 chunkSize = (10, 30) # width or length, then height (both in blocks)

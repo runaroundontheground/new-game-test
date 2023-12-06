@@ -1,5 +1,5 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize, maxStackSize
-from widelyUsedVariables import screenWidth, screenHeight, chunks
+from widelyUsedVariables import screenWidth, screenHeight, chunks, font
 from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain
 from controls import keysPressed, keys, mouse
 import pygame, math
@@ -124,6 +124,7 @@ class Player():
             "count": 0, # how many of x item is in this slot
             "renderPosition": (0, 0),
             "selectedSlotRenderPosition": (0, 0),
+            "itemCountRenderPosition": (0, 0),
             "rect": pygame.Rect(0, 0, 0, 0) # used for mouse collision
         }
         
@@ -144,8 +145,11 @@ class Player():
                 rectY = renderY - itemIconShift
 
                 updatedInventorySlot = inventorySlot.copy()
+                
+                fontShift = font.size("1")
 
                 updatedInventorySlot["renderPosition"] = (renderX, renderY)
+                updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
                 updatedInventorySlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots,
                                                                       rectY - gapBetweenSlots)
                 updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
@@ -167,9 +171,12 @@ class Player():
             rectX = renderX - itemIconShift
             rectY = renderY - itemIconShift
 
+            fontShift = font.size("1")
+
             updatedInventorySlot = inventorySlot.copy()
 
             updatedInventorySlot["renderPosition"] = (renderX, renderY)
+            updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
             updatedInventorySlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots,
                                                                   rectY - gapBetweenSlots)
             updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
