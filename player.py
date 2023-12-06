@@ -542,7 +542,7 @@ class Player():
                             # communicate rendering information via the mouse
                             # to rendering
                             mouse.hoveredSlotId = slotId
-
+                            mouse.inASlot = True
                             # interaction for moving around items and stuff
                             if mouse.buttons["pressed"]["left"]:
                                 mouseItem = mouse.heldItem["contents"]
@@ -551,30 +551,26 @@ class Player():
                                 mouse.heldItem["contents"] = item
                                 mouse.heldItem["count"] = slot["count"]
 
-                                self.inventory[slotId]["contents"] = mouseItem
-                                self.inventory[slotId]["count"] = mouseCount
+                                slot["contents"] = mouseItem
+                                slot["count"] = mouseCount
                 
                 if mouse.inPlayerHotbar:
                     for slotId, slot in enumerate(self.hotbar):
-
+                        item = slot["contents"]
                         if slot["rect"].collidepoint(mouse.x, mouse.y):
                             # info for rendering stuff
-                            mouse.hoveredSlotRenderingData = {
-                                "itemIconRenderPosition": slot["renderPosition"],
-                                "selectedSlotRenderPosition": slot["selectedSlotRenderPosition"],
-                                "itemIconAccessData": item.name
-                            }
+                            mouse.hoveredSlotId = slotId
+                            mouse.inASlot = True
                             # interaction for hotbar and mouse stuff
-                            """
-                            rename stuff here to follow conventions of above
-                            """
                             if mouse.buttons["pressed"]["left"]:
-                                playerItem = self.hotbar[slotId]["contents"]
-                                playerItemCount = self.hotbar[slotId]["count"]
-                                self.hotbar[slotId]["contents"] = mouse.heldItem["contents"]
-                                self.hotbar[slotId]["count"] = mouse.heldItem["count"]
-                                mouse.heldItem["contents"] = playerItem
-                                mouse.heldItem["count"] = playerItemCount
+                                mouseItem = mouse.heldItem["contents"]
+                                mouseCount = mouse.heldItem["count"]
+
+                                mouse.heldItem["contents"] = item
+                                mouse.heldItem["count"] = slot["count"]
+
+                                slot["contents"] = mouseItem
+                                slot["count"] = mouseCount
                     
 
         mouseInteractionWithInventory()        

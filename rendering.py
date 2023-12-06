@@ -372,13 +372,15 @@ def render(deltaTime):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
-        image = player.inventoryRenderingData["selectedSlotSurface"]
-        slot = player.inventory[mouse.hoveredSlotId]
-        position = slot["selectedSlotRenderPosition"]
-        
-        imageData = (image, position)
-        renderingData.append(imageData)
-        
+        if mouse.inPlayerInventory:
+            if mouse.inASlot:
+                image = player.inventoryRenderingData["selectedSlotSurface"]
+                slot = player.inventory[mouse.hoveredSlotId]
+                position = slot["selectedSlotRenderPosition"]
+                
+                imageData = (image, position)
+                renderingData.append(imageData)
+            
         
 
         
@@ -404,7 +406,9 @@ def render(deltaTime):
             renderingData.append(imageData)
 
         if player.otherInventoryData["open"]:
-            pass
+            if mouse.inPlayerHotbar:
+                if mouse.inASlot:
+                    pass
             # highlight the slot, need to add checks on player's side to get the 
             # mouse hovered slotId, and if it's hotbar or inventory
     
