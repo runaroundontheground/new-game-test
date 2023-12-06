@@ -15,7 +15,7 @@ FPS = 60
 """
 ok currently:
 
-order of doing stuff:
+to do list but in order:
     separate things from rendering into where they should go, like mouse interaction
     with the inventory, that should go in player.py
     add shift clicking

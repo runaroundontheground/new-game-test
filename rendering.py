@@ -336,9 +336,7 @@ def render(deltaTime):
 
 
         
-    # append blocks to rendering
-    for y in range(chunkSize[1]):
-        renderingData += blocks[y]
+    
 
     # add player to rendering
     if player.blockCoord[1] < chunkSize[1]:
@@ -349,6 +347,10 @@ def render(deltaTime):
     # add entities to rendering
     #for entity in entities:
     #    blocks[entity.blockCoord[1]].append(entity.imageData)
+
+    # add blocks to rendering
+    for y in range(chunkSize[1]):
+        renderingData += blocks[y]
        
 
     image = player.inventoryRenderingData["hotbarSurface"]
@@ -386,31 +388,33 @@ def render(deltaTime):
         
 
     # run hotbar rendering
-    for index, slot in enumerate(player.hotbar):
+    for slotId, slot in enumerate(player.hotbar):
         
         item = slot["contents"]
         currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
         
-        if index == currentHotbarSlot:
+        if slotId == currentHotbarSlot:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             position = slot["selectedSlotRenderPosition"]
-            imageData = (image, position)
 
+            imageData = (image, position)
             renderingData.append(imageData)
 
         if item != "empty":
             image = itemIcons[item.name]
             position = slot["renderPosition"]
-            imageData = (image, position)
 
+            imageData = (image, position)
             renderingData.append(imageData)
 
         if player.otherInventoryData["open"]:
             if mouse.inPlayerHotbar:
                 if mouse.inASlot:
-                    pass
-            # highlight the slot, need to add checks on player's side to get the 
-            # mouse hovered slotId, and if it's hotbar or inventory
+                    image = player.inventoryRenderingData["selectedSlotSurface"]
+                    position = slot["selectedSlotRenderPosition"]
+
+                    imageData = (image, position)
+                    renderingData.append(imageData)
     
     # run mouse's held item rendering
     # also figure out selecting a block in the world, highlighting it, ect
