@@ -1,4 +1,4 @@
-from widelyUsedVariables import camera, blockSize, gravity, chunkSize
+from widelyUsedVariables import camera, blockSize, gravity, chunkSize, maxStackSize
 from widelyUsedVariables import screenWidth, screenHeight, chunks
 from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain
 from controls import keysPressed, keys, mouse
@@ -528,6 +528,7 @@ class Player():
         def mouseInteractionWithInventory():
             mouse.inPlayerInventory = False
             mouse.inPlayerHotbar = False
+            mouse.inASlot = False
 
 
             if self.otherInventoryData["open"]:
@@ -545,32 +546,97 @@ class Player():
                             mouse.inASlot = True
                             # interaction for moving around items and stuff
                             if mouse.buttons["pressed"]["left"]:
-                                mouseItem = mouse.heldItem["contents"]
-                                mouseCount = mouse.heldItem["count"]
+                                if keys[0][pygame.K_LSHIFT] and item != "empty":
+                                    movingItem = item
+                                    movingCount = slot["count"]
+                                    
+                                    movingHasBeenDone = False
 
-                                mouse.heldItem["contents"] = item
-                                mouse.heldItem["count"] = slot["count"]
+                                    for hotbarSlot in self.hotbar:
+                                        if hotbarSlot["contents"] == item:
+                                            addedCount = movingCount + hotbarSlot["count"]
+                                            if addedCount <= maxStackSize:
 
-                                slot["contents"] = mouseItem
-                                slot["count"] = mouseCount
+                                                slot["count"] = 0
+                                                slot["contents"] = "empty"
+
+                                                hotbarSlot["count"] = addedCount
+                                                hotbarSlot["contents"] = movingItem
+
+                                                movingHasBeenDone = True
+                                                break
+                                            # may add putting extra stuff
+                                                
+                                    if not movingHasBeenDone:
+                                        for hotbarSlot in self.hotbar:
+                                            if hotbarSlot["contents"] == "empty":
+
+                                                hotbarSlot["contents"] = movingItem
+                                                hotbarSlot["count"] = movingCount
+
+                                                slot["contents"] = "empty"
+                                                slot["count"] = 0
+                                                break
+                                else:
+                                    mouseItem = mouse.heldItem["contents"]
+                                    mouseCount = mouse.heldItem["count"]
+
+                                    mouse.heldItem["contents"] = item
+                                    mouse.heldItem["count"] = slot["count"]
+
+                                    slot["contents"] = mouseItem
+                                    slot["count"] = mouseCount
                 
                 if mouse.inPlayerHotbar:
                     for slotId, slot in enumerate(self.hotbar):
                         item = slot["contents"]
+
                         if slot["rect"].collidepoint(mouse.x, mouse.y):
                             # info for rendering stuff
                             mouse.hoveredSlotId = slotId
                             mouse.inASlot = True
                             # interaction for hotbar and mouse stuff
                             if mouse.buttons["pressed"]["left"]:
-                                mouseItem = mouse.heldItem["contents"]
-                                mouseCount = mouse.heldItem["count"]
+                                if keys[0][pygame.K_LSHIFT] and item != "empty":
+                                    movingItem = item
+                                    movingCount = slot["count"]
+                                    
+                                    movingHasBeenDone = False
 
-                                mouse.heldItem["contents"] = item
-                                mouse.heldItem["count"] = slot["count"]
+                                    for inventorySlot in self.inventory:
+                                        if inventorySlot["contents"] == item:
+                                            addedCount = movingCount + inventorySlot["count"]
+                                            if addedCount <= maxStackSize:
 
-                                slot["contents"] = mouseItem
-                                slot["count"] = mouseCount
+                                                inventorySlot["count"] = addedCount
+                                                inventorySlot["contents"] = movingItem
+                                                
+                                                slot["count"] = 0
+                                                slot["contents"] = "empty"
+
+                                                movingHasBeenDone = True
+                                                break
+                                            # may add putting extra stuff
+                                                
+                                    if not movingHasBeenDone:
+                                        for inventorySlot in self.inventory:
+                                            if inventorySlot["contents"] == "empty":
+
+                                                inventorySlot["contents"] = movingItem
+                                                inventorySlot["count"] = movingCount
+
+                                                slot["contents"] = "empty"
+                                                slot["count"] = 0
+                                                break
+                                else:
+                                    mouseItem = mouse.heldItem["contents"]
+                                    mouseCount = mouse.heldItem["count"]
+
+                                    mouse.heldItem["contents"] = item
+                                    mouse.heldItem["count"] = slot["count"]
+
+                                    slot["contents"] = mouseItem
+                                    slot["count"] = mouseCount
                     
 
         mouseInteractionWithInventory()        

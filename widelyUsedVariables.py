@@ -28,6 +28,8 @@ entities = []
 items = {}
 itemIcons = {}
 
+maxStackSize = 64
+
 listOfBlockItems = [
     "air", "grass", "dirt", "snowy dirt", "stone", "snowy stone", "sand",
     "clay", "gravel", "water", "bedrock", "log", "leaves"

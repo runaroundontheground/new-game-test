@@ -16,10 +16,10 @@ FPS = 60
 ok currently:
 
 to do list but in order:
-    separate things from rendering into where they should go, like mouse interaction
-    with the inventory, that should go in player.py
-    add shift clicking
+    
+    
     display an item count in the bottom right corner of inv slots that have items
+    make sure placing blocks actually removes 1 from the count
     add/make sure item entities actually work and give player their 
     make sure picking up the items can stack properly, and other stuff
     once that's done ish

@@ -374,8 +374,7 @@ def render(deltaTime):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
-        if mouse.inPlayerInventory:
-            if mouse.inASlot:
+        if mouse.inPlayerInventory and mouse.inASlot:
                 image = player.inventoryRenderingData["selectedSlotSurface"]
                 slot = player.inventory[mouse.hoveredSlotId]
                 position = slot["selectedSlotRenderPosition"]
@@ -392,13 +391,21 @@ def render(deltaTime):
         
         item = slot["contents"]
         currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
-        
+
+    
         if slotId == currentHotbarSlot:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             position = slot["selectedSlotRenderPosition"]
 
             imageData = (image, position)
             renderingData.append(imageData)
+
+            if mouse.inPlayerHotbar and mouse.inASlot:
+                image = player.inventoryRenderingData["selectedSlotSurface"]
+                position = player.hotbar[mouse.hoveredSlotId]["selectedSlotRenderPosition"]
+
+                imageData = (image, position)
+                renderingData.append(imageData)
 
         if item != "empty":
             image = itemIcons[item.name]
@@ -407,14 +414,6 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
-        if player.otherInventoryData["open"]:
-            if mouse.inPlayerHotbar:
-                if mouse.inASlot:
-                    image = player.inventoryRenderingData["selectedSlotSurface"]
-                    position = slot["selectedSlotRenderPosition"]
-
-                    imageData = (image, position)
-                    renderingData.append(imageData)
     
     # run mouse's held item rendering
     # also figure out selecting a block in the world, highlighting it, ect
