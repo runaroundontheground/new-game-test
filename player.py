@@ -191,11 +191,11 @@ class Player():
             "inventorySurface": inventorySurface,
             "hotbarSurface": hotbarSurface,
             "itemIconShift": itemIconShift,
+            "slotSize": slotSizeInPixels,
             "selectedSlotSurface": selectedSlotSurface
         }
 
         self.otherInventoryData = {
-            "slotSize": slotSizeInPixels,
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
             "currentHotbarSlotSelected": 0, # id/index of the slot in the hotbar
@@ -541,11 +541,7 @@ class Player():
                         if slot["rect"].collidepoint(mouse.x, mouse.y):
                             # communicate rendering information via the mouse
                             # to rendering
-                            mouse.hoveredSlotRenderingData = {
-                                "itemIconRenderPosition": slot["renderPosition"],
-                                "selectedSlotRenderPosition": slot["selectedSlotRenderPosition"],
-                                "itemIconAccessData": item.name
-                            }
+                            mouse.hoveredSlotId = slotId
 
                             # interaction for moving around items and stuff
                             if mouse.buttons["pressed"]["left"]:

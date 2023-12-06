@@ -1,5 +1,5 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
-from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks
+from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
 from widelyUsedVariables import camera, itemIcons
@@ -73,10 +73,10 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
 
     # adding item icons for blocks specifically
 
-    slotSize = player.otherInventoryData["slotSize"]
+    slotSize = player.inventoryRenderingData["slotSize"]
     blockIcon = block.copy()
     # definitely a very short variable name lol
-    targetSize = slotSize - player.otherInventoryData["itemIconShift"] * 2
+    targetSize = slotSize - player.inventoryRenderingData["itemIconShift"] * 2
 
     scale = abs(targetSize / blockSize)
 
@@ -334,60 +334,58 @@ def render(deltaTime):
 
     renderingData = []
 
-    # do special player things for rendering
-    # inventory, player itself, whatever
-    playerAddedToRendering = False
-    for listOfBlocksIndex in range(chunkSize[1]):
 
-        if not playerAddedToRendering:
-            if player.blockCoord[1] == listOfBlocksIndex:
-                playerAddedToRendering = True
-                blocks[listOfBlocksIndex].append(player.imageData)
+        
+    # append blocks to rendering
+    for y in range(chunkSize[1]):
+        renderingData += blocks[y]
 
-        renderingData += blocks[listOfBlocksIndex]
-
-    if not playerAddedToRendering:
+    # add player to rendering
+    if player.blockCoord[1] < chunkSize[1]:
+        blocks[player.blockCoord[1]].append(player.imageData)
+    else:
         renderingData.append(player.imageData)
 
-    image = player.otherInventoryData["hotbarSurface"]
-    position = player.otherInventoryData["hotbarRenderPosition"]
+    # add entities to rendering
+    #for entity in entities:
+    #    blocks[entity.blockCoord[1]].append(entity.imageData)
+       
+
+    image = player.inventoryRenderingData["hotbarSurface"]
+    position = player.inventoryRenderingData["hotbarRenderPosition"]
     imageData = (image, position)
     renderingData.append(imageData)
         
     # run inventory rendering
     if player.otherInventoryData["open"]:
-        image = player.otherInventoryData["inventorySurface"]
-        position = player.otherInventoryData["inventoryRenderPosition"]
+        image = player.inventoryRenderingData["inventorySurface"]
+        position = player.inventoryRenderingData["inventoryRenderPosition"]
         imageData = (image, position)
 
         renderingData.append(imageData)
-        
-        """
-        need a complete rework here, so that interaction is actually
-        handled in the player's code
-        get a bit of information from the player/mouse to render the
-        highlighted slot
-        from the mouse, get position for the selected slot
-        get positions from the player inside of this file
-        
-        render the selected slot surface
 
-        check for inventory being open
-        for slotId, slot in enumerate(player.inventory):
-            check the slot for items, then render the items if any
-            and their count if it's not 1
+        for slot in player.inventory:
+            if slot["contents"] != "empty":
+                image = itemIcons[slot["contents"].name]
+                position = slot["renderPosition"]
 
+                imageData = (image, position)
+                renderingData.append(imageData)
+
+        image = player.inventoryRenderingData["selectedSlotSurface"]
+        slot = player.inventory[mouse.hoveredSlotId]
+        position = slot["selectedSlotRenderPosition"]
         
-        """
+        imageData = (image, position)
+        renderingData.append(imageData)
+        
+        
 
         
 
     # run hotbar rendering
     for index, slot in enumerate(player.hotbar):
-        """
-        player.otherInventoryData sepearated into that and also
-        player.inventoryRenderingData, update names to use that properly
-        """
+        
         item = slot["contents"]
         currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
         
@@ -404,6 +402,11 @@ def render(deltaTime):
             imageData = (image, position)
 
             renderingData.append(imageData)
+
+        if player.otherInventoryData["open"]:
+            pass
+            # highlight the slot, need to add checks on player's side to get the 
+            # mouse hovered slotId, and if it's hotbar or inventory
     
     # run mouse's held item rendering
     # also figure out selecting a block in the world, highlighting it, ect

@@ -21,6 +21,7 @@ class Mouse():
         self.selectedYChange = 0
         # detection for blocks and stuff
         self.hoveredBlock = {}
+        self.hoveredSlotId = 0
 
         self.inPlayerInventory = False
         self.inPlayerHotbar = False
