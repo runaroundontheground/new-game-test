@@ -283,7 +283,7 @@ def render(deltaTime):
 
                         thisBlockHasAlpha = False
                         
-                        if block["usesAlpha"]:
+                        if block["alphaValue"] != 0:
                             if player.blockCoord[1] <= y:
                                 fiveBlocks = 5 * blockSize
                                 if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:

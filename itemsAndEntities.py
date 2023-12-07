@@ -31,7 +31,7 @@ class PlaceableItem(Item):
         self.placedBlock = {
             "type": self.name,
             "render": False,
-            "usesAlpha": False
+            "alphaValue": 0
         }
 
     def placeItem(self):

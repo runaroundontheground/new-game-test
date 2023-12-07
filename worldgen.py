@@ -31,7 +31,7 @@ def fixStructuresData():
         for key, block in structures[structureName].items():
             
             structures[structureName][key]["render"] = False
-            structures[structureName][key]["usesAlpha"] = False
+            structures[structureName][key]["alphaValue"] = 0
 fixStructuresData()
 
 
@@ -48,7 +48,7 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
                     blockData = {
                         "type": "air",
                         "render": False,
-                        "usesAlpha": False
+                        "alphaValue": 0
                     }
                     
                     noiseCoordinate = [x, z]
@@ -164,7 +164,6 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
                         generateStructure("tree 1", blockCoord)
     chunks[inputChunkCoord]["structuresGenerated"] = True
 
-
 def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
 
     for x in range(chunkSize[0]):
@@ -173,93 +172,147 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                 block = chunks[chunkCoord]["data"][(x, y, z)]
                 if block["type"] != "air":
                     
-                    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
-                    if not blockAbove:
+                    def checkForSolidBlock(block):
+                        if block["type"] != "water":
+                            return True
+                        return False
+
+                    blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                    blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                    blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                    blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                    blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord)
+                    blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord)
+
+                    above = checkForSolidBlock(blockAbove)
+                    below = checkForSolidBlock(blockBelow)
+                    toRight = checkForSolidBlock(blockToRight)
+                    toLeft = checkForSolidBlock(blockToLeft)
+                    toUp = checkForSolidBlock(blockToUp)
+                    toDown = checkForSolidBlock(blockToDown)
+                    surrounded = False
+                    if toRight and toLeft and toUp and toDown:
+                        surrounded = True
+
+                    def setAlpha(alphaValue):
+                        block["alphaValue"] = alphaValue
                         block["render"] = True
-                        if y != 0:
-                            blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
-                            if blockBelowThisOne["usesAlpha"]:
-                                block["usesAlpha"] = True
-                                block["alphaValue"] = 250
                     
-                    else: # there is a block above current one
-                    
-                        blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
-                        if not blockBelow:
-                            if y != 0:
-                                block["render"] = True
-                                block["usesAlpha"] = True
-                                block["alphaValue"] = 200
-                        
-                        else: # there is a block below current one
-                            topSide = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
-                            rightSide = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
-                            bottomSide = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
-                            leftSide = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
-                            surrounded = False
-                            if topSide and rightSide and leftSide and bottomSide:
-                                surrounded = True
+                    if above: # there's a block above this one
+                        if below: # there's a block below this one
+                            if blockBelow["alphaValue"] != 0:
+                                setAlpha(250)
                             if not surrounded:
-                                # current block has at least 1 air block next to it
                                 block["render"] = True
-                                blockBelowThisOne = chunks[chunkCoord]["data"][(x, y - 1, z)]
-                                if blockBelowThisOne["usesAlpha"]:
-                                    block["usesAlpha"] = True
-                                    block["alphaValue"] = 250
+                        else: # no block below this one
+                            setAlpha(100)
+                    else: # there's no block above this one
+                        block["render"] = True
+                        if below: # there's a block under this one
+                            if blockBelow["alphaValue"] != 0:
+                                setAlpha(250)
+                        
+
+
+                    
+
+                    chunks[chunkCoord]["data"][(x, y, z)] = block
                             
                     
     chunks[chunkCoord]["blocksUpdated"] = True    
 
-
 def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
-    # this is what will fix rendering and stuff when the player breaks/places blocks
-    # it's a smaller scale version of runblockupdatesaftergeneration
-    # we'll see how this goes
+   
     x = blockCoord[0]
     y = blockCoord[1]
     z = blockCoord[2]
 
     block = chunks[chunkCoord]["data"][blockCoord]
 
-    blockAbove = findBlockWithEasyCoordinates(x, y + 1, z, chunkCoord)
-    blockBelow = findBlockWithEasyCoordinates(x, y - 1, z, chunkCoord)
-    blockToRight = findBlockWithEasyCoordinates(x + 1, y, z, chunkCoord)
-    blockToLeft = findBlockWithEasyCoordinates(x - 1, y, z, chunkCoord)
-    blockToUp = findBlockWithEasyCoordinates(x, y, z - 1, chunkCoord)
-    blockToDown = findBlockWithEasyCoordinates(x, y, z + 1, chunkCoord)
-    
-    if not blockAbove:
+    def checkForSolidBlock(block):
+        if block["type"] != "water":
+            return True
+        return False
+
+    blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
+    blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
+    blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
+    blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
+    blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord)
+    blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord)
+
+    above = checkForSolidBlock(blockAbove)
+    below = checkForSolidBlock(blockBelow)
+    toRight = checkForSolidBlock(blockToRight)
+    toLeft = checkForSolidBlock(blockToLeft)
+    toUp = checkForSolidBlock(blockToUp)
+    toDown = checkForSolidBlock(blockToDown)
+    surrounded = False
+    if toRight and toLeft and toUp and toDown:
+        surrounded = True
+
+    def setAlpha(alphaValue):
+        block["alphaValue"] = alphaValue
         block["render"] = True
-        if blockBelow:
-            # do things to the block under this one
-            thatBlock = chunks[chunkCoord]["data"][(x, y - 1, z)]
-            if thatBlock["usesAlpha"]:
-                block["usesAlpha"] = True
-                block["alphaValue"] = 200
-            else:
-                thatBlock["render"] = False
-                chunks[chunkCoord]["data"][(x, y - 1, z)] = thatBlock
-    # later, add some checks for blocks to the side that should be hidden, since
-    # there'd be no air blocks next to them
+    
+    def modifyOtherBlock(x, y, z, render = False, alphaValue = 0):
+        pass
+
+    if above: # there's a block above this one
+        if below: # there's a block below this one
+            if blockBelow["alphaValue"] != 0:
+                setAlpha(250)
+            if not surrounded:
+                block["render"] = True
+        else: # no block below this one
+            setAlpha(100)
+    else: # there's no block above this one
+        block["render"] = True
+        if below: # there's a block under this one
+            if blockBelow["alphaValue"] != 0:
+                setAlpha(250)
     
     
 
     chunks[chunkCoord]["data"][blockCoord] = block
 
+def findBlock(xPos, yPos, zPos, extraInfo = False, ignoreWater = False, 
+              chunkCoordInput = None):
+    
+    if chunkCoordInput != None:
+        x = xPos
+        y = yPos
+        z = zPos
+    
+        chunkX = chunkCoordInput[0]
+        chunkZ = chunkCoordInput[1]
+        
+        while x >= chunkSize[0]:
+            x -= chunkSize[0]
+            chunkX += 1
+        while x < 0:
+            x += chunkSize[0]
+            chunkX -= 1
 
-def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
+        if y >= chunkSize[1]:
+            y = chunkSize[1] - 1
+        if y < 0:
+            y = 0
+
+        while z >= chunkSize[0]:
+            z -= chunkSize[0]
+            chunkZ += 1
+        while z < 0:
+            z += chunkSize[0]
+            chunkZ -= 1
+
+        blockCoord = (x, y, z)
+        chunkCoord = (chunkX, chunkZ)
+    else:
+        blockCoord = getBlockCoord(xPos, yPos, zPos)
+        chunkCoord = getChunkCoord(xPos, zPos)
     
-    chunkCoord = getChunkCoord(x, z)
-    blockCoord = getBlockCoord(x, y, z)
-    
-    if blockCoord[1] < 0 or blockCoord[1] > chunkSize[1] - 1:
-        if extraInfo:
-            return {
-                "type": "air",
-                "render": False,
-                "usesAlpha": False
-            }
-        return False
+
     try:
         chunks[chunkCoord]["data"][blockCoord]
     except:
@@ -269,64 +322,33 @@ def findBlock(x = 1, y = 1, z = 1, extraInfo = False, ignoreWater = False):
 
     if extraInfo:
         return block
-    else:
-        if block["type"] != "air":
-            if block["type"] == "water" and ignoreWater:
-                return False
-            return True
-        else:
+    
+    if block["type"] != "air":
+        if block["type"] == "water" and ignoreWater:
             return False
-
-def findBlockWithEasyCoordinates(xPos = 1, yPos = 1, zPos = 1, chunkCoordInput = (0, 0)):
-
-    x = xPos
-    y = yPos
-    z = zPos
-    chunkX = chunkCoordInput[0]
-    chunkZ = chunkCoordInput[1]
-
-    if x < 0:
-        x += chunkSize[0]
-        chunkX -= 1
-    if x >= chunkSize[0]:
-        x -= chunkSize[0]
-        chunkX += 1
-
-    if y < 0 or y >= chunkSize[1]:
-        return False
-
-    if z < 0:
-        z += chunkSize[0]
-        chunkZ -= 1
-    if z >= chunkSize[0]:
-        z -= chunkSize[0]
-        chunkZ += 1
-
-    chunkCoord = (chunkX, chunkZ)
-
-    try:
-        chunks[chunkCoord]["data"][(x, y, z)]
-    except:
-        generateChunkTerrain(chunkCoord)
-    
-    block = chunks[chunkCoord]["data"][(x, y, z)]
-
-    if block["type"] != "air" and block["type"] != "water":
         return True
-        
-def getChunkCoord(x = 1, z = 1):
-    xPos = math.floor(x / totalChunkSize)
-    zPos = math.floor(z / totalChunkSize)
     
-    chunkCoord = (xPos, zPos)
+    return False
+        
+def getChunkCoord(xPos = 1, zPos = 1):
+    
+    x = math.floor(xPos / totalChunkSize)
+    z = math.floor(zPos / totalChunkSize)
+    
+    chunkCoord = (x, z)
 
     return chunkCoord
 
-def getBlockCoord(xPos = 1, yPos = 1, zPos = 1):
+def getBlockCoord(xPos = 1, yPos = 1, zPos = 1, usesSimpleInputs = False):
     
-    x = math.floor(xPos / blockSize)
-    y = math.floor(yPos / blockSize)
-    z = math.floor(zPos / blockSize)
+    if not usesSimpleInputs:
+        x = math.floor(xPos / blockSize)
+        y = math.floor(yPos / blockSize)
+        z = math.floor(zPos / blockSize)
+    else:
+        x = xPos
+        y = yPos
+        z = zPos
 
     if x < 0:
         while x < 0:
@@ -334,6 +356,12 @@ def getBlockCoord(xPos = 1, yPos = 1, zPos = 1):
     if x >= chunkSize[0]:
         while x >= chunkSize[0]:
             x -= chunkSize[0]
+    
+    if y >= chunkSize[1]:
+        y = chunkSize[1] - 1
+    if y < 0:
+        y = 0
+
     if z < 0:
         while z < 0:
             z += chunkSize[0]
@@ -344,13 +372,5 @@ def getBlockCoord(xPos = 1, yPos = 1, zPos = 1):
     blockCoord = (x, y, z)
 
     return blockCoord
-
-def testChunk(chunkCoord):
-    try:
-        chunks[chunkCoord]
-    except:
-        generateChunkTerrain(chunkCoord)
-
-
-                            
+  
                             
