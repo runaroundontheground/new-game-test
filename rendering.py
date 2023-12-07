@@ -166,7 +166,7 @@ def convertTextToImageData(textValue, position, centeredOnPosition = False,):
         return imageData
         
 
-def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
+def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
     chunkList = []
     cameraChunk = camera.currentChunk
     screenExtension = 1
@@ -185,8 +185,8 @@ def generateNearbyAreas(rangeOfGeneration = 1, returnChunkList = False):
                 generateChunkTerrain((x, z))
 
     # generate structures
-    for x in range(xRange, maxXRange):
-        for z in range(xRange, maxXRange):
+    for x in range(xRange - (rangeOfGeneration - 1), maxXRange + (rangeOfGeneration - 1)):
+        for z in range(zRange - (rangeOfGeneration - 1), maxZRange + (rangeOfGeneration - 1)):
             try:
                 chunks[(x, z)]
             except:

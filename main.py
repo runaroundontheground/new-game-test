@@ -18,6 +18,10 @@ ok currently:
 to do list but in order:
     
     figure out why alpha on the trees don't work sometimes
+        ok, nevermind for now, idk why it won't work
+    make the updated small scale block updates actually work
+        just a moment ago, didn't disable rendering on the block under it
+        when it should have
     make sure placing blocks actually removes 1 from the count
     add/make sure item entities actually work and give player their 
     make sure picking up the items can stack properly, and other stuff
