@@ -273,25 +273,28 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
             return True
         return False
 
+    def checkBelowStuff():
+        if not surrounded:
+                block["render"] = True
+        if blockBelow["alphaValue"] != 0:
+            setAlpha(250)
+        elif blockBelow["render"]:
+            otherBlockSurrounded = checkSidesOfBlock(x, y - 1, z)
+            if otherBlockSurrounded:
+                modifyOtherBlock(x, y - 1, z, False)
+
+
+
     if above: # there's a block above this one
         if below: # there's a block below this one
-            if not surrounded:
-                block["render"] = True
-            if blockBelow["alphaValue"] != 0:
-                setAlpha(250)
-            elif blockBelow["render"]:
-                otherBlockSurrounded = checkSidesOfBlock(x, y - 1, z)
-                if otherBlockSurrounded:
-                    modifyOtherBlock(x, y - 1, z, False)
-            
+            checkBelowStuff()
             
         else: # no block below this one
             setAlpha(150)
     else: # there's no block above this one
         block["render"] = True
         if below: # there's a block under this one
-            if blockBelow["alphaValue"] != 0:
-                setAlpha(250)
+            checkBelowStuff()
     
     
 

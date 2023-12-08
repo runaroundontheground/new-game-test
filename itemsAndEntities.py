@@ -39,6 +39,15 @@ class PlaceableItem(Item):
         
         blockType = mouse.hoveredBlock["block"]["type"]
         if blockType == "air" or blockType == "water":
+            count = player.hotbar[self.slotId]["count"]
+            if count > 1:
+                player.hotbar[self.slotId]["count"] -= 1
+            if count == 1:
+                player.hotbar[self.slotId]["count"] = 0
+                player.hotbar[self.slotId]["contents"] = "empty"
+            if count <= 0:
+                print("what the heck, how did you do that??")
+
             chunkCoord = mouse.hoveredBlock["chunkCoord"]
             blockCoord = mouse.hoveredBlock["blockCoord"]
 
