@@ -42,10 +42,11 @@ class PlaceableItem(Item):
             count = player.hotbar[self.slotId]["count"]
             if count > 1:
                 player.hotbar[self.slotId]["count"] -= 1
-                print("hey you should change the item count now to be lower")
+                
             elif count == 1:
                 player.hotbar[self.slotId]["count"] = 0
                 player.hotbar[self.slotId]["contents"] = "empty"
+                
             elif count <= 0:
                 print("what the heck, how did you do that??")
 

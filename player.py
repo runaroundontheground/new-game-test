@@ -472,6 +472,9 @@ class Player():
         for slotId, slot in enumerate(self.inventory):
             if slot["contents"] != "empty":
                 slot["contents"].slotId = slotId
+        for slotId, slot in enumerate(self.hotbar):
+            if slot["contents"] != "empty":
+                slot["contents"].slotId = slotId
 
 
         # change the selected height of the mouse
