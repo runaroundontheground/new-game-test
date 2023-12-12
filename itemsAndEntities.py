@@ -11,6 +11,11 @@ class Item():
     def __init__(self, name = "air"):
         self.name = name
         self.slotId = 0
+        
+        self.attackPower = 1 # damage value of player's fist
+        self.knockback = 1 # knockback of player's fist
+        self.breakingPower = 1 # power of player's fist
+        self.breakingSpeed = 1 # speed of player's fist
     
     # drop/throw this item out as an entity
     def drop(self, x = 0, y = 0, z = 0, throwItem = False):
