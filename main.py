@@ -19,10 +19,9 @@ to do list but in order:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
-    make sure placing blocks actually removes 1 from the count
-    add/make sure item entities actually work and give player their 
+    
+    add/make sure item entities actually work and give player their item
     make sure picking up the items can stack properly, and other stuff
-    once that's done ish
     do the inventory looping when closing the inventory with something in 
     mouse.helditem, because if the inv is full, can't place the item, so it has to
     be dropped

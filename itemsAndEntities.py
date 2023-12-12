@@ -14,7 +14,7 @@ class Item():
         
         self.attackPower = 1 # damage value of player's fist
         self.knockback = 1 # knockback of player's fist
-        self.breakingPower = 1 # power of player's fist
+        self.breakingPower = 1 # player's fist power, or what's allowed to be broken w/ fist
         self.breakingSpeed = 1 # speed of player's fist
     
     # drop/throw this item out as an entity
