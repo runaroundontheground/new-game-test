@@ -1,5 +1,5 @@
 from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
-from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks
+from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames
 from perlin_noise import PerlinNoise
 import random
 import math
@@ -33,7 +33,29 @@ def fixStructuresData():
             structures[structureName][key]["render"] = False
             structures[structureName][key]["alphaValue"] = 0
 fixStructuresData()
+# extra info for what is required to break blocks
+dictOfBlockBreakingStuff = {
+    # sediment/shovel effective type blocks
+    "grass": {}, "dirt": {}, "snowy dirt": {}, "clay": {}, "gravel": {}, "sand": {},
+        "after shovel effective": 0,
+    # stone/pickaxe effective type blocks
+    "stone": {}, "snowy stone": {}, # add additional things here for when other stone types exist
+        "after pickaxe effective": 0,
+    # wood/axe effective type blocks
+    "log": {}, "leaves": {}, # yes leaves break with an axe here, don't worry about it
+        "after axe effective": 0,
+    # any new tools types to add here? this is where they go
 
+        "reached unbreakable blocks": 0,
+    # unbreakable blocks/wouldn't make sense to be able to break them
+    "bedrock": {}, "air": {}, "water": {}
+}   
+
+def assignBlockBreakingDataStuff():
+    for key, data in dictOfBlockBreakingStuff.items():
+        pass
+
+assignBlockBreakingDataStuff()
 
 waterHeight = 4
 

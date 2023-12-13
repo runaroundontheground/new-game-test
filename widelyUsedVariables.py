@@ -33,7 +33,7 @@ itemIcons = {}
 
 maxStackSize = 64
 
-listOfBlockItems = [
+listOfBlockNames = [
     "air", "grass", "dirt", "snowy dirt", "stone", "snowy stone", "sand",
     "clay", "gravel", "water", "bedrock", "log", "leaves"
 ]

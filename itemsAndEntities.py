@@ -1,4 +1,4 @@
-from widelyUsedVariables import entities, items, chunks, listOfBlockItems, blockSize, gravity
+from widelyUsedVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity
 from worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from controls import mouse
 from player import player
@@ -12,7 +12,7 @@ class Item():
         self.name = name
         self.slotId = 0
         
-        self.attackPower = 1 # damage value of player's fist
+        self.attack = 1 # damage value of player's fist
         self.knockback = 1 # knockback of player's fist
         self.breakingPower = 1 # player's fist power, or what's allowed to be broken w/ fist
         self.breakingSpeed = 1 # speed of player's fist
@@ -135,5 +135,5 @@ def addItem(name = "air", itemType = "none"):
     items[name] = item
 
 def makeItemsExist():
-    for itemName in listOfBlockItems:
+    for itemName in listOfBlockNames:
         addItem(itemName, "placeable")

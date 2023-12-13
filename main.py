@@ -35,6 +35,9 @@ oh. welp, uhh dropped items and other entites need to be scaled based on
 height from the player and stuff
 that could be annoying
 
+important note for iterating through lists that need stuff deleted from them
+iterate in reverse, so using pop to delete things doesn't cause an indexerror
+
     
 
 problem that can happen with current implementation of structure gen

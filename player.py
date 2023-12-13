@@ -517,21 +517,17 @@ class Player():
                 slotData = self.hotbar[index]
                 item = slotData["contents"]
 
+                if mouse.buttons["pressed"]["left"]:
+                    self.doStuffOnLeftClick(item, LMBHeld = False)
+                elif mouse.buttons["left"]:
+                    self.doStuffOnLeftClick(item, LMBHeld = True)
+                
                 if item != "empty":
-                    # also allow breaking items with fist speed, but
-                    # the item will have a breaking speed? or pickaxe power? ect
-                    if mouse.buttons["pressed"]["left"]:
-                        item.LMBPressedAction()
-                    elif mouse.buttons["left"]:
-                        item.LMBAction()
 
                     if mouse.buttons["pressed"]["right"]:
                         item.RMBPressedAction()
                     elif mouse.buttons["right"]:
                         item.RMBAction()
-                else:
-                    # no item in hand, break items with fist very slowly
-                    pass
 
         hotbarHeldItemStuff()
 
@@ -697,7 +693,28 @@ class Player():
             else:
                 self.y = chunkSize[1] * blockSize
 
+    def doStuffOnLeftClick(self, currentlyHeldItem = "empty", LMBHeld = False):
+        item = currentlyHeldItem
 
+        if item != "empty":
+            breakingPower = item.breakingPower
+            breakingSpeed = item.breakingSpeed
+            damage = item.damage
+            knockback = item.knockback
+        else:
+            breakingPower = 1
+            breakingSpeed = 1
+            damage = 1
+            knockback = 1
+        
+        # run a test for interaction with entitys, hitting them, etc
+        # if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
+
+        # else:
+        # break blocks
+        self.currentBreakProgress = 0
+        if breakingPower >= mouse.hoveredBlock["hardness"]:
+            print("break da block")
 
 
             

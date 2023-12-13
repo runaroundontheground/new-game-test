@@ -343,9 +343,11 @@ def render(deltaTime):
         renderingData.append(player.imageData)
 
     # add entities to rendering
+    # go through the list of entites in reverse, and use pop(index) to delete
+    # any of the entities that have .deleteSelf or something as true
     #for entity in entities:
     #    blocks[entity.blockCoord[1]].append(entity.imageData)
-
+    
     # add blocks to rendering
     for y in range(chunkSize[1]):
         renderingData += blocks[y]
