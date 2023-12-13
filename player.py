@@ -720,3 +720,12 @@ class Player():
             
 
 player = Player()
+
+
+test = [1, 2, 3, 4, 5,6,7,8]
+length = len(test)
+for i in range(-1, -length - 1, -1):
+    print(test[i])
+    if i == -5:
+        print(test[-5])
+        test.pop(-5)

@@ -36,7 +36,11 @@ height from the player and stuff
 that could be annoying
 
 important note for iterating through lists that need stuff deleted from them
-iterate in reverse, so using pop to delete things doesn't cause an indexerror
+example for how to iterate in reverse
+test = [1, 2, 3, 4, 5,6,7,8]
+start, end, step
+for i in range(-1, -len(test) - 1, -1):
+    print(test[i])
 
     
 
