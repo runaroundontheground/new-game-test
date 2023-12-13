@@ -26,6 +26,7 @@ screenHeightInChunks = math.floor( screenHeight / totalChunkSize )
 # need to add a for loop that does a standard function for each entity,
 # like entity.runSelf(deltaTime) or something
 entities = []
+projectiles = []
 
 # dict with all items in it
 items = {}

@@ -36,26 +36,27 @@ fixStructuresData()
 # extra info for what is required to break blocks
 dictOfBlockBreakingStuff = {
     # sediment/shovel effective type blocks
-    "grass": {}, "dirt": {}, "snowy dirt": {}, "clay": {}, "gravel": {}, "sand": {},
-        "after shovel effective": 0,
+    "grass": {"hardness": 1, "effectiveTool": "shovel"},
+    "dirt": {"hardness": 1, "effectiveTool": "shovel"},
+    "snowy dirt": {"hardness": 1, "effectiveTool": "shovel"},
+    "clay": {"hardness": 1, "effectiveTool": "shovel"},
+    "gravel": {"hardness": 1, "effectiveTool": "shovel"},
+    "sand": {"hardness": 1, "effectiveTool": "shovel"},
+    
     # stone/pickaxe effective type blocks
-    "stone": {}, "snowy stone": {}, # add additional things here for when other stone types exist
-        "after pickaxe effective": 0,
+    "stone": {"hardness": 3, "effectiveTool": "pickaxe"},
+    "snowy stone": {"hardness": 3, "effectiveTool": "pickaxe"},
+    
     # wood/axe effective type blocks
-    "log": {}, "leaves": {}, # yes leaves break with an axe here, don't worry about it
-        "after axe effective": 0,
+    "log": {"hardness": 2, "effectiveTool": "axe"},
+    "leaves": {"hardness": 0, "effectiveTool": "axe"},
+
     # any new tools types to add here? this is where they go
 
-        "reached unbreakable blocks": 0,
+        "reached unbreakable blocks": False,
     # unbreakable blocks/wouldn't make sense to be able to break them
     "bedrock": {}, "air": {}, "water": {}
-}   
-
-def assignBlockBreakingDataStuff():
-    for key, data in dictOfBlockBreakingStuff.items():
-        pass
-
-assignBlockBreakingDataStuff()
+}
 
 waterHeight = 4
 

@@ -11,11 +11,6 @@ class Item():
     def __init__(self, name = "air"):
         self.name = name
         self.slotId = 0
-        
-        self.attack = 1 # damage value of player's fist
-        self.knockback = 1 # knockback of player's fist
-        self.breakingPower = 1 # player's fist power, or what's allowed to be broken w/ fist
-        self.breakingSpeed = 1 # speed of player's fist
     
     # drop/throw this item out as an entity
     def drop(self, x = 0, y = 0, z = 0, throwItem = False):
@@ -33,6 +28,7 @@ class Item():
 class PlaceableItem(Item):
     def __init__(self, name):
         super().__init__(name)
+        self.itemType = "PlaceableItem"
         self.placedBlock = {
             "type": self.name,
             "render": False,
@@ -63,13 +59,6 @@ class PlaceableItem(Item):
             smallScaleBlockUpdates(chunkCoord, blockCoord)
 
 
-
-    def LMBAction(self):
-        pass
-
-    def LMBPressedAction(self):
-        pass
-
     def RMBAction(self):
         pass
         
@@ -77,8 +66,16 @@ class PlaceableItem(Item):
     def RMBPressedAction(self):
         self.placeItem()
 
+class ToolItem(Item):
+    def __init__(self, name):
+        super().__init__(name)
+        self.itemType = "ToolItem"
         
-
+        self.attack = 1 # damage value of player's fist
+        self.knockback = 1 # knockback of player's fist
+        self.breakingPower = 1 # player's fist power, or what's allowed to be broken w/ fist
+        self.breakingSpeed = 1 # speed of player's fist
+        self.breakingType = "none"
 
 # basic entity, no ai or anything
 class Entity():

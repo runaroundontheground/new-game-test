@@ -1,4 +1,4 @@
-from widelyUsedVariables import deltaTime, items
+from widelyUsedVariables import deltaTime, items, entities, projectiles
 from itemsAndEntities import makeItemsExist
 from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea
@@ -35,12 +35,6 @@ oh. welp, uhh dropped items and other entites need to be scaled based on
 height from the player and stuff
 that could be annoying
 
-important note for iterating through lists that need stuff deleted from them
-example for how to iterate in reverse
-test = [1, 2, 3, 4, 5,6,7,8]
-start, end, step
-for i in range(-1, -len(test) - 1, -1):
-    print(test[i])
 
     
 
@@ -105,6 +99,16 @@ def gameLoop():
                 pygame.quit()
 
         player.doStuff(deltaTime)
+
+        def makeStuffInAListDoThings(list):
+            i = -1
+            while i > -len(list):
+                list[i].doStuff()
+                if list[i].deleteSelf:
+                    list.pop(i)
+                i -= 1
+        makeStuffInAListDoThings(entities)
+        makeStuffInAListDoThings(projectiles)
         
 
         render(deltaTime)

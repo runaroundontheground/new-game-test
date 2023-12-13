@@ -217,6 +217,8 @@ class Player():
         self.verticalBlockReach = 3
         self.horizontalBlockReach = 3
 
+        self.blockBreakProgress = 0
+
 
 
 
@@ -517,11 +519,9 @@ class Player():
                 slotData = self.hotbar[index]
                 item = slotData["contents"]
 
-                if mouse.buttons["pressed"]["left"]:
-                    self.doStuffOnLeftClick(item, LMBHeld = False)
-                elif mouse.buttons["left"]:
-                    self.doStuffOnLeftClick(item, LMBHeld = True)
-                
+                if mouse.buttons["pressed"]["left"] or mouse.buttons["left"]:
+                    self.doStuffOnLeftClick(item)
+
                 if item != "empty":
 
                     if mouse.buttons["pressed"]["right"]:
@@ -693,39 +693,50 @@ class Player():
             else:
                 self.y = chunkSize[1] * blockSize
 
-    def doStuffOnLeftClick(self, currentlyHeldItem = "empty", LMBHeld = False):
+    def doStuffOnLeftClick(self, currentlyHeldItem = "empty"):
         item = currentlyHeldItem
 
+        breakingPower = 1
+        breakingSpeed = 1
+        breakingType = "none"
+        damage = 1
+        knockback = 1
+
         if item != "empty":
-            breakingPower = item.breakingPower
-            breakingSpeed = item.breakingSpeed
-            damage = item.damage
-            knockback = item.knockback
-        else:
-            breakingPower = 1
-            breakingSpeed = 1
-            damage = 1
-            knockback = 1
+            if item.itemType == "ToolItem":
+                breakingPower = item.breakingPower
+                breakingSpeed = item.breakingSpeed
+                breakingType = item.breakingType
+                damage = item.damage
+                knockback = item.knockback
+            
+            
         
         # run a test for interaction with entitys, hitting them, etc
         # if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
 
         # else:
         # break blocks
-        self.currentBreakProgress = 0
-        if breakingPower >= mouse.hoveredBlock["hardness"]:
-            print("break da block")
+        block = mouse.hoveredBlock
+        # make sure to add something that accounts for block hardness being
+        # 0, aka insta break
+        
+        if breakingType == block["effectiveTool"]:
+            self.blockBreakProgress += breakingSpeed / 100
+        else:
+            self.blockBreakProgress += 0.02 # 60 fps, roughly .5 seconds
+        
+        if self.blockBreakProgress >= block["hardness"]:
+            self.blockBreakProgress = 0
+            # destroy the block, drop an item
+            # only drop item if the block is breakable via shovel or axe
+            # pickaxe minable blocks drop nothing without a pickaxe
+            # convert things like grass, snowy grass, and snowy stone into things
+            # like dirt, and stone (or cobblestone?)
+
+            
 
 
             
 
 player = Player()
-
-
-test = [1, 2, 3, 4, 5,6,7,8]
-length = len(test)
-for i in range(-1, -length - 1, -1):
-    print(test[i])
-    if i == -5:
-        print(test[-5])
-        test.pop(-5)
