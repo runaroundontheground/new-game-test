@@ -23,7 +23,7 @@ to do list but in order:
     
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
     to make the icons
-    once the tools exist, make breaking blocks actually work
+    
     add/make sure item entities actually work and give player their item
     make sure picking up the items can stack properly, and other stuff
     do the inventory looping when closing the inventory with something in 

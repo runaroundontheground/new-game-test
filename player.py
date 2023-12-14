@@ -750,7 +750,7 @@ class Player():
             
             if self.blockBreakProgress >= block["hardness"]:
                 self.blockBreakProgress = 0
-                print("a block has been broken")
+                
                 itemData = PlaceableItem(block["type"])
 
                 chunkCoord = mouse.hoveredBlock["chunkCoord"]

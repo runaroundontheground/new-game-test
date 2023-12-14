@@ -351,12 +351,13 @@ def render(deltaTime):
 
     i = -1
     if len(entities) != 0:
+        print(len(entities))
         while i > -len(entities):
             entity = entities[i]
             
             image = itemEntityIcons[entity.itemData["name"]]
             
-            #y = entity.blockCoord[1]
+            y = math.floor(entity.y / blockSize)
             
             x = entity.x - camera.x
             z -= entity.z - camera.z
@@ -364,14 +365,14 @@ def render(deltaTime):
             position = (x, z)
             imageData = (image, position)
 
-            renderingData.append(imageData)
+            blocks[y].append(imageData)
             
             i -= 1
     
     # add blocks to rendering
     for y in range(chunkSize[1]):
         renderingData += blocks[y]
-       
+
 
     image = player.inventoryRenderingData["hotbarSurface"]
     position = player.inventoryRenderingData["hotbarRenderPosition"]
