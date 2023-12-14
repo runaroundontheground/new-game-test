@@ -21,6 +21,8 @@ to do list but in order:
                             ok, nevermind for now, idk why it won't work
     separate items and entities into two diff files, player needs to be able to spawn
     things
+    or maybe find some way to allow entities and player to access each other?
+    need to put them in the same file to do that
     add/make sure item entities actually work and give player their item
     make sure picking up the items can stack properly, and other stuff
     do the inventory looping when closing the inventory with something in 
