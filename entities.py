@@ -12,16 +12,23 @@ class Entity():
         self.xv = 0
         self.yv = 0
         self.zv = 0
+        self.deleteSelf = False
+
+        self.width = blockSize
+        self.height = self.width
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
     def __init__(self, itemData, x, y, z):
         super().__init__(x, y, z)
-        self = itemData
-        self.maxFallingVelocity = 10
+        self.itemData = itemData.__dict__
+        self.yv = 10
 
-    def runSelf(self, player):
-        blockBelow = findBlock(self.x, self.y - blockSize, self.z)
+        self.maxFallingVelocity = 10
+        
+
+    def doStuff(self, player):
+        blockBelow = findBlock(self.x, self.y - self.height, self.z)
         # gravity
         if blockBelow:
             self.yv = 0

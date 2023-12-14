@@ -1,8 +1,9 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities
 from widelyUsedVariables import screenWidth, screenHeight, chunks, font, FPS
-from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain
+from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
 from controls import keysPressed, keys, mouse
 from entities import ItemEntity
+from items import PlaceableItem
 import pygame, math
 
 
@@ -676,6 +677,14 @@ class Player():
         coordinate = (imageX, imageY)
         self.imageData = (self.image, coordinate)
 
+        # DEBUG REMOVE LATER
+        if keysPressed[pygame.K_g]:
+            print("make an item entity")
+            itemData = PlaceableItem("dirt")
+            entity = ItemEntity(itemData,
+                                self.x, self.y + 20, self.z)
+            entities.append(entity)
+
     def doStuff(self, deltaTime):
         # need to update mouse's camera relative things here, don't want circular imports
         mouse.cameraRelativeX = round((self.x + mouse.x) - screenWidth/2)
@@ -717,32 +726,50 @@ class Player():
                 damage = item.damage
                 knockback = item.knockback
             
-            
         
         # run a test for interaction with entitys, hitting them, etc
         # if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
 
         # else:
         # break blocks
-        block = mouse.hoveredBlock
+        block = mouse.hoveredBlock["block"]
+        
         # make sure to add something that accounts for block hardness being
         # 0, aka insta break
         
-        if breakingType == block["effectiveTool"]:
-            self.blockBreakProgress += breakingSpeed / FPS
-        else:
-            self.blockBreakProgress += slowestBreakSpeed / FPS
-        
-        if self.blockBreakProgress >= block["hardness"]:
-            self.blockBreakProgress = 0
-
-            itemEntity = ItemEntity()
+        if block["hardness"] != "infinity":
+            if breakingType == block["effectiveTool"]:
+                self.blockBreakProgress += breakingSpeed / FPS
+            else:
+                self.blockBreakProgress += slowestBreakSpeed / FPS
             
-            # destroy the block, drop an item
-            # only drop item if the block is breakable via shovel or axe
-            # pickaxe minable blocks drop nothing without a pickaxe
-            # convert things like grass, snowy grass, and snowy stone into things
-            # like dirt, and stone (or cobblestone?)
+            if self.blockBreakProgress >= block["hardness"]:
+                self.blockBreakProgress = 0
+                print("a block has been broken")
+                itemData = PlaceableItem(block["type"])
+
+                chunkCoord = mouse.hoveredBlock["chunkCoord"]
+                blockCoord = mouse.hoveredBlock["blockCoord"]
+                x = blockCoord[0] * blockSize
+                y = blockCoord[1] * blockSize
+                z = blockCoord[2] * blockSize
+                entity = ItemEntity(itemData, x, y, z)
+
+                chunks[chunkCoord]["data"][blockCoord]["type"] = "air"
+                chunks[chunkCoord]["data"][blockCoord]["render"] = False
+                chunks[chunkCoord]["data"][blockCoord]["alphaValue"] = 0
+                chunks[chunkCoord]["data"][blockCoord]["hardness"] = "infinity"
+                chunks[chunkCoord]["data"][blockCoord]["effectiveTool"] = "none"
+
+                smallScaleBlockUpdates(chunkCoord, blockCoord)
+
+                entities.append(entity)
+                
+                # destroy the block, drop an item
+                # only drop item if the block is breakable via shovel or axe
+                # pickaxe minable blocks drop nothing without a pickaxe
+                # convert things like grass, snowy grass, and snowy stone into things
+                # like dirt, and stone (or cobblestone?)
 
             
 

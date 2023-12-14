@@ -47,8 +47,9 @@ dictOfBlockBreakingStuff = {
 
 
     # unbreakable blocks/wouldn't make sense to be able to break them
-    "bedrock": {"hardness": "infinity"}, "air": {"hardness": "infinity"},
-    "water": {"hardness": "infinity"}
+    "bedrock": {"hardness": "infinity", "effectiveTool": "none"},
+    "air": {"hardness": "infinity", "effectiveTool": "none"},
+    "water": {"hardness": "infinity", "effectiveTool": "none"}
 }
 
 # add any additional things that all blocks require in their data automatically
@@ -59,8 +60,8 @@ def fixStructuresData():
             
             block["render"] = False
             block["alphaValue"] = 0
-            block["hardness"] = dictOfBlockBreakingStuff[key]["hardness"]
-            block["effectiveTool"] = dictOfBlockBreakingStuff[key]["effectiveTool"]
+            block["hardness"] = dictOfBlockBreakingStuff[block["type"]]["hardness"]
+            block["effectiveTool"] = dictOfBlockBreakingStuff[block["type"]]["effectiveTool"]
 fixStructuresData()
 
 waterHeight = 4

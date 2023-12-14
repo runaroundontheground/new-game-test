@@ -13,6 +13,8 @@ totalChunkSize = chunkSize[0] * blockSize
 
 gravity = 1
 
+itemEntitySize = blockSize/2
+
 chunks = {}
 keys = pygame.key.get_pressed()
 deltaTime = 1

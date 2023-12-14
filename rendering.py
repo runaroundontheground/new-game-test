@@ -1,8 +1,8 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
+from widelyUsedVariables import itemEntitySize, camera, itemIcons, font
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
-from widelyUsedVariables import camera, itemIcons, font
 from controls import mouse
 from player import player
 import pygame, math
@@ -22,6 +22,7 @@ pygame.display.flip()
 blockImages = {
     "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
 }
+itemEntityIcons = {}
 
 blockHighlightSurface = pygame.Surface((blockSize, blockSize))
 blockHighlightSurface.fill((255, 255, 0)) # yellow?
@@ -31,8 +32,9 @@ blockHighlightSurface.fill((255, 255, 255), rect)
 blockHighlightSurface.set_colorkey((255, 255, 255))
 
 
-def addAnItemIcon():
+def addAToolIcon(itemName, toolType, toolHeadColor = "gray"):
     pass
+    # will also require adding that to the itementity icons list as well
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 0):
@@ -74,14 +76,19 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
 
     slotSize = player.inventoryRenderingData["slotSize"]
     blockIcon = block.copy()
-    # definitely a very short variable name lol
     targetSize = slotSize - player.inventoryRenderingData["itemIconShift"] * 2
 
     scale = abs(targetSize / blockSize)
 
     blockIcon = pygame.transform.scale_by(blockIcon, scale)
-
+    
     itemIcons[blockName] = blockIcon
+
+    itemEntityIcon = block.copy()
+    scale = itemEntitySize / blockSize
+
+    itemEntityIcon = pygame.transform.scale_by(itemEntityIcon, scale)
+    itemEntityIcons[blockName] = itemEntityIcon
 
 addABlock("grass", (0, 200, 0), (150, 75, 0))
 addABlock("dirt", (150, 75, 0))
@@ -274,7 +281,7 @@ def render(deltaTime):
 
                     block = chunks[chunkCoord]["data"][(x, y, z)]
                     
-                    if block["render"]:
+                    if block["render"] and block["type"] != "air":
                         xPos = x * blockSize
                         zPos = z * blockSize
                         
@@ -342,11 +349,24 @@ def render(deltaTime):
     else:
         renderingData.append(player.imageData)
 
-    # add entities to rendering
-    # go through the list of entites in reverse, and use pop(index) to delete
-    # any of the entities that have .deleteSelf or something as true
-    #for entity in entities:
-    #    blocks[entity.blockCoord[1]].append(entity.imageData)
+    i = -1
+    if len(entities) != 0:
+        while i > -len(entities):
+            entity = entities[i]
+            
+            image = itemEntityIcons[entity.itemData["name"]]
+            
+            #y = entity.blockCoord[1]
+            
+            x = entity.x - camera.x
+            z -= entity.z - camera.z
+
+            position = (x, z)
+            imageData = (image, position)
+
+            renderingData.append(imageData)
+            
+            i -= 1
     
     # add blocks to rendering
     for y in range(chunkSize[1]):
@@ -387,6 +407,8 @@ def render(deltaTime):
                     renderingData.append(imageData)
 
         
+
+        
             
         
 
@@ -423,6 +445,7 @@ def render(deltaTime):
             if slot["count"] > 1:
                 imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
                 renderingData.append(imageData)
+
 
     
     # run mouse's held item rendering
@@ -461,6 +484,15 @@ def render(deltaTime):
         imageData = (image, position)
 
         renderingData.append(imageData)
+
+        if mouse.heldItem["count"] > 1:
+            shift = player.inventoryRenderingData["slotSize"]
+            position = (mouse.x + 5 + shift, mouse.y + 5 + shift)
+            imageData = convertTextToImageData(slot["count"], position)
+            renderingData.append(imageData)
+
+
+        
     
 
     # debug things

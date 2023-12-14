@@ -19,10 +19,8 @@ to do list but in order:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
-    separate items and entities into two diff files, player needs to be able to spawn
-    things
-    or maybe find some way to allow entities and player to access each other?
-    need to put them in the same file to do that
+    
+    
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
     to make the icons
     once the tools exist, make breaking blocks actually work
@@ -109,7 +107,7 @@ def gameLoop():
         def makeStuffInAListDoThings(list):
             i = -1
             while i > -len(list):
-                list[i].doStuff()
+                list[i].doStuff(player)
                 if list[i].deleteSelf:
                     list.pop(i)
                 i -= 1

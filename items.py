@@ -1,8 +1,7 @@
 from widelyUsedVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity
 from worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from controls import mouse
-from player import player
-import math
+from entities import ItemEntity
 
 
 
@@ -11,9 +10,10 @@ class Item():
     def __init__(self, name = "air"):
         self.name = name
         self.slotId = 0
+        
     
     # drop/throw this item out as an entity
-    def drop(self, x = 0, y = 0, z = 0, throwItem = False):
+    def drop(self, x = 0, y = 0, z = 0, throwItem = False, player = None):
 
         droppedItem = ItemEntity(self, x, y, z)
 
@@ -35,7 +35,7 @@ class PlaceableItem(Item):
             "alphaValue": 0
         }
 
-    def placeItem(self):
+    def placeItem(self, player):
 
         
         blockType = mouse.hoveredBlock["block"]["type"]
@@ -67,31 +67,36 @@ class PlaceableItem(Item):
         self.placeItem()
 
 class ToolItem(Item):
-    def __init__(self, name):
+    def __init__(self, name, attack = 1, knockback = 1, breakingPower = 1,
+                 breakingSpeed = 1, breakingType = "none"):
         super().__init__(name)
         self.itemType = "ToolItem"
         
-        self.attack = 1 # damage value of player's fist
-        self.knockback = 1 # knockback of player's fist
-        self.breakingPower = 1 # player's fist power, or what's allowed to be broken w/ fist
-        self.breakingSpeed = 1 # speed of player's fist
-        self.breakingType = "none"
+        self.attack = attack
+        self.knockback = knockback
+        self.breakingPower = breakingPower
+        self.breakingSpeed = breakingSpeed
+        self.breakingType = breakingType
 
 
-
-test = PlaceableItem("dirt")
-test.drop(100, 300, 100)
 # adding items to the game
-def addItem(name = "air", itemType = "none"):
+def addItem(name = "air", itemType = "none", toolData = "none"):
 
     if itemType == "placeable":
         item = PlaceableItem(name)
     
     if itemType == "tool":
-        pass
+        item = ToolItem(name)
 
     items[name] = item
 
 def makeItemsExist():
     for itemName in listOfBlockNames:
         addItem(itemName, "placeable")
+    addItem("stone pickaxe", "tool",
+            {"attack": 3, "knockback": 1, "breakingPower": 3,
+            "breakingSpeed": 3, "breakingType": "pickaxe"})
+    
+    addItem("stone axe", "tool",
+            {"attack": 3, "knockback": 1, "breakingPower": 3,
+            "breakingSpeed": 3, "breakingType": "axe"})
