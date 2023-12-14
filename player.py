@@ -225,6 +225,7 @@ class Player():
         self.horizontalBlockReach = 3
 
         self.blockBreakProgress = 0
+        self.currentBreakingBlock = None
 
 
 
@@ -732,7 +733,11 @@ class Player():
 
         # else:
         # break blocks
-        block = mouse.hoveredBlock["block"]
+        if self.currentBreakingBlock != mouse.hoveredBlock["block"]:
+            self.blockBreakProgress = 0
+
+        self.currentBreakingBlock = mouse.hoveredBlock["block"]
+        block = self.currentBreakingBlock
         
         # make sure to add something that accounts for block hardness being
         # 0, aka insta break
