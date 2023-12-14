@@ -1,4 +1,4 @@
-from widelyUsedVariables import deltaTime, items, entities, projectiles
+from widelyUsedVariables import deltaTime, items, entities, projectiles, FPS
 from itemsAndEntities import makeItemsExist
 from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea
@@ -9,7 +9,7 @@ import pygame, time
 pygame.init()
 
 clock = pygame.time.Clock()
-FPS = 60
+
 
 
 """
@@ -19,7 +19,8 @@ to do list but in order:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
-    
+    separate items and entities into two diff files, player needs to be able to spawn
+    things
     add/make sure item entities actually work and give player their item
     make sure picking up the items can stack properly, and other stuff
     do the inventory looping when closing the inventory with something in 

@@ -1,5 +1,5 @@
 from widelyUsedVariables import camera, blockSize, gravity, chunkSize, maxStackSize
-from widelyUsedVariables import screenWidth, screenHeight, chunks, font
+from widelyUsedVariables import screenWidth, screenHeight, chunks, font, FPS
 from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain
 from controls import keysPressed, keys, mouse
 import pygame, math
@@ -722,12 +722,13 @@ class Player():
         # 0, aka insta break
         
         if breakingType == block["effectiveTool"]:
-            self.blockBreakProgress += breakingSpeed / 100
+            self.blockBreakProgress += breakingSpeed / FPS
         else:
-            self.blockBreakProgress += 0.02 # 60 fps, roughly .5 seconds
+            self.blockBreakProgress += 1 / FPS
         
         if self.blockBreakProgress >= block["hardness"]:
             self.blockBreakProgress = 0
+            
             # destroy the block, drop an item
             # only drop item if the block is breakable via shovel or axe
             # pickaxe minable blocks drop nothing without a pickaxe

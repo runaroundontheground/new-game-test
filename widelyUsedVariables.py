@@ -32,6 +32,8 @@ projectiles = []
 items = {}
 itemIcons = {}
 
+FPS = 60
+
 maxStackSize = 64
 
 listOfBlockNames = [
