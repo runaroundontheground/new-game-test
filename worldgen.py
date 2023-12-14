@@ -24,15 +24,7 @@ def makeTree1():
     structures["tree 1"][(2, 1, 2)] = {"type": "log"}
     structures["tree 1"][(2, 2, 2)] = {"type": "log"}
 makeTree1()
-# add any additional things that all blocks require in their data automatically
-# such as: render, and noBlockBelow
-def fixStructuresData():
-    for structureName, structureData in structures.items():
-        for key, block in structures[structureName].items():
-            
-            structures[structureName][key]["render"] = False
-            structures[structureName][key]["alphaValue"] = 0
-fixStructuresData()
+
 # extra info for what is required to break blocks
 dictOfBlockBreakingStuff = {
     # sediment/shovel effective type blocks
@@ -53,10 +45,23 @@ dictOfBlockBreakingStuff = {
 
     # any new tools types to add here? this is where they go
 
-        "reached unbreakable blocks": False,
+
     # unbreakable blocks/wouldn't make sense to be able to break them
-    "bedrock": {}, "air": {}, "water": {}
+    "bedrock": {"hardness": "infinity"}, "air": {"hardness": "infinity"},
+    "water": {"hardness": "infinity"}
 }
+
+# add any additional things that all blocks require in their data automatically
+# such as: render, and noBlockBelow
+def fixStructuresData():
+    for structureName, structureData in structures.items():
+        for key, block in structures[structureName].items():
+            
+            block["render"] = False
+            block["alphaValue"] = 0
+            block["hardness"] = dictOfBlockBreakingStuff[key]["hardness"]
+            block["effectiveTool"] = dictOfBlockBreakingStuff[key]["effectiveTool"]
+fixStructuresData()
 
 waterHeight = 4
 
@@ -71,7 +76,9 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
                     blockData = {
                         "type": "air",
                         "render": False,
-                        "alphaValue": 0
+                        "alphaValue": 0,
+                        "hardness": 0,
+                        "effectiveTool": "none"
                     }
                     
                     noiseCoordinate = [x, z]
@@ -123,6 +130,11 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
                     # bottom layer of world, at least have something
                     if y == 0:
                         blockData["type"] = "bedrock"
+
+                    hardness = dictOfBlockBreakingStuff[blockData["type"]]["hardness"]
+                    effectiveTool = dictOfBlockBreakingStuff[blockData["type"]]["effectiveTool"]
+                    blockData["hardness"] = hardness
+                    blockData["effectiveTool"] = effectiveTool
 
                     chunkData[(x, y, z)] = blockData
     initialTerrainGeneration()

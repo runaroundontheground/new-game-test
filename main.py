@@ -1,5 +1,5 @@
 from widelyUsedVariables import deltaTime, items, entities, projectiles, FPS
-from itemsAndEntities import makeItemsExist
+from items import makeItemsExist
 from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea
 from player import player
@@ -23,6 +23,9 @@ to do list but in order:
     things
     or maybe find some way to allow entities and player to access each other?
     need to put them in the same file to do that
+    add some crappy images for the tools (aka drawing a line on a surf, then another line)
+    to make the icons
+    once the tools exist, make breaking blocks actually work
     add/make sure item entities actually work and give player their item
     make sure picking up the items can stack properly, and other stuff
     do the inventory looping when closing the inventory with something in 
