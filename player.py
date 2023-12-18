@@ -755,9 +755,12 @@ class Player():
 
                 chunkCoord = mouse.hoveredBlock["chunkCoord"]
                 blockCoord = mouse.hoveredBlock["blockCoord"]
-                x = blockCoord[0] * blockSize
+                x = chunkCoord[0] * chunkSize[0]
                 y = blockCoord[1] * blockSize
-                z = blockCoord[2] * blockSize
+                z = chunkCoord[1] * chunkSize[0]
+
+                x += blockCoord[0] * blockSize
+                z += blockCoord[2] * blockSize
                 entity = ItemEntity(itemData, x, y, z)
 
                 chunks[chunkCoord]["data"][blockCoord]["type"] = "air"

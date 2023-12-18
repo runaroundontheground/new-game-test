@@ -19,7 +19,10 @@ to do list but in order:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
-    figure out why item entities won't render
+    make item entities render in the correct position
+    figure out why the heck destroying a part of one tree breaks it on every single
+    other tree, the heck is happening???
+    fix player's movement, found a bug holding space sends you down super fast sometimes
     
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
     to make the icons
