@@ -351,8 +351,7 @@ def render(deltaTime):
 
     i = -1
     if len(entities) != 0:
-        print(len(entities))
-        while i > -len(entities):
+        while i >= -len(entities):
             entity = entities[i]
             
             image = itemEntityIcons[entity.itemData["name"]]
@@ -364,8 +363,9 @@ def render(deltaTime):
 
             position = (x, z)
             imageData = (image, position)
-
+            print(y)
             blocks[y].append(imageData)
+            
             
             i -= 1
     

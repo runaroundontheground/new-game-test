@@ -19,7 +19,7 @@ to do list but in order:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
-    
+    figure out why item entities won't render
     
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
     to make the icons
