@@ -760,9 +760,9 @@ class Player():
 
                 chunkCoord = mouse.hoveredBlock["chunkCoord"]
                 blockCoord = mouse.hoveredBlock["blockCoord"]
-                x = chunkCoord[0] * chunkSize[0]
+                x = (chunkCoord[0] * chunkSize[0]) * blockSize
                 y = blockCoord[1] * blockSize
-                z = chunkCoord[1] * chunkSize[0]
+                z = (chunkCoord[1] * chunkSize[0]) * blockSize
 
                 x += blockCoord[0] * blockSize
                 z += blockCoord[2] * blockSize

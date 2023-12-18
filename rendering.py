@@ -357,13 +357,18 @@ def render(deltaTime):
             image = itemEntityIcons[entity.itemData["name"]]
             
             y = math.floor(entity.y / blockSize)
+
+            if y >= chunkSize[1]:
+                y = chunkSize[1] - 1
+            if y < 0:
+                y = 0
             
             x = entity.x - camera.x
             z = entity.z - camera.z
 
             position = (x, z)
             imageData = (image, position)
-            print(y)
+            
             blocks[y].append(imageData)
             
             
