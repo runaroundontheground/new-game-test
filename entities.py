@@ -1,6 +1,6 @@
 from widelyUsedVariables import blockSize, gravity
 from worldgen import findBlock
-import math
+import math, pygame
 
 # basic entity, no ai or anything
 class Entity():
@@ -17,6 +17,8 @@ class Entity():
         self.width = blockSize
         self.height = self.width
 
+        self.rect = pygame.rect.Rect(0, 0, self.width, self.width)
+
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
     def __init__(self, itemData, x, y, z):
@@ -24,11 +26,24 @@ class ItemEntity(Entity):
         self.itemData = itemData.__dict__
         self.yv = 10
 
+        self.width = blockSize / 2
+        self.height = blockSize / 2
+
         self.maxFallingVelocity = 10
         
 
     def doStuff(self, player):
-        blockBelow = findBlock(self.x, self.y - self.height, self.z)
+
+        self.rect.x = self.x
+        self.rect.y = self.z
+
+        a = findBlock(self.x, self.y - self.height, self.z)
+        b = findBlock(self.x, self.y - self.height, self.z + self.width)
+        c = findBlock(self.x + self.width, self.y - self.height, self.z)
+        d = findBlock(self.x + self.width, self.y - self.height, self.z + self.width)
+        blockBelow = False
+        if a or b or c or d:
+            blockBelow = True
         # gravity
         if blockBelow:
             self.yv = 0
@@ -40,12 +55,34 @@ class ItemEntity(Entity):
                 self.yv -= gravity
 
         # do wall collision, but only if xv/zv is != 0, for performance
+        if self.xv != 0:
+            if self.xv > 0:
+                blockToRight = findBlock(self.x + self.width + 1, self.y, self.z)
+                if blockToRight:
+                    self.x -= self.xv
+                    self.xv = 0
+            if self.xv < 0:
+                blockToLeft = findBlock(self.x - 1, self.y, self.z)
+                if blockToLeft:
+                    self.x -= self.xv
+                    self.xv = 0
 
-        # check for collision with player
-        # probably just within same block as player
+        if self.zv != 0:
+            if self.zv > 0:
+                blockToUp = findBlock(self.x, self.y, self.z - 1)
+                if blockToUp:
+                    self.z -= self.zv
+                    self.zv = 0
+            if self.zv < 0:
+                blockToDown = findBlock(self.x, self.y, self.z + self.width + 1)
+                if blockToDown:
+                    self.z -= self.zv
+                    self.zv = 0
 
-        # do stuff on collision with that
+        if self.rect.colliderect(player.rect):
+            print("give player an item")
+            self.deleteSelf = True
 
-        # figure out what layer this should be rendered on, and then figure out
-        # scaling in rendering 
-        # probably entities[index].y to use to figure out scaling compared to player
+        self.x += self.xv
+        self.y += self.yv
+        self.z += self.zv

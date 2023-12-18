@@ -42,6 +42,8 @@ class Player():
         self.chunkCoord = (0, 0)
         self.blockCoord = (0, 0, 0)
 
+        self.rect = pygame.rect.Rect(0, 0, self.width, self.width)
+
         # how i'm organizing the collision
         # default is the same height as player
         # above + down, or right, etc is one block higher
@@ -240,6 +242,9 @@ class Player():
         
         self.chunkCoord = getChunkCoord(self.x, self.z)
         self.blockCoord = getBlockCoord(self.x, self.y, self.z)
+
+        self.rect.x = self.x
+        self.rect.y = self.z
 
         def doPlayerCollision():
             
