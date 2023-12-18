@@ -1,4 +1,4 @@
-from widelyUsedVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity
+from widelyUsedVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity, dictOfBlockBreakingStuff
 from worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from controls import mouse
 from entities import ItemEntity
@@ -32,8 +32,12 @@ class PlaceableItem(Item):
         self.placedBlock = {
             "type": self.name,
             "render": False,
-            "alphaValue": 0
+            "alphaValue": 0,
+            "hardness": 0,
+            "effectiveTool": "none"
         }
+        self.placedBlock["hardness"] = dictOfBlockBreakingStuff[self.name]["hardness"]
+        self.placedBlock["effectiveTool"] = dictOfBlockBreakingStuff[self.name]["effectiveTool"]
 
     def placeItem(self, player):
 
@@ -53,18 +57,19 @@ class PlaceableItem(Item):
 
             chunkCoord = mouse.hoveredBlock["chunkCoord"]
             blockCoord = mouse.hoveredBlock["blockCoord"]
+            
 
             chunks[chunkCoord]["data"][blockCoord] = self.placedBlock
 
             smallScaleBlockUpdates(chunkCoord, blockCoord)
 
 
-    def RMBAction(self):
+    def RMBAction(self, player):
         pass
         
 
-    def RMBPressedAction(self):
-        self.placeItem()
+    def RMBPressedAction(self, player):
+        self.placeItem(player)
 
 class ToolItem(Item):
     def __init__(self, name, attack = 1, knockback = 1, breakingPower = 1,

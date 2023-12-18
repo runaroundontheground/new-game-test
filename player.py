@@ -533,9 +533,9 @@ class Player():
                 if item != "empty":
 
                     if mouse.buttons["pressed"]["right"]:
-                        item.RMBPressedAction()
+                        item.RMBPressedAction(self)
                     elif mouse.buttons["right"]:
-                        item.RMBAction()
+                        item.RMBAction(self)
 
         hotbarHeldItemStuff()
 

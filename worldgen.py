@@ -1,5 +1,5 @@
 from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
-from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames
+from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames, dictOfBlockBreakingStuff
 from perlin_noise import PerlinNoise
 import random
 import math
@@ -25,32 +25,6 @@ def makeTree1():
     structures["tree 1"][(2, 2, 2)] = {"type": "log"}
 makeTree1()
 
-# extra info for what is required to break blocks
-dictOfBlockBreakingStuff = {
-    # sediment/shovel effective type blocks
-    "grass": {"hardness": 1, "effectiveTool": "shovel"},
-    "dirt": {"hardness": 1, "effectiveTool": "shovel"},
-    "snowy dirt": {"hardness": 1, "effectiveTool": "shovel"},
-    "clay": {"hardness": 1, "effectiveTool": "shovel"},
-    "gravel": {"hardness": 1, "effectiveTool": "shovel"},
-    "sand": {"hardness": 1, "effectiveTool": "shovel"},
-    
-    # stone/pickaxe effective type blocks
-    "stone": {"hardness": 3, "effectiveTool": "pickaxe"},
-    "snowy stone": {"hardness": 3, "effectiveTool": "pickaxe"},
-    
-    # wood/axe effective type blocks
-    "log": {"hardness": 2, "effectiveTool": "axe"},
-    "leaves": {"hardness": 0, "effectiveTool": "axe"},
-
-    # any new tools types to add here? this is where they go
-
-
-    # unbreakable blocks/wouldn't make sense to be able to break them
-    "bedrock": {"hardness": "infinity", "effectiveTool": "none"},
-    "air": {"hardness": "infinity", "effectiveTool": "none"},
-    "water": {"hardness": "infinity", "effectiveTool": "none"}
-}
 
 # add any additional things that all blocks require in their data automatically
 # such as: render, and noBlockBelow

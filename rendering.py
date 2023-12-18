@@ -359,7 +359,7 @@ def render(deltaTime):
             y = math.floor(entity.y / blockSize)
             
             x = entity.x - camera.x
-            z -= entity.z - camera.z
+            z = entity.z - camera.z
 
             position = (x, z)
             imageData = (image, position)
