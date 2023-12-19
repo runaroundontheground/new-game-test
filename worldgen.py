@@ -286,33 +286,42 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
 
 
 
-
-    if above: # there's a block above this one
-        if not surrounded:
-            block["render"] = True
-        if below:
-            if blockBelow["alphaValue"] != 0:
-                block["alphaValue"] = 200
+    if block["type"] != "air":
+        if above: # there's a block above this one
+            if not surrounded:
+                block["render"] = True
+            if below:
+                if blockBelow["alphaValue"] != 0:
+                    block["alphaValue"] = 200
+                else:
+                    belowSurrounded = checkSidesOfBlock(x, y - 1, z)
+                    if belowSurrounded:
+                        modifyOtherBlock(x, y - 1, z, False)
             else:
-                belowSurrounded = checkSidesOfBlock(x, y - 1, z)
-                if belowSurrounded:
-                    modifyOtherBlock(x, y - 1, z, False)
-        else:
-            block["alphaValue"] = 150
-    
-    if not above: # no block above this one
-        block["render"] = True
-        if below:
-            if blockBelow["alphaValue"] != 0:
-                block["alphaValue"] = 200
-            else:
-                belowSurrounded = checkSidesOfBlock(x, y - 1, z)
-                if belowSurrounded:
-                    modifyOtherBlock(x, y - 1, z, False)
-
-        else:
-            block["alphaValue"] = 150
+                block["alphaValue"] = 150
         
+        if not above: # no block above this one
+            block["render"] = True
+            if below:
+                if blockBelow["alphaValue"] != 0:
+                    block["alphaValue"] = 200
+                else:
+                    belowSurrounded = checkSidesOfBlock(x, y - 1, z)
+                    if belowSurrounded:
+                        modifyOtherBlock(x, y - 1, z, False)
+
+            else:
+                block["alphaValue"] = 150
+    else: # this current block is air
+        if below:
+            modifyOtherBlock(x, y - 1, z, True)
+            blockBelow2 = findBlock(x, y - 2, z, True, chunkCoordInput = chunkCoord)
+            below2 = checkForSolidBlock(blockBelow2)
+            
+            if not below2:
+                modifyOtherBlock(x, y - 1, z, True, 150)
+
+
     
 
     chunks[chunkCoord]["data"][blockCoord] = block

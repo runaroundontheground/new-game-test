@@ -90,22 +90,41 @@ class ItemEntity(Entity):
                     self.zv = 0
 
         if self.rect.colliderect(player.rect):
-            for slot in player.hotbar:
+
+            def checkStackables(slot):
                 if slot["contents"] != "empty":
                     if slot["contents"].stackable:
                         if slot["contents"].name == self.itemData.name:
                             if slot["count"] < maxStackSize:
                                 slot["count"] += 1
                                 self.deleteSelf = True
-                                break
+
+            def checkEmptySlots(slot):
+                if slot["contents"] == "empty":
+                    slot["count"] = 1
+                    slot["contents"] = self.itemData
+                    self.deleteSelf = True
+                    
+            if self.itemData.stackable:
+                for slot in player.hotbar:
+                    checkStackables(slot)
+                    if self.deleteSelf: break
+
+                if not self.deleteSelf:
+                    for slot in player.inventory:
+                        checkStackables(slot)
+                        if self.deleteSelf: break
+                
+
             if not self.deleteSelf:
                 for slot in player.hotbar:
-                    if slot["contents"] == "empty":
-                        slot["count"] = 1
-                        slot["contents"] = self.itemData
-                        self.deleteSelf = True
-                        break
+                    checkEmptySlots(slot)
+                    if self.deleteSelf: break
 
+            if not self.deleteSelf:
+                for slot in player.inventory:
+                    checkEmptySlots(slot)
+                    if self.deleteSelf: break
             
 
         self.x += self.xv
