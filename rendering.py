@@ -286,20 +286,22 @@ def render(deltaTime):
     chunkList = generateNearbyAreas(2, True)
 
 
-    # need to separate which layers of the blocks get rendered at once, so
-    # the lower layers are below the higher ones
+    # separate the blocks into layers, so they get rendered in the right order
+    # also, keep track of the scale for each y layer
     blocks = []
+    positionAndScaleFactors = []
     for i in range(chunkSize[1]):
         blocks.append( [] )
+        positionAndScaleFactors.append( [] )
 
+    
     
 
     for chunkCoord in chunkList:
         for y in range(chunkSize[1]):
             
         
-            # scale everything besides position outside of the x and z loops
-            # it runs faster that way
+            # scale images outside of x/z loop, better performance
             
             posFactor = 1
             sizeFactor = 1
@@ -326,7 +328,7 @@ def render(deltaTime):
             if sizeFactor < 0.1:
                 sizeFactor = 0.1
             
-
+            positionAndScaleFactors[y] = posFactor
 
             scaledImages = blockImages.copy()
             
@@ -417,6 +419,7 @@ def render(deltaTime):
                 y = chunkSize[1] - 1
             if y < 0:
                 y = 0
+
             
             x = entity.x - camera.x
             z = entity.z - camera.z

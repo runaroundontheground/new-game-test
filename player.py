@@ -683,14 +683,6 @@ class Player():
         coordinate = (imageX, imageY)
         self.imageData = (self.image, coordinate)
 
-        # DEBUG REMOVE LATER
-        if keysPressed[pygame.K_g]:
-            print("make an item entity")
-            itemData = PlaceableItem("dirt")
-            entity = ItemEntity(itemData,
-                                self.x, self.y + 20, self.z)
-            entities.append(entity)
-
     def doStuff(self, deltaTime):
         # need to update mouse's camera relative things here, don't want circular imports
         mouse.cameraRelativeX = round((self.x + mouse.x) - screenWidth/2)

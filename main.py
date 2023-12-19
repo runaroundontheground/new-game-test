@@ -15,14 +15,14 @@ clock = pygame.time.Clock()
 """
 ok currently:
 
-to do list but in order:
+to do list:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
     
-    figure out why the heck destroying a part of one tree breaks it on every single
-    other tree, the heck is happening???
-    still have no idea why it's broken
+            figure out why the heck destroying a part of one tree breaks it on every single
+            other tree, the heck is happening???
+            still have no idea why it's broken
     fix player's movement, found a bug holding space sends you down super fast sometimes
     
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
@@ -43,6 +43,7 @@ to do list but in order:
 oh. welp, uhh dropped items and other entites need to be scaled based on
 height from the player and stuff
 that could be annoying
+attempted this^, and didn't get it just now
 
 
     
