@@ -108,8 +108,8 @@ def makeItemsExist():
         addItem(itemName, "placeable")
     addItem("stone pickaxe", "tool",
             {"attack": 3, "knockback": 1, "breakingPower": 3,
-            "breakingSpeed": 3, "breakingType": "pickaxe"})
+            "breakingSpeed": 20, "breakingType": "pickaxe"})
     
     addItem("stone axe", "tool",
-            {"attack": 3, "knockback": 1, "breakingPower": 3,
-            "breakingSpeed": 3, "breakingType": "axe"})
+            {"attack": 7, "knockback": 1, "breakingPower": 3,
+            "breakingSpeed": 20, "breakingType": "axe"})

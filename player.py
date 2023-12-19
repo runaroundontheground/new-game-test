@@ -744,15 +744,27 @@ class Player():
         self.currentBreakingBlock = mouse.hoveredBlock["block"]
         block = self.currentBreakingBlock
         
-        # make sure to add something that accounts for block hardness being
-        # 0, aka insta break
-        
         if block["hardness"] != "infinity":
+            correctTool = False
+            powerfulEnoughTool = False
+
+            if breakingPower >= block["hardness"]:
+                powerfulEnoughTool = True
             if breakingType == block["effectiveTool"]:
+                correctTool = True
+            
+            if powerfulEnoughTool and correctTool:
                 self.blockBreakProgress += breakingSpeed / FPS
             else:
                 self.blockBreakProgress += slowestBreakSpeed / FPS
+
+
             
+
+
+
+
+
             if self.blockBreakProgress >= block["hardness"]:
                 self.blockBreakProgress = 0
                 
@@ -766,7 +778,16 @@ class Player():
 
                 x += blockCoord[0] * blockSize
                 z += blockCoord[2] * blockSize
-                entity = ItemEntity(itemData, x, y, z)
+
+                dropAnItem = False
+                if correctTool and breakingType == "pickaxe":
+                    dropAnItem = True
+                if block["hardness"] == 1:
+                    dropAnItem = True
+                
+                if dropAnItem:
+                    entity = ItemEntity(itemData, x, y, z)
+                    entities.append(entity)
 
                 chunks[chunkCoord]["data"][blockCoord]["type"] = "air"
                 chunks[chunkCoord]["data"][blockCoord]["render"] = False
@@ -776,13 +797,8 @@ class Player():
 
                 smallScaleBlockUpdates(chunkCoord, blockCoord)
 
-                entities.append(entity)
                 
-                # destroy the block, drop an item
-                # only drop item if the block is breakable via shovel or axe
-                # pickaxe minable blocks drop nothing without a pickaxe
-                # convert things like grass, snowy grass, and snowy stone into things
-                # like dirt, and stone (or cobblestone?)
+                
 
             
 
