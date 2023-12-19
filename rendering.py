@@ -25,16 +25,62 @@ blockImages = {
 itemEntityIcons = {}
 
 blockHighlightSurface = pygame.Surface((blockSize, blockSize))
-blockHighlightSurface.fill((255, 255, 0)) # yellow?
+blockHighlightSurface.fill((255, 255, 150)) # yellow?
 
 rect = pygame.Rect(5, 5, blockSize - 10, blockSize - 10)
 blockHighlightSurface.fill((255, 255, 255), rect)
 blockHighlightSurface.set_colorkey((255, 255, 255))
 
 
-def addAToolIcon(itemName, toolType, toolHeadColor = "gray"):
-    pass
-    # will also require adding that to the itementity icons list as well
+itemIconSize = player.inventoryRenderingData["slotSize"] - player.inventoryRenderingData["itemIconShift"] * 2
+
+def makeAllAlpha(surface):
+    surface.fill((255, 255, 255))
+    surface.set_colorkey((255, 255, 255))
+
+baseToolSurface = pygame.Surface((itemIconSize, itemIconSize)) # a wooden stick
+line = pygame.draw.line(baseToolSurface, (150, 75, 0), (0, itemIconSize), (itemIconSize, 0), 3)
+
+uneditedTools = {
+"pickaxe": pygame.Surface((itemIconSize, itemIconSize)),
+"axe": pygame.Surface((itemIconSize, itemIconSize)),
+"shovel": pygame.Surface((itemIconSize, itemIconSize))
+}
+
+makeAllAlpha(baseToolSurface)
+makeAllAlpha(uneditedTools["pickaxe"])
+makeAllAlpha(uneditedTools["axe"])
+makeAllAlpha(uneditedTools["shovel"])
+
+pickaxeHead = pygame.Surface(())
+rect = pygame.Rect(itemIconSize + 5, 5, itemIconSize - 10, 5)
+uneditedTools["pickaxe"].fill((254, 254, 254))
+pygame.transform.rotate(uneditedTools["pickaxe"], 45)
+
+
+
+def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
+    
+    toolIcon = baseToolSurface.copy()
+    toolHead = uneditedTools[toolType].copy()
+
+    for x in range(itemIconSize):
+        for y in range(itemIconSize):
+            color = pygame.Surface.get_at(toolHead, (x, y))
+            if color == (254, 254, 254):
+                pygame.Surface.set_at(toolHead, (x, y), toolHeadColor)
+
+    
+
+    itemIcons[toolName] = toolIcon
+
+    itemEntityIcon = toolIcon.copy()
+    scale = itemEntitySize / blockSize
+
+    itemEntityIcon = pygame.transform.scale_by(itemEntityIcon, scale)
+    itemEntityIcons[toolName] = itemEntityIcon
+
+addAToolIcon("stone pickaxe", "pickaxe", (100, 100, 100))
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 0):
@@ -506,6 +552,10 @@ def render(deltaTime):
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
     imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
     renderingData.append(imageData)
+
+    imageData = (baseToolSurface, (300, 300))
+    renderingData.append(imageData)
+    renderingData.append(itemIcons["stone pickaxe"])
 
     screen.blits(renderingData)
 

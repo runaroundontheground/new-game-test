@@ -19,13 +19,19 @@ to do list but in order:
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work
-    make item entities render in the correct position
+    
     figure out why the heck destroying a part of one tree breaks it on every single
     other tree, the heck is happening???
+    still have no idea why it's broken
     fix player's movement, found a bug holding space sends you down super fast sometimes
     
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
     to make the icons
+
+    add 3? surfaces to represent breaking blocks
+    probably at the mouse's position, with math.floor and blocksize to put it
+    on top of the block
+    based on % of break progress, put that kind of breaking progress surf there
     
     add/make sure item entities actually work and give player their item
     make sure picking up the items can stack properly, and other stuff
@@ -33,10 +39,6 @@ to do list but in order:
     mouse.helditem, because if the inv is full, can't place the item, so it has to
     be dropped
     
-
-add breaking/placing blocks
-    placing blocks has been implemented, but you can't break them, and it doesn't
-    track item count
 
 oh. welp, uhh dropped items and other entites need to be scaled based on
 height from the player and stuff
@@ -73,6 +75,9 @@ lighting
     varying alpha levels
 enemies
     probably a simple ai, similar to terraria's run towards player and jump over things
+    new ai idea: draw a line to the player that only goes on x/z axis and then check
+    if any blocks are in the way there (maybe also floor blocks?)
+    go there, and do checks and stuff
 day/night cycle
 
 
