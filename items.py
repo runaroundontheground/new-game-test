@@ -83,6 +83,14 @@ class ToolItem(Item):
         self.breakingSpeed = breakingSpeed
         self.breakingType = breakingType
 
+        self.durability = 100 # durability will exist when the game actually functions
+    
+    def RMBPressedAction(self, player):
+        pass
+
+    def RMBAction(self, player):
+        pass
+
 
 # adding items to the game
 def addItem(name = "air", itemType = "none", toolData = "none"):

@@ -99,6 +99,8 @@ def gameLoop():
     player.inventory[4]["count"] = 3
     player.inventory[9]["contents"] = items["grass"]
     player.inventory[9]["count"] = 1
+    player.inventory[16]["contents"] = items["stone pickaxe"]
+    player.inventory[16]["count"] = 1
 
     while running:
         currentTime = time.time()

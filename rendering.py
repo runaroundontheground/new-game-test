@@ -1,6 +1,6 @@
 from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
-from widelyUsedVariables import itemEntitySize, camera, itemIcons, font
+from widelyUsedVariables import itemEntitySize, camera, itemIcons, font, rotatePoint
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
 from controls import mouse
@@ -34,44 +34,53 @@ blockHighlightSurface.set_colorkey((255, 255, 255))
 
 itemIconSize = player.inventoryRenderingData["slotSize"] - player.inventoryRenderingData["itemIconShift"] * 2
 
-def makeAllAlpha(surface):
-    surface.fill((255, 255, 255))
-    surface.set_colorkey((255, 255, 255))
+
 
 baseToolSurface = pygame.Surface((itemIconSize, itemIconSize)) # a wooden stick
-line = pygame.draw.line(baseToolSurface, (150, 75, 0), (0, itemIconSize), (itemIconSize, 0), 3)
+baseToolSurface.fill((255, 255, 255))
+baseToolSurface.set_colorkey((255, 255, 255))
+line = pygame.draw.line(baseToolSurface, (150, 75, 0), (0, itemIconSize), (itemIconSize - 5, 5), 3)
 
 uneditedTools = {
-"pickaxe": pygame.Surface((itemIconSize, itemIconSize)),
-"axe": pygame.Surface((itemIconSize, itemIconSize)),
-"shovel": pygame.Surface((itemIconSize, itemIconSize))
+"pickaxe": baseToolSurface.copy(),
+"axe": baseToolSurface.copy(),
+"shovel": baseToolSurface.copy()
 }
 
-makeAllAlpha(baseToolSurface)
-makeAllAlpha(uneditedTools["pickaxe"])
-makeAllAlpha(uneditedTools["axe"])
-makeAllAlpha(uneditedTools["shovel"])
 
-pickaxeHead = pygame.Surface(())
-rect = pygame.Rect(itemIconSize + 5, 5, itemIconSize - 10, 5)
-uneditedTools["pickaxe"].fill((254, 254, 254))
-pygame.transform.rotate(uneditedTools["pickaxe"], 45)
+pickaxeHead = pygame.Surface((itemIconSize, itemIconSize))
+rect = pygame.Rect(itemIconSize/2 - (itemIconSize/2)/2, itemIconSize/2 - (5)/2, itemIconSize, itemIconSize/10)
+pickaxeHead.fill((51, 52, 53), rect)
+rotatedImage, rect = rotatePoint(pickaxeHead, 45, [itemIconSize/2, itemIconSize/2], pygame.math.Vector2([-7, -10]))
+rotatedImage.set_colorkey((255, 255, 255))
+rotatedImage.set_colorkey((0, 0, 0))
+uneditedTools["pickaxe"].blit(rotatedImage, rect)
 
 
 
 def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
     
-    toolIcon = baseToolSurface.copy()
-    toolHead = uneditedTools[toolType].copy()
+    toolIcon = uneditedTools[toolType].copy()
 
-    for x in range(itemIconSize):
-        for y in range(itemIconSize):
-            color = pygame.Surface.get_at(toolHead, (x, y))
-            if color == (254, 254, 254):
-                pygame.Surface.set_at(toolHead, (x, y), toolHeadColor)
+    for x in range(math.floor(itemIconSize)):
+        for y in range(math.floor(itemIconSize)):
+            color = pygame.Surface.get_at(toolIcon, (x, y))
+            c, d, e, hasAlpha = False, False, False, False
+            r, g, b = color[0], color[1], color[2]
+
+            if len(color) >= 4:
+                hasAlpha = True
+            if r - 5 < 51 and r + 5 > 51:
+                c = True
+            if g - 5 < 52 and g + 5 > 52:
+                d = True
+            if b - 5 < 53 and b + 5 > 53:
+                e = True
+            
+            if (c or d or e) and not hasAlpha:
+                pygame.Surface.set_at(toolIcon, (x, y), toolHeadColor)
 
     
-
     itemIcons[toolName] = toolIcon
 
     itemEntityIcon = toolIcon.copy()
@@ -80,7 +89,7 @@ def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
     itemEntityIcon = pygame.transform.scale_by(itemEntityIcon, scale)
     itemEntityIcons[toolName] = itemEntityIcon
 
-addAToolIcon("stone pickaxe", "pickaxe", (100, 100, 100))
+addAToolIcon("stone pickaxe", "pickaxe", (200, 200, 200))
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 0):
@@ -553,9 +562,6 @@ def render(deltaTime):
     imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
     renderingData.append(imageData)
 
-    imageData = (baseToolSurface, (300, 300))
-    renderingData.append(imageData)
-    renderingData.append(itemIcons["stone pickaxe"])
 
     screen.blits(renderingData)
 

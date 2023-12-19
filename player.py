@@ -720,7 +720,7 @@ class Player():
         breakingPower = 1
         breakingSpeed = 1
         breakingType = "none"
-        damage = 1
+        attack = 1
         knockback = 1
         slowestBreakSpeed = 1
 
@@ -729,7 +729,7 @@ class Player():
                 breakingPower = item.breakingPower
                 breakingSpeed = item.breakingSpeed
                 breakingType = item.breakingType
-                damage = item.damage
+                attack = item.attack
                 knockback = item.knockback
             
         
