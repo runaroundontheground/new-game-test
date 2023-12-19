@@ -246,40 +246,48 @@ class Player():
         self.rect.x = self.x
         self.rect.y = self.z
 
-        def doPlayerCollision():
-            
-            for dictKey in self.collision.keys():
-                self.collision[dictKey] = False
+    
+        
+        for dictKey in self.collision.keys():
+            self.collision[dictKey] = False
 
-            # faster? access to variables that need to be used a lot in collision
-            rightSide = self.x + self.width
-            bottomSide = self.z + self.width
-            underSide = self.y - self.height
-
+        # faster? access to variables that need to be used a lot in collision
+        rightSide = self.x + self.width
+        bottomSide = self.z + self.width
+        underSide = self.y - self.height
+        
+        def doCollisionBelow():
             topLeft = findBlock(self.x, underSide - 3, self.z, ignoreWater = True)
             topRight = findBlock(rightSide, underSide - 3, self.z, ignoreWater = True)
             bottomLeft = findBlock(self.x, underSide - 3, bottomSide, ignoreWater = True)
             bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = True)
             if topLeft or topRight or bottomLeft or bottomRight:
                 self.collision["below"] = True
-            
+        
+        doCollisionBelow()
+
+        def doCollisionAbove():
             topLeft = findBlock(self.x, self.y, self.z, ignoreWater = True)
             topRight = findBlock(rightSide, self.y, self.z, ignoreWater = True)
             bottomLeft = findBlock(self.x, self.y, bottomSide, ignoreWater = True)
             bottomRight = findBlock(rightSide, self.y, bottomSide, ignoreWater = True)
             if topLeft or topRight or bottomLeft or bottomRight:
                 self.collision["above"] = True
-            
+        
+        doCollisionAbove()
 
+        def doCollisionToRight():
             temporaryNumber = rightSide + 1
             aboveTopRight = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
             aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
-            belowBottomRight = findBlock(temporaryNumber, underSide + 2, bottomSide, ignoreWater = True)
-            belowTopRight = findBlock(temporaryNumber, underSide + 2, self.z, ignoreWater = True)
-            if aboveTopRight or aboveBottomRight or belowBottomRight or aboveBottomRight:
+            belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
+            belowTopRight = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
+            if aboveTopRight or aboveBottomRight or belowBottomRight or belowTopRight:
                 self.collision["right"] = True
-                    
-            
+
+        doCollisionToRight()
+        
+        def doCollisionToLeft():
             temporaryNumber = self.x - 1
             aboveTopLeft = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
             aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
@@ -288,6 +296,9 @@ class Player():
             if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
                 self.collision["left"] = True
 
+        doCollisionToLeft()
+
+        def doCollisionToUp():
             aboveTopLeft = findBlock(self.x, self.y, self.z - 1, ignoreWater = True)
             aboveTopRight = findBlock(rightSide, self.y, self.z - 1, ignoreWater = True)
             belowTopRight = findBlock(rightSide, underSide, self.z - 1, ignoreWater = True)
@@ -295,6 +306,9 @@ class Player():
             if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
                 self.collision["up"] = True
 
+        doCollisionToUp()
+
+        def doCollisionToDown():
             aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1, ignoreWater = True)
             aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1, ignoreWater = True)
             belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = True)
@@ -302,34 +316,39 @@ class Player():
             if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
                 self.collision["down"] = True
 
+        doCollisionToDown()
+
+        def checkForBeingInsideOfABlock():
             center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
             self.collision["insideOfBlock"] = center["type"]
 
-            temporaryNumber = self.y + (blockSize - self.height + 3)
+        checkForBeingInsideOfABlock()
 
-            aboveToTopRight = findBlock(rightSide + self.xv + 3, temporaryNumber, self.z, ignoreWater = True)
-            aboveToBottomRight = findBlock(rightSide + self.xv + 3, temporaryNumber, bottomSide, ignoreWater = True)
-            if aboveToTopRight or aboveToBottomRight:
-                self.collision["aboveRight"] = True
+        temporaryNumber = (self.y - self.height) + blockSize + 3
+        # SEPARATE THESE LATER INTO FUNCTIONS
+        aboveToTopRight = findBlock(rightSide + self.xv + 3, temporaryNumber, self.z, ignoreWater = True)
+        aboveToBottomRight = findBlock(rightSide + self.xv + 3, temporaryNumber, bottomSide, ignoreWater = True)
+        if aboveToTopRight or aboveToBottomRight:
+            self.collision["aboveRight"] = True
 
-            aboveToTopLeft = findBlock(self.x + self.xv - 3, temporaryNumber, self.z, ignoreWater = True)
-            aboveToBottomLeft = findBlock(self.x + self.xv - 3, temporaryNumber, bottomSide, ignoreWater = True)
-            if aboveToTopLeft or aboveToBottomLeft:
-                self.collision["aboveLeft"] = True
+        aboveToTopLeft = findBlock(self.x + self.xv - 3, temporaryNumber, self.z, ignoreWater = True)
+        aboveToBottomLeft = findBlock(self.x + self.xv - 3, temporaryNumber, bottomSide, ignoreWater = True)
+        if aboveToTopLeft or aboveToBottomLeft:
+            self.collision["aboveLeft"] = True
 
-            aboveToLeftUp = findBlock(self.x, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
-            aboveToRightUp = findBlock(rightSide, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
-            if aboveToLeftUp or aboveToRightUp:
-                self.collision["aboveUp"] = True
-            
-            aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
-            aboveToLeftDown = findBlock(self.x, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
-            if aboveToLeftDown or aboveToRightDown:
-                self.collision["aboveDown"] = True
+        aboveToLeftUp = findBlock(self.x, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
+        aboveToRightUp = findBlock(rightSide, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
+        if aboveToLeftUp or aboveToRightUp:
+            self.collision["aboveUp"] = True
+        
+        aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
+        aboveToLeftDown = findBlock(self.x, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
+        if aboveToLeftDown or aboveToRightDown:
+            self.collision["aboveDown"] = True
 
 
 
-        doPlayerCollision()
+
 
         currentMaxHorizontalSpeed = self.maxHorizontalSpeed
         if self.collision["insideOfBlock"] == "water":
@@ -388,46 +407,26 @@ class Player():
                 self.yv = 0
 
          # wall collision
-         # and block step up (go up blocks without jumping)
-
-        def blockStepUpAndWallCollision(velocity = "xv", side = "right", 
-                                        playerInput = right, directionalPushback = "negative"):
-            
-            aboveSide = "above" + side.capitalize()
-            axis = velocity[0]
-            
-            if self.collision[side]:
-                condition1 = self.collision["below"]
-                condition2 = self.collision["above"]
-                condition3 = self.collision[aboveSide]
-                condition4 = playerInput
-                condition5 = self.booleans["blockStepUsed"]
-                
-                if condition1 and not condition2 and not condition3 and condition4 and not condition5:
-                    
-                    self.y += blockSize
-                    
-                    self.booleans["blockStepUsed"] = True
-                else:    
-                    if directionalPushback == "negative":
-                        pushback = abs(getattr(self, velocity))
-                        thing = getattr(self, axis)
-                        setattr(self, axis, (thing - pushback))
-                        setattr(self, velocity, 0)
-
-                    if directionalPushback == "positive":
-                        pushback = abs(getattr(self, velocity))
-                        thing = getattr(self, axis)
-                        setattr(self, axis, (thing + pushback))
-                        setattr(self, velocity, 0)
+         # and block step up (go up blocks without jumping
 
 
-         # call function for each side
         self.booleans["blockStepUsed"] = False
-        blockStepUpAndWallCollision("xv", "right", right, "negative")
-        blockStepUpAndWallCollision("xv", "left", left, "positive")
-        blockStepUpAndWallCollision("zv", "up", up, "positive")
-        blockStepUpAndWallCollision("zv", "down", down, "negative")
+
+        if self.collision["up"]:
+            a = self.collision["below"]
+            b = not self.collision["aboveUp"]
+            c = not self.booleans["blockStepUsed"]
+            d = up
+            if a and b and c and d:
+                self.y += blockSize
+                # update collision, since player's been moved a lot
+                doCollisionToDown()
+                doCollisionToLeft()
+                doCollisionToRight()
+            else:
+                self.z = 
+            
+       
 
 
          
