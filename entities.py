@@ -1,6 +1,6 @@
 from widelyUsedVariables import blockSize, gravity
 from worldgen import findBlock
-import math, pygame
+import math, pygame, random
 
 # basic entity, no ai or anything
 class Entity():
@@ -24,7 +24,10 @@ class ItemEntity(Entity):
     def __init__(self, itemData, x, y, z):
         super().__init__(x, y, z)
         self.itemData = itemData.__dict__
-        self.yv = 10
+        self.xv = random.randint(-5, 5)
+        self.zv = random.randint(-5, 5)
+        self.y += 5
+        self.yv = random.randint(1, 10)
 
         self.width = blockSize / 2
         self.height = blockSize / 2
@@ -49,6 +52,13 @@ class ItemEntity(Entity):
             self.yv = 0
             # normalize y coordinate, should set it to on top of the block
             self.y = math.floor(self.y / blockSize) * blockSize
+
+            self.xv -= self.xv / 15
+            self.zv -= self.zv / 15
+            if self.xv > -0.1 and self.xv < 0.1:
+                self.xv = 0
+            if self.zv > -0.1 and self.zv < 0.1:
+                self.zv = 0
         else:
             # do gravity
             if self.yv > self.maxFallingVelocity:

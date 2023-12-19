@@ -101,6 +101,8 @@ def gameLoop():
     player.inventory[9]["count"] = 1
     player.inventory[16]["contents"] = items["stone pickaxe"]
     player.inventory[16]["count"] = 1
+    player.inventory[21]["contents"] = items["stone"]
+    player.inventory[21]["count"] = 14
 
     while running:
         currentTime = time.time()
@@ -116,7 +118,7 @@ def gameLoop():
 
         def makeStuffInAListDoThings(list):
             i = -1
-            while i > -len(list):
+            while i >= -len(list):
                 list[i].doStuff(player)
                 if list[i].deleteSelf:
                     list.pop(i)
