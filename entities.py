@@ -1,4 +1,4 @@
-from widelyUsedVariables import blockSize, gravity
+from widelyUsedVariables import blockSize, gravity, maxStackSize
 from worldgen import findBlock
 import math, pygame, random
 
@@ -23,7 +23,7 @@ class Entity():
 class ItemEntity(Entity):
     def __init__(self, itemData, x, y, z):
         super().__init__(x, y, z)
-        self.itemData = itemData.__dict__
+        self.itemData = itemData
         self.xv = random.randint(-5, 5)
         self.zv = random.randint(-5, 5)
         self.y += 5
@@ -90,8 +90,23 @@ class ItemEntity(Entity):
                     self.zv = 0
 
         if self.rect.colliderect(player.rect):
-            print("give player an item")
-            self.deleteSelf = True
+            for slot in player.hotbar:
+                if slot["contents"] != "empty":
+                    if slot["contents"].stackable:
+                        if slot["contents"].name == self.itemData.name:
+                            if slot["count"] < maxStackSize:
+                                slot["count"] += 1
+                                self.deleteSelf = True
+                                break
+            if not self.deleteSelf:
+                for slot in player.hotbar:
+                    if slot["contents"] == "empty":
+                        slot["count"] = 1
+                        slot["contents"] = self.itemData
+                        self.deleteSelf = True
+                        break
+
+            
 
         self.x += self.xv
         self.y += self.yv

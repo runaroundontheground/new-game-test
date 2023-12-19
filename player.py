@@ -723,6 +723,7 @@ class Player():
                 breakingType = item.breakingType
                 attack = item.attack
                 knockback = item.knockback
+                print("hey you should have tool properties")
             
         
         # run a test for interaction with entitys, hitting them, etc
@@ -747,6 +748,7 @@ class Player():
             
             if powerfulEnoughTool and correctTool:
                 self.blockBreakProgress += breakingSpeed / FPS
+                print("break fast")
             else:
                 self.blockBreakProgress += slowestBreakSpeed / FPS
 

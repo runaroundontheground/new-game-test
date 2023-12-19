@@ -411,7 +411,7 @@ def render(deltaTime):
         while i >= -len(entities):
             entity = entities[i]
             
-            image = itemEntityIcons[entity.itemData["name"]]
+            image = itemEntityIcons[entity.itemData.name]
             
             y = math.floor(entity.y / blockSize)
 
