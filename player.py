@@ -424,16 +424,8 @@ class Player():
                 doCollisionToLeft()
                 doCollisionToRight()
             else:
-                # attempt at pushing the player exactly out of the wall
-                thing1 = math.floor(self.z / blockSize)
-                thing2 = self.blockCoord[2]
-                if thing1 != thing2:
-                    zChange = self.blockCoord[2] - (self.z / blockSize)
-                    self.z += abs(zChange)
-                    self.zv = 0
-                else:
-                    self.z += abs(self.zv)
-                    self.zv = 0
+                self.z += abs(self.zv)
+                self.zv = 0
 
         if self.collision["right"]:
             a = self.collision["below"]
@@ -446,17 +438,9 @@ class Player():
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToUp()
-            else:
-                # attempt at pushing the player exactly out of the wall
-                thing1 = math.floor((self.x + self.width) / blockSize)
-                thing2 = self.blockCoord[0]
-                if thing1 != thing2:
-                    xChange = self.blockCoord[0] - ((self.x + self.width) / blockSize)
-                    self.x -= abs(xChange)
-                    self.xv = 0
-                else:
-                    self.x -= abs(self.xv)
-                    self.xv = 0
+            else: 
+                self.x -= abs(self.xv)
+                self.xv = 0
 
         if self.collision["left"]:
             a = self.collision["below"]
@@ -470,16 +454,8 @@ class Player():
                 doCollisionToRight()
                 doCollisionToUp()
             else:
-                # attempt at pushing the player exactly out of the wall
-                thing1 = math.floor(self.x / blockSize)
-                thing2 = self.blockCoord[0]
-                if thing1 != thing2:
-                    xChange = self.blockCoord[0] - (self.x / blockSize)
-                    self.x += abs(xChange)
-                    self.xv = 0
-                else:
-                    self.x += abs(self.xv)
-                    self.xv = 0
+                self.x += abs(self.xv)
+                self.xv = 0
             
         if self.collision["down"]:
             a = self.collision["below"]
@@ -493,16 +469,8 @@ class Player():
                 doCollisionToRight()
                 doCollisionToUp()
             else:
-                # attempt at pushing the player exactly out of the wall
-                thing1 = math.floor((self.z + self.width) / blockSize)
-                thing2 = self.blockCoord[0]
-                if thing1 != thing2:
-                    zChange = self.blockCoord[0] - ((self.z + self.width) / blockSize)
-                    self.z -= abs(zChange)
-                    self.zv = 0
-                else:
-                    self.x -= abs(self.zv)
-                    self.zv = 0
+                self.x -= abs(self.zv)
+                self.zv = 0
        
 
 
