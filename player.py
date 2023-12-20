@@ -396,9 +396,16 @@ class Player():
         elif self.yv < 0:
             self.yv = 0
             self.y = self.blockCoord[1] * blockSize + self.height
+            # re-do collisions, hopefully fixes colliding with walls while hitting
+            # the ground hard, looks like it didn't fix it?
+            #doCollisionToDown()
+            #doCollisionToLeft()
+            #doCollisionToUp()
+            #doCollisionToRight()
          # don't let player fall out of the world
-        if self.y < blockSize:
-            self.yv = 100
+        if self.y < -300:
+            self.y = chunkSize[1] * blockSize
+            self.yv = 0
 
          # don't let player go through ceilings
         if self.collision["above"]:
@@ -427,6 +434,7 @@ class Player():
             else:
                 self.z += abs(self.zv)
                 self.zv = 0
+                self.z += 1
 
         if self.collision["right"]:
             a = self.collision["below"]
@@ -443,6 +451,7 @@ class Player():
             else: 
                 self.x -= abs(self.xv)
                 self.xv = 0
+                self.x -= 1
 
         if self.collision["left"]:
             a = self.collision["below"]
@@ -459,6 +468,7 @@ class Player():
             else:
                 self.x += abs(self.xv)
                 self.xv = 0
+                self.x += 1
             
         if self.collision["down"]:
             a = self.collision["below"]
@@ -475,6 +485,7 @@ class Player():
             else:
                 self.x -= abs(self.zv)
                 self.zv = 0
+                self.z -= 1
        
 
 
