@@ -56,6 +56,9 @@ rotatedImage.set_colorkey((255, 255, 255))
 rotatedImage.set_colorkey((0, 0, 0))
 uneditedTools["pickaxe"].blit(rotatedImage, rect)
 
+axeHead = pygame.Surface((itemIconSize/3, itemIconSize/3))
+rect = pygame.Rect()
+
 
 
 def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
@@ -90,6 +93,8 @@ def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
     itemEntityIcons[toolName] = itemEntityIcon
 
 addAToolIcon("stone pickaxe", "pickaxe", (200, 200, 200))
+addAToolIcon("stone axe", "axe", (200, 200, 200))
+#addAToolIcon("stone shovel", "shovel", (200, 200, 200))
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 0):
