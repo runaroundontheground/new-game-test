@@ -423,6 +423,7 @@ class Player():
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToRight()
+                self.booleans["blockStepUsed"] = True
             else:
                 self.z += abs(self.zv)
                 self.zv = 0
@@ -438,6 +439,7 @@ class Player():
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToUp()
+                self.booleans["blockStepUsed"] = True
             else: 
                 self.x -= abs(self.xv)
                 self.xv = 0
@@ -453,6 +455,7 @@ class Player():
                 doCollisionToDown()
                 doCollisionToRight()
                 doCollisionToUp()
+                self.booleans["blockStepUsed"] = True
             else:
                 self.x += abs(self.xv)
                 self.xv = 0
@@ -468,6 +471,7 @@ class Player():
                 doCollisionToLeft()
                 doCollisionToRight()
                 doCollisionToUp()
+                self.booleans["blockStepUsed"] = True
             else:
                 self.x -= abs(self.zv)
                 self.zv = 0
