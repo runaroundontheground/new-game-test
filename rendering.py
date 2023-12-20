@@ -57,7 +57,10 @@ rotatedImage.set_colorkey((0, 0, 0))
 uneditedTools["pickaxe"].blit(rotatedImage, rect)
 
 axeHead = pygame.Surface((itemIconSize/3, itemIconSize/3))
-rect = pygame.Rect()
+rect = pygame.Rect(0, 5, (itemIconSize/3)/2, (itemIconSize/3)/2)
+axeHead.fill((255, 255, 255)); axeHead.set_colorkey((255, 255, 255))
+axeHead.fill((51, 52, 53), rect)
+rect = pygame.Rect((itemIconSize/3)/2, 0, )
 
 
 
