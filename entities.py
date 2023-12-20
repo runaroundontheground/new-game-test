@@ -98,23 +98,19 @@ class ItemEntity(Entity):
                             if slot["count"] < maxStackSize:
                                 slot["count"] += 1
                                 self.deleteSelf = True
+                                print("added 1 item to the slot")
 
             def checkEmptySlots(slot):
                 if slot["contents"] == "empty":
                     slot["count"] = 1
                     slot["contents"] = self.itemData
                     self.deleteSelf = True
+                    print("put an item in an empty slot")
                     
             if self.itemData.stackable:
                 for slot in player.hotbar:
                     checkStackables(slot)
                     if self.deleteSelf: break
-
-                if not self.deleteSelf:
-                    for slot in player.inventory:
-                        checkStackables(slot)
-                        if self.deleteSelf: break
-                
 
             if not self.deleteSelf:
                 for slot in player.hotbar:
@@ -125,6 +121,11 @@ class ItemEntity(Entity):
                 for slot in player.inventory:
                     checkEmptySlots(slot)
                     if self.deleteSelf: break
+
+            if not self.deleteSelf and self.itemData.stackable:
+                    for slot in player.inventory:
+                        checkStackables(slot)
+                        if self.deleteSelf: break
             
 
         self.x += self.xv

@@ -56,11 +56,12 @@ rotatedImage.set_colorkey((255, 255, 255))
 rotatedImage.set_colorkey((0, 0, 0))
 uneditedTools["pickaxe"].blit(rotatedImage, rect)
 
-axeHead = pygame.Surface((itemIconSize/3, itemIconSize/3))
-rect = pygame.Rect(0, 5, (itemIconSize/3)/2, (itemIconSize/3)/2)
+axeHead = pygame.Surface((itemIconSize/2, itemIconSize/2))
+rect = pygame.Rect(0, 5, (itemIconSize/3), (itemIconSize/3))
 axeHead.fill((255, 255, 255)); axeHead.set_colorkey((255, 255, 255))
 axeHead.fill((51, 52, 53), rect)
-rect = pygame.Rect((itemIconSize/3)/2, 0, )
+rect = pygame.Rect((itemIconSize/3), 0, (itemIconSize/3), itemIconSize/3)
+axeHead.fill((51, 52, 53), rect)
 
 
 
@@ -564,7 +565,9 @@ def render(deltaTime):
             renderingData.append(imageData)
 
 
-        
+    
+    imageData = (axeHead, (400, 250))
+    renderingData.append(imageData)
     
 
     # debug things

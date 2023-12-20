@@ -65,6 +65,7 @@ class PlaceableItem(Item):
             smallScaleBlockUpdates(chunkCoord, blockCoord)
 
 
+
     def RMBAction(self, player):
         pass
         
@@ -73,17 +74,18 @@ class PlaceableItem(Item):
         self.placeItem(player)
 
 class ToolItem(Item):
-    def __init__(self, name, attack = 1, knockback = 1, breakingPower = 1,
-                 breakingSpeed = 1, breakingType = "none"):
+    def __init__(self, name, toolData = {"attack": 1, "knockback": 1,
+                                         "breakingPower": 1, "breakingSpeed": 1,
+                                         "breakingType": "none"}):
         super().__init__(name)
         self.itemType = "ToolItem"
         self.stackable = False
         
-        self.attack = attack
-        self.knockback = knockback
-        self.breakingPower = breakingPower
-        self.breakingSpeed = breakingSpeed
-        self.breakingType = breakingType
+        self.attack = toolData["attack"]
+        self.knockback = toolData["knockback"]
+        self.breakingPower = toolData["breakingPower"]
+        self.breakingSpeed = toolData["breakingSpeed"]
+        self.breakingType = toolData["breakingType"]
 
         self.durability = 100 # durability will exist when the game actually functions
     
@@ -95,13 +97,13 @@ class ToolItem(Item):
 
 
 # adding items to the game
-def addItem(name = "air", itemType = "none", toolData = "none"):
+def addItem(name = "air", itemType = "none", toolData = {}):
 
     if itemType == "placeable":
         item = PlaceableItem(name)
     
     if itemType == "tool":
-        item = ToolItem(name)
+        item = ToolItem(name, toolData)
 
     items[name] = item
 
@@ -119,3 +121,5 @@ def makeItemsExist():
     addItem("stone shovel", "tool",
             {"attack": 2, "knockback": 1, "breakingPower": 1,
             "breakingSpeed": 20, "breakingType": "shovel"})
+    
+    

@@ -16,6 +16,10 @@ clock = pygame.time.Clock()
 ok currently:
 
 to do list:
+
+
+    when placing blocks, apparently picking up a block does weird things sometimes
+    the blocks aren't placing correctly, it's not actually putting it down
     
                         figure out why alpha on the trees don't work sometimes
                             ok, nevermind for now, idk why it won't work

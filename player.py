@@ -131,11 +131,14 @@ class Player():
                 "renderPosition": (0, 0),
                 "selectedSlotRenderPosition": (0, 0),
                 "itemCountRenderPosition": (0, 0),
-                "rect": pygame.Rect(0, 0, 0, 0) # used for mouse collision
+                "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                "slotId": 0
             }
             
             self.inventory = []
             self.hotbar = []
+
+            slotId = 0
 
             for y in range(heightOfInventoryInSlots):
                 for x in range(widthOfInventoryInSlots):
@@ -153,6 +156,7 @@ class Player():
                     updatedInventorySlot = inventorySlot.copy()
                     
                     fontShift = font.size("1")
+                    
 
                     updatedInventorySlot["renderPosition"] = (renderX, renderY)
                     updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
@@ -160,12 +164,16 @@ class Player():
                                                                         rectY - gapBetweenSlots)
                     updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
                                                             slotSizeInPixels, slotSizeInPixels)
+                    updatedInventorySlot["slotId"] = slotId
+                    slotId += 1
+                    
 
                     self.inventory.append(updatedInventorySlot)
 
             inventorySurface = inventoryBackground        
         
             # create hotbar data
+            slotId = 0
             for x in range(widthOfInventoryInSlots):
 
                 slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
@@ -187,6 +195,8 @@ class Player():
                                                                     rectY - gapBetweenSlots)
                 updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
                                                         slotSizeInPixels, slotSizeInPixels)
+                updatedInventorySlot["slotId"] = slotId
+                slotId += 1
 
                 hotbarSurface.blit(slotSurface, (slotX, slotY))
 
@@ -543,12 +553,13 @@ class Player():
             else:
                 self.otherInventoryData["open"] = True
 
-        for slotId, slot in enumerate(self.inventory):
-            if slot["contents"] != "empty":
-                slot["contents"].slotId = slotId
-        for slotId, slot in enumerate(self.hotbar):
-            if slot["contents"] != "empty":
-                slot["contents"].slotId = slotId
+        for slot in self.inventory():
+            if slot["contents"] != "emtpy":
+                slot["contents"].slotId = slot["slotId"]
+        for slot in self.hotbar():
+            if slot["contents"] != "emtpy":
+                slot["contents"].slotId = slot["slotId"]
+
 
 
         # change the selected height of the mouse
@@ -614,13 +625,13 @@ class Player():
                 mouse.inPlayerHotbar = self.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
 
                 if mouse.inPlayerInventory:
-                    for slotId, slot in enumerate(self.inventory):
+                    for slot in self.inventory:
                         item = slot["contents"]
                             
                         if slot["rect"].collidepoint(mouse.x, mouse.y):
                             # communicate rendering information via the mouse
                             # to rendering
-                            mouse.hoveredSlotId = slotId
+                            mouse.hoveredSlotId = slot["slotId"]
                             mouse.inASlot = True
                             # interaction for moving around items and stuff
                             if mouse.buttons["pressed"]["left"]:
@@ -666,12 +677,12 @@ class Player():
                                     slot["count"] = mouseCount
                 
                 if mouse.inPlayerHotbar:
-                    for slotId, slot in enumerate(self.hotbar):
+                    for slot in self.hotbar:
                         item = slot["contents"]
 
                         if slot["rect"].collidepoint(mouse.x, mouse.y):
                             # info for rendering stuff
-                            mouse.hoveredSlotId = slotId
+                            mouse.hoveredSlotId = slot["slotId"]
                             mouse.inASlot = True
                             # interaction for hotbar and mouse stuff
                             if mouse.buttons["pressed"]["left"]:
@@ -782,7 +793,6 @@ class Player():
                 breakingType = item.breakingType
                 attack = item.attack
                 knockback = item.knockback
-                print("hey you should have tool properties")
             
         
         # run a test for interaction with entitys, hitting them, etc
@@ -805,9 +815,9 @@ class Player():
             if breakingType == block["effectiveTool"]:
                 correctTool = True
             
+            
             if powerfulEnoughTool and correctTool:
                 self.blockBreakProgress += breakingSpeed / FPS
-                print("break fast")
             else:
                 self.blockBreakProgress += slowestBreakSpeed / FPS
 
