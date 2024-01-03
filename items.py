@@ -28,6 +28,7 @@ class Item():
 class PlaceableItem(Item):
     def __init__(self, name):
         super().__init__(name)
+        self.slotId = 0
         self.itemType = "PlaceableItem"
         self.stackable = True
         self.placedBlock = {
@@ -78,6 +79,7 @@ class ToolItem(Item):
                                          "breakingPower": 1, "breakingSpeed": 1,
                                          "breakingType": "none"}):
         super().__init__(name)
+        self.slotId = 0
         self.itemType = "ToolItem"
         self.stackable = False
         

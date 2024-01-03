@@ -222,7 +222,8 @@ class Player():
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
             "currentHotbarSlotSelected": 0, # id/index of the slot in the hotbar
-            "open": False
+            "open": False,
+            "slotId": 0
             }
 
         doLotsOfThingsToMakeTheInventorySurfaceAndStuff()
@@ -553,11 +554,11 @@ class Player():
             else:
                 self.otherInventoryData["open"] = True
 
-        for slot in self.inventory():
-            if slot["contents"] != "emtpy":
+        for slot in self.inventory:
+            if slot["contents"] != "empty":
                 slot["contents"].slotId = slot["slotId"]
-        for slot in self.hotbar():
-            if slot["contents"] != "emtpy":
+        for slot in self.hotbar:
+            if slot["contents"] != "empty":
                 slot["contents"].slotId = slot["slotId"]
 
 

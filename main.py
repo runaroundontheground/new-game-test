@@ -17,6 +17,9 @@ ok currently:
 
 to do list:
 
+    add tooltips to items on hovering
+    also add item number on mouse's held item
+
 
     when placing blocks, apparently picking up a block does weird things sometimes
     the blocks aren't placing correctly, it's not actually putting it down
