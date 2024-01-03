@@ -20,6 +20,10 @@ to do list:
     
     add dropping/putting items into ur inventory if you close inv with something
     in the mouse
+    add in some extra fast clicking functionality
+    aka
+    ctrl click an item to move only one
+    shift right click to move half of the items (rounded down)
     make ground items not delete themselves until being picked up is confirmed
     actually i might have already done that
     

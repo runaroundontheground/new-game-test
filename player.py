@@ -618,9 +618,12 @@ class Player():
         for i in range(9):
             changeSelectedHotbarSlot(i)
 
-
+        # drop items from either the hotbar, the mouse's item
+        # or a slot in the hotbar or inventory (while inventory is open)
         if keysPressed[pygame.K_q]:
-            item = self.hotbar[self.otherInventoryData["currentHotbarSlot"]]
+            if not self.otherInventoryData["open"]:
+                item = self.hotbar[self.otherInventoryData["currentHotbarSlot"]]["contents"]
+
         
 
         def hotbarHeldItemStuff():
@@ -647,7 +650,12 @@ class Player():
             mouse.inASlot = False
 
             def inventoryContentInteraction(inventorySection):
-                invSection = getattr(self, inventorySection)
+                if inventorySection == "hotbar":
+                    invSection = self.hotbar
+                    otherInvSection = self.inventory
+                elif inventorySection == "inventory":
+                    invSection = self.inventory
+                    otherInvSection = self.hotbar
 
                 for slot in invSection:
                     item = slot["contents"]
@@ -657,51 +665,38 @@ class Player():
                         mouse.hoveredSlotId = slot["slotId"]
                         mouse.inASlot = True
 
-                        if mouse.buttons["left"]:
-                            if item != "empty":
-                                if keys[0][pygame.K_LSHIFT]:
-                                    movingItem = item
-                                    movingCount = slot["count"]
-                                    
-                                    movingHasBeenDone = False
-                                    
-                                    for invSectionSlot in invSection:
-                                        if invSectionSlot["contents"] == item:
-                                            addedCount = movingCount + invSectionSlot["count"]
-                                            if addedCount <= maxStackSize:
+                        movingHasBeenDone = False
+                        
+                        # copy the checkstackablesinotherinvsection for shift and also ctrl
+                        # and have an argument in it to modify how many items it should move
+                        # into the other spot
 
-                                                slot["count"] = 0
-                                                slot["contents"] = "empty"
+                        # fast transfer options
+                        if mouse.buttons["pressed"]["left"]:
+                            if keys[0][pygame.K_LSHIFT]:
+                                # move all of the items from this slot
+                                def checkStackablesInOtherInvSection():
+                                    if item != "empty":
+                                        if item.stackable:
+                                            for otherSlot in otherInvSection:
+                                                # have the loop go through and compare the
+                                                # moving item to the other item
+                                                # do stuff for the moving count = max stack size
+                                                # do stuff for moving count > max stack size
+                                                # do stuff for moving count < max stack size
+                                                if movingCount == maxStackSize:
 
-                                                invSectionSlot["count"] = addedCount
-                                                invSectionSlot["contents"] = movingItem
+                            
+                            if not movingHasBeenDone:
+                                if keys[0][pygame.K_LCTRL]:
+                                    # move a single item from this slot
+                                    # check for stackables in the other inventory section
+                                    pass
 
-                                                movingHasBeenDone = True
-                                                break
-                                            # may add putting extra stuff
-                                    
-                                    if not movingHasBeenDone:
-                                        for invSectionSlot in invSection:
-                                            if invSectionSlot["contents"] == "empty":
-
-                                                invSectionSlot["contents"] = movingItem
-                                                invSectionSlot["count"] = movingCount
-
-                                                slot["contents"] = "empty"
-                                                slot["count"] = 0
-                                                break
-
-                                elif mouse.button["pressed"]["left"]:
-                                    mouseItem = mouse.heldItem["contents"]
-                                    mouseCount = mouse.heldItem["count"]
-
-                                    mouse.heldItem["contents"] = item
-                                    mouse.heldItem["count"] = slot["count"]
-
-                                    slot["contents"] = mouseItem
-                                    slot["count"] = mouseCount
-
-                setattr(self, inventorySection, invSection)
+                            if not movingHasBeenDone:
+                                if not keys[0][pygame.K_LSHIFT]:
+                                    # try to pick up or swap the item in slot and mouse helditem
+                                    pass
 
             if self.otherInventoryData["open"]:
                 mouse.inPlayerInventory = self.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
@@ -717,12 +712,13 @@ class Player():
             if not self.otherInventoryData["open"]:
 
                 if mouse.heldItem["contents"] != "empty":
+                    item = mouse.heldItem["contents"]
                     done = False
 
                     def checkForStackables(inventorySection, done):
                         if not done:
                             invSection = getattr(self, inventorySection)
-
+                            """
                             for slotId, slot in enumerate(invSection):
                                 # THIS ISN'T DONE YET
                                 # STILL NEED TO ADD LOGIC FOR ADDING ITEMS
@@ -742,6 +738,7 @@ class Player():
                                     # slot have a max stack in it
                                     done = True
                                     break
+                            """
                             setattr(self, inventorySection, invSection)
 
                     def checkForEmptySlots(inventorySection, done):
@@ -771,8 +768,6 @@ class Player():
                     
 
                     if not done:
-
-                        item = mouse.heldItem["contents"]
 
                         # center of player
                         x = self.x + self.width/2
