@@ -479,7 +479,7 @@ def render(deltaTime):
                     if player.inventory[mouse.hoveredSlotId]["contents"] == item:
                         tooltip = item.tooltip
                         if tooltip != "":
-                            position = (mouse.x + 5, mouse.y + 5)
+                            position = (mouse.x + 10, mouse.y + 5)
 
                             imageData = convertTextToImageData(tooltip, position)
                             renderingData.append(imageData)
@@ -521,7 +521,7 @@ def render(deltaTime):
                     if player.hotbar[mouse.hoveredSlotId]["contents"] == item:
                         tooltip = item.tooltip
                         if tooltip != "":
-                            position = (mouse.x + 5, mouse.y + 5)
+                            position = (mouse.x + 10, mouse.y + 5)
 
                             imageData = convertTextToImageData(tooltip, position)
                             renderingData.append(imageData)
@@ -576,13 +576,13 @@ def render(deltaTime):
 
         renderingData.append(imageData)
 
-        shift = player.inventoryRenderingData["slotSize"] + 5
+        shift = player.inventoryRenderingData["slotSize"] - 10
 
 
         if mouse.heldItem["count"] > 1:
             
             position = (mouse.x + shift, mouse.y + shift)
-            imageData = convertTextToImageData(slot["count"], position)
+            imageData = convertTextToImageData(mouse.heldItem["count"], position)
             renderingData.append(imageData)
 
 

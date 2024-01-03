@@ -32,11 +32,11 @@ class ItemEntity(Entity):
         self.width = blockSize / 2
         self.height = blockSize / 2
 
-        self.maxFallingVelocity = 10
-        
+        self.maxFallingVelocity = -10
 
-    def doStuff(self, player):
 
+
+    def positionUpdates(self, player):
         self.rect.x = self.x
         self.rect.y = self.z
 
@@ -47,12 +47,14 @@ class ItemEntity(Entity):
         blockBelow = False
         if a or b or c or d:
             blockBelow = True
-        # gravity
+        
         if blockBelow:
+            # snap to floor
             self.yv = 0
             # normalize y coordinate, should set it to on top of the block
-            self.y = math.floor(self.y / blockSize) * blockSize
+            self.y = math.floor(self.y / blockSize) * blockSize + self.height
 
+            # friction
             self.xv -= self.xv / 15
             self.zv -= self.zv / 15
             if self.xv > -0.1 and self.xv < 0.1:
@@ -89,6 +91,12 @@ class ItemEntity(Entity):
                     self.z -= self.zv
                     self.zv = 0
 
+        
+        self.x += self.xv
+        self.y += self.yv
+        self.z += self.zv
+
+    def playerInteraction(self, player):
         if self.rect.colliderect(player.rect):
 
             def checkStackables(slot):
@@ -117,17 +125,18 @@ class ItemEntity(Entity):
                     checkEmptySlots(slot)
                     if self.deleteSelf: break
 
+            if not self.deleteSelf and self.itemData.stackable:
+                for slot in player.inventory:
+                    checkStackables(slot)
+                    if self.deleteSelf: break
+
             if not self.deleteSelf:
                 for slot in player.inventory:
                     checkEmptySlots(slot)
                     if self.deleteSelf: break
 
-            if not self.deleteSelf and self.itemData.stackable:
-                    for slot in player.inventory:
-                        checkStackables(slot)
-                        if self.deleteSelf: break
-            
+    def doStuff(self, player):
 
-        self.x += self.xv
-        self.y += self.yv
-        self.z += self.zv
+        self.positionUpdates(player)
+
+        self.playerInteraction(player)
