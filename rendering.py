@@ -501,7 +501,7 @@ def render(deltaTime):
     for slotId, slot in enumerate(player.hotbar):
         
         item = slot["contents"]
-        currentHotbarSlot = player.otherInventoryData["currentHotbarSlotSelected"]
+        currentHotbarSlot = player.otherInventoryData["currentHotbarSlot"]
 
     
         if slotId == currentHotbarSlot:

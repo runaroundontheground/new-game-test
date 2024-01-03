@@ -221,7 +221,7 @@ class Player():
             self.otherInventoryData = {
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
-            "currentHotbarSlotSelected": 0, # id/index of the slot in the hotbar
+            "currentHotbarSlot": 0, # id/index of the slot in the hotbar
             "open": False,
             "slotId": 0
             }
@@ -544,15 +544,39 @@ class Player():
 
         self.position = (self.x, self.y, self.z)
 
-    def itemPickupLogic(self, itemData):
-        
+    def giveItem(self, item, count = 1):
+        done = False
+        def checkForStackables(inventorySection, done):
+            if not done:
+                invSection = getattr(self, inventorySection)
+                for slotId, slot in enumerate(invSection):
+                    pass
+
+            setattr(self, inventorySection, invSection)
+            
+        def checkForEmptySlots(inventorySection, done):
+            if not done:
+                invSection = getattr(self, inventorySection)
+                for slotId, slot in enumerate(invSection):
+                    pass
+
+
+            setattr(self, inventorySection, invSection)
+
+        checkForStackables("hotbar", done)
+        checkForStackables("inventory", done)
+
+        checkForEmptySlots("hotbar", done)
+        checkForEmptySlots("inventory", done)
+
+        if not done:
+            print("giving the item failed")
 
 
     def doInventoryThings(self):
-        e = pygame.K_e
 
-        # mostly for player inventory goes here now, hooray
-        if keysPressed[e]:
+        
+        if keysPressed[pygame.K_e]:
             if self.otherInventoryData["open"]:
                 self.otherInventoryData["open"] = False
             else:
@@ -586,24 +610,22 @@ class Player():
         if mouse.selectedY >= chunkSize[1] * blockSize:
             mouse.selectedY = chunkSize[1] * (blockSize - 1)
 
-        def changeSelectedHotbarSlot(keyboardInput, slotId):
+        def changeSelectedHotbarSlot(numberPress):
+            keyboardInput = getattr(pygame, "K_" + str(numberPress))
             if keysPressed[keyboardInput]:
-                self.otherInventoryData["currentHotbarSlotSelected"] = slotId
-        # there's gotta be a way to do this in a loop with less code, but
-        # idk how to do that with the key codes so eh
-        changeSelectedHotbarSlot(pygame.K_1, 0)
-        changeSelectedHotbarSlot(pygame.K_2, 1)
-        changeSelectedHotbarSlot(pygame.K_3, 2)
-        changeSelectedHotbarSlot(pygame.K_4, 3)
-        changeSelectedHotbarSlot(pygame.K_5, 4)
-        changeSelectedHotbarSlot(pygame.K_6, 5)
-        changeSelectedHotbarSlot(pygame.K_7, 6)
-        changeSelectedHotbarSlot(pygame.K_8, 7)
-        changeSelectedHotbarSlot(pygame.K_9, 8)
+                self.otherInventoryData["currentHotbarSlot"] = numberPress
+        
+        for i in range(9):
+            changeSelectedHotbarSlot(i)
+
+
+        if keysPressed[pygame.K_q]:
+            item = self.hotbar[self.otherInventoryData["currentHotbarSlot"]]
+        
 
         def hotbarHeldItemStuff():
             if not self.otherInventoryData["open"]:
-                index = self.otherInventoryData["currentHotbarSlotSelected"]
+                index = self.otherInventoryData["currentHotbarSlot"]
                 slotData = self.hotbar[index]
                 item = slotData["contents"]
 
@@ -702,24 +724,32 @@ class Player():
                             invSection = getattr(self, inventorySection)
 
                             for slotId, slot in enumerate(invSection):
+                                # THIS ISN'T DONE YET
+                                # STILL NEED TO ADD LOGIC FOR ADDING ITEMS
                                 if slot["contents"] != "empty":
-                                    item = mouse.heldItem["contents"]
-                                    count = mouse.heldItem["count"]
+                                    mouseItem = mouse.heldItem["contents"]
+                                    mouseCount = mouse.heldItem["count"]
 
-                                    invSection[slotId]["contents"] = item
-                                    invSection[slotId]["count"] = count
+                                    item = slot["contents"]
+                                    count = slot["count"]
 
-                                    mouse.heldItem["contents"] = "empty"
-                                    mouse.heldItem["count"] = 0
+                                    # do things here to put the stuff where it goes
+                                    # if combining both stacks ends up with total
+                                    # count less than max stack size, then 
+                                    # delete the mouse's items
+                                    # if it ends up being more, subtract an amount
+                                    # from the mouses items and make the inventory
+                                    # slot have a max stack in it
                                     done = True
                                     break
+                            setattr(self, inventorySection, invSection)
 
                     def checkForEmptySlots(inventorySection, done):
                         if not done:
                             invSection = getattr(self, inventorySection)
 
                             for slotId, slot in enumerate(invSection):
-                                if slot["contents"] != "empty":
+                                if slot["contents"] == "empty":
                                     item = mouse.heldItem["contents"]
                                     count = mouse.heldItem["count"]
 
@@ -730,6 +760,7 @@ class Player():
                                     mouse.heldItem["count"] = 0
                                     done = True
                                     break
+                            setattr(self, inventorySection, invSection)
 
                     checkForStackables("hotbar", done)
                     checkForStackables("inventory", done)
@@ -737,16 +768,29 @@ class Player():
                     checkForEmptySlots("hotbar", done)
                     checkForEmptySlots("inventory", done)
 
-                    item = mouse.heldItem["contents"]
+                    
 
-                    x = self.x + self.width/2
-                    y = self.y - self.height/2
-                    z = self.z + self.width/2
+                    if not done:
 
+                        item = mouse.heldItem["contents"]
 
-                    item.drop(x, y, z, xv, yv, zv)
+                        # center of player
+                        x = self.x + self.width/2
+                        y = self.y - self.height/2
+                        z = self.z + self.width/2
 
+                        # figure out velocity for angle of player to mouse
 
+                        xDiff = mouse.cameraRelativeX - x
+                        yDiff = mouse.cameraRelativeZ - z
+
+                        angle = math.atan2(yDiff, xDiff)                        
+
+                        xv = math.cos(angle) * 3
+                        yv = 2
+                        zv = math.sin(angle) * 3
+
+                        item.drop(x, y, z, xv, yv, zv)
 
         mouseInteractionWithInventory()   
 
@@ -870,7 +914,7 @@ class Player():
                     dropAnItem = True
                 
                 if dropAnItem:
-                    entity = ItemEntity(itemData, x, y, z)
+                    entity = ItemEntity(itemData, x, y, z, yv = 5)
                     entities.append(entity)
 
                 chunks[chunkCoord]["data"][blockCoord]["type"] = "air"

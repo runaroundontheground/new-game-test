@@ -21,17 +21,19 @@ class Entity():
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
-    def __init__(self, itemData, x, y, z, xv, yv, zv):
+    def __init__(self, itemData, x, y, z, xv = 0, yv = 0, zv = 0):
         super().__init__(x, y, z, xv, yv, zv)
         self.itemData = itemData
-        self.xv = xv
-        self.yv = yv
-        self.zv = zv
+        self.count = 1
 
         self.width = blockSize / 2
         self.height = blockSize / 2
 
         self.maxFallingVelocity = -10
+
+        self.timers = {
+            "pickupDelay": 20
+        }
 
 
 
@@ -95,47 +97,29 @@ class ItemEntity(Entity):
         self.y += self.yv
         self.z += self.zv
 
+    def runTimers(self):
+        for key, value in self.timers.items():
+            if value > 0:
+                value -= 1
+                print("timer is in fact working? " + str(value))
+            if value < 0:
+                value += 1
+
+            
+
     def playerInteraction(self, player):
-        if self.rect.colliderect(player.rect):
+        if self.timers["pickupDelay"] == 0:
+            if self.rect.colliderect(player.rect):
 
-            def checkStackables(slot):
-                if slot["contents"] != "empty":
-                    if slot["contents"].stackable:
-                        if slot["contents"].name == self.itemData.name:
-                            if slot["count"] < maxStackSize:
-                                slot["count"] += 1
-                                self.deleteSelf = True
-                                print("added 1 item to the slot")
+                itemPickedUp = player.giveItem(self.itemData, self.count)
 
-            def checkEmptySlots(slot):
-                if slot["contents"] == "empty":
-                    slot["count"] = 1
-                    slot["contents"] = self.itemData
+                if itemPickedUp:
                     self.deleteSelf = True
-                    print("put an item in an empty slot")
-                    
-            if self.itemData.stackable:
-                for slot in player.hotbar:
-                    checkStackables(slot)
-                    if self.deleteSelf: break
-
-            if not self.deleteSelf:
-                for slot in player.hotbar:
-                    checkEmptySlots(slot)
-                    if self.deleteSelf: break
-
-            if not self.deleteSelf and self.itemData.stackable:
-                for slot in player.inventory:
-                    checkStackables(slot)
-                    if self.deleteSelf: break
-
-            if not self.deleteSelf:
-                for slot in player.inventory:
-                    checkEmptySlots(slot)
-                    if self.deleteSelf: break
 
     def doStuff(self, player):
+        
+        if not self.deleteSelf:
+            self.positionUpdates(player)
+            self.runTimers()
 
-        self.positionUpdates(player)
-
-        self.playerInteraction(player)
+            self.playerInteraction(player)
