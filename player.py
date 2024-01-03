@@ -544,6 +544,10 @@ class Player():
 
         self.position = (self.x, self.y, self.z)
 
+    def itemPickupLogic(self, itemData):
+        pass
+
+
     def doInventoryThings(self):
         e = pygame.K_e
 
@@ -728,8 +732,20 @@ class Player():
                                     slot["contents"] = mouseItem
                                     slot["count"] = mouseCount
                     
+        mouseInteractionWithInventory()   
 
-        mouseInteractionWithInventory()        
+        if not self.otherInventoryData["open"]:
+            if mouse.heldItem["contents"] != "empty":
+                done = False
+
+                for slotId, slot in enumerate(self.hotbar):
+                    if slot["contents"] == "empty":
+                        item = mouse.heldItem["contents"]
+                        count = mouse.heldItem["count"]
+
+                        self.hotbar[slotId] = item
+                        self.hotbar[slotId]["count"] = count
+                        mouse.heldItem["contents"] = "empty"
         
     def handleTimers(self):
         for key, timerValue in self.timers.items():

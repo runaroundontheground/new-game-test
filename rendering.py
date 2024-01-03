@@ -279,7 +279,6 @@ def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
 
 def generateSpawnArea():
     generateNearbyAreas(rangeOfGeneration = 3)
-    # that might cause some lag...
     
 
 
@@ -468,12 +467,23 @@ def render(deltaTime):
                 renderingData.append(imageData)
 
         for slot in player.inventory:
-            if slot["contents"] != "empty":
-                image = itemIcons[slot["contents"].name]
+            item = slot["contents"]
+            if item != "empty":
+                image = itemIcons[item.name]
                 position = slot["renderPosition"]
 
                 imageData = (image, position)
                 renderingData.append(imageData)
+
+                if mouse.inPlayerInventory and mouse.inASlot:
+                    if player.inventory[mouse.hoveredSlotId]["contents"] == item:
+                        tooltip = item.tooltip
+                        if tooltip != "":
+                            position = (mouse.x + 5, mouse.y + 5)
+
+                            imageData = convertTextToImageData(tooltip, position)
+                            renderingData.append(imageData)
+
 
                 if slot["count"] > 1:
                     imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
@@ -507,6 +517,14 @@ def render(deltaTime):
 
                 imageData = (image, position)
                 renderingData.append(imageData)
+                if item != "empty" and player.otherInventoryData["open"]:
+                    if player.hotbar[mouse.hoveredSlotId]["contents"] == item:
+                        tooltip = item.tooltip
+                        if tooltip != "":
+                            position = (mouse.x + 5, mouse.y + 5)
+
+                            imageData = convertTextToImageData(tooltip, position)
+                            renderingData.append(imageData)
 
         if item != "empty":
             image = itemIcons[item.name]
@@ -558,9 +576,12 @@ def render(deltaTime):
 
         renderingData.append(imageData)
 
+        shift = player.inventoryRenderingData["slotSize"] + 5
+
+
         if mouse.heldItem["count"] > 1:
-            shift = player.inventoryRenderingData["slotSize"]
-            position = (mouse.x + 5 + shift, mouse.y + 5 + shift)
+            
+            position = (mouse.x + shift, mouse.y + shift)
             imageData = convertTextToImageData(slot["count"], position)
             renderingData.append(imageData)
 

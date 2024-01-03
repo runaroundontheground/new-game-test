@@ -10,6 +10,7 @@ class Item():
     def __init__(self, name = "air"):
         self.name = name
         self.slotId = 0
+        self.tooltip = "tooltip unavailable"
         
     
     # drop/throw this item out as an entity
@@ -26,8 +27,11 @@ class Item():
 
 # an item that can be placed, like wood or something
 class PlaceableItem(Item):
-    def __init__(self, name):
+    def __init__(self, name, tooltip = ""):
         super().__init__(name)
+        self.tooltip = self.name
+        if tooltip != "":
+            self.tooltip = tooltip
         self.slotId = 0
         self.itemType = "PlaceableItem"
         self.stackable = True
@@ -77,10 +81,14 @@ class PlaceableItem(Item):
 class ToolItem(Item):
     def __init__(self, name, toolData = {"attack": 1, "knockback": 1,
                                          "breakingPower": 1, "breakingSpeed": 1,
-                                         "breakingType": "none"}):
+                                         "breakingType": "none"},
+                                         tooltip = ""):
         super().__init__(name)
         self.slotId = 0
         self.itemType = "ToolItem"
+        self.tooltip = self.name
+        if tooltip != "":
+            self.tooltip = tooltip
         self.stackable = False
         
         self.attack = toolData["attack"]

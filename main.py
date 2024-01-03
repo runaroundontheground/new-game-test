@@ -18,6 +18,9 @@ ok currently:
 to do list:
 
     add tooltips to items on hovering
+    add dropping/putting items into ur inventory if you close inv with something
+    in the mouse
+    make ground items not delete themselves until being picked up is confirmed
     also add item number on mouse's held item
 
 
