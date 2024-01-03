@@ -681,8 +681,6 @@ class Player():
 
                 setattr(self, inventorySection, invSection)
 
-            
-
             if self.otherInventoryData["open"]:
                 mouse.inPlayerInventory = self.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
                 mouse.inPlayerHotbar = self.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
@@ -691,25 +689,67 @@ class Player():
                     inventoryContentInteraction("inventory")
                 if mouse.inPlayerHotbar:
                     inventoryContentInteraction("hotbar")
-                    
+        
+
+            # do stuff with items in the mouse when the inventory is closed
+            if not self.otherInventoryData["open"]:
+
+                if mouse.heldItem["contents"] != "empty":
+                    done = False
+
+                    def checkForStackables(inventorySection, done):
+                        if not done:
+                            invSection = getattr(self, inventorySection)
+
+                            for slotId, slot in enumerate(invSection):
+                                if slot["contents"] != "empty":
+                                    item = mouse.heldItem["contents"]
+                                    count = mouse.heldItem["count"]
+
+                                    invSection[slotId]["contents"] = item
+                                    invSection[slotId]["count"] = count
+
+                                    mouse.heldItem["contents"] = "empty"
+                                    mouse.heldItem["count"] = 0
+                                    done = True
+                                    break
+
+                    def checkForEmptySlots(inventorySection, done):
+                        if not done:
+                            invSection = getattr(self, inventorySection)
+
+                            for slotId, slot in enumerate(invSection):
+                                if slot["contents"] != "empty":
+                                    item = mouse.heldItem["contents"]
+                                    count = mouse.heldItem["count"]
+
+                                    invSection[slotId]["contents"] = item
+                                    invSection[slotId]["count"] = count
+
+                                    mouse.heldItem["contents"] = "empty"
+                                    mouse.heldItem["count"] = 0
+                                    done = True
+                                    break
+
+                    checkForStackables("hotbar", done)
+                    checkForStackables("inventory", done)
+
+                    checkForEmptySlots("hotbar", done)
+                    checkForEmptySlots("inventory", done)
+
+                    item = mouse.heldItem["contents"]
+
+                    x = self.x + self.width/2
+                    y = self.y - self.height/2
+                    z = self.z + self.width/2
+
+
+                    item.drop(x, y, z, xv, yv, zv)
+
+
+
         mouseInteractionWithInventory()   
 
-        if not self.otherInventoryData["open"]:
-            if mouse.heldItem["contents"] != "empty":
-                done = False
-
-                for slotId, slot in enumerate(self.hotbar):
-                    if slot["contents"] == "empty":
-                        item = mouse.heldItem["contents"]
-                        count = mouse.heldItem["count"]
-
-                        self.hotbar[slotId]["contents"] = item
-                        self.hotbar[slotId]["count"] = count
-                        mouse.heldItem["contents"] = "empty"
-                        done = True
-                        break
-                if not done:
-                    for slotId, slot in enumerate(self.hotbar)
         
     def handleTimers(self):
         for key, timerValue in self.timers.items():

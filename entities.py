@@ -21,13 +21,12 @@ class Entity():
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
-    def __init__(self, itemData, x, y, z):
-        super().__init__(x, y, z)
+    def __init__(self, itemData, x, y, z, xv, yv, zv):
+        super().__init__(x, y, z, xv, yv, zv)
         self.itemData = itemData
-        self.xv = random.randint(-5, 5)
-        self.zv = random.randint(-5, 5)
-        self.y += 5
-        self.yv = random.randint(1, 10)
+        self.xv = xv
+        self.yv = yv
+        self.zv = zv
 
         self.width = blockSize / 2
         self.height = blockSize / 2
