@@ -665,36 +665,51 @@ class Player():
                         mouse.hoveredSlotId = slot["slotId"]
                         mouse.inASlot = True
 
-                        movingHasBeenDone = False
+                        done = False
                         
                         # copy the checkstackablesinotherinvsection for shift and also ctrl
                         # and have an argument in it to modify how many items it should move
                         # into the other spot
 
-                        # fast transfer options
-                        if mouse.buttons["pressed"]["left"]:
-                            if keys[0][pygame.K_LSHIFT]:
-                                # move all of the items from this slot
-                                def checkStackablesInOtherInvSection():
+                        def checkStackablesInOtherInvSection(amountToMove = "max"):
                                     if item != "empty":
                                         if item.stackable:
                                             for otherSlot in otherInvSection:
-                                                # have the loop go through and compare the
-                                                # moving item to the other item
-                                                # do stuff for the moving count = max stack size
-                                                # do stuff for moving count > max stack size
-                                                # do stuff for moving count < max stack size
-                                                if movingCount == maxStackSize:
+                                                otherItem = otherSlot["contents"]
 
-                            
-                            if not movingHasBeenDone:
+                                                if otherItem != "empty":
+                                                    if otherItem.stackable:
+                                                        if amountToMove == "max":
+                                                            movingCount = slot["count"] + otherSlot["count"]
+                                                        
+
+                                                            if movingCount <= maxStackSize:
+                                                                otherSlot["count"] = movingCount
+                                                                slot["count"] = 0
+                                                                slot["contents"] = "empty"
+
+                                                            if movingCount == maxStackSize:
+                                                                pass
+                                                        else: # not moving max amount
+                                                            pass
+
+                        # fast transfer options
+                        if mouse.buttons["pressed"]["left"]:
+                            if keys[0][pygame.K_LSHIFT]:
+                                # move all items from this slot (if possible)
+                                checkStackablesInOtherInvSection("max")
+                                checkEmptySlotsInOtherInvSection("max")
+                                # move all of the items from this slot
+                                
+                            if not done:
                                 if keys[0][pygame.K_LCTRL]:
-                                    # move a single item from this slot
-                                    # check for stackables in the other inventory section
-                                    pass
+                                    # move a single item from this slot (if possible)
+                                    checkStackablesInOtherInvSection(1)
+                                    checkEmptySlotsInOtherInvSection(1)
+                                    
 
-                            if not movingHasBeenDone:
-                                if not keys[0][pygame.K_LSHIFT]:
+                            if not done:
+                                if not keys[0][pygame.K_LSHIFT] and not keys[0][pygame.K_LCTRL]:
                                     # try to pick up or swap the item in slot and mouse helditem
                                     pass
 
