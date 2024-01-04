@@ -666,46 +666,88 @@ class Player():
                         mouse.inASlot = True
 
                         done = False
-                        
-                        # copy the checkstackablesinotherinvsection for shift and also ctrl
-                        # and have an argument in it to modify how many items it should move
-                        # into the other spot
 
-                        def checkStackablesInOtherInvSection(amountToMove = "max"):
-                                    if item != "empty":
-                                        if item.stackable:
-                                            for otherSlot in otherInvSection:
-                                                otherItem = otherSlot["contents"]
+                        def checkStackablesInOtherInvSection(amountToMove, done):
+                            """
+                            amountToMove: either "max" or an int less than 64 \n
+                            done: used to see if the current slot/item has been completely depleted
+                            """
+                            if item != "empty" and not done:
+                                if item.stackable:
+                                    for otherSlot in otherInvSection:
+                                        otherItem = otherSlot["contents"]
 
-                                                if otherItem != "empty":
-                                                    if otherItem.stackable:
-                                                        if amountToMove == "max":
-                                                            movingCount = slot["count"] + otherSlot["count"]
+                                        if otherItem != "empty" and otherSlot["count"] < maxStackSize:
+                                            if otherItem.stackable and item.name == otherItem.name:
+                                                if amountToMove == "max":
+                                                    movingCount = slot["count"] + otherSlot["count"]
+                                                
+                                                    # combine the count
+                                                    if movingCount <= maxStackSize:
+                                                        otherSlot["count"] = movingCount
+                                                        slot["count"] = 0
+                                                        slot["contents"] = "empty"
                                                         
+                                                        done = True
 
-                                                            if movingCount <= maxStackSize:
-                                                                otherSlot["count"] = movingCount
-                                                                slot["count"] = 0
-                                                                slot["contents"] = "empty"
+                                                    # make the other stack full, reduce item count
+                                                    # in first slot so the later update catches it
+                                                    if movingCount > maxStackSize:
+                                                        slot["count"] = movingCount - maxStackSize
+                                                        otherSlot["count"] = maxStackSize
+                                                else: # not moving max amount
+                                                    otherSlotNewCount = otherSlot["count"] + amountToMove
+                                                    slotNewCount = slot["count"] - amountToMove
 
-                                                            if movingCount == maxStackSize:
-                                                                pass
-                                                        else: # not moving max amount
-                                                            pass
+                                                    # subtract from first slot, add to the second if possible
+                                                    if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
+                                                        slot["count"] = slotNewCount
+                                                        otherSlot["count"] = otherSlotNewCount
+                                                        if slotNewCount == 0:
+                                                            done = True
+
+                        def checkEmptySlotsInOtherInvSection(amountToMove, done):
+                            """
+                            amountToMove: either "max" or an int less than 64 \n
+                            done: used to see if the current slot/item has been completely depleted
+                            """
+                            if item != "empty" and not done:
+                                for otherSlot in otherInvSection:
+                                    otherItem = otherSlot["contents"]
+
+                                    if otherItem == "empty":
+                                        if amountToMove == "max":
+                                            otherSlot["contents"] = slot["contents"]
+                                            otherSlot["count"] = slot["count"]
+
+                                            slot["contents"] = "empty"
+                                            slot["count"] = 0
+                                                
+                                            done = True
+
+                                        else: # not moving max amount
+                                            slotNewCount = slot["count"] - amountToMove
+
+                                            # subtract from first slot, add to the second if possible
+                                            if slotNewCount >= 0:
+                                                slot["count"] = slotNewCount
+                                                otherSlot["count"] = amountToMove
+                                                if slotNewCount == 0:
+                                                    done = True
 
                         # fast transfer options
                         if mouse.buttons["pressed"]["left"]:
                             if keys[0][pygame.K_LSHIFT]:
                                 # move all items from this slot (if possible)
-                                checkStackablesInOtherInvSection("max")
-                                checkEmptySlotsInOtherInvSection("max")
-                                # move all of the items from this slot
+                                checkStackablesInOtherInvSection("max", done)
+                                checkEmptySlotsInOtherInvSection("max", done)
+                                
                                 
                             if not done:
                                 if keys[0][pygame.K_LCTRL]:
                                     # move a single item from this slot (if possible)
-                                    checkStackablesInOtherInvSection(1)
-                                    checkEmptySlotsInOtherInvSection(1)
+                                    checkStackablesInOtherInvSection(1, done)
+                                    checkEmptySlotsInOtherInvSection(1, done)
                                     
 
                             if not done:
