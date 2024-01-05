@@ -14,18 +14,18 @@ class Item():
         
     
     # drop/throw this item out as an entity
-    def drop(self, x, y, z, xv, yv, zv, player = None):
+    def drop(self, x, y, z, xv, yv, zv, player = None, count = 1):
 
-        droppedItem = ItemEntity(self, x, y, z, xv, yv, zv)
+        droppedItem = ItemEntity(self, count, x, y, z, xv, yv, zv)
 
         entities.append(droppedItem)
 
         if player != None:
             print("doing stuff to player inventory after dropping something")
-            if player.inventory[self.slotId]["count"] == 1:
-                player.inventory[self.slotId]["contents"] = "empty"
-            elif player.inventory[self.slotId]["count"] >= 2:
-                player.inventory[self.slotId]["count"] -= 1
+            if player.hotbar[self.slotId]["count"] == 1:
+                player.hotbar[self.slotId]["contents"] = "empty"
+            elif player.hotbar[self.slotId]["count"] >= 2:
+                player.hotbar[self.slotId]["count"] -= 1
 
 # an item that can be placed, like wood or something
 class PlaceableItem(Item):

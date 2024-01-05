@@ -4,14 +4,14 @@ import math, pygame, random
 
 # basic entity, no ai or anything
 class Entity():
-    def __init__(self, x = 0, y = 0, z = 0):
+    def __init__(self, x = 0, y = 0, z = 0, xv = 0, yv = 0, zv = 0):
         self.x = x
         self.y = y
         self.z = z
 
-        self.xv = 0
-        self.yv = 0
-        self.zv = 0
+        self.xv = xv
+        self.yv = yv
+        self.zv = zv
         self.deleteSelf = False
 
         self.width = blockSize
@@ -21,13 +21,14 @@ class Entity():
 
 # used for items that are on the ground, like after breaking something
 class ItemEntity(Entity):
-    def __init__(self, itemData, x, y, z, xv = 0, yv = 0, zv = 0):
+    def __init__(self, itemData, count, x, y, z, xv = 0, yv = 0, zv = 0):
         super().__init__(x, y, z, xv, yv, zv)
         self.itemData = itemData
-        self.count = 1
+        self.count = count
 
         self.width = blockSize / 2
         self.height = blockSize / 2
+        self.rect = pygame.rect.Rect(0, 0, self.width, self.height)
 
         self.maxFallingVelocity = -10
 
@@ -38,13 +39,11 @@ class ItemEntity(Entity):
 
 
     def positionUpdates(self, player):
-        self.rect.x = self.x
-        self.rect.y = self.z
 
-        a = findBlock(self.x, self.y - self.height, self.z)
-        b = findBlock(self.x, self.y - self.height, self.z + self.width)
-        c = findBlock(self.x + self.width, self.y - self.height, self.z)
-        d = findBlock(self.x + self.width, self.y - self.height, self.z + self.width)
+        a = findBlock(self.x, self.y - self.height, self.z, ignoreWater = True)
+        b = findBlock(self.x, self.y - self.height, self.z + self.width, ignoreWater = True)
+        c = findBlock(self.x + self.width, self.y - self.height, self.z, ignoreWater = True)
+        d = findBlock(self.x + self.width, self.y - self.height, self.z + self.width, ignoreWater = True)
         blockBelow = False
         if a or b or c or d:
             blockBelow = True
@@ -97,22 +96,22 @@ class ItemEntity(Entity):
         self.y += self.yv
         self.z += self.zv
 
+        self.rect.x = self.x
+        self.rect.y = self.z
+
     def runTimers(self):
         for key, value in self.timers.items():
             if value > 0:
                 value -= 1
-                print("timer is in fact working? " + str(value))
             if value < 0:
                 value += 1
-
-            
 
     def playerInteraction(self, player):
         if self.timers["pickupDelay"] == 0:
             if self.rect.colliderect(player.rect):
 
-                itemPickedUp = player.giveItem(self.itemData, self.count)
-
+                itemPickedUp = not player.giveItem(self.itemData, self.count)
+                print(itemPickedUp)
                 if itemPickedUp:
                     self.deleteSelf = True
 

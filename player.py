@@ -546,31 +546,46 @@ class Player():
 
     def giveItem(self, item, count = 1):
         done = False
-        def checkForStackables(inventorySection, done):
-            if not done:
-                invSection = getattr(self, inventorySection)
-                for slotId, slot in enumerate(invSection):
-                    pass
+        def checkForStackables(inventorySection, done, count, item):
+            if not done and item.stackable:
+                for slot in inventorySection:
+                    if slot["contents"] != "empty":
+                        if slot["contents"].name == item.name:
 
-            setattr(self, inventorySection, invSection)
+                            addedCount = count + slot["count"]
+                            if addedCount <= maxStackSize:
+
+                                slot["count"] = addedCount
+                                done = True
+                                return True
+                            elif addedCount > maxStackSize:
+                                slot["count"] = maxStackSize
+                                count = addedCount - maxStackSize
             
-        def checkForEmptySlots(inventorySection, done):
+        def checkForEmptySlots(inventorySection, done, count, item):
             if not done:
-                invSection = getattr(self, inventorySection)
-                for slotId, slot in enumerate(invSection):
-                    pass
+                for slot in inventorySection:
+                    if slot["contents"] == "empty":
+                        slot["contents"] = item
+                        slot["count"] = count
+                        
+                        done = True
+                        return True
+
+            
 
 
-            setattr(self, inventorySection, invSection)
 
-        checkForStackables("hotbar", done)
-        checkForStackables("inventory", done)
+        done = checkForStackables(self.hotbar, done, count, item)
+        done = checkForStackables(self.inventory, done, count, item)
 
-        checkForEmptySlots("hotbar", done)
-        checkForEmptySlots("inventory", done)
+        done = checkForEmptySlots(self.hotbar, done, count, item)
+        done = checkForEmptySlots(self.inventory, done, count, item)
 
         if not done:
             print("giving the item failed")
+
+        return done
 
 
     def doInventoryThings(self):
@@ -622,7 +637,30 @@ class Player():
         # or a slot in the hotbar or inventory (while inventory is open)
         if keysPressed[pygame.K_q]:
             if not self.otherInventoryData["open"]:
-                item = self.hotbar[self.otherInventoryData["currentHotbarSlot"]]["contents"]
+                currentHotbarSlot = self.otherInventoryData["currentHotbarSlot"]
+                item = self.hotbar[currentHotbarSlot]["contents"]
+
+                if item != "empty":
+
+                    x = self.x + self.width/2
+                    y = self.y - self.height/2
+                    z = self.z + self.width/2
+
+                    # figure out velocity for angle of player to mouse
+
+                    xDiff = mouse.cameraRelativeX - x
+                    yDiff = mouse.cameraRelativeZ - z
+
+                    angle = math.atan2(yDiff, xDiff)                        
+
+                    xv = math.cos(angle) * 3
+                    yv = 2
+                    zv = math.sin(angle) * 3
+
+                    count = 1
+
+                    item.drop(x, y, z, xv, yv, zv, self, count)
+
 
         
 

@@ -20,6 +20,8 @@ to do list:
     
     add dropping/putting items into ur inventory if you close inv with something
     in the mouse
+    
+    can't pick up items anymore, why???
 
 
 
