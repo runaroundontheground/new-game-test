@@ -613,9 +613,9 @@ class Player():
         def changeSelectedHotbarSlot(numberPress):
             keyboardInput = getattr(pygame, "K_" + str(numberPress))
             if keysPressed[keyboardInput]:
-                self.otherInventoryData["currentHotbarSlot"] = numberPress
+                self.otherInventoryData["currentHotbarSlot"] = numberPress - 1
         
-        for i in range(9):
+        for i in range(1, 10):
             changeSelectedHotbarSlot(i)
 
         # drop items from either the hotbar, the mouse's item
@@ -689,10 +689,11 @@ class Player():
                                                         slot["contents"] = "empty"
                                                         
                                                         done = True
+                                                        break
 
                                                     # make the other stack full, reduce item count
                                                     # in first slot so the later update catches it
-                                                    if movingCount > maxStackSize:
+                                                    elif movingCount > maxStackSize:
                                                         slot["count"] = movingCount - maxStackSize
                                                         otherSlot["count"] = maxStackSize
                                                 else: # not moving max amount
@@ -703,8 +704,9 @@ class Player():
                                                     if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
                                                         slot["count"] = slotNewCount
                                                         otherSlot["count"] = otherSlotNewCount
-                                                        if slotNewCount == 0:
-                                                            done = True
+
+                                                        done = True
+                                                        break
 
                         def checkEmptySlotsInOtherInvSection(amountToMove, done):
                             """
@@ -724,6 +726,7 @@ class Player():
                                             slot["count"] = 0
                                                 
                                             done = True
+                                            break
 
                                         else: # not moving max amount
                                             slotNewCount = slot["count"] - amountToMove
@@ -732,8 +735,10 @@ class Player():
                                             if slotNewCount >= 0:
                                                 slot["count"] = slotNewCount
                                                 otherSlot["count"] = amountToMove
-                                                if slotNewCount == 0:
-                                                    done = True
+                                                otherSlot["contents"] = slot["contents"]
+                                            
+                                                done = True
+                                                break
 
                         # fast transfer options
                         if mouse.buttons["pressed"]["left"]:
@@ -743,17 +748,57 @@ class Player():
                                 checkEmptySlotsInOtherInvSection("max", done)
                                 
                                 
-                            if not done:
-                                if keys[0][pygame.K_LCTRL]:
-                                    # move a single item from this slot (if possible)
-                                    checkStackablesInOtherInvSection(1, done)
-                                    checkEmptySlotsInOtherInvSection(1, done)
+                        
+                            if keys[0][pygame.K_LCTRL]:
+                                # move a single item from this slot (if possible)
+                                checkStackablesInOtherInvSection(1, done)
+                                checkEmptySlotsInOtherInvSection(1, done)
                                     
 
                             if not done:
                                 if not keys[0][pygame.K_LSHIFT] and not keys[0][pygame.K_LCTRL]:
                                     # try to pick up or swap the item in slot and mouse helditem
-                                    pass
+                                    mouseItem = mouse.heldItem["contents"]
+                                    if mouseItem != "empty":
+                                        if item != "empty":
+                                            if mouseItem.stackable and item.stackable:
+                                                addedCount = mouse.heldItem["count"] + slot["count"]
+                                                
+                                                if addedCount <= maxStackSize:
+                                                    mouse.heldItem["contents"] = "empty"
+                                                    mouse.heldItem["count"] = 0
+
+                                                    slot["count"] = addedCount
+
+                                                    done = True
+                                                    break
+
+                                                elif addedCount > maxStackSize:
+                                                    newMouseSlotCount = addedCount - maxStackSize
+
+                                                    slot["count"] = maxStackSize
+                                                    mouse.heldItem["count"] = newMouseSlotCount
+
+
+                                        else: # clicked item has nothing there, put mouse contents there
+                                            slot["contents"] = mouse.heldItem["contents"]
+                                            slot["count"] = mouse.heldItem["count"]
+
+                                            mouse.heldItem["count"] = 0
+                                            mouse.heldItem["contents"] = "empty"
+                                            
+                                            done = True
+                                            break
+
+                                    else: # mouse has no item in it
+                                        if item != "empty":
+                                            mouse.heldItem["count"] = slot["count"]
+                                            mouse.heldItem["contents"] = slot["contents"]
+
+                                            slot["count"] = 0
+                                            slot["contents"] = "empty"
+
+
 
             if self.otherInventoryData["open"]:
                 mouse.inPlayerInventory = self.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
