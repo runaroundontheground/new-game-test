@@ -670,7 +670,7 @@ class Player():
                         def checkStackablesInOtherInvSection(amountToMove, done):
                             """
                             amountToMove: either "max" or an int less than 64 \n
-                            done: used to see if the current slot/item has been completely depleted
+                            done: used to see if the interaction is done
                             """
                             if item != "empty" and not done:
                                 if item.stackable:
@@ -696,6 +696,7 @@ class Player():
                                                     elif movingCount > maxStackSize:
                                                         slot["count"] = movingCount - maxStackSize
                                                         otherSlot["count"] = maxStackSize
+
                                                 else: # not moving max amount
                                                     otherSlotNewCount = otherSlot["count"] + amountToMove
                                                     slotNewCount = slot["count"] - amountToMove
@@ -704,6 +705,9 @@ class Player():
                                                     if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
                                                         slot["count"] = slotNewCount
                                                         otherSlot["count"] = otherSlotNewCount
+
+                                                        if slotNewCount == 0:
+                                                            slot["contents"] = 0
 
                                                         done = True
                                                         break
@@ -762,22 +766,23 @@ class Player():
                                     if mouseItem != "empty":
                                         if item != "empty":
                                             if mouseItem.stackable and item.stackable:
-                                                addedCount = mouse.heldItem["count"] + slot["count"]
-                                                
-                                                if addedCount <= maxStackSize:
-                                                    mouse.heldItem["contents"] = "empty"
-                                                    mouse.heldItem["count"] = 0
+                                                if mouseItem.name == item.name:
+                                                    addedCount = mouse.heldItem["count"] + slot["count"]
+                                                    
+                                                    if addedCount <= maxStackSize:
+                                                        mouse.heldItem["contents"] = "empty"
+                                                        mouse.heldItem["count"] = 0
 
-                                                    slot["count"] = addedCount
+                                                        slot["count"] = addedCount
 
-                                                    done = True
-                                                    break
+                                                        done = True
+                                                        break
 
-                                                elif addedCount > maxStackSize:
-                                                    newMouseSlotCount = addedCount - maxStackSize
+                                                    elif addedCount > maxStackSize:
+                                                        newMouseSlotCount = addedCount - maxStackSize
 
-                                                    slot["count"] = maxStackSize
-                                                    mouse.heldItem["count"] = newMouseSlotCount
+                                                        slot["count"] = maxStackSize
+                                                        mouse.heldItem["count"] = newMouseSlotCount
 
 
                                         else: # clicked item has nothing there, put mouse contents there

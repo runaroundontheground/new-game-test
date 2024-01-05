@@ -23,7 +23,9 @@ to do list:
 
     i managed to break hotbar slot selection too, so that needs to be fixed
     shift click appears to work
-    ctrl click doesn't yet
+    ctrl click doesn't yet kinda
+    it seems to leave an item in a slot and it's count is at 0, so it doesn'ta ctually 
+    do anything
 
 
     make ground items not delete themselves until being picked up is confirmed
