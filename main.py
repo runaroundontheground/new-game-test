@@ -93,12 +93,13 @@ day/night cycle
 
 
 """
-
+typingCommands = False
+commandString = ""
 
 
 running = True
 
-def gameLoop():
+def gameLoop(typingCommands, commandString):
     global deltaTime
     # hopefully i did deltatime correctly
 
@@ -154,7 +155,7 @@ def gameLoop():
             render(1)
 
 
-gameLoop()
+gameLoop(typingCommands, commandString)
 
 pygame.quit()
 
