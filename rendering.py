@@ -1,6 +1,6 @@
-from globalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
-from globalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
-from globalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint, typingCommands, commandString
+from globalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks, keys
+from globalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities, keysPressed
+from globalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
 from controls import mouse
@@ -168,7 +168,9 @@ addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("leaves", (29, 64, 17))
 
 
-
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    ]
 
 characters = {}
 
@@ -285,12 +287,11 @@ def generateSpawnArea():
 
 
 
-def render(deltaTime):
+def render(deltaTime, typingCommands = None):
 
 
     if not typingCommands:
         screen.fill((0, 0, 0))
-
         # get the chunks to be used for rendering
         chunkList = generateNearbyAreas(2, True)
 
@@ -621,20 +622,106 @@ def render(deltaTime):
 
     else: # commands are being typed, display and keep track of them!
         pass
-        """
-        how to make this work:
-        use keysPressed to append stuff to commandString, remove characters if
-        keysPressed[pygame.K_BACKSPACE]
-        if enter is pressed, then do:
-        try:
-            eval(commandString)
-        except:
-            render a string that says "invalid command!" or something like that
-            and have time.sleep for a second or something so that it has time
-            to be seen
-        after that happens
 
-        set commandString back to ""
-        set typingCommands to False
-        """
+def doCommandStuff(commandString, submitCommand):
     
+    def goThroughACharacterList(list, commandString):
+        
+        for character in list:
+            try:
+                thing = "K_" + str(character)
+                thisKeyPressed = keysPressed[getattr(pygame, thing)]
+            except:
+                pass
+            else:
+
+                if thisKeyPressed:
+                    print("add a thing")
+                    commandString += str(character)
+                    imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
+                    size = font.size(commandString)
+                    rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+                    pygame.draw.rect(screen, (0, 0, 0), rect)
+                    screen.blit(imageData[0], imageData[1])
+                    pygame.display.flip()
+                    return commandString
+    def appendACharacter(character, commandString):
+        commandString += character
+        imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
+        size = font.size(commandString)
+        rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+        pygame.draw.rect(screen, (0, 0, 0), rect)
+        screen.blit(imageData[0], imageData[1])
+        pygame.display.flip()
+        return commandString
+
+    commandString = goThroughACharacterList(letters, commandString)
+    commandString = goThroughACharacterList(["0","1","2","3","4","5","6","7","8","9"], commandString)
+    if keys[0][pygame.K_LSHIFT]:
+        if keysPressed[pygame.K_LEFTPAREN]:
+            commandString = appendACharacter("(", commandString)
+        if keysPressed[pygame.K_RIGHTPAREN]:
+            commandString = appendACharacter(")", commandString)
+    if keysPressed[pygame.K_QUOTE]:
+        commandString = appendACharacter("'", commandString)
+    if keysPressed[pygame.K_LEFTBRACKET]:
+        if keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]:
+            commandString = appendACharacter("{", commandString)
+        else:
+            commandString = appendACharacter("[", commandString)
+    if keysPressed[pygame.K_RIGHTBRACKET]:
+        if keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]:
+            commandString = appendACharacter("}", commandString)
+        else:
+            commandString = appendACharacter("]", commandString)
+
+
+
+    if keysPressed[pygame.K_BACKSPACE]:
+            print("delete a thing")
+            if len(commandString) > 0:
+                
+                size = font.size(commandString)
+                print(commandString)
+                commandString = commandString[:-1]
+                print(commandString)
+                imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
+                
+                rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+                pygame.draw.rect(screen, (0, 0, 0), rect)
+                screen.blit(imageData[0], imageData[1])
+                pygame.display.flip()
+
+    if keysPressed[pygame.K_BACKSLASH]:
+        print("submit command")
+        submitCommand = True
+
+
+
+    return commandString, submitCommand
+
+    """
+    how to make this work:
+    use keysPressed to append stuff to commandString, remove characters if
+    keysPressed[pygame.K_BACKSPACE]
+    if enter is pressed, then do:
+    try:
+        eval(commandString)
+    except:
+        render a string that says "invalid command!" or something like that
+        and have time.sleep for a second or something so that it has time
+        to be seen
+    after that happens
+
+    set commandString back to ""
+    set typingCommands to False
+    """
+
+def showInvalidCommand():
+    string = "invalid command"
+    imageData = convertTextToImageData(string, (30, screenHeight - 100))
+    size = font.size(string)
+    rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+    pygame.draw.rect(screen, (0, 0, 0), rect)
+    screen.blit(imageData[0], imageData[1])
+    pygame.display.flip()

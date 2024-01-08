@@ -1,7 +1,7 @@
 from globalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands, commandString
 from items import makeItemsExist
 from controls import updateMouseAndKeys
-from rendering import render, generateSpawnArea
+from rendering import render, generateSpawnArea, doCommandStuff, showInvalidCommand
 from player import player
 
 import pygame, time
@@ -99,8 +99,8 @@ commandString = ""
 
 running = True
 
-def gameLoop(typingCommands, commandString):
-    global deltaTime
+def gameLoop():
+    global deltaTime, typingCommands, commandString
     # hopefully i did deltatime correctly
 
     generateSpawnArea()
@@ -121,6 +121,8 @@ def gameLoop(typingCommands, commandString):
         if keysPressed[pygame.K_SLASH]:
             typingCommands = True
             commandString = ""
+            clock.tick(15)
+            print("started doing commands stuff")
             
 
         for event in pygame.event.get():
@@ -142,20 +144,37 @@ def gameLoop(typingCommands, commandString):
             makeStuffInAListDoThings(projectiles)
         
 
-            render(deltaTime)
-            
+            render(deltaTime, typingCommands)
+
             clock.tick(FPS)
 
             newCurrentTime = time.time()
             
             deltaTime = 1 + (newCurrentTime - currentTime)
+
         else: # currently typing commands
             # add in a special feature in render that only does stuff when 
             # typingCommands is true
-            render(1)
+            submitCommand = False
+            commandString, submitCommand = doCommandStuff(commandString, submitCommand)
 
 
-gameLoop(typingCommands, commandString)
+            if submitCommand:
+                try:
+                    eval(commandString)
+                except:
+                    print("invalid command")
+                    showInvalidCommand()
+                    time.sleep(1)
+                    
+
+                typingCommands = False
+                commandString = ""
+
+            clock.tick(FPS)
+
+
+gameLoop()
 
 pygame.quit()
 
