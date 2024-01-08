@@ -1,4 +1,4 @@
-from globalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands
+from globalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands, commandString
 from items import makeItemsExist
 from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea
@@ -119,12 +119,8 @@ def gameLoop():
         
         if keysPressed[pygame.K_SLASH]:
             typingCommands = True
-            command = input("type a command: ")
-            try:
-                eval(command)
-            except:
-                print("invalid command")
-            typingCommands = False
+            commandString = ""
+            
 
         for event in pygame.event.get():
             if event.type == exit:
@@ -153,7 +149,9 @@ def gameLoop():
             
             deltaTime = 1 + (newCurrentTime - currentTime)
         else: # currently typing commands
-            pass
+            # add in a special feature in render that only does stuff when 
+            # typingCommands is true
+            render(1)
 
 
 gameLoop()

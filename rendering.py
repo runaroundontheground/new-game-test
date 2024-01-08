@@ -1,6 +1,6 @@
 from globalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
 from globalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
-from globalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint, typingCommands
+from globalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint, typingCommands, commandString
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
 from controls import mouse
@@ -288,186 +288,245 @@ def generateSpawnArea():
 def render(deltaTime):
 
 
-    screen.fill((0, 0, 0))
+    if not typingCommands:
+        screen.fill((0, 0, 0))
 
-    # get the chunks to be used for rendering
-    chunkList = generateNearbyAreas(2, True)
+        # get the chunks to be used for rendering
+        chunkList = generateNearbyAreas(2, True)
 
 
-    # separate the blocks into layers, so they get rendered in the right order
-    # also, keep track of the scale for each y layer
-    blocks = []
-    positionAndScaleFactors = []
-    for i in range(chunkSize[1]):
-        blocks.append( [] )
-        positionAndScaleFactors.append( [] )
+        # separate the blocks into layers, so they get rendered in the right order
+        # also, keep track of the scale for each y layer
+        blocks = []
+        positionAndScaleFactors = []
+        for i in range(chunkSize[1]):
+            blocks.append( [] )
+            positionAndScaleFactors.append( [] )
 
-    
-    
-
-    for chunkCoord in chunkList:
-        for y in range(chunkSize[1]):
-            
         
-            # scale images outside of x/z loop, better performance
-            
-            posFactor = 1
-            sizeFactor = 1
-            divisor = 50
-            # scale smoother when using exact position rather than player's block coord
-            playerYInBlocks = player.y / blockSize
-            thing2 = y - playerYInBlocks
-            posFactor += thing2 / divisor
+        
 
-
-            divisor *= 2
-
-            if y > playerYInBlocks:
-                thing = y - playerYInBlocks
-                thing /= (divisor / 1.1)
-                sizeFactor += thing
-
-            if y < playerYInBlocks:
-                thing = playerYInBlocks - y
-                thing /= (divisor * 2)
-                sizeFactor -= thing
+        for chunkCoord in chunkList:
+            for y in range(chunkSize[1]):
                 
-
-            if sizeFactor < 0.1:
-                sizeFactor = 0.1
             
-            positionAndScaleFactors[y] = posFactor
+                # scale images outside of x/z loop, better performance
+                
+                posFactor = 1
+                sizeFactor = 1
+                divisor = 50
+                # scale smoother when using exact position rather than player's block coord
+                playerYInBlocks = player.y / blockSize
+                thing2 = y - playerYInBlocks
+                posFactor += thing2 / divisor
 
-            scaledImages = blockImages.copy()
-            
 
-            for x in range(chunkSize[0]):
-                for z in range(chunkSize[0]):
+                divisor *= 2
 
-                    block = chunks[chunkCoord]["data"][(x, y, z)]
+                if y > playerYInBlocks:
+                    thing = y - playerYInBlocks
+                    thing /= (divisor / 1.1)
+                    sizeFactor += thing
+
+                if y < playerYInBlocks:
+                    thing = playerYInBlocks - y
+                    thing /= (divisor * 2)
+                    sizeFactor -= thing
                     
-                    if block["render"] and block["type"] != "air":
-                        xPos = x * blockSize
-                        zPos = z * blockSize
-                        
-                        xPos += chunkCoord[0] * totalChunkSize
-                        zPos += chunkCoord[1] * totalChunkSize
 
-                        thisBlockHasAlpha = False
-                        
-                        if block["alphaValue"] != 0:
-                            if player.blockCoord[1] <= y:
-                                fiveBlocks = 5 * blockSize
-                                if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
-                                    if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
-                                        thisBlockHasAlpha = True
-                                    
-
-                        
-                        xPos -= player.x
-                        zPos -= player.z
-                        
-                        if not scaledImages[block["type"]]["scaled"]: # image has not been scaled
-                            if sizeFactor != 1:
-
-                                newImageData = scaledImages[block["type"]]["data"]
-                                newImageData = pygame.transform.scale_by(newImageData, sizeFactor)
-                                scaledImages[block["type"]]["data"] = newImageData
-                                
-                            scaledImages[block["type"]]["scaled"] = True
-
-                        if thisBlockHasAlpha:
-
-                            if not scaledImages[block["type"]]["alpha'd"]:
-                                image = scaledImages[block["type"]]["data"].copy()
-                                image.set_alpha(block["alphaValue"])
-                                scaledImages[block["type"]]["alpha'd"] = True
-                                scaledImages[block["type"]]["dataWithAlpha"] = image
-                            else:
-                                image = scaledImages[block["type"]]["dataWithAlpha"]
-                        else:
-                            image = scaledImages[block["type"]]["data"]
-
-                        
-                        
-
-                        xPos *= posFactor
-                        zPos *= posFactor
-                        
-                        xPos -= camera.x - player.x
-                        zPos -= camera.z - player.z
-
-                        position = (xPos, zPos)
-                        imageData = (image, position)
-
-                        blocks[y].append(imageData)
-
-    renderingData = []
-
-
-        
-    
-
-    # add player to rendering
-    if player.blockCoord[1] < chunkSize[1]:
-        blocks[player.blockCoord[1]].append(player.imageData)
-    else:
-        renderingData.append(player.imageData)
-
-    i = -1
-    if len(entities) != 0:
-        while i >= -len(entities):
-            entity = entities[i]
-            
-            image = itemEntityIcons[entity.itemData.name]
-            
-            y = math.floor(entity.y / blockSize)
-
-            if y >= chunkSize[1]:
-                y = chunkSize[1] - 1
-            if y < 0:
-                y = 0
-
-            
-            x = entity.x - camera.x
-            z = entity.z - camera.z
-
-            position = (x, z)
-            imageData = (image, position)
-            
-            blocks[y].append(imageData)
-            
-            
-            i -= 1
-    
-    # add blocks to rendering
-    for y in range(chunkSize[1]):
-        renderingData += blocks[y]
-
-
-    image = player.inventoryRenderingData["hotbarSurface"]
-    position = player.inventoryRenderingData["hotbarRenderPosition"]
-    imageData = (image, position)
-    renderingData.append(imageData)
-        
-    # run inventory rendering
-    if player.otherInventoryData["open"]:
-        image = player.inventoryRenderingData["inventorySurface"]
-        position = player.inventoryRenderingData["inventoryRenderPosition"]
-        imageData = (image, position)
-
-        renderingData.append(imageData)
-
-        if mouse.inPlayerInventory and mouse.inASlot:
-                image = player.inventoryRenderingData["selectedSlotSurface"]
-                slot = player.inventory[mouse.hoveredSlotId]
-                position = slot["selectedSlotRenderPosition"]
+                if sizeFactor < 0.1:
+                    sizeFactor = 0.1
                 
+                positionAndScaleFactors[y] = posFactor
+
+                scaledImages = blockImages.copy()
+                
+
+                for x in range(chunkSize[0]):
+                    for z in range(chunkSize[0]):
+
+                        block = chunks[chunkCoord]["data"][(x, y, z)]
+                        
+                        if block["render"] and block["type"] != "air":
+                            xPos = x * blockSize
+                            zPos = z * blockSize
+                            
+                            xPos += chunkCoord[0] * totalChunkSize
+                            zPos += chunkCoord[1] * totalChunkSize
+
+                            thisBlockHasAlpha = False
+                            
+                            if block["alphaValue"] != 0:
+                                if player.blockCoord[1] <= y:
+                                    fiveBlocks = 5 * blockSize
+                                    if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
+                                        if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
+                                            thisBlockHasAlpha = True
+                                        
+
+                            
+                            xPos -= player.x
+                            zPos -= player.z
+                            
+                            if not scaledImages[block["type"]]["scaled"]: # image has not been scaled
+                                if sizeFactor != 1:
+
+                                    newImageData = scaledImages[block["type"]]["data"]
+                                    newImageData = pygame.transform.scale_by(newImageData, sizeFactor)
+                                    scaledImages[block["type"]]["data"] = newImageData
+                                    
+                                scaledImages[block["type"]]["scaled"] = True
+
+                            if thisBlockHasAlpha:
+
+                                if not scaledImages[block["type"]]["alpha'd"]:
+                                    image = scaledImages[block["type"]]["data"].copy()
+                                    image.set_alpha(block["alphaValue"])
+                                    scaledImages[block["type"]]["alpha'd"] = True
+                                    scaledImages[block["type"]]["dataWithAlpha"] = image
+                                else:
+                                    image = scaledImages[block["type"]]["dataWithAlpha"]
+                            else:
+                                image = scaledImages[block["type"]]["data"]
+
+                            
+                            
+
+                            xPos *= posFactor
+                            zPos *= posFactor
+                            
+                            xPos -= camera.x - player.x
+                            zPos -= camera.z - player.z
+
+                            position = (xPos, zPos)
+                            imageData = (image, position)
+
+                            blocks[y].append(imageData)
+
+        renderingData = []
+
+
+            
+        
+
+        # add player to rendering
+        if player.blockCoord[1] < chunkSize[1]:
+            blocks[player.blockCoord[1]].append(player.imageData)
+        else:
+            renderingData.append(player.imageData)
+
+        i = -1
+        if len(entities) != 0:
+            while i >= -len(entities):
+                entity = entities[i]
+                
+                image = itemEntityIcons[entity.itemData.name]
+                
+                y = math.floor(entity.y / blockSize)
+
+                if y >= chunkSize[1]:
+                    y = chunkSize[1] - 1
+                if y < 0:
+                    y = 0
+
+                
+                x = entity.x - camera.x
+                z = entity.z - camera.z
+
+                position = (x, z)
+                imageData = (image, position)
+                
+                blocks[y].append(imageData)
+                
+                
+                i -= 1
+        
+        # add blocks to rendering
+        for y in range(chunkSize[1]):
+            renderingData += blocks[y]
+
+
+        image = player.inventoryRenderingData["hotbarSurface"]
+        position = player.inventoryRenderingData["hotbarRenderPosition"]
+        imageData = (image, position)
+        renderingData.append(imageData)
+            
+        # run inventory rendering
+        if player.otherInventoryData["open"]:
+            image = player.inventoryRenderingData["inventorySurface"]
+            position = player.inventoryRenderingData["inventoryRenderPosition"]
+            imageData = (image, position)
+
+            renderingData.append(imageData)
+
+            if mouse.inPlayerInventory and mouse.inASlot:
+                    image = player.inventoryRenderingData["selectedSlotSurface"]
+                    slot = player.inventory[mouse.hoveredSlotId]
+                    position = slot["selectedSlotRenderPosition"]
+                    
+                    imageData = (image, position)
+                    renderingData.append(imageData)
+
+            for slot in player.inventory:
+                item = slot["contents"]
+                if item != "empty":
+                    image = itemIcons[item.name]
+                    position = slot["renderPosition"]
+
+                    imageData = (image, position)
+                    renderingData.append(imageData)
+
+                    if mouse.inPlayerInventory and mouse.inASlot:
+                        if player.inventory[mouse.hoveredSlotId]["contents"] == item:
+                            tooltip = item.tooltip
+                            if tooltip != "":
+                                position = (mouse.x + 10, mouse.y + 5)
+
+                                imageData = convertTextToImageData(tooltip, position)
+                                renderingData.append(imageData)
+
+
+                    if slot["count"] > 1:
+                        imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                        renderingData.append(imageData)
+
+            
+
+            
+                
+            
+
+            
+
+        # run hotbar rendering
+        for slotId, slot in enumerate(player.hotbar):
+            
+            item = slot["contents"]
+            currentHotbarSlot = player.otherInventoryData["currentHotbarSlot"]
+
+        
+            if slotId == currentHotbarSlot:
+                image = player.inventoryRenderingData["selectedSlotSurface"]
+                position = slot["selectedSlotRenderPosition"]
+
                 imageData = (image, position)
                 renderingData.append(imageData)
 
-        for slot in player.inventory:
-            item = slot["contents"]
+                if mouse.inPlayerHotbar and mouse.inASlot:
+                    image = player.inventoryRenderingData["selectedSlotSurface"]
+                    position = player.hotbar[mouse.hoveredSlotId]["selectedSlotRenderPosition"]
+
+                    imageData = (image, position)
+                    renderingData.append(imageData)
+                    if item != "empty" and player.otherInventoryData["open"]:
+                        if player.hotbar[mouse.hoveredSlotId]["contents"] == item:
+                            tooltip = item.tooltip
+                            if tooltip != "":
+                                position = (mouse.x + 10, mouse.y + 5)
+
+                                imageData = convertTextToImageData(tooltip, position)
+                                renderingData.append(imageData)
+
             if item != "empty":
                 image = itemIcons[item.name]
                 position = slot["renderPosition"]
@@ -475,145 +534,107 @@ def render(deltaTime):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
-                if mouse.inPlayerInventory and mouse.inASlot:
-                    if player.inventory[mouse.hoveredSlotId]["contents"] == item:
-                        tooltip = item.tooltip
-                        if tooltip != "":
-                            position = (mouse.x + 10, mouse.y + 5)
-
-                            imageData = convertTextToImageData(tooltip, position)
-                            renderingData.append(imageData)
-
-
                 if slot["count"] > 1:
                     imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
                     renderingData.append(imageData)
 
-        
 
         
-            
-        
+        # run mouse's held item rendering
+        # also figure out selecting a block in the world, highlighting it, ect
+        if not player.otherInventoryData["open"]:
+            x = math.floor(mouse.cameraRelativeX / blockSize)
+            z = math.floor(mouse.cameraRelativeZ / blockSize)
+            x *= blockSize
+            z *= blockSize
 
-        
+            if x < player.x + (player.horizontalBlockReach * blockSize):
+                if x > player.x - (player.horizontalBlockReach * blockSize):
+                    if z < player.z + (player.horizontalBlockReach * blockSize):
+                        if z > player.z - (player.horizontalBlockReach * blockSize):
+                            x -= camera.x
+                            z -= camera.z
 
-    # run hotbar rendering
-    for slotId, slot in enumerate(player.hotbar):
-        
-        item = slot["contents"]
-        currentHotbarSlot = player.otherInventoryData["currentHotbarSlot"]
+                            position = (x, z)
 
-    
-        if slotId == currentHotbarSlot:
-            image = player.inventoryRenderingData["selectedSlotSurface"]
-            position = slot["selectedSlotRenderPosition"]
+                            renderingData.append((blockHighlightSurface, position))
 
-            imageData = (image, position)
-            renderingData.append(imageData)
-
-            if mouse.inPlayerHotbar and mouse.inASlot:
-                image = player.inventoryRenderingData["selectedSlotSurface"]
-                position = player.hotbar[mouse.hoveredSlotId]["selectedSlotRenderPosition"]
-
-                imageData = (image, position)
-                renderingData.append(imageData)
-                if item != "empty" and player.otherInventoryData["open"]:
-                    if player.hotbar[mouse.hoveredSlotId]["contents"] == item:
-                        tooltip = item.tooltip
-                        if tooltip != "":
-                            position = (mouse.x + 10, mouse.y + 5)
-
-                            imageData = convertTextToImageData(tooltip, position)
+                            # do stuff so it displays the mouse's y selection and 
+                            # the block that the mouse is theoretically currently
+                            # selecting
+                            position = (mouse.x, mouse.y + blockSize * 1.5)
+                            
+                            imageData = convertTextToImageData(mouse.hoveredBlock["block"]["type"], position)
                             renderingData.append(imageData)
+                            
 
-        if item != "empty":
-            image = itemIcons[item.name]
-            position = slot["renderPosition"]
 
+        
+        if mouse.heldItem["contents"] != "empty":
+            image = itemIcons[mouse.heldItem["contents"].name]
+            position = (mouse.x + 5, mouse.y + 5)
             imageData = (image, position)
+
             renderingData.append(imageData)
 
-            if slot["count"] > 1:
-                imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+            shift = player.inventoryRenderingData["slotSize"] - 10
+
+
+            if mouse.heldItem["count"] > 1:
+                
+                position = (mouse.x + shift, mouse.y + shift)
+                imageData = convertTextToImageData(mouse.heldItem["count"], position)
                 renderingData.append(imageData)
 
 
-    
-    # run mouse's held item rendering
-    # also figure out selecting a block in the world, highlighting it, ect
-    if not player.otherInventoryData["open"]:
-        x = math.floor(mouse.cameraRelativeX / blockSize)
-        z = math.floor(mouse.cameraRelativeZ / blockSize)
-        x *= blockSize
-        z *= blockSize
+        
+        imageData = (axeHead, (400, 250))
+        renderingData.append(imageData)
+        
 
-        if x < player.x + (player.horizontalBlockReach * blockSize):
-            if x > player.x - (player.horizontalBlockReach * blockSize):
-                if z < player.z + (player.horizontalBlockReach * blockSize):
-                    if z > player.z - (player.horizontalBlockReach * blockSize):
-                        x -= camera.x
-                        z -= camera.z
-
-                        position = (x, z)
-
-                        renderingData.append((blockHighlightSurface, position))
-
-                        # do stuff so it displays the mouse's y selection and 
-                        # the block that the mouse is theoretically currently
-                        # selecting
-                        position = (mouse.x, mouse.y + blockSize * 1.5)
-                        
-                        imageData = convertTextToImageData(mouse.hoveredBlock["block"]["type"], position)
-                        renderingData.append(imageData)
-                        
-
-
-    
-    if mouse.heldItem["contents"] != "empty":
-        image = itemIcons[mouse.heldItem["contents"].name]
-        position = (mouse.x + 5, mouse.y + 5)
-        imageData = (image, position)
-
+        # debug things
+        debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
+        debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
+        imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
         renderingData.append(imageData)
 
-        shift = player.inventoryRenderingData["slotSize"] - 10
 
+        screen.blits(renderingData)
 
-        if mouse.heldItem["count"] > 1:
-            
-            position = (mouse.x + shift, mouse.y + shift)
-            imageData = convertTextToImageData(mouse.heldItem["count"], position)
-            renderingData.append(imageData)
+        # pretty much just debug after this
 
+        if typingCommands:
+            pass
 
-    
-    imageData = (axeHead, (400, 250))
-    renderingData.append(imageData)
-    
+        
+        debugRenderingStuff2 = "player block position " + str(player.blockCoord)
+        debugRenderingStuff2 += "player yv " + str(player.yv)
+        debugRenderingStuff3 = "mouse pos: " + str(mouse.pos) + ", mouseRelativePos: " + str(mouse.cameraRelativePos)
+        
+        thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
+        thing3 = font.render(debugRenderingStuff3, 0, (255, 0, 0))
+        
+        screen.blit(thing2, (100, 200))
+        screen.blit(thing3, (100, 100))
 
-    # debug things
-    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
-    debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
-    imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
-    renderingData.append(imageData)
+        pygame.display.flip()
 
-
-    screen.blits(renderingData)
-
-     # pretty much just debug after this
-
-    if typingCommands:
+    else: # commands are being typed, display and keep track of them!
         pass
+        """
+        how to make this work:
+        use keysPressed to append stuff to commandString, remove characters if
+        keysPressed[pygame.K_BACKSPACE]
+        if enter is pressed, then do:
+        try:
+            eval(commandString)
+        except:
+            render a string that says "invalid command!" or something like that
+            and have time.sleep for a second or something so that it has time
+            to be seen
+        after that happens
 
+        set commandString back to ""
+        set typingCommands to False
+        """
     
-    debugRenderingStuff2 = "player block position " + str(player.blockCoord)
-    debugRenderingStuff2 += "player yv " + str(player.yv)
-    debugRenderingStuff3 = "mouse pos: " + str(mouse.pos) + ", mouseRelativePos: " + str(mouse.cameraRelativePos)
-    
-    thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
-    thing3 = font.render(debugRenderingStuff3, 0, (255, 0, 0))
-    
-    screen.blit(thing2, (100, 200))
-    screen.blit(thing3, (100, 100))
-
-    pygame.display.flip()
