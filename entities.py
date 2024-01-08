@@ -1,4 +1,4 @@
-from widelyUsedVariables import blockSize, gravity, maxStackSize
+from globalVariables import blockSize, gravity, maxStackSize, itemEntitySize
 from worldgen import findBlock
 import math, pygame, random
 
@@ -26,8 +26,8 @@ class ItemEntity(Entity):
         self.itemData = itemData
         self.count = count
 
-        self.width = blockSize / 2
-        self.height = blockSize / 2
+        self.width = itemEntitySize
+        self.height = itemEntitySize
         self.rect = pygame.rect.Rect(0, 0, self.width, self.height)
 
         self.maxFallingVelocity = -10
@@ -91,6 +91,10 @@ class ItemEntity(Entity):
                     self.z -= self.zv
                     self.zv = 0
 
+        insideABlock = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, ignoreWater = True)
+        if insideABlock:
+            self.y += blockSize/2
+            self.yv = 2
         
         self.x += self.xv
         self.y += self.yv

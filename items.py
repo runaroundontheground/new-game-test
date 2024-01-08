@@ -1,4 +1,4 @@
-from widelyUsedVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity, dictOfBlockBreakingStuff
+from globalVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity, dictOfBlockBreakingStuff
 from worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from controls import mouse
 from entities import ItemEntity

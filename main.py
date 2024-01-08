@@ -1,4 +1,4 @@
-from widelyUsedVariables import deltaTime, items, entities, projectiles, FPS
+from globalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands
 from items import makeItemsExist
 from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea
@@ -20,6 +20,8 @@ to do list:
     
     make sure inventory management is fully functioning and doesn't break (often at least)
 
+    add in an actual command line thing within the game to run commands, instead
+    of just using eval() on an input (probably pretty insecure lol but eh whatever)
 
 
 
@@ -103,45 +105,55 @@ def gameLoop():
     generateSpawnArea()
     player.positionInSpawnArea()
     makeItemsExist()
-    player.inventory[4]["contents"] = items["log"]
-    player.inventory[4]["count"] = 3
-    player.inventory[9]["contents"] = items["grass"]
-    player.inventory[9]["count"] = 1
-    player.inventory[16]["contents"] = items["stone pickaxe"]
-    player.inventory[16]["count"] = 1
-    player.inventory[21]["contents"] = items["stone"]
-    player.inventory[21]["count"] = 14
-
+    # hooray for adding a function to do this!
+    player.giveItem(items["log"], 3)
+    player.giveItem(items["grass"], 64)
+    player.giveItem(items["stone pickaxe"], 1)
+    player.giveItem(items["stone"], 8)
+    
+    
     while running:
         currentTime = time.time()
 
         updateMouseAndKeys()
         
-        
+        if keysPressed[pygame.K_SLASH]:
+            typingCommands = True
+            command = input("type a command: ")
+            try:
+                eval(command)
+            except:
+                print("invalid command")
+            typingCommands = False
+
         for event in pygame.event.get():
             if event.type == exit:
                 pygame.quit()
 
-        player.doStuff(deltaTime)
+        if not typingCommands:
 
-        def makeStuffInAListDoThings(list):
-            i = -1
-            while i >= -len(list):
-                list[i].doStuff(player)
-                if list[i].deleteSelf:
-                    list.pop(i)
-                i -= 1
-        makeStuffInAListDoThings(entities)
-        makeStuffInAListDoThings(projectiles)
+            player.doStuff(deltaTime)
+
+            def makeStuffInAListDoThings(list):
+                i = -1
+                while i >= -len(list):
+                    list[i].doStuff(player)
+                    if list[i].deleteSelf:
+                        list.pop(i)
+                    i -= 1
+            makeStuffInAListDoThings(entities)
+            makeStuffInAListDoThings(projectiles)
         
 
-        render(deltaTime)
-        
-        clock.tick(FPS)
+            render(deltaTime)
+            
+            clock.tick(FPS)
 
-        newCurrentTime = time.time()
-        
-        deltaTime = 1 + (newCurrentTime - currentTime)
+            newCurrentTime = time.time()
+            
+            deltaTime = 1 + (newCurrentTime - currentTime)
+        else: # currently typing commands
+            pass
 
 
 gameLoop()

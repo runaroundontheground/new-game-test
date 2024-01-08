@@ -1,6 +1,6 @@
-from widelyUsedVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
-from widelyUsedVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
-from widelyUsedVariables import itemEntitySize, camera, itemIcons, font, rotatePoint
+from globalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks
+from globalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities
+from globalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint, typingCommands
 from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from worldgen import generateChunkStructures, findBlock
 from controls import mouse
@@ -602,7 +602,8 @@ def render(deltaTime):
 
      # pretty much just debug after this
 
-    
+    if typingCommands:
+        pass
 
     
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)

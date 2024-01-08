@@ -1,10 +1,10 @@
-from widelyUsedVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities
-from widelyUsedVariables import screenWidth, screenHeight, chunks, font, FPS
+from globalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities
+from globalVariables import screenWidth, screenHeight, chunks, font, FPS, itemEntitySize
 from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
 from controls import keysPressed, keys, mouse
 from entities import ItemEntity
 from items import PlaceableItem
-import pygame, math
+import pygame, math, random
 
 
 
@@ -545,7 +545,7 @@ class Player():
         self.position = (self.x, self.y, self.z)
 
     def giveItem(self, item, count = 1):
-        done = False
+        
         def checkForStackables(container, done, count, item):
             if not done and item.stackable:
                 for slot in container:
@@ -556,12 +556,12 @@ class Player():
                             if addedCount <= maxStackSize:
 
                                 slot["count"] = addedCount
-                                done = True
                                 return True
                             elif addedCount > maxStackSize:
                                 slot["count"] = maxStackSize
                                 count = addedCount - maxStackSize
                                 break
+            return done
             
         def checkForEmptySlots(container, done, count, item):
             if not done:
@@ -570,18 +570,19 @@ class Player():
                         slot["contents"] = item
                         slot["count"] = count
                         
-                        done = True
+                        
                         return True
+            return done
 
             
 
+        done = False
 
+        done = checkForStackables(self.hotbar, done, count, item)
+        done = checkForStackables(self.inventory, done, count, item)
 
-        checkForStackables(self.hotbar, done, count, item)
-        checkForStackables(self.inventory, done, count, item)
-
-        checkForEmptySlots(self.hotbar, done, count, item)
-        checkForEmptySlots(self.inventory, done, count, item)
+        done = checkForEmptySlots(self.hotbar, done, count, item)
+        done = checkForEmptySlots(self.inventory, done, count, item)
 
         if not done:
             print("giving the item failed")
@@ -627,15 +628,15 @@ class Player():
             mouse.selectedY = chunkSize[1] * (blockSize - 1)
 
         def changeSelectedHotbarSlot(numberPress):
-            keyboardInput = getattr(pygame, "K_" + str(numberPress))
-            if keysPressed[keyboardInput]:
-                self.otherInventoryData["currentHotbarSlot"] = numberPress - 1
+            if not self.otherInventoryData["open"]:
+                keyboardInput = getattr(pygame, "K_" + str(numberPress))
+                if keysPressed[keyboardInput]:
+                    self.otherInventoryData["currentHotbarSlot"] = numberPress - 1
         
         for i in range(1, 10):
             changeSelectedHotbarSlot(i)
 
-        # drop items from either the hotbar, the mouse's item
-        # or a slot in the hotbar or inventory (while inventory is open)
+        # drop items from the hotbar
         if keysPressed[pygame.K_q]:
             if not self.otherInventoryData["open"]:
                 currentHotbarSlot = self.otherInventoryData["currentHotbarSlot"]
@@ -643,9 +644,9 @@ class Player():
 
                 if item != "empty":
 
-                    x = self.x + self.width/2
+                    x = self.x + self.width/2 - itemEntitySize/2
                     y = self.y - self.height/2
-                    z = self.z + self.width/2
+                    z = self.z + self.width/2 - itemEntitySize/2
 
                     # figure out velocity for angle of player to mouse
 
@@ -865,37 +866,43 @@ class Player():
                     def checkForStackables(container, done):
                         if not done:
                             
-                            for slotId, slot in enumerate(container):
-                                # THIS ISN'T DONE YET
-                                # STILL NEED TO ADD LOGIC FOR ADDING ITEMS
-                                if slot["contents"] != "empty":
-                                    if slot["contents"].stackable:
+                            for slot in container:
+                                if slot["contents"] != "empty" and mouse.heldItem["contents"] != "empty":
+                                    if slot["contents"].stackable and mouse.heldItem["contents"].stackable:
                                         mouseItem = mouse.heldItem["contents"]
                                         mouseCount = mouse.heldItem["count"]
 
                                         item = slot["contents"]
                                         count = slot["count"]
 
-                                        # do things here to put the stuff where it goes
-                                        # if combining both stacks ends up with total
-                                        # count less than max stack size, then 
-                                        # delete the mouse's items
-                                        # if it ends up being more, subtract an amount
-                                        # from the mouses items and make the inventory
-                                        # slot have a max stack in it
-                                        return True
+                                        addedCount = count + mouseCount
+
+                                        if addedCount <= maxStackSize:
+                                            slot["count"] = addedCount
+                                            mouse.heldItem["count"] = 0
+                                            mouse.heldItem["contents"] = "empty"
+
+                                            return True
+                                        
+                                        if addedCount > maxStackSize:
+                                            newMouseCount = addedCount - maxStackSize
+
+                                            slot["count"] = maxStackSize
+                                            mouse.heldItem["count"] = newMouseCount
+
+                                            return True
                         return done
 
                     def checkForEmptySlots(container, done):
                         if not done:
 
-                            for slotId, slot in enumerate(container):
+                            for slot in container:
                                 if slot["contents"] == "empty":
                                     item = mouse.heldItem["contents"]
                                     count = mouse.heldItem["count"]
 
-                                    container[slotId]["contents"] = item
-                                    container[slotId]["count"] = count
+                                    slot["contents"] = item
+                                    slot["count"] = count
 
                                     mouse.heldItem["contents"] = "empty"
                                     mouse.heldItem["count"] = 0
@@ -915,7 +922,7 @@ class Player():
                     done = checkForEmptySlots(self.hotbar, done)
                     done = checkForEmptySlots(self.inventory, done)
 
-                    print(done)
+                    
 
                     
 
@@ -1056,13 +1063,14 @@ class Player():
                 z += blockCoord[2] * blockSize
 
                 dropAnItem = False
-                if correctTool and breakingType == "pickaxe":
-                    dropAnItem = True
-                if block["hardness"] == 1:
+                if correctTool or block["hardness"] == 1:
                     dropAnItem = True
                 
                 if dropAnItem:
-                    entity = ItemEntity(itemData, x, y, z, yv = 5)
+                    count = 1
+                    xv = random.randint(-3, 3)
+                    zv = random.randint(-3, 3)
+                    entity = ItemEntity(itemData, count, x, y, z, xv, 5, zv)
                     entities.append(entity)
 
                 chunks[chunkCoord]["data"][blockCoord]["type"] = "air"

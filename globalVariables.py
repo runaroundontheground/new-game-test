@@ -16,8 +16,16 @@ gravity = 1
 itemEntitySize = blockSize/2
 
 chunks = {}
-keys = pygame.key.get_pressed()
+
+keys = []
+keys.append(pygame.key.get_pressed())
+keysPressed = []
+for index, num in enumerate(keys[0]):
+    keysPressed.append(False)
+
 deltaTime = 1
+
+typingCommands = False
 
 # extra info for what is required to break blocks
 dictOfBlockBreakingStuff = {

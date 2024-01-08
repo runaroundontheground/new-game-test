@@ -1,5 +1,5 @@
-from widelyUsedVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
-from widelyUsedVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames, dictOfBlockBreakingStuff
+from globalVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
+from globalVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames, dictOfBlockBreakingStuff
 from perlin_noise import PerlinNoise
 import random
 import math

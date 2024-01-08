@@ -1,12 +1,7 @@
 from worldgen import getBlockCoord, getChunkCoord, generateChunkTerrain
-from widelyUsedVariables import chunks
+from globalVariables import chunks, keys, keysPressed
 import pygame
-pygame.display.init()
-keys = []
-keys.append(pygame.key.get_pressed())
-keysPressed = []
-for index, num in enumerate(keys[0]):
-    keysPressed.append(False)
+
 
 class Mouse():
     def __init__(self):
