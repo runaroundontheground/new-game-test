@@ -18,15 +18,12 @@ ok currently:
 to do list:
 
     
-    add dropping/putting items into ur inventory if you close inv with something
-    in the mouse
+    make sure inventory management is fully functioning and doesn't break (often at least)
+
+
+
+
     
-    can't pick up items anymore, why???
-
-
-
-    make ground items not delete themselves until being picked up is confirmed
-    actually i might have already done that
     
 
 
@@ -48,11 +45,6 @@ to do list:
     probably at the mouse's position, with math.floor and blocksize to put it
     on top of the block
     based on % of break progress, put that kind of breaking progress surf there
-    
-    
-    do the inventory looping when closing the inventory with something in 
-    mouse.helditem, because if the inv is full, can't place the item, so it has to
-    be dropped
     
 
 oh. welp, uhh dropped items and other entites need to be scaled based on

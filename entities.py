@@ -105,13 +105,15 @@ class ItemEntity(Entity):
                 value -= 1
             if value < 0:
                 value += 1
+            self.timers[key] = value
 
     def playerInteraction(self, player):
         if self.timers["pickupDelay"] == 0:
+            
             if self.rect.colliderect(player.rect):
 
-                itemPickedUp = not player.giveItem(self.itemData, self.count)
-                print(itemPickedUp)
+                itemPickedUp = player.giveItem(self.itemData, self.count)
+                #print(itemPickedUp)
                 if itemPickedUp:
                     self.deleteSelf = True
 

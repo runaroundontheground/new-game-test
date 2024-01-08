@@ -546,9 +546,9 @@ class Player():
 
     def giveItem(self, item, count = 1):
         done = False
-        def checkForStackables(inventorySection, done, count, item):
+        def checkForStackables(container, done, count, item):
             if not done and item.stackable:
-                for slot in inventorySection:
+                for slot in container:
                     if slot["contents"] != "empty":
                         if slot["contents"].name == item.name:
 
@@ -561,10 +561,11 @@ class Player():
                             elif addedCount > maxStackSize:
                                 slot["count"] = maxStackSize
                                 count = addedCount - maxStackSize
+                                break
             
-        def checkForEmptySlots(inventorySection, done, count, item):
+        def checkForEmptySlots(container, done, count, item):
             if not done:
-                for slot in inventorySection:
+                for slot in container:
                     if slot["contents"] == "empty":
                         slot["contents"] = item
                         slot["count"] = count
@@ -576,11 +577,11 @@ class Player():
 
 
 
-        done = checkForStackables(self.hotbar, done, count, item)
-        done = checkForStackables(self.inventory, done, count, item)
+        checkForStackables(self.hotbar, done, count, item)
+        checkForStackables(self.inventory, done, count, item)
 
-        done = checkForEmptySlots(self.hotbar, done, count, item)
-        done = checkForEmptySlots(self.inventory, done, count, item)
+        checkForEmptySlots(self.hotbar, done, count, item)
+        checkForEmptySlots(self.inventory, done, count, item)
 
         if not done:
             print("giving the item failed")
@@ -687,11 +688,11 @@ class Player():
             mouse.inPlayerHotbar = False
             mouse.inASlot = False
 
-            def inventoryContentInteraction(inventorySection):
-                if inventorySection == "hotbar":
+            def inventoryContentInteraction(container):
+                if container == "hotbar":
                     invSection = self.hotbar
                     otherInvSection = self.inventory
-                elif inventorySection == "inventory":
+                elif container == "inventory":
                     invSection = self.inventory
                     otherInvSection = self.hotbar
 
@@ -703,7 +704,6 @@ class Player():
                         mouse.hoveredSlotId = slot["slotId"]
                         mouse.inASlot = True
 
-                        done = False
 
                         def checkStackablesInOtherInvSection(amountToMove, done):
                             """
@@ -747,8 +747,8 @@ class Player():
                                                         if slotNewCount == 0:
                                                             slot["contents"] = "empty"
 
-                                                        done = True
                                                         return True
+                            return done
 
                         def checkEmptySlotsInOtherInvSection(amountToMove, done):
                             """
@@ -767,7 +767,7 @@ class Player():
                                             slot["contents"] = "empty"
                                             slot["count"] = 0
                                                 
-                                            done = True
+                                            
                                             return True
 
                                         else: # not moving max amount
@@ -782,11 +782,13 @@ class Player():
                                                 if slotNewCount == 0:
                                                     slot["contents"] = "empty"
                                             
-                                                done = True
+                                                
                                                 return True
+                            return done
 
                         # fast transfer options
                         if mouse.buttons["pressed"]["left"]:
+                            done = False
                             
                             if keys[0][pygame.K_LSHIFT]:
                                 # move all items from this slot (if possible)
@@ -817,8 +819,6 @@ class Player():
 
                                                         slot["count"] = addedCount
 
-                                                        done = True
-                                                        break
 
                                                     elif addedCount > maxStackSize:
                                                         newMouseSlotCount = addedCount - maxStackSize
@@ -833,9 +833,7 @@ class Player():
 
                                             mouse.heldItem["count"] = 0
                                             mouse.heldItem["contents"] = "empty"
-                                            
-                                            done = True
-                                            break
+
 
                                     else: # mouse has no item in it
                                         if item != "empty":
@@ -862,57 +860,62 @@ class Player():
 
                 if mouse.heldItem["contents"] != "empty":
                     item = mouse.heldItem["contents"]
-                    done = False
+                    
 
-                    def checkForStackables(inventorySection, done):
+                    def checkForStackables(container, done):
                         if not done:
-                            invSection = getattr(self, inventorySection)
-                            """
-                            for slotId, slot in enumerate(invSection):
+                            
+                            for slotId, slot in enumerate(container):
                                 # THIS ISN'T DONE YET
                                 # STILL NEED TO ADD LOGIC FOR ADDING ITEMS
                                 if slot["contents"] != "empty":
-                                    mouseItem = mouse.heldItem["contents"]
-                                    mouseCount = mouse.heldItem["count"]
+                                    if slot["contents"].stackable:
+                                        mouseItem = mouse.heldItem["contents"]
+                                        mouseCount = mouse.heldItem["count"]
 
-                                    item = slot["contents"]
-                                    count = slot["count"]
+                                        item = slot["contents"]
+                                        count = slot["count"]
 
-                                    # do things here to put the stuff where it goes
-                                    # if combining both stacks ends up with total
-                                    # count less than max stack size, then 
-                                    # delete the mouse's items
-                                    # if it ends up being more, subtract an amount
-                                    # from the mouses items and make the inventory
-                                    # slot have a max stack in it
-                                    done = True
-                                    break
-                            """
-                            setattr(self, inventorySection, invSection)
+                                        # do things here to put the stuff where it goes
+                                        # if combining both stacks ends up with total
+                                        # count less than max stack size, then 
+                                        # delete the mouse's items
+                                        # if it ends up being more, subtract an amount
+                                        # from the mouses items and make the inventory
+                                        # slot have a max stack in it
+                                        return True
+                        return done
 
-                    def checkForEmptySlots(inventorySection, done):
+                    def checkForEmptySlots(container, done):
                         if not done:
-                            invSection = getattr(self, inventorySection)
 
-                            for slotId, slot in enumerate(invSection):
+                            for slotId, slot in enumerate(container):
                                 if slot["contents"] == "empty":
                                     item = mouse.heldItem["contents"]
                                     count = mouse.heldItem["count"]
 
-                                    invSection[slotId]["contents"] = item
-                                    invSection[slotId]["count"] = count
+                                    container[slotId]["contents"] = item
+                                    container[slotId]["count"] = count
 
                                     mouse.heldItem["contents"] = "empty"
                                     mouse.heldItem["count"] = 0
-                                    done = True
-                                    break
-                            setattr(self, inventorySection, invSection)
+                                    
+                                    return True
+                        return done
+                        
+                                    
+                                    
 
-                    checkForStackables("hotbar", done)
-                    checkForStackables("inventory", done)
 
-                    checkForEmptySlots("hotbar", done)
-                    checkForEmptySlots("inventory", done)
+                    done = False
+
+                    done = checkForStackables(self.hotbar, done)
+                    done = checkForStackables(self.inventory, done)
+
+                    done = checkForEmptySlots(self.hotbar, done)
+                    done = checkForEmptySlots(self.inventory, done)
+
+                    print(done)
 
                     
 
@@ -947,6 +950,7 @@ class Player():
                 timerValue += 1
             if timerValue != 0:
                 print(str(key) + " " + str(timerValue))
+            self.timers[key] = timerValue
 
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
