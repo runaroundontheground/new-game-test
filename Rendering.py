@@ -162,7 +162,7 @@ addABlock("snowy stone", (220, 220, 220), (125, 125, 125))
 addABlock("sand", (232, 228, 118))
 addABlock("clay", (196, 152, 94))
 addABlock("gravel", (150, 150, 150))
-addABlock("water", (0, 0, 255), (0, 0, 255), True, 100)
+addABlock("water", (0, 0, 255), (0, 0, 255))
 addABlock("bedrock", (0, 255, 255))
 addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("leaves", (29, 64, 17))
@@ -362,11 +362,14 @@ def render(deltaTime, typingCommands = None):
                             thisBlockHasAlpha = False
                             
                             if block["alphaValue"] != 0:
-                                if player.blockCoord[1] <= y:
-                                    fiveBlocks = 5 * blockSize
-                                    if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
-                                        if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
-                                            thisBlockHasAlpha = True
+                                if block["type"] != "water":
+                                    if player.blockCoord[1] <= y:
+                                        fiveBlocks = 5 * blockSize
+                                        if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
+                                            if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
+                                                thisBlockHasAlpha = True
+                                if block["type"] == "water":
+                                    thisBlockHasAlpha = True
                                         
 
                             

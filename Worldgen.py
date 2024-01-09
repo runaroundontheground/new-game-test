@@ -193,7 +193,8 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                     
 
                     if block["type"] == "water":
-                        blockAbove = findBlock(x, y + 1, z, extraInfo = True)
+                        
+                        blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
                         if blockAbove["type"] == "air":
 
                             # don't render water that's underneath other water, instead make
@@ -203,14 +204,19 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             
                             block["alphaValue"] = 150
                             block["render"] = True
-                            foundNotWater = True
-                            subtracYy = 0
-                            while foundNotWater:
-                                blockBelow = findBlock(x, y - subtracYy, z, extraInfo = True)
+                            foundNotWater = False
+                            subtracYy = 1
+                            while not foundNotWater:
+                                blockBelow = findBlock(x, y - subtracYy, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                                
                                 if blockBelow["type"] == "water":
                                     block["alphaValue"] -= 25
 
                                 if blockBelow["type"] != "water":
+                                    foundNotWater = True
+
+                                if block["alphaValue"] <= 0:
+                                    block["alphaValue"] = 0
                                     break
 
 
@@ -218,9 +224,9 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                                 if subtracYy < -100:
                                     break
 
-                                if block["alphaValue"] <= 0:
-                                    block["alphaValue"] = 1
+                                if foundNotWater:
                                     break
+                        
 
                     else: # this block isn't water
                         blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
@@ -262,7 +268,9 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
 
                         
 
-                        chunks[chunkCoord]["data"][(x, y, z)] = block
+                    chunks[chunkCoord]["data"][(x, y, z)] = block
+                    if block["type"] == "water" and block["render"]:
+                        print(block["alphaValue"])
                                 
                     
     chunks[chunkCoord]["blocksUpdated"] = True    

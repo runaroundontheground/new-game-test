@@ -21,10 +21,13 @@ to do list:
 
     make sure inventory management is fully functioning and doesn't break (often at least)
 
-    potential performance fix
+    performance fix
     when deciding whether to render water, do some extra logic to figure out what the opacity of the top
     layer of water is, and then don't render any of the water beneath it, that way better performance
-    
+    i have almost added this, but it won't change the alpha to different thigns for some reasaon
+    maybe it needs to copy the surface when it has diff alpha values? that's probably it
+    and something about scaling it, and then also putting it in the alpha'd images list or something
+
     
     YAYYYY
     finally fixed structures being weird
