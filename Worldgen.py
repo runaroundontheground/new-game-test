@@ -1,5 +1,5 @@
-from globalVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
-from globalVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames, dictOfBlockBreakingStuff
+from GlobalVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
+from GlobalVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames, dictOfBlockBreakingStuff
 from perlin_noise import PerlinNoise
 import random
 import math
@@ -190,48 +190,80 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                         if block["type"] != "water" and block["type"] != "air":
                             return True
                         return False
-
-                    blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
-                    blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
-                    blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
-                    blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
-                    blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord)
-                    blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord)
-
-                    above = checkForSolidBlock(blockAbove)
-                    below = checkForSolidBlock(blockBelow)
-                    toRight = checkForSolidBlock(blockToRight)
-                    toLeft = checkForSolidBlock(blockToLeft)
-                    toUp = checkForSolidBlock(blockToUp)
-                    toDown = checkForSolidBlock(blockToDown)
-                    surrounded = False
-                    if toRight and toLeft and toUp and toDown:
-                        surrounded = True
-
-                    def setAlpha(alphaValue):
-                        block["alphaValue"] = alphaValue
-                        block["render"] = True
                     
-                    if above: # there's a block above this one
-                        if below: # there's a block below this one
-                            if blockBelow["alphaValue"] != 0:
-                                setAlpha(250)
-                            if not surrounded:
-                                block["render"] = True
-                        else: # no block below this one
-                            setAlpha(150)
-                    else: # there's no block above this one
-                        block["render"] = True
-                        if below: # there's a block under this one
-                            if blockBelow["alphaValue"] != 0:
-                                setAlpha(250)
+
+                    if block["type"] == "water":
+                        blockAbove = findBlock(x, y + 1, z, extraInfo = True)
+                        if blockAbove["type"] == "air":
+
+                            # don't render water that's underneath other water, instead make
+                            # the top water darker
+                            # and also in scale make sure water becomes bigger as a fix to this
+                            # or just actually figure out how to make the scale and rendering work correctly
+                            
+                            block["alphaValue"] = 150
+                            block["render"] = True
+                            foundNotWater = True
+                            subtracYy = 0
+                            while foundNotWater:
+                                blockBelow = findBlock(x, y - subtracYy, z, extraInfo = True)
+                                if blockBelow["type"] == "water":
+                                    block["alphaValue"] -= 25
+
+                                if blockBelow["type"] != "water":
+                                    break
+
+
+                                subtracYy -= 1
+                                if subtracYy < -100:
+                                    break
+
+                                if block["alphaValue"] <= 0:
+                                    block["alphaValue"] = 1
+                                    break
+
+                    else: # this block isn't water
+                        blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                        blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                        blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                        blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
+                        blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord)
+                        blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord)
+
+                        above = checkForSolidBlock(blockAbove)
+                        below = checkForSolidBlock(blockBelow)
+                        toRight = checkForSolidBlock(blockToRight)
+                        toLeft = checkForSolidBlock(blockToLeft)
+                        toUp = checkForSolidBlock(blockToUp)
+                        toDown = checkForSolidBlock(blockToDown)
+                        surrounded = False
+                        if toRight and toLeft and toUp and toDown:
+                            surrounded = True
+
+                        def setAlpha(alphaValue):
+                            block["alphaValue"] = alphaValue
+                            block["render"] = True
+                        
+                        if above: # there's a block above this one
+                            if below: # there's a block below this one
+                                if blockBelow["alphaValue"] != 0:
+                                    setAlpha(250)
+                                if not surrounded:
+                                    block["render"] = True
+                            else: # no block below this one
+                                setAlpha(150)
+                        else: # there's no block above this one
+                            block["render"] = True
+                            if below: # there's a block under this one
+                                if blockBelow["alphaValue"] != 0:
+                                    setAlpha(250)
+                            
+
+
                         
 
-
-                    
-
-                    chunks[chunkCoord]["data"][(x, y, z)] = block
-                            
+                        chunks[chunkCoord]["data"][(x, y, z)] = block
+                                
                     
     chunks[chunkCoord]["blocksUpdated"] = True    
 

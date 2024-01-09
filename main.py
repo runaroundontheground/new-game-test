@@ -1,9 +1,9 @@
-from globalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands, commandString
-import worldgen
-from items import makeItemsExist
-from controls import updateMouseAndKeys
-from rendering import render, generateSpawnArea, doCommandStuff, showInvalidCommand
-from player import player
+from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands, commandString
+import Worldgen, Controls, Items, Rendering # do this so command line works for everything? from here
+from Items import makeItemsExist
+from Controls import updateMouseAndKeys
+from Rendering import render, generateSpawnArea, doCommandStuff, showInvalidCommand
+from Player import player
 
 import pygame, time
 

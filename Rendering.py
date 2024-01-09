@@ -1,10 +1,10 @@
-from globalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks, keys
-from globalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities, keysPressed
-from globalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint
-from worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
-from worldgen import generateChunkStructures, findBlock
-from controls import mouse
-from player import player
+from GlobalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks, keys
+from GlobalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities, keysPressed
+from GlobalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint
+from Worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
+from Worldgen import generateChunkStructures, findBlock
+from Controls import mouse
+from Player import player
 import pygame, math
 
 pygame.init()

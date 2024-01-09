@@ -1,9 +1,9 @@
-from globalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities
-from globalVariables import screenWidth, screenHeight, chunks, font, FPS, itemEntitySize
-from worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
-from controls import keysPressed, keys, mouse
-from entities import ItemEntity
-from items import PlaceableItem
+from GlobalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities
+from GlobalVariables import screenWidth, screenHeight, chunks, font, FPS, itemEntitySize
+from Worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
+from Controls import keysPressed, keys, mouse
+from Entities import ItemEntity
+from Items import PlaceableItem
 import pygame, math, random
 
 

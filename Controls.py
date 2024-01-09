@@ -1,5 +1,5 @@
-from worldgen import getBlockCoord, getChunkCoord, generateChunkTerrain
-from globalVariables import chunks, keys, keysPressed
+from Worldgen import getBlockCoord, getChunkCoord, generateChunkTerrain
+from GlobalVariables import chunks, keys, keysPressed
 import pygame
 
 

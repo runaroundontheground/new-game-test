@@ -1,7 +1,7 @@
-from globalVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity, dictOfBlockBreakingStuff
-from worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
-from controls import mouse
-from entities import ItemEntity
+from GlobalVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity, dictOfBlockBreakingStuff
+from Worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
+from Controls import mouse
+from Entities import ItemEntity
 
 
 

@@ -1,5 +1,5 @@
-from globalVariables import blockSize, gravity, maxStackSize, itemEntitySize
-from worldgen import findBlock
+from GlobalVariables import blockSize, gravity, maxStackSize, itemEntitySize
+from Worldgen import findBlock
 import math, pygame, random
 
 # basic entity, no ai or anything
