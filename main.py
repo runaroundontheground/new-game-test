@@ -18,11 +18,15 @@ ok currently:
 to do list:
 
     
+    when picking up items that are stackable,
+    if it finds a slot that is full, just skip it
+
+    closing inv with a full stack in mouse doesn't check for the same item name
+    in stackables
+
     make sure inventory management is fully functioning and doesn't break (often at least)
 
-    command line thingy:
-    works, but is missing some characters (will find more missing later lol)
-    missing:
+    
     
 
 

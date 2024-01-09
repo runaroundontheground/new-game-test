@@ -551,6 +551,8 @@ class Player():
                 for slot in container:
                     if slot["contents"] != "empty":
                         if slot["contents"].name == item.name:
+                            if slot["count"] == maxStackSize:
+                                break
 
                             addedCount = count + slot["count"]
                             if addedCount <= maxStackSize:
@@ -718,6 +720,8 @@ class Player():
 
                                         if otherItem != "empty" and otherSlot["count"] < maxStackSize:
                                             if otherItem.stackable and item.name == otherItem.name:
+                                                if otherSlot["count"] == maxStackSize:
+                                                    break
                                                 if amountToMove == "max":
                                                     movingCount = slot["count"] + otherSlot["count"]
                                                 
@@ -869,28 +873,31 @@ class Player():
                             for slot in container:
                                 if slot["contents"] != "empty" and mouse.heldItem["contents"] != "empty":
                                     if slot["contents"].stackable and mouse.heldItem["contents"].stackable:
-                                        mouseItem = mouse.heldItem["contents"]
-                                        mouseCount = mouse.heldItem["count"]
+                                        if slot["contents"].name == mouse.heldItem["contents"].name:
+                                            if slot["count"] == maxStackSize:
+                                                break
+                                            mouseItem = mouse.heldItem["contents"]
+                                            mouseCount = mouse.heldItem["count"]
 
-                                        item = slot["contents"]
-                                        count = slot["count"]
+                                            item = slot["contents"]
+                                            count = slot["count"]
 
-                                        addedCount = count + mouseCount
+                                            addedCount = count + mouseCount
 
-                                        if addedCount <= maxStackSize:
-                                            slot["count"] = addedCount
-                                            mouse.heldItem["count"] = 0
-                                            mouse.heldItem["contents"] = "empty"
+                                            if addedCount <= maxStackSize:
+                                                slot["count"] = addedCount
+                                                mouse.heldItem["count"] = 0
+                                                mouse.heldItem["contents"] = "empty"
 
-                                            return True
-                                        
-                                        if addedCount > maxStackSize:
-                                            newMouseCount = addedCount - maxStackSize
+                                                return True
+                                            
+                                            if addedCount > maxStackSize:
+                                                newMouseCount = addedCount - maxStackSize
 
-                                            slot["count"] = maxStackSize
-                                            mouse.heldItem["count"] = newMouseCount
+                                                slot["count"] = maxStackSize
+                                                mouse.heldItem["count"] = newMouseCount
 
-                                            return True
+                                                return True
                         return done
 
                     def checkForEmptySlots(container, done):

@@ -539,9 +539,12 @@ def render(deltaTime, typingCommands = None):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
-                if slot["count"] > 1:
-                    imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                    renderingData.append(imageData)
+        # fix to selectedHotbarSlot thingy being rendered over the item counts
+                
+        for slotId, slot in enumerate(player.hotbar):
+            if slot["count"] > 1:
+                imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                renderingData.append(imageData)
 
 
         
@@ -607,10 +610,6 @@ def render(deltaTime, typingCommands = None):
         screen.blits(renderingData)
 
         # pretty much just debug after this
-
-        if typingCommands:
-            pass
-
         
         debugRenderingStuff2 = "player block position " + str(player.blockCoord)
         debugRenderingStuff2 += "player yv " + str(player.yv)
