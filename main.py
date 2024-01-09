@@ -26,24 +26,8 @@ to do list:
     layer of water is, and then don't render any of the water beneath it, that way better performance
     
     
-    alright, it's time to figure out why trees are being weird.
-    using the command in order to print worldgen.structures,
-    i have found that it's modifying the structure data for some reason, so that sucks
-    how do i fix that?
-
-    
-    
-
-
-    when placing blocks, apparently picking up a block does weird things sometimes
-    the blocks aren't placing correctly, it's not actually putting it down
-    
-                        figure out why alpha on the trees don't work sometimes
-                            ok, nevermind for now, idk why it won't work
-    
-                        figure out why the heck destroying a part of one tree breaks it on every single
-                        other tree, the heck is happening???
-                        still have no idea why it's broken
+    YAYYYY
+    finally fixed structures being weird
     
 
     add some crappy images for the tools (aka drawing a line on a surf, then another line)

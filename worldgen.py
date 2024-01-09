@@ -124,7 +124,7 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
 def generateChunkStructures(inputChunkCoord = (0, 0)):
 
     def generateStructure(structureName, blockCoord):
-        thisStructure = structures[structureName].copy()
+        thisStructure = structures[structureName]
         
         for structureBlockCoord, block in thisStructure.items():
 
@@ -163,7 +163,7 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
             except:
                 generateChunkTerrain(chunkCoord)
 
-            chunks[chunkCoord]["data"][newBlockCoord] = structures[structureName].copy()[structureBlockCoord]
+            chunks[chunkCoord]["data"][newBlockCoord] = block.copy()
 
 
     for x in range(chunkSize[0]):
