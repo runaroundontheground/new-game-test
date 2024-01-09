@@ -174,7 +174,7 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 
 capitalLetters = []
 for letter in letters:
-    capitalLetters.append(letter.capitalize())
+    capitalLetters.append(letter.upper())
 
 characters = {}
 
@@ -667,13 +667,31 @@ def doCommandStuff(commandStringArg, submitCommand):
 
     shiftPressed = keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]
     
-    commandString = goThroughACharacterList(letters, commandString)
+   
     if not shiftPressed:
         commandString = goThroughACharacterList(["0","1","2","3","4","5","6","7","8","9"], commandString)
-
+        commandString = goThroughACharacterList(letters, commandString)
     
     if shiftPressed:
-        commandString = goThroughACharacterList(capitalLetters, commandString)
+        for character in letters:
+            try:
+                thing = "K_" + character
+                thisKeyPressed = keysPressed[getattr(pygame, thing)]
+            except:
+                pass
+            else:
+
+                if thisKeyPressed:
+                    
+                    commandString += character.upper()
+                    
+
+                    imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
+                    size = font.size(commandString)
+                    rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+                    pygame.draw.rect(screen, (0, 0, 0), rect)
+                    screen.blit(imageData[0], imageData[1])
+                    pygame.display.flip()
         
 
         if keysPressed[pygame.K_3]:

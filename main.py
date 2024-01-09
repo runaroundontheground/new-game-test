@@ -23,7 +23,7 @@ to do list:
     command line thingy:
     works, but is missing some characters (will find more missing later lol)
     missing:
-    capital letters
+    
 
 
     
