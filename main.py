@@ -23,7 +23,7 @@ to do list:
     command line thingy:
     works, but is missing some characters (will find more missing later lol)
     missing:
-    , . : ; * ^
+    capital letters
 
 
     
@@ -118,12 +118,6 @@ def gameLoop():
         currentTime = time.time()
 
         updateMouseAndKeys()
-        
-        if keysPressed[pygame.K_SLASH]:
-            typingCommands = True
-            commandString = ""
-            clock.tick(15)
-            print("started doing commands stuff")
             
 
         for event in pygame.event.get():
@@ -131,6 +125,11 @@ def gameLoop():
                 pygame.quit()
 
         if not typingCommands:
+
+            if keysPressed[pygame.K_SLASH]:
+                typingCommands = True
+                commandString = ""
+                time.sleep(.5)
 
             player.doStuff(deltaTime)
 

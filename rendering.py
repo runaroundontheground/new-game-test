@@ -172,6 +172,10 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
              "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
     ]
 
+capitalLetters = []
+for letter in letters:
+    capitalLetters.append(letter.capitalize())
+
 characters = {}
 
 defaultTextColor = (255, 255, 255)
@@ -669,36 +673,88 @@ def doCommandStuff(commandStringArg, submitCommand):
 
     
     if shiftPressed:
+        commandString = goThroughACharacterList(capitalLetters, commandString)
+        
+
+        if keysPressed[pygame.K_3]:
+            commandString += "#"
+            updateCommandRendering(commandString)
+
+        if keysPressed[pygame.K_5]:
+            commandString += "%"
+            updateCommandRendering(commandString)
+
+        if keysPressed[pygame.K_6]:
+            commandString += "^"
+            updateCommandRendering(commandString)
+
+        if keysPressed[pygame.K_8]:
+            commandString += "*"
+            updateCommandRendering(commandString)
+
         if keysPressed[pygame.K_9]:
             commandString += "("
             updateCommandRendering(commandString)
+
         if keysPressed[pygame.K_0]:
             commandString += ")"
             updateCommandRendering(commandString)
 
-    
+        if keysPressed[pygame.K_QUOTE]:
+            commandString += '"'
+            updateCommandRendering(commandString)
 
-    if keysPressed[pygame.K_QUOTE]:
-        commandString += "'"
-        updateCommandRendering(commandString)
-
-    if keysPressed[pygame.K_LEFTBRACKET]:
-        if keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]:
+        if keysPressed[pygame.K_LEFTBRACKET]:
             commandString += "{"
             updateCommandRendering(commandString)
-        else:
+
+        if keysPressed[pygame.K_RIGHTBRACKET]:
+            commandString += "}"
+            updateCommandRendering(commandString)
+        
+        if keysPressed[pygame.K_SEMICOLON]:
+            commandString += ":"
+            updateCommandRendering(commandString)
+    
+    else: # not shift pressed
+
+        if keysPressed[pygame.K_SLASH]:
+            commandString += "/"
+            updateCommandRendering(commandString)
+        
+        #if keysPressed[pygame.K_BACKSLASH]:
+        #    commandString += "\"
+        # doesn't work, can't put \ in a string
+             
+        if keysPressed[pygame.K_LEFTBRACKET]:
             commandString +=  "["
             updateCommandRendering(commandString)
 
-    if keysPressed[pygame.K_RIGHTBRACKET]:
-        if keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]:
-            commandString += "}"
-            updateCommandRendering(commandString)
-        else:
+        if keysPressed[pygame.K_RIGHTBRACKET]:
             commandString += "]"
             updateCommandRendering(commandString)
+        
+        if keysPressed[pygame.K_COMMA]:
+            commandString += ","
+            updateCommandRendering(commandString)
+        
+        if keysPressed[pygame.K_PERIOD]:
+            commandString += "."
+            updateCommandRendering(commandString)
+        
+        if keysPressed[pygame.K_SEMICOLON]:
+            commandString += ";"
+            updateCommandRendering(commandString)
 
-    # add in , and .
+        if keysPressed[pygame.K_QUOTE]:
+            commandString += "'"
+            updateCommandRendering(commandString)
+
+    # past here is regardless of shift pressed or not pressed
+    if keysPressed[pygame.K_SPACE]:
+        commandString += " "
+        updateCommandRendering(commandString)
+    
 
     if keysPressed[pygame.K_BACKSPACE]:
             if len(commandString) > 0:
