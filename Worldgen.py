@@ -37,6 +37,7 @@ def fixStructuresData():
             block["alphaValue"] = 0
             block["hardness"] = dictOfBlockBreakingStuff[block["type"]]["hardness"]
             block["effectiveTool"] = dictOfBlockBreakingStuff[block["type"]]["effectiveTool"]
+            block["dropsWithNoTool"] = dictOfBlockBreakingStuff[block["type"]]["dropsWithNoTool"]
 fixStructuresData()
 
 waterHeight = 4
@@ -54,7 +55,8 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
                         "render": False,
                         "alphaValue": 0,
                         "hardness": 0,
-                        "effectiveTool": "none"
+                        "effectiveTool": "none",
+                        "dropsWithNoTool": False
                     }
                     
                     noiseCoordinate = [x, z]
@@ -109,8 +111,11 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
 
                     hardness = dictOfBlockBreakingStuff[blockData["type"]]["hardness"]
                     effectiveTool = dictOfBlockBreakingStuff[blockData["type"]]["effectiveTool"]
+                    dropsWithNoTool = dictOfBlockBreakingStuff[blockData["type"]]["dropsWithNoTool"]
+
                     blockData["hardness"] = hardness
                     blockData["effectiveTool"] = effectiveTool
+                    blockData["dropsWithNoTool"] = dropsWithNoTool
 
                     chunkData[(x, y, z)] = blockData
     initialTerrainGeneration()

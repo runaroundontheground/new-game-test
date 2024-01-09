@@ -291,7 +291,7 @@ def generateSpawnArea():
 
 
 
-def render(deltaTime, typingCommands = None):
+def render(deltaTime):
 
 
     if not typingCommands:
