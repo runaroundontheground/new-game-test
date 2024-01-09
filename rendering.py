@@ -620,24 +620,28 @@ def render(deltaTime, typingCommands = None):
 
         pygame.display.flip()
 
-    else: # commands are being typed, display and keep track of them!
+    else: # commands are being typed, display and keep track of them
         pass
 
-def doCommandStuff(commandString, submitCommand):
+def doCommandStuff(commandStringArg, submitCommand):
+
+    commandString = commandStringArg
     
-    def goThroughACharacterList(list, commandString):
-        
+    def goThroughACharacterList(list, commandStringArg = ""):
+        commandString = commandStringArg
         for character in list:
             try:
-                thing = "K_" + str(character)
+                thing = "K_" + character
                 thisKeyPressed = keysPressed[getattr(pygame, thing)]
             except:
                 pass
             else:
 
                 if thisKeyPressed:
-                    print("add a thing")
-                    commandString += str(character)
+                    
+                    commandString += character
+                    
+
                     imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
                     size = font.size(commandString)
                     rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
@@ -645,46 +649,62 @@ def doCommandStuff(commandString, submitCommand):
                     screen.blit(imageData[0], imageData[1])
                     pygame.display.flip()
                     return commandString
-    def appendACharacter(character, commandString):
-        commandString += character
+        return commandString
+                
+    def updateCommandRendering(commandString):
+
+
         imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
         size = font.size(commandString)
         rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
         pygame.draw.rect(screen, (0, 0, 0), rect)
         screen.blit(imageData[0], imageData[1])
         pygame.display.flip()
-        return commandString
 
+    shiftPressed = keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]
+    
     commandString = goThroughACharacterList(letters, commandString)
-    commandString = goThroughACharacterList(["0","1","2","3","4","5","6","7","8","9"], commandString)
-    if keys[0][pygame.K_LSHIFT]:
-        if keysPressed[pygame.K_LEFTPAREN]:
-            commandString = appendACharacter("(", commandString)
-        if keysPressed[pygame.K_RIGHTPAREN]:
-            commandString = appendACharacter(")", commandString)
+    if not shiftPressed:
+        commandString = goThroughACharacterList(["0","1","2","3","4","5","6","7","8","9"], commandString)
+
+    
+    if shiftPressed:
+        if keysPressed[pygame.K_9]:
+            commandString += "("
+            updateCommandRendering(commandString)
+        if keysPressed[pygame.K_0]:
+            commandString += ")"
+            updateCommandRendering(commandString)
+
+    
+
     if keysPressed[pygame.K_QUOTE]:
-        commandString = appendACharacter("'", commandString)
+        commandString += "'"
+        updateCommandRendering(commandString)
+
     if keysPressed[pygame.K_LEFTBRACKET]:
         if keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]:
-            commandString = appendACharacter("{", commandString)
+            commandString += "{"
+            updateCommandRendering(commandString)
         else:
-            commandString = appendACharacter("[", commandString)
+            commandString +=  "["
+            updateCommandRendering(commandString)
+
     if keysPressed[pygame.K_RIGHTBRACKET]:
         if keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]:
-            commandString = appendACharacter("}", commandString)
+            commandString += "}"
+            updateCommandRendering(commandString)
         else:
-            commandString = appendACharacter("]", commandString)
+            commandString += "]"
+            updateCommandRendering(commandString)
 
 
 
     if keysPressed[pygame.K_BACKSPACE]:
-            print("delete a thing")
             if len(commandString) > 0:
                 
                 size = font.size(commandString)
-                print(commandString)
                 commandString = commandString[:-1]
-                print(commandString)
                 imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
                 
                 rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
@@ -692,11 +712,8 @@ def doCommandStuff(commandString, submitCommand):
                 screen.blit(imageData[0], imageData[1])
                 pygame.display.flip()
 
-    if keysPressed[pygame.K_BACKSLASH]:
-        print("submit command")
+    if keysPressed[pygame.K_RETURN]:
         submitCommand = True
-
-
 
     return commandString, submitCommand
 

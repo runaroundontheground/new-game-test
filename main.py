@@ -153,10 +153,15 @@ def gameLoop():
             deltaTime = 1 + (newCurrentTime - currentTime)
 
         else: # currently typing commands
-            # add in a special feature in render that only does stuff when 
-            # typingCommands is true
             submitCommand = False
-            commandString, submitCommand = doCommandStuff(commandString, submitCommand)
+            
+            thing = doCommandStuff(commandString, submitCommand)
+            commandString = thing[0]
+            submitCommand = thing[1]
+            
+
+            
+            
 
 
             if submitCommand:
