@@ -25,9 +25,10 @@ def makeTree1():
     structures["tree 1"][(2, 2, 2)] = {"type": "log"}
 makeTree1()
 
+structures = structures.copy()
 
 # add any additional things that all blocks require in their data automatically
-# such as: render, and noBlockBelow
+# such as render
 def fixStructuresData():
     for structureName, structureData in structures.items():
         for key, block in structures[structureName].items():
@@ -127,6 +128,7 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
         
         for structureBlockCoord, block in thisStructure.items():
 
+
             chunkX = inputChunkCoord[0]
             chunkZ = inputChunkCoord[1]
             
@@ -161,7 +163,7 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
             except:
                 generateChunkTerrain(chunkCoord)
 
-            chunks[chunkCoord]["data"][newBlockCoord] = block
+            chunks[chunkCoord]["data"][newBlockCoord] = structures[structureName].copy()[structureBlockCoord]
 
 
     for x in range(chunkSize[0]):

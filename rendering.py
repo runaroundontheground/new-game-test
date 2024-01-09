@@ -631,7 +631,7 @@ def doCommandStuff(commandString, previousCommandString, submitCommand):
     if previousCommandString != commandString or keysPressed[pygame.K_BACKSPACE]:
 
         imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
-        size = font.size(commandString + " ")
+        size = font.size(commandString + "       ")
         rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
         pygame.draw.rect(screen, (0, 0, 0), rect)
         screen.blit(imageData[0], imageData[1])

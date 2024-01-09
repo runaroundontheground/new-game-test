@@ -1,4 +1,5 @@
 from globalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands, commandString
+import worldgen
 from items import makeItemsExist
 from controls import updateMouseAndKeys
 from rendering import render, generateSpawnArea, doCommandStuff, showInvalidCommand
@@ -17,18 +18,18 @@ ok currently:
 
 to do list:
 
-    
-    when picking up items that are stackable,
-    if it finds a slot that is full, just skip it
-
-    closing inv with a full stack in mouse doesn't check for the same item name
-    in stackables
 
     make sure inventory management is fully functioning and doesn't break (often at least)
 
+    potential performance fix
+    when deciding whether to render water, do some extra logic to figure out what the opacity of the top
+    layer of water is, and then don't render any of the water beneath it, that way better performance
     
     
-
+    alright, it's time to figure out why trees are being weird.
+    using the command in order to print worldgen.structures,
+    i have found that it's modifying the structure data for some reason, so that sucks
+    how do i fix that?
 
     
     
