@@ -626,186 +626,21 @@ def render(deltaTime, typingCommands = None):
     else: # commands are being typed, display and keep track of them
         pass
 
-def doCommandStuff(commandStringArg, submitCommand):
+def doCommandStuff(commandString, previousCommandString, submitCommand):
 
-    commandString = commandStringArg
-    
-    def goThroughACharacterList(list, commandStringArg = ""):
-        commandString = commandStringArg
-        for character in list:
-            try:
-                thing = "K_" + character
-                thisKeyPressed = keysPressed[getattr(pygame, thing)]
-            except:
-                pass
-            else:
-
-                if thisKeyPressed:
-                    
-                    commandString += character
-                    
-
-                    imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
-                    size = font.size(commandString)
-                    rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
-                    pygame.draw.rect(screen, (0, 0, 0), rect)
-                    screen.blit(imageData[0], imageData[1])
-                    pygame.display.flip()
-                    return commandString
-        return commandString
-                
-    def updateCommandRendering(commandString):
-
+    if previousCommandString != commandString or keysPressed[pygame.K_BACKSPACE]:
 
         imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
-        size = font.size(commandString)
+        size = font.size(commandString + " ")
         rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
         pygame.draw.rect(screen, (0, 0, 0), rect)
         screen.blit(imageData[0], imageData[1])
         pygame.display.flip()
 
-    shiftPressed = keys[0][pygame.K_LSHIFT] or keys[0][pygame.K_RSHIFT]
-    
-   
-    if not shiftPressed:
-        commandString = goThroughACharacterList(["0","1","2","3","4","5","6","7","8","9"], commandString)
-        commandString = goThroughACharacterList(letters, commandString)
-    
-    if shiftPressed:
-        for character in letters:
-            try:
-                thing = "K_" + character
-                thisKeyPressed = keysPressed[getattr(pygame, thing)]
-            except:
-                pass
-            else:
-
-                if thisKeyPressed:
-                    
-                    commandString += character.upper()
-                    
-
-                    imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
-                    size = font.size(commandString)
-                    rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
-                    pygame.draw.rect(screen, (0, 0, 0), rect)
-                    screen.blit(imageData[0], imageData[1])
-                    pygame.display.flip()
-        
-
-        if keysPressed[pygame.K_3]:
-            commandString += "#"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_5]:
-            commandString += "%"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_6]:
-            commandString += "^"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_8]:
-            commandString += "*"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_9]:
-            commandString += "("
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_0]:
-            commandString += ")"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_QUOTE]:
-            commandString += '"'
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_LEFTBRACKET]:
-            commandString += "{"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_RIGHTBRACKET]:
-            commandString += "}"
-            updateCommandRendering(commandString)
-        
-        if keysPressed[pygame.K_SEMICOLON]:
-            commandString += ":"
-            updateCommandRendering(commandString)
-    
-    else: # not shift pressed
-
-        if keysPressed[pygame.K_SLASH]:
-            commandString += "/"
-            updateCommandRendering(commandString)
-        
-        #if keysPressed[pygame.K_BACKSLASH]:
-        #    commandString += "\"
-        # doesn't work, can't put \ in a string
-             
-        if keysPressed[pygame.K_LEFTBRACKET]:
-            commandString +=  "["
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_RIGHTBRACKET]:
-            commandString += "]"
-            updateCommandRendering(commandString)
-        
-        if keysPressed[pygame.K_COMMA]:
-            commandString += ","
-            updateCommandRendering(commandString)
-        
-        if keysPressed[pygame.K_PERIOD]:
-            commandString += "."
-            updateCommandRendering(commandString)
-        
-        if keysPressed[pygame.K_SEMICOLON]:
-            commandString += ";"
-            updateCommandRendering(commandString)
-
-        if keysPressed[pygame.K_QUOTE]:
-            commandString += "'"
-            updateCommandRendering(commandString)
-
-    # past here is regardless of shift pressed or not pressed
-    if keysPressed[pygame.K_SPACE]:
-        commandString += " "
-        updateCommandRendering(commandString)
-    
-
-    if keysPressed[pygame.K_BACKSPACE]:
-            if len(commandString) > 0:
-                
-                size = font.size(commandString)
-                commandString = commandString[:-1]
-                imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
-                
-                rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
-                pygame.draw.rect(screen, (0, 0, 0), rect)
-                screen.blit(imageData[0], imageData[1])
-                pygame.display.flip()
-
     if keysPressed[pygame.K_RETURN]:
         submitCommand = True
 
-    return commandString, submitCommand
-
-    """
-    how to make this work:
-    use keysPressed to append stuff to commandString, remove characters if
-    keysPressed[pygame.K_BACKSPACE]
-    if enter is pressed, then do:
-    try:
-        eval(commandString)
-    except:
-        render a string that says "invalid command!" or something like that
-        and have time.sleep for a second or something so that it has time
-        to be seen
-    after that happens
-
-    set commandString back to ""
-    set typingCommands to False
-    """
+    return submitCommand
 
 def showInvalidCommand():
     string = "invalid command"

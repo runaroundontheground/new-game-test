@@ -127,13 +127,18 @@ def gameLoop():
         for event in pygame.event.get():
             if event.type == exit:
                 pygame.quit()
+            if event.type == pygame.TEXTINPUT:
+                previousCommandString = commandString
+                commandString += event.text
 
         if not typingCommands:
 
             if keysPressed[pygame.K_SLASH]:
                 typingCommands = True
                 commandString = ""
+                pygame.key.start_text_input()
                 time.sleep(.5)
+
 
             player.doStuff(deltaTime)
 
@@ -158,15 +163,13 @@ def gameLoop():
 
         else: # currently typing commands
             submitCommand = False
-            
-            thing = doCommandStuff(commandString, submitCommand)
-            commandString = thing[0]
-            submitCommand = thing[1]
-            
+
+            if keysPressed[pygame.K_BACKSPACE]:
+                commandString = commandString[:-1]
+                
+            submitCommand = doCommandStuff(commandString, previousCommandString, submitCommand)
 
             
-            
-
 
             if submitCommand:
                 try:
