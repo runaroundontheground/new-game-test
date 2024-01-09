@@ -1057,34 +1057,36 @@ class Player():
 
             if self.blockBreakProgress >= block["hardness"]:
                 self.blockBreakProgress = 0
+
+                if correctTool or block["dropsWithNoTool"]:
                 
-                itemData = PlaceableItem(block["type"])
+                    itemData = PlaceableItem(block["type"])
 
-                chunkCoord = mouse.hoveredBlock["chunkCoord"]
-                blockCoord = mouse.hoveredBlock["blockCoord"]
-                x = (chunkCoord[0] * chunkSize[0]) * blockSize
-                y = blockCoord[1] * blockSize
-                z = (chunkCoord[1] * chunkSize[0]) * blockSize
+                    chunkCoord = mouse.hoveredBlock["chunkCoord"]
+                    blockCoord = mouse.hoveredBlock["blockCoord"]
+                    x = (chunkCoord[0] * chunkSize[0]) * blockSize
+                    y = blockCoord[1] * blockSize
+                    z = (chunkCoord[1] * chunkSize[0]) * blockSize
 
-                x += blockCoord[0] * blockSize
-                z += blockCoord[2] * blockSize
+                    x += blockCoord[0] * blockSize
+                    z += blockCoord[2] * blockSize
 
-                dropAnItem = False
-                if correctTool or block["hardness"] == 1:
-                    dropAnItem = True
                 
-                if dropAnItem:
+                
                     count = 1
                     xv = random.randint(-3, 3)
                     zv = random.randint(-3, 3)
                     entity = ItemEntity(itemData, count, x, y, z, xv, 5, zv)
                     entities.append(entity)
 
-                chunks[chunkCoord]["data"][blockCoord]["type"] = "air"
-                chunks[chunkCoord]["data"][blockCoord]["render"] = False
-                chunks[chunkCoord]["data"][blockCoord]["alphaValue"] = 0
-                chunks[chunkCoord]["data"][blockCoord]["hardness"] = "infinity"
-                chunks[chunkCoord]["data"][blockCoord]["effectiveTool"] = "none"
+                air = {
+                    "type": "air",
+                    "alphaValue": 0,
+                    "hardness": "infinity",
+                    "effectiveTool": "none"
+                }
+
+                chunks[chunkCoord]["data"][blockCoord] = air
 
                 smallScaleBlockUpdates(chunkCoord, blockCoord)
 
