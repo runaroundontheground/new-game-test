@@ -20,9 +20,10 @@ to do list:
     
     make sure inventory management is fully functioning and doesn't break (often at least)
 
-    add in an actual command line thing within the game to run commands, instead
-    of just using eval() on an input (probably pretty insecure lol but eh whatever)
-
+    command line thingy:
+    works, but is missing some characters (will find more missing later lol)
+    missing:
+    , . : ; * ^
 
 
     

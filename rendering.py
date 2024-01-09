@@ -698,7 +698,7 @@ def doCommandStuff(commandStringArg, submitCommand):
             commandString += "]"
             updateCommandRendering(commandString)
 
-
+    # add in , and .
 
     if keysPressed[pygame.K_BACKSPACE]:
             if len(commandString) > 0:
