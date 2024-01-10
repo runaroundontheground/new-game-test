@@ -203,7 +203,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                         if blockAbove["type"] == "air":
 
                             # don't render water that's underneath other water, instead make
-                            # the top water darker
+                            # the top water harder to see through
                             # and also in scale make sure water becomes bigger as a fix to this
                             # or just actually figure out how to make the scale and rendering work correctly
                             
@@ -215,9 +215,8 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                                 blockBelow = findBlock(x, y - subtracYy, z, extraInfo = True, chunkCoordInput = chunkCoord)
                                 
                                 if blockBelow["type"] == "water":
-                                    block["alphaValue"] -= 25
-
-                                if blockBelow["type"] != "water":
+                                    block["alphaValue"] += 25
+                                else:
                                     foundNotWater = True
 
                                 if block["alphaValue"] <= 0:
@@ -226,10 +225,8 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
 
 
                                 subtracYy -= 1
-                                if subtracYy < -100:
-                                    break
 
-                                if foundNotWater:
+                                if subtracYy < -100 or foundNotWater:
                                     break
                         
 
@@ -274,8 +271,6 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                         
 
                     chunks[chunkCoord]["data"][(x, y, z)] = block
-                    if block["type"] == "water" and block["render"]:
-                        print(block["alphaValue"])
                                 
                     
     chunks[chunkCoord]["blocksUpdated"] = True    

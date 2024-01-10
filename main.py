@@ -125,8 +125,9 @@ def gameLoop():
             if keysPressed[pygame.K_SLASH]:
                 typingCommands = True
                 commandString = ""
+                time.sleep(.25)
                 pygame.key.start_text_input()
-                time.sleep(.5)
+                
 
 
             player.doStuff(deltaTime)
