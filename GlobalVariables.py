@@ -25,8 +25,6 @@ for index, num in enumerate(keys[0]):
 
 deltaTime = 1
 
-typingCommands = False
-commandString = ""
 
 # extra info for what is required to break blocks
 dictOfBlockBreakingStuff = {

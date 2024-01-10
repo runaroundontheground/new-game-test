@@ -1,4 +1,4 @@
-from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed, typingCommands, commandString
+from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed
 import Worldgen, Controls, Items, Rendering # do this so command line works for everything? from here
 from Items import makeItemsExist
 from Controls import updateMouseAndKeys
@@ -86,14 +86,15 @@ day/night cycle
 
 
 """
-typingCommands = False
-commandString = ""
+
 
 
 running = True
 
 def gameLoop():
-    global deltaTime, typingCommands, commandString
+    global deltaTime
+    typingCommands = False
+    commandString = ""
     # hopefully i did deltatime correctly
 
     generateSpawnArea()

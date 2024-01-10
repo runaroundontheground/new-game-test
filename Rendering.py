@@ -386,14 +386,18 @@ def render(deltaTime):
                                 scaledImages[block["type"]]["scaled"] = True
 
                             if thisBlockHasAlpha:
+                                if block["type"] != "water":
 
-                                if not scaledImages[block["type"]]["alpha'd"]:
+                                    if not scaledImages[block["type"]]["alpha'd"]:
+                                        image = scaledImages[block["type"]]["data"].copy()
+                                        image.set_alpha(block["alphaValue"])
+                                        scaledImages[block["type"]]["alpha'd"] = True
+                                        scaledImages[block["type"]]["dataWithAlpha"] = image
+                                    else:
+                                        image = scaledImages[block["type"]]["dataWithAlpha"]
+                                else: # dealing with a water block
                                     image = scaledImages[block["type"]]["data"].copy()
                                     image.set_alpha(block["alphaValue"])
-                                    scaledImages[block["type"]]["alpha'd"] = True
-                                    scaledImages[block["type"]]["dataWithAlpha"] = image
-                                else:
-                                    image = scaledImages[block["type"]]["dataWithAlpha"]
                             else:
                                 image = scaledImages[block["type"]]["data"]
 
