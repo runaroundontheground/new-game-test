@@ -367,7 +367,7 @@ def render(deltaTime):
                         
                         if block["alphaValue"] < 255:
                             if block["type"] != "water":
-                                if player.blockCoord[1] <= y: # player is underneath or in? this block
+                                if player.blockCoord[1] < y: # player is underneath this block
                                     fiveBlocks = 5 * blockSize
 
                                     if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:

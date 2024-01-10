@@ -21,27 +21,8 @@ to do list:
 
     make sure inventory management is fully functioning and doesn't break
 
-    why was alpha inverted
-    0 = transparent, 255 = opaque
-
-    ok, when dealing with blocks with alpha, it gets performance heavy to have a ton of different alpha
-    blocks at the same time
-    if the block underneath has alpha, set it's rendering to false, and then boom, less alpha stuff being
-    rendered
-
-
-
-
-    fix smallScaleBlockUpdates, it seems to have some problems making things actually render
-    or maybe that's just the regular block updates, but breaking leaves that are right above another
-    block does seem to not make the block underneath render
-
-    new blocks:
-    planks, need to figure out crafting as well
-
     
-    YAYYYY
-    finally fixed structures being weird
+
     
 
     add some crappy images for the tools (aka drawing a line on a surf, then another line)
@@ -53,6 +34,25 @@ to do list:
     based on % of break progress, put that kind of breaking progress surf there
     
 
+    extend the player inventory, and then also figure out how to make crafting work
+    and make sure recipes aren't awful to add
+    recipes:
+        based on grid size:
+        2x2:
+            dict with 4 items, ex: {0: empty, 1: planks,
+                                    2: empty, 3: planks}
+                                    = sticks
+    recipe detection ideas:
+        go through the crafting slots, and then count how many of each item there is in it
+        ex: sticks recipe, req's two planks, and nothing else
+        and then after than, if it's a shapeless recipe, that's all that needs to be done
+        if it's shaped, like sticks, but can be crafted in multiple spots, then
+        define some functions to check whether the recipe has items in the right spots, so for sticks
+        it would look through the list until it finds a plank
+
+
+
+    
 oh. welp, uhh dropped items and other entites need to be scaled based on
 height from the player and stuff
 that could be annoying
