@@ -5,7 +5,8 @@ from Worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from Worldgen import generateChunkStructures, findBlock
 from Controls import mouse
 from Player import player
-import pygame, math, perlin_noise
+from perlin_noise import PerlinNoise
+import pygame, math
 
 pygame.init()
 
@@ -132,11 +133,58 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
 
     # add in perlin noise texture thing here
     if useNoiseTexture:
-        width, height = imageSize
-        for x in range(width):
-            for y in range(height):
-                pass
 
+
+        width = blockSize
+        height = blockSize
+        width = math.floor(width / 6)
+        height = math.floor(height / 6)
+
+        tempBlock = block.copy()
+        tempBlock = pygame.transform.scale(tempBlock, (width, height))
+        
+        print(width)
+        for x in range(width):
+            if x != (1 or 2 or width - 1 or width - 2):
+                for y in range(height):
+                    if y != (1 or 2 or height - 1 or height - 2):
+
+                        noiseCoordinate = [x, y]
+                        
+                        noiseIntensity = 2
+                        rgbChange = 0
+
+                        noiseCoordinate[0] /= noiseIntensity
+                        noiseCoordinate[1] /= noiseIntensity
+
+
+
+                        rgbChange = round(PerlinNoise(octaves = 0.5)(noiseCoordinate) * noiseIntensity)
+                        #print(rgbChange)
+
+                        currentColor = tempBlock.get_at((x, y))
+
+                        r = currentColor[0] + rgbChange
+                        g = currentColor[1] + rgbChange
+                        b = currentColor[2] + rgbChange
+
+                        if r > 255: r = 255
+                        if r < 0: r = 0
+
+                        if g > 255: g = 255
+                        if g < 0: g = 0
+                        
+                        if b > 255: b = 255
+                        if b < 0: b = 0
+
+                        newColor = (r, g, b)
+
+                        tempBlock.set_at((x, y), newColor)
+
+                width *= 6
+                height *= 6
+
+                block = pygame.transform.scale(tempBlock, (width, height))
 
 
     

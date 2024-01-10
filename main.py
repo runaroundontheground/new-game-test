@@ -19,8 +19,8 @@ to do list/ideas for things:
 
     make sure inventory management is fully functioning and doesn't break
 
-    idea for adding actual textures to the block textures
-    use a perlin noise map when generating the block to put some random darker/lighter bits on the texture
+    way to make the noise texture not super laggy:
+    do the noise texture with  a sixth of the size, and then scale it back up to normal size
 
     blocks needed to make simple structures (like a small hut, or something)
         planks, probably make cobblestone 

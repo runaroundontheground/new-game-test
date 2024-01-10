@@ -69,7 +69,7 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
                     noiseCoordinate[1] /= noiseIntensity
 
                     
-
+                    
                     surfaceYLevel = noise(noiseCoordinate)
                     surfaceYLevel = round( abs( surfaceYLevel * noiseIntensity))
                     surfaceYLevel += 1 # make bottom layer be bedrock
