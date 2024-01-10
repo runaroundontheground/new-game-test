@@ -14,14 +14,17 @@ clock = pygame.time.Clock()
 
 
 """
-ok currently:
-
-to do list:
+to do list/ideas for things:
 
 
     make sure inventory management is fully functioning and doesn't break
 
-    
+    idea for adding actual textures to the block textures
+    use a perlin noise map when generating the block to put some random darker/lighter bits on the texture
+
+    blocks needed to make simple structures (like a small hut, or something)
+        planks, probably make cobblestone 
+
 
     
 
@@ -33,6 +36,7 @@ to do list:
     on top of the block
     based on % of break progress, put that kind of breaking progress surf there
     
+    recipes: complicated wow
 
     extend the player inventory, and then also figure out how to make crafting work
     and make sure recipes aren't awful to add
@@ -48,7 +52,27 @@ to do list:
         and then after than, if it's a shapeless recipe, that's all that needs to be done
         if it's shaped, like sticks, but can be crafted in multiple spots, then
         define some functions to check whether the recipe has items in the right spots, so for sticks
-        it would look through the list until it finds a plank
+        it would look through the list until it finds a plank, and then looks if theres a plank above 
+        or under it
+
+        the way to begin searching for recipes:
+        if something is put into the crafting grid, count the number of items and stuff
+        using all the keys from what is in the crafting grid
+        use dict.get and check that against all recipes, if it returns false while checking a recipe then
+        just stop checking that one
+
+
+
+    adding recipes:
+        3 recipe types?
+        shapeless, exact, and nearExact
+        for all recipes, input a dict that has the count of whatever items need to be in the crafting grid
+        for shapeless recipes, all it needs is the count of items
+        exact recipes:
+        input a dict with items in specific slots/slot ids, and dont include empty slots
+        nearExact recipes:
+        hopefully there can't be too many of these, they probably need specific code to work
+        maybe have it so that a specific layout is inputed, 
 
 
 

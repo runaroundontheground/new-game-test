@@ -5,7 +5,7 @@ from Worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
 from Worldgen import generateChunkStructures, findBlock
 from Controls import mouse
 from Player import player
-import pygame, math
+import pygame, math, perlin_noise
 
 pygame.init()
 
@@ -101,7 +101,7 @@ addAToolIcon("stone axe", "axe", (200, 200, 200))
 #addAToolIcon("stone shovel", "shovel", (200, 200, 200))
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
-              hasAlpha = False, alphaValue = 255):
+              hasAlpha = False, alphaValue = 255, useNoiseTexture = True):
     imageSize = (blockSize, blockSize)
     baseSurface = pygame.surface.Surface(imageSize)
     fillingRect = pygame.rect.Rect(2, 2, blockSize - 4, blockSize - 4)
@@ -128,6 +128,17 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
 
     if hasAlpha:
         block.set_alpha(alphaValue)
+
+
+    # add in perlin noise texture thing here
+    if useNoiseTexture:
+        width, height = imageSize
+        for x in range(width):
+            for y in range(height):
+                pass
+
+
+
     
     blockImages[blockName] = {
         "data": block,
@@ -399,7 +410,7 @@ def render(deltaTime):
 
                             imageExists = scaledImages[blockType]["alphaData"].get(alphaValue, False)
                             
-                            if not imageExists:
+                            if imageExists == False:
                                 
                                 newImage = scaledImages[blockType]["data"].copy()
                                 newImage.set_alpha(alphaValue)
