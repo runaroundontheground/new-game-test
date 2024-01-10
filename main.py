@@ -21,8 +21,14 @@ to do list:
 
     make sure inventory management is fully functioning and doesn't break (often at least)
 
-    water that has lower? alpha when it's deeper:
-    compare the block alpha and also keep track of the alpha for each surface in the alpha'd list
+    figure out why trees aren't having alpha when player gets near under them
+
+    fix smallScaleBlockUpdates, it seems to have some problems making things actually render
+    or maybe that's just the regular block updates, but breaking leaves that are right above another
+    block does seem to not make the block underneath render
+
+    new blocks:
+    planks, need to figure out crafting as well
 
     
     YAYYYY
