@@ -304,10 +304,6 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
     surrounded = False
     if toRight and toLeft and toUp and toDown:
         surrounded = True
-
-    def setAlpha(alphaValue):
-        block["alphaValue"] = alphaValue
-        block["render"] = True
     
     def modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change"):
         localBlockCoord, localChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord)

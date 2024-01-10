@@ -132,8 +132,12 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
     blockImages[blockName] = {
         "data": block,
         "scaled": False,
-        "dataWithAlpha": block,
-        "alpha'd": False
+        # alphaData: if there are blocks with multiple different alpha values, then 
+        # it'll append another thing to the list for that specific alpha value
+        # the key is the same as the alpha value, so for instance, that's 0 alpha
+        "alphaData": {
+            #0: block just the image data, but with alpha in it
+            }
     }
 
     # adding item icons for blocks specifically
@@ -386,18 +390,19 @@ def render(deltaTime):
                             scaledImages[block["type"]]["scaled"] = True
 
                         if thisBlockHasAlpha:
-                            if block["type"] != "water":
+                            
+                            blockType = block["type"]
+                            alphaValue = block["alphaValue"]
 
-                                if not scaledImages[block["type"]]["alpha'd"]:
-                                    image = scaledImages[block["type"]]["data"].copy()
-                                    image.set_alpha(block["alphaValue"])
-                                    scaledImages[block["type"]]["alpha'd"] = True
-                                    scaledImages[block["type"]]["dataWithAlpha"] = image
-                                else:
-                                    image = scaledImages[block["type"]]["dataWithAlpha"]
-                            else: # dealing with a water block
-                                image = scaledImages[block["type"]]["data"].copy()
-                                image.set_alpha(block["alphaValue"])
+                            if not scaledImages[blockType]["alphaData"].get(alphaValue):
+                                
+                                newImage = scaledImages[blockType]["data"].copy()
+                                newImage.set_alpha(alphaValue)
+                                
+                                scaledImages[blockType]["alphaData"][alphaValue] = newImage
+                                
+                            image = scaledImages[blockType]["alphaData"][alphaValue]
+
                         else:
                             image = scaledImages[block["type"]]["data"]
 
@@ -631,6 +636,7 @@ def render(deltaTime):
     pygame.display.flip()
 
 def doCommandStuff(commandString, previousCommandString, submitCommand):
+
 
     if previousCommandString != commandString or keysPressed[pygame.K_BACKSPACE]:
 
