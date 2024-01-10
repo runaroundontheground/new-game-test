@@ -19,10 +19,10 @@ ok currently:
 to do list:
 
 
-    make sure inventory management is fully functioning and doesn't break (often at least)
-        picking up another item when you have a full stack of it, still doesn't work??
+    make sure inventory management is fully functioning and doesn't break
 
     figure out why trees aren't having alpha when player gets near under them
+    actually, they seem to have a very very small amount of alpha
 
     fix smallScaleBlockUpdates, it seems to have some problems making things actually render
     or maybe that's just the regular block updates, but breaking leaves that are right above another

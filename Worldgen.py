@@ -29,16 +29,16 @@ structures = structures.copy()
 
 # add any additional things that all blocks require in their data automatically
 # such as render
-def fixStructuresData():
+def fixStructureData():
     for structureName, structureData in structures.items():
         for key, block in structures[structureName].items():
             
             block["render"] = False
-            block["alphaValue"] = 0
+            block["alphaValue"] = 255
             block["hardness"] = dictOfBlockBreakingStuff[block["type"]]["hardness"]
             block["effectiveTool"] = dictOfBlockBreakingStuff[block["type"]]["effectiveTool"]
             block["dropsWithNoTool"] = dictOfBlockBreakingStuff[block["type"]]["dropsWithNoTool"]
-fixStructuresData()
+fixStructureData()
 
 waterHeight = 4
 
@@ -53,7 +53,7 @@ def generateChunkTerrain(chunkCoords = (0, 0)):
                     blockData = {
                         "type": "air",
                         "render": False,
-                        "alphaValue": 0,
+                        "alphaValue": 255,
                         "hardness": 0,
                         "effectiveTool": "none",
                         "dropsWithNoTool": False
@@ -207,7 +207,7 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             # and also in scale make sure water becomes bigger as a fix to this
                             # or just actually figure out how to make the scale and rendering work correctly
                             
-                            block["alphaValue"] = 150
+                            block["alphaValue"] = 100
                             block["render"] = True
                             foundNotWater = False
                             subtracYy = 1
@@ -219,8 +219,8 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                                 else:
                                     foundNotWater = True
 
-                                if block["alphaValue"] <= 0:
-                                    block["alphaValue"] = 0
+                                if block["alphaValue"] >= 255:
+                                    block["alphaValue"] = 255
                                     break
 
 
@@ -247,30 +247,29 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                         surrounded = False
                         if toRight and toLeft and toUp and toDown:
                             surrounded = True
-
-                        def setAlpha(alphaValue):
-                            block["alphaValue"] = alphaValue
-                            block["render"] = True
                         
                         if above: # there's a block above this one
                             if below: # there's a block below this one
-                                if blockBelow["alphaValue"] != 0:
-                                    setAlpha(250)
+                                if blockBelow["alphaValue"] != 255:
+                                    block["alphaValue"] = 30
+                                    block["render"] = True
                                 if not surrounded:
                                     block["render"] = True
                             else: # no block below this one
-                                setAlpha(150)
+                                block["alphaValue"] = 100
+                                block["render"] = True
                         else: # there's no block above this one
                             block["render"] = True
                             if below: # there's a block under this one
-                                if blockBelow["alphaValue"] != 0:
-                                    setAlpha(250)
+                                if blockBelow["alphaValue"] != 255:
+                                    block["alphaValue"] = 30
+                                    block["render"] = True
                             
 
 
                         
 
-                    chunks[chunkCoord]["data"][(x, y, z)] = block
+                chunks[chunkCoord]["data"][(x, y, z)] = block
                                 
                     
     chunks[chunkCoord]["blocksUpdated"] = True    
@@ -329,27 +328,27 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
             if not surrounded:
                 block["render"] = True
             if below:
-                if blockBelow["alphaValue"] != 0:
-                    block["alphaValue"] = 200
+                if blockBelow["alphaValue"] != 255:
+                    block["alphaValue"] = 30
                 else:
                     belowSurrounded = checkSidesOfBlock(x, y - 1, z)
                     if belowSurrounded:
                         modifyOtherBlock(x, y - 1, z, False)
             else:
-                block["alphaValue"] = 150
+                block["alphaValue"] = 100
         
         if not above: # no block above this one
             block["render"] = True
             if below:
-                if blockBelow["alphaValue"] != 0:
-                    block["alphaValue"] = 200
+                if blockBelow["alphaValue"] != 255:
+                    block["alphaValue"] = 30
                 else:
                     belowSurrounded = checkSidesOfBlock(x, y - 1, z)
                     if belowSurrounded:
                         modifyOtherBlock(x, y - 1, z, False)
 
             else:
-                block["alphaValue"] = 150
+                block["alphaValue"] = 100
     else: # this current block is air
         if below:
             modifyOtherBlock(x, y - 1, z, True)
@@ -357,7 +356,7 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
             below2 = checkForSolidBlock(blockBelow2)
             
             if not below2:
-                modifyOtherBlock(x, y - 1, z, True, 150)
+                modifyOtherBlock(x, y - 1, z, True, 100)
 
 
     

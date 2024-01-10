@@ -101,7 +101,7 @@ addAToolIcon("stone axe", "axe", (200, 200, 200))
 #addAToolIcon("stone shovel", "shovel", (200, 200, 200))
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
-              hasAlpha = False, alphaValue = 0):
+              hasAlpha = False, alphaValue = 255):
     imageSize = (blockSize, blockSize)
     baseSurface = pygame.surface.Surface(imageSize)
     fillingRect = pygame.rect.Rect(2, 2, blockSize - 4, blockSize - 4)
@@ -365,13 +365,15 @@ def render(deltaTime):
 
                         thisBlockHasAlpha = False
                         
-                        if block["alphaValue"] != 0:
+                        if block["alphaValue"] < 255:
                             if block["type"] != "water":
-                                if player.blockCoord[1] <= y:
+                                if player.blockCoord[1] <= y: # player is underneath or in? this block
                                     fiveBlocks = 5 * blockSize
+
                                     if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
                                         if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
                                             thisBlockHasAlpha = True
+
                             if block["type"] == "water":
                                 thisBlockHasAlpha = True
                                     
@@ -394,12 +396,18 @@ def render(deltaTime):
                             blockType = block["type"]
                             alphaValue = block["alphaValue"]
 
-                            if not scaledImages[blockType]["alphaData"].get(alphaValue):
+
+                            imageExists = scaledImages[blockType]["alphaData"].get(alphaValue, False)
+                            
+                            if not imageExists:
                                 
                                 newImage = scaledImages[blockType]["data"].copy()
                                 newImage.set_alpha(alphaValue)
 
                                 scaledImages[blockType]["alphaData"][alphaValue] = newImage
+                                #if blockType == "leaves":
+                                #    print(scaledImages[blockType]["alphaData"][alphaValue])
+
                                 
                             image = scaledImages[blockType]["alphaData"][alphaValue]
 
