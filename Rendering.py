@@ -398,7 +398,7 @@ def render(deltaTime):
                                 
                                 newImage = scaledImages[blockType]["data"].copy()
                                 newImage.set_alpha(alphaValue)
-                                
+
                                 scaledImages[blockType]["alphaData"][alphaValue] = newImage
                                 
                             image = scaledImages[blockType]["alphaData"][alphaValue]

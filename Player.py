@@ -551,18 +551,18 @@ class Player():
                 for slot in container:
                     if slot["contents"] != "empty":
                         if slot["contents"].name == item.name:
-                            if slot["count"] == maxStackSize:
-                                break
+                            if slot["count"] != maxStackSize:
+                                
 
-                            addedCount = count + slot["count"]
-                            if addedCount <= maxStackSize:
+                                addedCount = count + slot["count"]
+                                if addedCount <= maxStackSize:
 
-                                slot["count"] = addedCount
-                                return True
-                            elif addedCount > maxStackSize:
-                                slot["count"] = maxStackSize
-                                count = addedCount - maxStackSize
-                                break
+                                    slot["count"] = addedCount
+                                    return True
+                                elif addedCount > maxStackSize:
+                                    slot["count"] = maxStackSize
+                                    count = addedCount - maxStackSize
+                                    break
             return done
             
         def checkForEmptySlots(container, done, count, item):
@@ -1081,6 +1081,7 @@ class Player():
 
                 air = {
                     "type": "air",
+                    "render": False,
                     "alphaValue": 0,
                     "hardness": "infinity",
                     "effectiveTool": "none"

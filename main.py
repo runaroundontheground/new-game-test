@@ -20,6 +20,7 @@ to do list:
 
 
     make sure inventory management is fully functioning and doesn't break (often at least)
+        picking up another item when you have a full stack of it, still doesn't work??
 
     figure out why trees aren't having alpha when player gets near under them
 
