@@ -196,6 +196,13 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                             return True
                         return False
                     
+                    def modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change"):
+                        localBlockCoord, localChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord)
+
+                        if render != "no change":
+                            chunks[localChunkCoord]["data"][localBlockCoord]["render"] = render
+                        if alphaValue != "no change":
+                            chunks[localChunkCoord]["data"][localBlockCoord]["alphaValue"] = alphaValue
 
                     if block["type"] == "water":
                         
@@ -244,26 +251,39 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                         toLeft = checkForSolidBlock(blockToLeft)
                         toUp = checkForSolidBlock(blockToUp)
                         toDown = checkForSolidBlock(blockToDown)
+
                         surrounded = False
                         if toRight and toLeft and toUp and toDown:
                             surrounded = True
                         
                         if above: # there's a block above this one
                             if below: # there's a block below this one
-                                if blockBelow["alphaValue"] != 255:
-                                    block["alphaValue"] = 30
+
+                                if blockBelow["alphaValue"] < 255:
+                                    block["alphaValue"] = 100
                                     block["render"] = True
+                                    modifyOtherBlock(x, y - 1, z, render = False)
+
                                 if not surrounded:
                                     block["render"] = True
+
                             else: # no block below this one
+
                                 block["alphaValue"] = 100
                                 block["render"] = True
+
                         else: # there's no block above this one
+
                             block["render"] = True
                             if below: # there's a block under this one
-                                if blockBelow["alphaValue"] != 255:
-                                    block["alphaValue"] = 30
+                                if blockBelow["alphaValue"] < 255:
+                                    block["alphaValue"] = 100
                                     block["render"] = True
+                                    modifyOtherBlock(x, y - 1, z, render = False)
+
+                            else: # no block under this one
+                                block["alphaValue"] = 100
+                                block["render"] = True
                             
 
 
@@ -300,8 +320,10 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
     toLeft = checkForSolidBlock(blockToLeft)
     toUp = checkForSolidBlock(blockToUp)
     toDown = checkForSolidBlock(blockToDown)
+
     surrounded = False
     if toRight and toLeft and toUp and toDown:
+
         surrounded = True
     
     def modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change"):
@@ -327,36 +349,50 @@ def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
         if above: # there's a block above this one
             if not surrounded:
                 block["render"] = True
+
             if below:
-                if blockBelow["alphaValue"] != 255:
-                    block["alphaValue"] = 30
+
+                if blockBelow["alphaValue"] < 255:
+                    block["alphaValue"] = 100
+                    modifyOtherBlock(x, y - 1, z, render = False)
+
                 else:
+
                     belowSurrounded = checkSidesOfBlock(x, y - 1, z)
                     if belowSurrounded:
-                        modifyOtherBlock(x, y - 1, z, False)
+                        modifyOtherBlock(x, y - 1, z, render = False)
             else:
                 block["alphaValue"] = 100
         
         if not above: # no block above this one
             block["render"] = True
             if below:
-                if blockBelow["alphaValue"] != 255:
-                    block["alphaValue"] = 30
+
+                if blockBelow["alphaValue"] < 255:
+                    block["alphaValue"] = 100
+                    modifyOtherBlock(x, y - 1, z, render = False)
                 else:
+
                     belowSurrounded = checkSidesOfBlock(x, y - 1, z)
                     if belowSurrounded:
-                        modifyOtherBlock(x, y - 1, z, False)
+                        modifyOtherBlock(x, y - 1, z, render = False)
 
             else:
                 block["alphaValue"] = 100
     else: # this current block is air
+
         if below:
-            modifyOtherBlock(x, y - 1, z, True)
+            modifyOtherBlock(x, y - 1, z, render = True)
+
             blockBelow2 = findBlock(x, y - 2, z, True, chunkCoordInput = chunkCoord)
             below2 = checkForSolidBlock(blockBelow2)
             
             if not below2:
-                modifyOtherBlock(x, y - 1, z, True, 100)
+                modifyOtherBlock(x, y - 1, z, render = True, alphaValue = 100)
+            else: # theres a block 2 blocks below
+                if blockBelow2["alphaValue"] < 255:
+                    modifyOtherBlock(x, y - 2, z, render = False)
+                    modifyOtherBlock(x, y - 1, z, alphaValue = 100)
 
 
     

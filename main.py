@@ -21,8 +21,16 @@ to do list:
 
     make sure inventory management is fully functioning and doesn't break
 
-    figure out why trees aren't having alpha when player gets near under them
-    actually, they seem to have a very very small amount of alpha
+    why was alpha inverted
+    0 = transparent, 255 = opaque
+
+    ok, when dealing with blocks with alpha, it gets performance heavy to have a ton of different alpha
+    blocks at the same time
+    if the block underneath has alpha, set it's rendering to false, and then boom, less alpha stuff being
+    rendered
+
+
+
 
     fix smallScaleBlockUpdates, it seems to have some problems making things actually render
     or maybe that's just the regular block updates, but breaking leaves that are right above another
