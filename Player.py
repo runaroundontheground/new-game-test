@@ -72,6 +72,7 @@ class Player():
         widthOfInventoryInSlots = 9
         heightOfInventoryInSlots = 3
 
+
         def doLotsOfThingsToMakeTheInventorySurfaceAndStuff():
     
             # width and height
@@ -84,7 +85,7 @@ class Player():
             backgroundColor = (150, 150, 150)
             slotColor = (125, 125, 125)
             selectedSlotColor = (175, 175, 175, 0)
-            alphaForUI = 0
+            alphaForUI = 255
 
             emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
 
@@ -94,6 +95,18 @@ class Player():
 
             inventoryHeightInPixels = (slotSizeInPixels * heightOfInventoryInSlots)
             inventoryHeightInPixels += gapBetweenSlots * (heightOfInventoryInSlots + 1)
+
+            # add some more height to the inventory for crafting grid and armor? if added
+            craftingAndArmorHeightInSlots = 4.25
+            
+            craftingAndArmorWidthInPixels = inventoryWidthInPixels
+            craftingAndArmorHeightInPixels = (slotSizeInPixels * craftingAndArmorHeightInSlots)
+            craftingAndArmorHeightInPixels += (gapBetweenSlots * craftingAndArmorHeightInSlots + 1)
+
+            craftingAndArmorSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
+            
+            craftingAndArmorBackground = pygame.surface.Surface(craftingAndArmorSizeInPixels)
+            craftingAndArmorBackground.fill(backgroundColor)
 
             inventorySizeInPixels = (round(inventoryWidthInPixels), round(inventoryHeightInPixels))
 
@@ -115,13 +128,58 @@ class Player():
             hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
             hotbarSurface.fill(backgroundColor)
 
-            if alphaForUI != 0:
+            if alphaForUI < 255:
                 hotbarSurface.set_alpha(alphaForUI)
                 inventoryBackground.set_alpha(alphaForUI)
+                craftingAndArmorBackground.set_alpha(alphaForUI)
                 slotSurface.set_alpha(alphaForUI)
 
-            inventoryXForBlit = (screenWidth - inventoryWidthInPixels) / 2
-            inventoryYForBlit = (screenHeight - inventoryHeightInPixels) / 2
+            craftingAndArmorXForBlit = (screenWidth - (craftingAndArmorWidthInPixels)) / 2 
+            craftingAndArmorYForBlit = (screenHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))# - (slotSizeInPixels * craftingAndArmorHeightInSlots)
+            craftingAndArmorYForBlit /= 2
+
+            self.crafting = []
+            self.armor = []# head, chest, legs, feet
+
+            # actually add content spots to the armor/crafting
+            craftingSlot = {
+                "contents": "empty",
+                "count": 0,
+                "renderPosition": (0, 0),
+                "selectedSlotRenderPosition": (0, 0),
+                "itemCountRenderPosition": (0, 0),
+                "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                "slotId": 0
+            }
+
+            craftingSlot0 = craftingSlot.copy()
+            craftingSlot0["slotId"] = 0
+
+            slotX = craftingAndArmorXForBlit + (slotSizeInPixels * (widthOfInventoryInSlots - 4))
+            slotY = craftingAndArmorYForBlit + (slotSizeInPixels*0.75)
+
+            
+            craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
+
+           # craftingSlot0["renderPosition"] = (renderX, renderY)
+
+            
+            
+
+            craftingSlot0 = craftingSlot.copy()
+            craftingSlot0["slotId"] = 1
+
+            craftingSlot0 = craftingSlot.copy()
+            craftingSlot0["slotId"] = 2
+
+            craftingSlot0 = craftingSlot.copy()
+            craftingSlot0["slotId"] = 3
+
+
+            craftingAndArmorSurface = craftingAndArmorBackground
+
+            inventoryXForBlit = (screenWidth - inventoryWidthInPixels) / 2 
+            inventoryYForBlit = craftingAndArmorYForBlit + craftingAndArmorHeightInPixels
 
             hotbarXForBlit = inventoryXForBlit
             hotbarYForBlit = (screenHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
@@ -135,7 +193,7 @@ class Player():
                 "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
                 "slotId": 0
             }
-            
+
             self.inventory = []
             self.hotbar = []
 
@@ -143,8 +201,9 @@ class Player():
 
             for y in range(heightOfInventoryInSlots):
                 for x in range(widthOfInventoryInSlots):
+
                     slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
-                    slotY = (y * slotSizeInPixels) + ((y + 1) * gapBetweenSlots)
+                    slotY = (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
                     inventoryBackground.blit(slotSurface, (slotX, slotY))
 
@@ -157,6 +216,8 @@ class Player():
                     updatedInventorySlot = inventorySlot.copy()
                     
                     fontShift = font.size("1")
+
+                    print((renderX, renderY))      
                     
 
                     updatedInventorySlot["renderPosition"] = (renderX, renderY)
@@ -170,6 +231,11 @@ class Player():
                     
 
                     self.inventory.append(updatedInventorySlot)
+
+
+            
+
+
 
             inventorySurface = inventoryBackground        
         
@@ -208,11 +274,17 @@ class Player():
             
             hotbarRect = pygame.Rect(hotbarXForBlit, hotbarYForBlit,
                                     inventoryWidthInPixels, hotbarSizeInPixels[1])
+        
+            craftingAndArmorRect = pygame.Rect(craftingAndArmorXForBlit, craftingAndArmorYForBlit,
+                                               craftingAndArmorWidthInPixels, craftingAndArmorHeightInPixels)
+            
 
             self.inventoryRenderingData = {
                 "inventoryRenderPosition": (inventoryXForBlit, inventoryYForBlit),
+                "craftingAndArmorRenderPosition": (craftingAndArmorXForBlit, craftingAndArmorYForBlit),
                 "hotbarRenderPosition": (hotbarXForBlit, hotbarYForBlit),
                 "inventorySurface": inventorySurface,
+                "craftingAndArmorSurface": craftingAndArmorSurface,
                 "hotbarSurface": hotbarSurface,
                 "itemIconShift": itemIconShift,
                 "slotSize": slotSizeInPixels,
@@ -222,9 +294,12 @@ class Player():
             self.otherInventoryData = {
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
+            "craftingAndArmorRect": craftingAndArmorRect,
+
             "currentHotbarSlot": 0, # id/index of the slot in the hotbar
             "open": False,
-            "slotId": 0
+            "slotId": 0,
+            "showCraftingAndArmor": True # will be set to false if player is looking in a chest or something
             }
 
         doLotsOfThingsToMakeTheInventorySurfaceAndStuff()
@@ -861,6 +936,7 @@ class Player():
 
 
             if self.otherInventoryData["open"]:
+                mouse.inPlayerCraftingAndArmor = self.otherInventoryData["craftingAndArmorRect"].collidepoint(mouse.x, mouse.y)
                 mouse.inPlayerInventory = self.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
                 mouse.inPlayerHotbar = self.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
 

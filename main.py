@@ -65,6 +65,15 @@ to do list/ideas for things:
         use dict.get and check that against all recipes, if it returns false while checking a recipe then
         just stop checking that one
 
+        nearExact recipe detection:
+            check for the correct number of items
+            look until it finds one of the items
+
+            with a 3x3 and 2x2 crafting grid, even sticks only has 8 possible combinations
+
+            for the moment, i'll just do that, don't want to deal with it yet
+            that's a problem for future me
+
 
 
     adding recipes:
@@ -76,7 +85,8 @@ to do list/ideas for things:
         input a dict with items in specific slots/slot ids, and dont include empty slots
         nearExact recipes:
         hopefully there can't be too many of these, they probably need specific code to work
-        maybe have it so that a specific layout is inputed, 
+        maybe have it so that a specific layout is inputed, and some functions will try to find that layout
+        
 
 
 

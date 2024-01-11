@@ -569,7 +569,22 @@ def render(deltaTime):
 
         renderingData.append(imageData)
 
+        if player.otherInventoryData["showCraftingAndArmor"]:
+            image = player.inventoryRenderingData["craftingAndArmorSurface"]
+            position = player.inventoryRenderingData["craftingAndArmorRenderPosition"]
+            imageData = (image, position)
+
+            renderingData.append(imageData)
+
         if mouse.inPlayerInventory and mouse.inASlot:
+                image = player.inventoryRenderingData["selectedSlotSurface"]
+                slot = player.inventory[mouse.hoveredSlotId]
+                position = slot["selectedSlotRenderPosition"]
+                
+                imageData = (image, position)
+                renderingData.append(imageData)
+
+        if mouse.inPlayerCraftingAndArmor and mouse.inASlot:
                 image = player.inventoryRenderingData["selectedSlotSurface"]
                 slot = player.inventory[mouse.hoveredSlotId]
                 position = slot["selectedSlotRenderPosition"]
