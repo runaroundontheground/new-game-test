@@ -400,10 +400,10 @@ def render(deltaTime):
     # separate the blocks into layers, so they get rendered in the right order
     # also, keep track of the scale for each y layer
     blocks = []
-    positionAndScaleFactors = []
+    scaleFactors = []
     for i in range(chunkSize[1]):
         blocks.append( [] )
-        positionAndScaleFactors.append( [] )
+        scaleFactors.append( [] )
 
     
     
@@ -414,32 +414,33 @@ def render(deltaTime):
         
             # scale images outside of x/z loop, better performance
             
-            posFactor = 1
-            sizeFactor = 1
-            divisor = 50
+            scaleFactor = 1
+            
             # scale smoother when using exact position rather than player's block coord
             playerYInBlocks = player.y / blockSize
-            thing2 = y - playerYInBlocks
-            posFactor += thing2 / divisor
 
-
-            divisor *= 2
 
             if y > playerYInBlocks:
-                thing = y - playerYInBlocks
-                thing /= (divisor / 1.1)
-                sizeFactor += thing
-
-            if y < playerYInBlocks:
-                thing = playerYInBlocks - y
-                thing /= (divisor * 2)
-                sizeFactor -= thing
+                differenceInBlocks = y - playerYInBlocks
+                differenceInBlocks /= blockSize
+                scaleFactor += differenceInBlocks
                 
 
-            if sizeFactor < 0.1:
-                sizeFactor = 0.1
+            if y < playerYInBlocks:
+                differenceInBlocks = playerYInBlocks - y
+                differenceInBlocks /= blockSize
+                scaleFactor -= differenceInBlocks
+                
+
+            if scaleFactor < 0.1:
+                scaleFactor = 0.1
+
             
-            positionAndScaleFactors[y] = posFactor
+
+
+
+            
+            scaleFactors[y] = scaleFactor
 
             scaledImages = blockImages.copy()
             
@@ -476,10 +477,13 @@ def render(deltaTime):
                         zPos -= player.z
                         
                         if not scaledImages[block["type"]]["scaled"]: # image has not been scaled
-                            if sizeFactor != 1:
+                            if scaleFactor != 1:
 
                                 newImageData = scaledImages[block["type"]]["data"]
-                                newImageData = pygame.transform.scale_by(newImageData, sizeFactor)
+                                #if scaleFactor > 1:
+                                #    newImageData = pygame.transform.scale_by(newImageData, scaleFactor * 1.1)
+                                if True:#scaleFactor < 1:
+                                    newImageData = pygame.transform.scale_by(newImageData, scaleFactor)
                                 scaledImages[block["type"]]["data"] = newImageData
                                 
                             scaledImages[block["type"]]["scaled"] = True
@@ -508,8 +512,8 @@ def render(deltaTime):
                         
                         
 
-                        xPos *= posFactor
-                        zPos *= posFactor
+                        xPos *= scaleFactor
+                        zPos *= scaleFactor
                         
                         xPos -= camera.x - player.x
                         zPos -= camera.z - player.z
