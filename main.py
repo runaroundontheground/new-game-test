@@ -21,9 +21,15 @@ to do list/ideas for things:
 
 
     blocks needed to make simple structures (like a small hut, or something)
-        planks
+        none more thus far
 
-    remove players ability to place blocks from any distance
+    
+    problem with smallScaleBlockUpdates
+        when you place a block that is next to water, it's not rendered for some reason
+        wait nvm, it has alpha, still no idea why
+        that needs to be fixed
+        also one of them has super high alpha, but it's only with logs for some reason
+    
     
 
     add some crappy images for the tools (aka drawing a line on a surf, then another line)

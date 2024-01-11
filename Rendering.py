@@ -285,6 +285,7 @@ addABlock("gravel", (150, 150, 150))
 addABlock("water", (0, 0, 255), (0, 0, 255))
 addABlock("bedrock", (0, 255, 255))
 addABlock("log", (110, 79, 38), (110, 79, 38))
+addABlock("planks", (140, 109, 68))
 addABlock("leaves", (29, 64, 17))
 
 imageData = convertTextToImageData("block images generated", (100, 75))

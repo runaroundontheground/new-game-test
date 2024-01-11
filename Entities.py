@@ -117,7 +117,6 @@ class ItemEntity(Entity):
             if self.rect.colliderect(player.rect):
 
                 itemPickedUp = player.giveItem(self.itemData, self.count)
-                #print(itemPickedUp)
                 if itemPickedUp:
                     self.deleteSelf = True
 

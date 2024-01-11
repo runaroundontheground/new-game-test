@@ -43,7 +43,8 @@ dictOfBlockBreakingStuff = {
     
     # wood/axe effective type blocks
     "log": {"hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": True},
-    "leaves": {"hardness": 0, "effectiveTool": "axe", "dropsWithNoTool": True},
+    "planks": {"hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": True},
+    "leaves": {"hardness": 0, "effectiveTool": "axe", "dropsWithNoTool": False},
 
     # any new tools types to add here? this is where they go
 
@@ -74,18 +75,12 @@ FPS = 60
 
 maxStackSize = 64
 
-listOfBlockNames = [
-    "air", 
-    
-    "grass", "dirt", "snowy dirt", "sand", "clay", "gravel",
 
-    "log", "leaves",
-    
-    "stone", "snowy stone", "cobblestone",
-    
-    "water", "bedrock"
 
-]
+listOfBlockNames = []
+
+for key in dictOfBlockBreakingStuff.keys():
+    listOfBlockNames.append(key)
 
 
 class Camera():

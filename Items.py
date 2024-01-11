@@ -21,7 +21,6 @@ class Item():
         entities.append(droppedItem)
 
         if player != None:
-            print("doing stuff to player inventory after dropping something")
             if player.hotbar[self.slotId]["count"] == 1:
                 player.hotbar[self.slotId]["contents"] = "empty"
             elif player.hotbar[self.slotId]["count"] >= 2:
@@ -60,7 +59,7 @@ class PlaceableItem(Item):
                     player.hotbar[self.slotId]["contents"] = "empty"
                     
                 elif count <= 0:
-                    print("what the heck, how did you do that??")
+                    print("what the heck, how did you do that??\nthe item count is invalid or something")
 
                 chunkCoord = mouse.hoveredBlock["chunkCoord"]
                 blockCoord = mouse.hoveredBlock["blockCoord"]
