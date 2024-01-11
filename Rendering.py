@@ -48,6 +48,8 @@ uneditedTools = {
 "shovel": baseToolSurface.copy()
 }
 
+def cleanUpImage(surface, rgbValueToRemove):
+    pass
 
 pickaxeHead = pygame.Surface((itemIconSize, itemIconSize))
 rect = pygame.Rect(itemIconSize/2 - (itemIconSize/2)/2, itemIconSize/2 - (5)/2, itemIconSize, itemIconSize/10)
@@ -57,13 +59,24 @@ rotatedImage.set_colorkey((255, 255, 255))
 rotatedImage.set_colorkey((0, 0, 0))
 uneditedTools["pickaxe"].blit(rotatedImage, rect)
 
-axeHead = pygame.Surface((itemIconSize/2, itemIconSize/2))
-rect = pygame.Rect(0, 5, (itemIconSize/3), (itemIconSize/3))
-axeHead.fill((255, 255, 255)); axeHead.set_colorkey((255, 255, 255))
-axeHead.fill((51, 52, 53), rect)
-rect = pygame.Rect((itemIconSize/3), 0, (itemIconSize/3), itemIconSize/3)
-axeHead.fill((51, 52, 53), rect)
+print(pickaxeHead.get_size())
 
+axeHead = pygame.Surface((itemIconSize, itemIconSize))
+rect = pygame.Rect(itemIconSize/3, 2.5, (itemIconSize/3), (itemIconSize/3))
+axeHead.fill((255, 255, 255))
+axeHead.fill((51, 52, 53), rect)
+rect = pygame.Rect((itemIconSize/5)+itemIconSize/3, 0, itemIconSize/4, itemIconSize/2)
+axeHead.fill((51, 52, 53), rect)
+axeHead = pygame.transform.scale_by(axeHead, 0.9)
+rotatedImage, rect = rotatePoint(axeHead, 45, [itemIconSize/5 + itemIconSize/3, itemIconSize - itemIconSize/7], pygame.math.Vector2([-10, -10]))
+rotatedImage.set_colorkey((255, 255, 255))
+rotatedImage.set_colorkey((254, 254, 254))
+rotatedImage.set_colorkey((0, 0, 0))
+
+
+
+uneditedTools["axe"].blit(rotatedImage, rect)
+uneditedTools["axe"].blit(baseToolSurface, (0, 0))
 
 
 def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
@@ -102,7 +115,7 @@ addAToolIcon("stone axe", "axe", (200, 200, 200))
 #addAToolIcon("stone shovel", "shovel", (200, 200, 200))
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
-              hasAlpha = False, alphaValue = 255, useNoiseTexture = True):
+              hasAlpha = False, alphaValue = 255):
     imageSize = (blockSize, blockSize)
     baseSurface = pygame.surface.Surface(imageSize)
     fillingRect = pygame.rect.Rect(2, 2, blockSize - 4, blockSize - 4)
@@ -131,60 +144,6 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
         block.set_alpha(alphaValue)
 
 
-    # add in perlin noise texture thing here
-    if useNoiseTexture:
-
-
-        width = blockSize
-        height = blockSize
-        width = math.floor(width / 6)
-        height = math.floor(height / 6)
-
-        tempBlock = block.copy()
-        tempBlock = pygame.transform.scale(tempBlock, (width, height))
-        
-        print(width)
-        for x in range(width):
-            if x != (1 or 2 or width - 1 or width - 2):
-                for y in range(height):
-                    if y != (1 or 2 or height - 1 or height - 2):
-
-                        noiseCoordinate = [x, y]
-                        
-                        noiseIntensity = 2
-                        rgbChange = 0
-
-                        noiseCoordinate[0] /= noiseIntensity
-                        noiseCoordinate[1] /= noiseIntensity
-
-
-
-                        rgbChange = round(PerlinNoise(octaves = 0.5)(noiseCoordinate) * noiseIntensity)
-                        #print(rgbChange)
-
-                        currentColor = tempBlock.get_at((x, y))
-
-                        r = currentColor[0] + rgbChange
-                        g = currentColor[1] + rgbChange
-                        b = currentColor[2] + rgbChange
-
-                        if r > 255: r = 255
-                        if r < 0: r = 0
-
-                        if g > 255: g = 255
-                        if g < 0: g = 0
-                        
-                        if b > 255: b = 255
-                        if b < 0: b = 0
-
-                        newColor = (r, g, b)
-
-                        tempBlock.set_at((x, y), newColor)
-
-                width *= 6
-                height *= 6
-
-                block = pygame.transform.scale(tempBlock, (width, height))
 
 
     
@@ -464,8 +423,6 @@ def render(deltaTime):
                                 newImage.set_alpha(alphaValue)
 
                                 scaledImages[blockType]["alphaData"][alphaValue] = newImage
-                                #if blockType == "leaves":
-                                #    print(scaledImages[blockType]["alphaData"][alphaValue])
 
                                 
                             image = scaledImages[blockType]["alphaData"][alphaValue]
@@ -673,10 +630,6 @@ def render(deltaTime):
             imageData = convertTextToImageData(mouse.heldItem["count"], position)
             renderingData.append(imageData)
 
-
-    
-    imageData = (axeHead, (400, 250))
-    renderingData.append(imageData)
     
 
     # debug things
@@ -685,8 +638,10 @@ def render(deltaTime):
     imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
     renderingData.append(imageData)
 
-
+    
     screen.blits(renderingData)
+
+    
 
     # pretty much just debug after this
     

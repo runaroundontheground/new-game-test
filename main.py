@@ -19,8 +19,7 @@ to do list/ideas for things:
 
     make sure inventory management is fully functioning and doesn't break
 
-    way to make the noise texture not super laggy:
-    do the noise texture with  a sixth of the size, and then scale it back up to normal size
+    
 
     blocks needed to make simple structures (like a small hut, or something)
         planks, probably make cobblestone 
@@ -138,7 +137,8 @@ def gameLoop():
     # hooray for adding a function to do this!
     player.giveItem(items["log"], 3)
     player.giveItem(items["grass"], 64)
-    player.giveItem(items["stone pickaxe"], 1)
+    player.giveItem(items["stone pickaxe"])
+    player.giveItem(items["stone axe"])
     player.giveItem(items["stone"], 8)
     
     
