@@ -111,16 +111,39 @@ potentially naturally generated caves
 crafting
     probably copy mc, wonder how i'll make adding recipes annoying to do
     shapeless, shaped
-lighting
-    idea for general lighting based on time of day
-    render a really big rectangle black rectangle that covers the screen and has
-    varying alpha levels
+
 enemies
     probably a simple ai, similar to terraria's run towards player and jump over things
     new ai idea: draw a line to the player that only goes on x/z axis and then check
     if any blocks are in the way there (maybe also floor blocks?)
     go there, and do checks and stuff
-day/night cycle
+
+day/night cycle and lighting
+    don't use a screen sized surface with some alpha for lighting
+    use rgb add or subtract or whatever, that will also be used for the lighitng system in general
+    but everything on screen can have that as a temporarly solution for testing overall lighting
+
+    new lighting idea:
+        every air block has a light value, and it dimishes over distance, but in direct light it will be max
+        i guess i'll copy mc, so 15 is the max light level
+        after doing block updates from the inital generation, then do lighting updates, and it will go from
+        height limit down, to see if there is air, and then if there is air, it'll have a value of like,
+        receivesDaylight: True or something
+
+        in small scale block updates, it will run from the affected block up, until 
+
+    that's conveinent
+    255/15 = 17, so there'd be jumps of 17 rgb between each light level or something like that
+    
+        
+        new properties that all blocks will need (including air)
+            receivesDaylight and light
+
+    light dimishes 100% through any non transparent blocks
+
+    the way blocks will be lit with the only light source being daylight:
+        initially determined in block updates, and then based on the current time of the day cycle
+        receivesDaylight will stay the same, but light will change, figure out how to determine the jumps
 
 
 
