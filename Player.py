@@ -49,6 +49,7 @@ class Player():
         # above + down, or right, etc is one block higher
         # below + a side is one block below player
         # it's true if there is a block, otherwise it's false
+        # this doesn't include blocks that have no collision, like water as well
 
         self.collision = {
             "below": False,
@@ -230,12 +231,12 @@ class Player():
 
 
         self.timers = {
-            # timer for how long to wait when holding RMB when placing blocks
-            "blockPlacement": 0
+
         }
-        # x blocks up AND down of reach
+        # blocks up AND down of reach
         self.verticalBlockReach = 3
         self.horizontalBlockReach = 3
+        self.canReachSelectedBlock = False
 
         self.blockBreakProgress = 0
         self.currentBreakingBlock = None
@@ -814,22 +815,31 @@ class Player():
                                     mouseItem = mouse.heldItem["contents"]
                                     if mouseItem != "empty":
                                         if item != "empty":
-                                            if mouseItem.stackable and item.stackable:
-                                                if mouseItem.name == item.name:
-                                                    addedCount = mouse.heldItem["count"] + slot["count"]
-                                                    
-                                                    if addedCount <= maxStackSize:
-                                                        mouse.heldItem["contents"] = "empty"
-                                                        mouse.heldItem["count"] = 0
+                                            if mouseItem.stackable and item.stackable and mouseItem.name == item.name:
+                                            
+                                                addedCount = mouse.heldItem["count"] + slot["count"]
+                                                
+                                                if addedCount <= maxStackSize:
+                                                    mouse.heldItem["contents"] = "empty"
+                                                    mouse.heldItem["count"] = 0
 
-                                                        slot["count"] = addedCount
+                                                    slot["count"] = addedCount
 
 
-                                                    elif addedCount > maxStackSize:
-                                                        newMouseSlotCount = addedCount - maxStackSize
+                                                elif addedCount > maxStackSize:
+                                                    newMouseSlotCount = addedCount - maxStackSize
 
-                                                        slot["count"] = maxStackSize
-                                                        mouse.heldItem["count"] = newMouseSlotCount
+                                                    slot["count"] = maxStackSize
+                                                    mouse.heldItem["count"] = newMouseSlotCount
+                                            else: # not stacking the item, swap it with mouse's item
+                                                newSlotCount = mouse.heldItem["count"]
+                                                newSlotItem = mouse.heldItem["contents"]
+
+                                                mouse.heldItem["count"] = slot["count"]
+                                                mouse.heldItem["contents"] = slot["contents"]
+
+                                                slot["count"] = newSlotCount
+                                                slot["contents"] = newSlotItem
 
 
                                         else: # clicked item has nothing there, put mouse contents there
@@ -1030,66 +1040,75 @@ class Player():
         if self.currentBreakingBlock != mouse.hoveredBlock["block"]:
             self.blockBreakProgress = 0
 
-        self.currentBreakingBlock = mouse.hoveredBlock["block"]
-        block = self.currentBreakingBlock
-        
-        if block["hardness"] != "infinity":
-            correctTool = False
-            powerfulEnoughTool = False
+        if self.canReachSelectedBlock:
 
-            if breakingPower >= block["hardness"]:
-                powerfulEnoughTool = True
-            if breakingType == block["effectiveTool"]:
-                correctTool = True
+            self.currentBreakingBlock = mouse.hoveredBlock["block"]
+            block = self.currentBreakingBlock
             
-            
-            if powerfulEnoughTool and correctTool:
-                self.blockBreakProgress += breakingSpeed / FPS
-            else:
-                self.blockBreakProgress += slowestBreakSpeed / FPS
+            if block["hardness"] != "infinity":
+                correctTool = False
+                powerfulEnoughTool = False
 
-
-            
-
-
-
-
-
-            if self.blockBreakProgress >= block["hardness"]:
-                self.blockBreakProgress = 0
-
-                if correctTool or block["dropsWithNoTool"]:
-                
-                    itemData = PlaceableItem(block["type"])
-
-                    chunkCoord = mouse.hoveredBlock["chunkCoord"]
-                    blockCoord = mouse.hoveredBlock["blockCoord"]
-                    x = (chunkCoord[0] * chunkSize[0]) * blockSize
-                    y = blockCoord[1] * blockSize
-                    z = (chunkCoord[1] * chunkSize[0]) * blockSize
-
-                    x += blockCoord[0] * blockSize
-                    z += blockCoord[2] * blockSize
-
+                if breakingPower >= block["hardness"]:
+                    powerfulEnoughTool = True
+                if breakingType == block["effectiveTool"]:
+                    correctTool = True
                 
                 
-                    count = 1
-                    xv = random.randint(-3, 3)
-                    zv = random.randint(-3, 3)
-                    entity = ItemEntity(itemData, count, x, y, z, xv, 5, zv)
-                    entities.append(entity)
+                if powerfulEnoughTool and correctTool:
+                    self.blockBreakProgress += breakingSpeed / FPS
+                else:
+                    self.blockBreakProgress += slowestBreakSpeed / FPS
 
-                air = {
-                    "type": "air",
-                    "render": False,
-                    "alphaValue": 0,
-                    "hardness": "infinity",
-                    "effectiveTool": "none"
-                }
 
-                chunks[chunkCoord]["data"][blockCoord] = air
+                
 
-                smallScaleBlockUpdates(chunkCoord, blockCoord)
+
+
+
+
+                if self.blockBreakProgress >= block["hardness"]:
+                    self.blockBreakProgress = 0
+
+                    if correctTool or block["dropsWithNoTool"]:
+                    
+                        itemData = PlaceableItem(block["type"])
+
+                        chunkCoord = mouse.hoveredBlock["chunkCoord"]
+                        blockCoord = mouse.hoveredBlock["blockCoord"]
+                        x = (chunkCoord[0] * chunkSize[0]) * blockSize
+                        y = blockCoord[1] * blockSize
+                        z = (chunkCoord[1] * chunkSize[0]) * blockSize
+
+                        x += blockCoord[0] * blockSize
+                        z += blockCoord[2] * blockSize
+
+                    
+                    
+                        count = 1
+                        xv = random.randint(-3, 3)
+                        zv = random.randint(-3, 3)
+                        if True: # replace later with silk touch or something
+                            if block["type"] == ("grass" or "snowy grass"):
+                                itemData.name = "dirt"
+                            if block["type"] == ("stone" or "snowy stone"):
+                                itemData.name = "cobblestone"
+                            
+                            
+                        entity = ItemEntity(itemData, count, x, y, z, xv, 5, zv)
+                        entities.append(entity)
+
+                    air = {
+                        "type": "air",
+                        "render": False,
+                        "alphaValue": 0,
+                        "hardness": "infinity",
+                        "effectiveTool": "none"
+                    }
+
+                    chunks[chunkCoord]["data"][blockCoord] = air
+
+                    smallScaleBlockUpdates(chunkCoord, blockCoord)
 
                 
                 

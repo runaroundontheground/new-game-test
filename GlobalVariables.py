@@ -39,6 +39,7 @@ dictOfBlockBreakingStuff = {
     # stone/pickaxe effective type blocks
     "stone": {"hardness": 3, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
     "snowy stone": {"hardness": 3, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
+    "cobblestone": {"hardness": 3, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
     
     # wood/axe effective type blocks
     "log": {"hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": True},
@@ -74,8 +75,16 @@ FPS = 60
 maxStackSize = 64
 
 listOfBlockNames = [
-    "air", "grass", "dirt", "snowy dirt", "stone", "snowy stone", "sand",
-    "clay", "gravel", "water", "bedrock", "log", "leaves"
+    "air", 
+    
+    "grass", "dirt", "snowy dirt", "sand", "clay", "gravel",
+
+    "log", "leaves",
+    
+    "stone", "snowy stone", "cobblestone",
+    
+    "water", "bedrock"
+
 ]
 
 

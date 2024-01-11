@@ -19,14 +19,11 @@ to do list/ideas for things:
 
     make sure inventory management is fully functioning and doesn't break
 
-    
-    gonna give making rendering/scaling working properly another go
-
 
     blocks needed to make simple structures (like a small hut, or something)
-        planks, probably make cobblestone 
+        planks
 
-
+    remove players ability to place blocks from any distance
     
 
     add some crappy images for the tools (aka drawing a line on a surf, then another line)

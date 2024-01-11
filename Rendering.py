@@ -276,6 +276,7 @@ def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
 addABlock("grass", (0, 200, 0), (150, 75, 0))
 addABlock("dirt", (150, 75, 0))
 addABlock("stone", (125, 125, 125))
+addABlock("cobblestone", (150, 150, 150))
 addABlock("snowy dirt", (220, 220, 220), (150, 75, 0))
 addABlock("snowy stone", (220, 220, 220), (125, 125, 125))
 addABlock("sand", (232, 228, 118))
@@ -307,21 +308,15 @@ def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
     # initial generation in a larger area
     for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
         for z in range(zRange - rangeOfGeneration, maxZRange + rangeOfGeneration):
-            try:
-                chunks[(x, z)]
-            except:
+            if (x, z) not in chunks:
                 generateChunkTerrain((x, z))
 
     # generate structures
     for x in range(xRange - (rangeOfGeneration - 1), maxXRange + (rangeOfGeneration - 1)):
         for z in range(zRange - (rangeOfGeneration - 1), maxZRange + (rangeOfGeneration - 1)):
-            try:
-                chunks[(x, z)]
-            except:
-                generateChunkTerrain((x, z))
-            else:
-                if not chunks[(x, z)]["structuresGenerated"]:
-                    generateChunkStructures((x, z))
+        
+            if not chunks[(x, z)]["structuresGenerated"]:
+                generateChunkStructures((x, z))
 
     # prepare the chunks for being rendered when all generation is (probably) done
     for x in range(xRange, maxXRange):
@@ -349,10 +344,9 @@ def generateSpawnArea():
     # initial generation in a larger area
     for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
         for z in range(zRange - rangeOfGeneration, maxZRange + rangeOfGeneration):
-            try:
-                chunks[(x, z)]
-            except:
+            if (x, z) not in chunks:
                 generateChunkTerrain((x, z))
+
     imageData = convertTextToImageData("chunk terrain generated", (100, 100))
     screen.blits([imageData])
     pygame.display.flip()
@@ -360,13 +354,8 @@ def generateSpawnArea():
     # generate structures
     for x in range(xRange - (rangeOfGeneration - 1), maxXRange + (rangeOfGeneration - 1)):
         for z in range(zRange - (rangeOfGeneration - 1), maxZRange + (rangeOfGeneration - 1)):
-            try:
-                chunks[(x, z)]
-            except:
-                generateChunkTerrain((x, z))
-            else:
-                if not chunks[(x, z)]["structuresGenerated"]:
-                    generateChunkStructures((x, z))
+            if not chunks[(x, z)]["structuresGenerated"]:
+                generateChunkStructures((x, z))
 
     imageData = convertTextToImageData("chunk structures generated", (100, 150))
     screen.blits([imageData])
@@ -473,8 +462,7 @@ def render(deltaTime):
                                     
 
                         
-                        xPos -= player.x
-                        zPos -= player.z
+                        
                         
                         if not scaledImages[block["type"]]["scaled"]: # image has not been scaled
                             if scaleFactor != 1:
@@ -510,7 +498,8 @@ def render(deltaTime):
                             image = scaledImages[block["type"]]["data"]
 
                         
-                        
+                        xPos -= player.x
+                        zPos -= player.z
 
                         xPos *= scaleFactor
                         zPos *= scaleFactor
@@ -670,25 +659,32 @@ def render(deltaTime):
         z = math.floor(mouse.cameraRelativeZ / blockSize)
         x *= blockSize
         z *= blockSize
+        player.canReachSelectedBlock = False
 
         if x < player.x + (player.horizontalBlockReach * blockSize):
             if x > player.x - (player.horizontalBlockReach * blockSize):
                 if z < player.z + (player.horizontalBlockReach * blockSize):
                     if z > player.z - (player.horizontalBlockReach * blockSize):
+                        player.canReachSelectedBlock = True
                         x -= camera.x
                         z -= camera.z
 
                         position = (x, z)
 
                         renderingData.append((blockHighlightSurface, position))
+                        
 
                         # do stuff so it displays the mouse's y selection and 
                         # the block that the mouse is theoretically currently
                         # selecting
                         position = (mouse.x, mouse.y + blockSize * 1.5)
+
+                        string = mouse.hoveredBlock["block"]["type"] + ", " + str(mouse.selectedYChange)
+                        string += " blocks up/down"
                         
-                        imageData = convertTextToImageData(mouse.hoveredBlock["block"]["type"], position)
+                        imageData = convertTextToImageData(string, position)
                         renderingData.append(imageData)
+        
                         
 
 

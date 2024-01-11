@@ -48,27 +48,27 @@ class PlaceableItem(Item):
         self.placedBlock["effectiveTool"] = dictOfBlockBreakingStuff[self.name]["effectiveTool"]
     def placeItem(self, player):
 
-        
-        blockType = mouse.hoveredBlock["block"]["type"]
-        if blockType == "air" or blockType == "water":
-            count = player.hotbar[self.slotId]["count"]
-            if count > 1:
-                player.hotbar[self.slotId]["count"] -= 1
+        if player.canReachSelectedBlock:
+            blockType = mouse.hoveredBlock["block"]["type"]
+            if blockType == "air" or blockType == "water":
+                count = player.hotbar[self.slotId]["count"]
+                if count > 1:
+                    player.hotbar[self.slotId]["count"] -= 1
+                    
+                elif count == 1:
+                    player.hotbar[self.slotId]["count"] = 0
+                    player.hotbar[self.slotId]["contents"] = "empty"
+                    
+                elif count <= 0:
+                    print("what the heck, how did you do that??")
+
+                chunkCoord = mouse.hoveredBlock["chunkCoord"]
+                blockCoord = mouse.hoveredBlock["blockCoord"]
                 
-            elif count == 1:
-                player.hotbar[self.slotId]["count"] = 0
-                player.hotbar[self.slotId]["contents"] = "empty"
-                
-            elif count <= 0:
-                print("what the heck, how did you do that??")
 
-            chunkCoord = mouse.hoveredBlock["chunkCoord"]
-            blockCoord = mouse.hoveredBlock["blockCoord"]
-            
+                chunks[chunkCoord]["data"][blockCoord] = self.placedBlock
 
-            chunks[chunkCoord]["data"][blockCoord] = self.placedBlock
-
-            smallScaleBlockUpdates(chunkCoord, blockCoord)
+                smallScaleBlockUpdates(chunkCoord, blockCoord)
 
 
 

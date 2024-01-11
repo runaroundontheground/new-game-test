@@ -163,9 +163,7 @@ def generateChunkStructures(inputChunkCoord = (0, 0)):
             newBlockCoord = (x, y, z)
             chunkCoord = (chunkX, chunkZ)
 
-            try:
-                chunks[chunkCoord]["data"]
-            except:
+            if newBlockCoord not in chunks[chunkCoord]["data"]:
                 generateChunkTerrain(chunkCoord)
 
             chunks[chunkCoord]["data"][newBlockCoord] = block.copy()
@@ -436,9 +434,7 @@ def findBlock(xPos, yPos, zPos, extraInfo = False, ignoreWater = False,
         chunkCoord = getChunkCoord(xPos, zPos)
     
 
-    try:
-        chunks[chunkCoord]["data"][blockCoord]
-    except:
+    if blockCoord not in chunks[chunkCoord]["data"]:
         generateChunkTerrain(chunkCoord)
 
     block = chunks[chunkCoord]["data"][blockCoord]

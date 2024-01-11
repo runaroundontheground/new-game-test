@@ -89,9 +89,8 @@ def updateMouseAndKeys():
     
     chunkCoord = getChunkCoord(x, z)
     blockCoord = getBlockCoord(x, y, z)
-    try:
-        chunks[chunkCoord]["data"][blockCoord]
-    except:
+
+    if blockCoord not in chunks[chunkCoord]["data"]:
         generateChunkTerrain(chunkCoord)
     mouse.hoveredBlock["block"] = chunks[chunkCoord]["data"][blockCoord]
     mouse.hoveredBlock["chunkCoord"] = chunkCoord
