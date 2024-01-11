@@ -106,4 +106,4 @@ def updateMouseAndKeys():
 
     
 
-
+print("controls initialized")

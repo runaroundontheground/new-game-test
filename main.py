@@ -134,6 +134,7 @@ def gameLoop():
     generateSpawnArea()
     player.positionInSpawnArea()
     makeItemsExist()
+
     # hooray for adding a function to do this!
     player.giveItem(items["log"], 3)
     player.giveItem(items["grass"], 64)

@@ -128,3 +128,12 @@ class ItemEntity(Entity):
             self.runTimers()
 
             self.playerInteraction(player)
+
+
+
+
+
+
+
+
+print("entities initialized")

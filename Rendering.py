@@ -13,8 +13,84 @@ pygame.init()
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    ]
+
+capitalLetters = []
+for letter in letters:
+    capitalLetters.append(letter.upper())
+
+characters = {}
+
+defaultTextColor = (255, 255, 255)
+def addACharacter(character):
+    characters[character] = {
+        "text": font.render(character, 0, defaultTextColor),
+        "size": font.size(character)
+    }
+def addMostCharacters():
+    letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    ]
+    otherChars = [
+             ".", "-", "_", ",", "<", ">", "/", "?", ":", ";", "'", '"', " ",
+             "(", ")", "[", "]", "{", "}", "+", "="
+    ]
+
+    for numericalCharacter in range(10):
+        addACharacter(str(numericalCharacter))
+
+    for letter in letters:
+        characters[letter] = {
+            "text": font.render(letter, 0, defaultTextColor),
+            "size": font.size(letter)
+        }
+        characters[letter.upper()] = {
+            "text": font.render(letter.upper(), 0, defaultTextColor),
+            "size": font.size(letter.upper())
+        }
+    for character in otherChars:
+        characters[character] = {
+            "text": font.render(character, 0, defaultTextColor),
+            "size": font.size(character)
+        }
+addMostCharacters()
+
+def convertTextToImageData(textValue, position, centeredOnPosition = False,):
+    text = str(textValue)
+
+    x = 0
+    y = 0
+    
+    for character in text:
+        size = characters[character]["size"]
+        x += size[0]
+        if size[1] > y:
+            y = size[1]
+
+    temporarySurface = pygame.Surface((x, y))
+    temporarySurface.fill((0, 0, 0))
+    temporarySurface.set_colorkey((0, 0, 0))
+    
+    if centeredOnPosition:
+        for character in text:
+            pass
+    else:
+        x = 0
+        for character in text:
+            renderedText = characters[character]["text"]
+            temporarySurface.blit(renderedText, (x, 0))
+
+            x += characters[character]["size"][0]
+        imageData = (temporarySurface, position)
+        
+        return imageData
+
+
 
 screen.fill((0, 0, 0))
+
 position = (screenWidth/3, screenHeight/2)
 temporaryText = font.render("generating world", 0, (255, 255, 255))
 screen.blit(temporaryText, position)
@@ -48,8 +124,28 @@ uneditedTools = {
 "shovel": baseToolSurface.copy()
 }
 
-def cleanUpImage(surface, rgbValueToRemove):
-    pass
+def cleanUpImage(surface, rgbValueToRemove, rangeOfRemoval = 5):
+    r = rgbValueToRemove[0]
+    g = rgbValueToRemove[1]
+    b = rgbValueToRemove[2]
+    newSurface = surface
+
+    size = newSurface.get_size()
+
+    for x in range(size[0]):
+        for y in range(size[1]):
+            color = newSurface.get_at((x, y))
+            r2 = color[0]
+            g2 = color[1]
+            b2 = color[2]
+
+            conditionA = r2 + rangeOfRemoval > r and r2 - rangeOfRemoval < r
+            conditionB = g2 + rangeOfRemoval > g and g2 - rangeOfRemoval < g
+            conditionC = b2 + rangeOfRemoval > b and b2 - rangeOfRemoval < b
+
+            if conditionA and conditionB and conditionC:
+                newSurface.set_at((x, y), (255, 255, 255))
+    return newSurface
 
 pickaxeHead = pygame.Surface((itemIconSize, itemIconSize))
 rect = pygame.Rect(itemIconSize/2 - (itemIconSize/2)/2, itemIconSize/2 - (5)/2, itemIconSize, itemIconSize/10)
@@ -59,8 +155,6 @@ rotatedImage.set_colorkey((255, 255, 255))
 rotatedImage.set_colorkey((0, 0, 0))
 uneditedTools["pickaxe"].blit(rotatedImage, rect)
 
-print(pickaxeHead.get_size())
-
 axeHead = pygame.Surface((itemIconSize, itemIconSize))
 rect = pygame.Rect(itemIconSize/3, 2.5, (itemIconSize/3), (itemIconSize/3))
 axeHead.fill((255, 255, 255))
@@ -68,12 +162,11 @@ axeHead.fill((51, 52, 53), rect)
 rect = pygame.Rect((itemIconSize/5)+itemIconSize/3, 0, itemIconSize/4, itemIconSize/2)
 axeHead.fill((51, 52, 53), rect)
 axeHead = pygame.transform.scale_by(axeHead, 0.9)
-rotatedImage, rect = rotatePoint(axeHead, 45, [itemIconSize/5 + itemIconSize/3, itemIconSize - itemIconSize/7], pygame.math.Vector2([-10, -10]))
+rotatedImage, rect = rotatePoint(axeHead, 45, [itemIconSize/5 + itemIconSize/2.5, itemIconSize - itemIconSize/8], pygame.math.Vector2([-10, -10]))
 rotatedImage.set_colorkey((255, 255, 255))
-rotatedImage.set_colorkey((254, 254, 254))
 rotatedImage.set_colorkey((0, 0, 0))
 
-
+rotatedImage = cleanUpImage(rotatedImage.copy(), (230, 230, 230), 100)
 
 uneditedTools["axe"].blit(rotatedImage, rect)
 uneditedTools["axe"].blit(baseToolSurface, (0, 0))
@@ -113,6 +206,10 @@ def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
 addAToolIcon("stone pickaxe", "pickaxe", (200, 200, 200))
 addAToolIcon("stone axe", "axe", (200, 200, 200))
 #addAToolIcon("stone shovel", "shovel", (200, 200, 200))
+
+imageData = convertTextToImageData("tool images generated", (100, 50))
+screen.blits([imageData])
+pygame.display.flip()
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 255):
@@ -189,80 +286,12 @@ addABlock("bedrock", (0, 255, 255))
 addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("leaves", (29, 64, 17))
 
+imageData = convertTextToImageData("block images generated", (100, 75))
+screen.blits([imageData])
+pygame.display.flip()
 
-letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-    ]
 
-capitalLetters = []
-for letter in letters:
-    capitalLetters.append(letter.upper())
 
-characters = {}
-
-defaultTextColor = (255, 255, 255)
-def addACharacter(character):
-    characters[character] = {
-        "text": font.render(character, 0, defaultTextColor),
-        "size": font.size(character)
-    }
-def addMostCharacters():
-    letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-    ]
-    otherChars = [
-             ".", "-", "_", ",", "<", ">", "/", "?", ":", ";", "'", '"', " ",
-             "(", ")", "[", "]", "{", "}", "+", "="
-    ]
-
-    for numericalCharacter in range(10):
-        addACharacter(str(numericalCharacter))
-
-    for letter in letters:
-        characters[letter] = {
-            "text": font.render(letter, 0, defaultTextColor),
-            "size": font.size(letter)
-        }
-        characters[letter.upper()] = {
-            "text": font.render(letter.upper(), 0, defaultTextColor),
-            "size": font.size(letter.upper())
-        }
-    for character in otherChars:
-        characters[character] = {
-            "text": font.render(character, 0, defaultTextColor),
-            "size": font.size(character)
-        }
-addMostCharacters()
-
-def convertTextToImageData(textValue, position, centeredOnPosition = False,):
-    text = str(textValue)
-
-    x = 0
-    y = 0
-    
-    for character in text:
-        size = characters[character]["size"]
-        x += size[0]
-        if size[1] > y:
-            y = size[1]
-
-    temporarySurface = pygame.Surface((x, y))
-    temporarySurface.fill((0, 0, 0))
-    temporarySurface.set_colorkey((0, 0, 0))
-    
-    if centeredOnPosition:
-        for character in text:
-            pass
-    else:
-        x = 0
-        for character in text:
-            renderedText = characters[character]["text"]
-            temporarySurface.blit(renderedText, (x, 0))
-
-            x += characters[character]["size"][0]
-        imageData = (temporarySurface, position)
-        
-        return imageData
         
 
 def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
@@ -306,7 +335,53 @@ def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
 
 
 def generateSpawnArea():
-    generateNearbyAreas(rangeOfGeneration = 3)
+    chunkList = []
+    cameraChunk = camera.currentChunk
+    screenExtension = 1
+
+    xRange = cameraChunk[0] - screenExtension
+    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension + 1
+    zRange = cameraChunk[1] - screenExtension
+    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension + 1
+
+    rangeOfGeneration = 3
+
+    # initial generation in a larger area
+    for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
+        for z in range(zRange - rangeOfGeneration, maxZRange + rangeOfGeneration):
+            try:
+                chunks[(x, z)]
+            except:
+                generateChunkTerrain((x, z))
+    imageData = convertTextToImageData("chunk terrain generated", (100, 100))
+    screen.blits([imageData])
+    pygame.display.flip()
+
+    # generate structures
+    for x in range(xRange - (rangeOfGeneration - 1), maxXRange + (rangeOfGeneration - 1)):
+        for z in range(zRange - (rangeOfGeneration - 1), maxZRange + (rangeOfGeneration - 1)):
+            try:
+                chunks[(x, z)]
+            except:
+                generateChunkTerrain((x, z))
+            else:
+                if not chunks[(x, z)]["structuresGenerated"]:
+                    generateChunkStructures((x, z))
+
+    imageData = convertTextToImageData("chunk structures generated", (100, 150))
+    screen.blits([imageData])
+    pygame.display.flip()
+
+    # prepare the chunks for being rendered when all generation is (probably) done
+    for x in range(xRange, maxXRange):
+        for z in range(zRange, maxZRange):
+            chunkList.append((x, z))
+            if not chunks[(x, z)]["blocksUpdated"]:
+                runBlockUpdatesAfterGeneration((x, z))
+
+    imageData = convertTextToImageData("chunk blocks have been updated", (100, 200))
+    screen.blits([imageData])
+    pygame.display.flip()
     
 
 
@@ -682,3 +757,8 @@ def showInvalidCommand():
     pygame.draw.rect(screen, (0, 0, 0), rect)
     screen.blit(imageData[0], imageData[1])
     pygame.display.flip()
+
+
+
+
+print("rendering initialized")

@@ -1100,3 +1100,10 @@ class Player():
             
 
 player = Player()
+
+
+
+
+
+
+print("player initialized")

@@ -524,3 +524,8 @@ def getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord):
 
     return blockCoord, chunkCoord
 
+
+
+
+
+print("worldgen initialized")

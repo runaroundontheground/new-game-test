@@ -108,3 +108,7 @@ def rotatePoint(surface, angle, pivot, offset = pygame.math.Vector2(0, 0)):
     # Add the offset vector to the center/pivot point to shift the rect.
     rect = rotated_image.get_rect(center = pivot + rotated_offset)
     return rotated_image, rect  # Return the rotated image and shifted rect.
+
+
+
+print("global variables initialized")
