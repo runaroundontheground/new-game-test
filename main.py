@@ -19,13 +19,14 @@ to do list/ideas for things:
 
     make sure inventory management is fully functioning and doesn't break
 
-    add in somewhat functional recipe slots (can hold items, work with mouse, don't allow for extra storage, etc)
+    add mouse logic for the crafting slots
+    can't do fast transfer into them, can do fast transfer out, can pick up/swap around items and stuff in them
 
 
     set up some kind of function to call when messing with the inventory in a way that would require
     changing the interaction points of inventory slots
     normalInventoryPosition = (x, y)?
-    reset it to that when things
+    reset it to that when things happen to get to the normal inventory state or something
 
 
     blocks needed to make simple structures (like a small hut, or something)
@@ -50,14 +51,10 @@ to do list/ideas for things:
     
     recipes: complicated wow
 
-    extend the player inventory, and then also figure out how to make crafting work
-    and make sure recipes aren't awful to add
-    recipes:
-        based on grid size:
-        2x2:
-            dict with 4 items, ex: {0: empty, 1: planks,
-                                    2: empty, 3: planks}
-                                    = sticks
+    make sure that if the crafting item result is taken, remove one of each of the items in the crafting
+    slots (or remove every item if there's only one item in each slot)
+
+
     recipe detection ideas:
         go through the crafting slots, and then count how many of each item there is in it
         ex: sticks recipe, req's two planks, and nothing else

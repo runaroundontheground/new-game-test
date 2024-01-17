@@ -73,7 +73,7 @@ class Player():
         heightOfInventoryInSlots = 3
 
 
-        def doLotsOfThingsToMakeTheInventorySurfaceAndStuff():
+        def createALotOfInventoryThings():
     
             # width and height
             inventoryWidthInPixels = screenWidth / 3
@@ -138,6 +138,19 @@ class Player():
             craftingAndArmorYForBlit = (screenHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))# - (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorYForBlit /= 2
 
+
+            fontShift = font.size("1")
+
+            self.craftingResultSlot = {
+                "contents": "empty",
+                "count": 0,
+                "renderPosition": (0, 0),
+                "selectedSlotRenderPosition": (0, 0),
+                "itemCountRenderPosition": (0, 0),
+                "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+            }
+
+
             self.crafting = []
             self.armor = []# head, chest, legs, feet
 
@@ -152,7 +165,27 @@ class Player():
                 "slotId": 0
             }
 
-            fontShift = font.size("1")
+
+
+            slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
+            slotY = (slotSizeInPixels * 1.5)
+
+            renderX = slotX + craftingAndArmorXForBlit + itemIconShift
+            renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+
+            rectX = renderX - itemIconShift
+            rectY = renderY - itemIconShift
+
+            
+            
+            craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
+
+            self.craftingResultSlot["renderPosition"] = (renderX, renderY)
+            self.craftingResultSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            self.craftingResultSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
+            self.craftingResultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+
+           
 
 
             slotId = 0
@@ -185,17 +218,22 @@ class Player():
 
                     self.crafting.append(newCraftingSlot)
 
-            a = (widthOfInventoryInSlots - 3) * slotSizeInPixels
-            b = (slotSizeInPixels*0.75) + slotSizeInPixels * 2
+
+            # put an arrow that goes towards the result slot for crafting
+            a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels
+            b = (slotSizeInPixels*0.75) + slotSizeInPixels * 1.1
 
             c = (a, b)
-            d = (a + (slotSizeInPixels/2), b + (slotSizeInPixels/3))
-            e = (a, b + slotSizeInPixels/1.75)
+            d = (a + (slotSizeInPixels/3), b + (slotSizeInPixels/3)/2)
+            e = (a, b + slotSizeInPixels/3)
 
             f = (c, d, e)
 
             pygame.draw.polygon(craftingAndArmorBackground, selectedSlotColor, f)
 
+            rect = pygame.Rect(a - slotSizeInPixels/1.4, b + slotSizeInPixels/8.5,
+                               slotSizeInPixels/1.3, slotSizeInPixels/9)
+            pygame.draw.rect(craftingAndArmorBackground, selectedSlotColor, rect)
 
             craftingAndArmorSurface = craftingAndArmorBackground
 
@@ -325,12 +363,13 @@ class Player():
             "showCraftingAndArmor": True # will be set to false if player is looking in a chest or something
             }
 
-        doLotsOfThingsToMakeTheInventorySurfaceAndStuff()
+        createALotOfInventoryThings()
 
 
         self.timers = {
 
         }
+
         # blocks up AND down of reach
         self.verticalBlockReach = 3
         self.horizontalBlockReach = 3
@@ -694,39 +733,42 @@ class Player():
     def doInventoryThings(self):
 
         
-        if keysPressed[pygame.K_e]:
-            if self.otherInventoryData["open"]:
-                self.otherInventoryData["open"] = False
-            else:
-                self.otherInventoryData["open"] = True
+        def toggleInventoryVisibility():
+            if keysPressed[pygame.K_e]:
+                if self.otherInventoryData["open"]:
+                    self.otherInventoryData["open"] = False
+                else:
+                    self.otherInventoryData["open"] = True
 
-        for slot in self.inventory:
-            if slot["contents"] != "empty":
-                slot["contents"].slotId = slot["slotId"]
-        for slot in self.hotbar:
-            if slot["contents"] != "empty":
-                slot["contents"].slotId = slot["slotId"]
+            for slot in self.inventory:
+                if slot["contents"] != "empty":
+                    slot["contents"].slotId = slot["slotId"]
+            for slot in self.hotbar:
+                if slot["contents"] != "empty":
+                    slot["contents"].slotId = slot["slotId"]
+        toggleInventoryVisibility()
 
 
+        def adjustMouseSelectedBlockHeight():
+            # change the selected height of the mouse
+            mouse.selectedY = self.y
 
-        # change the selected height of the mouse
-        mouse.selectedY = self.y
+            if keysPressed[pygame.K_PERIOD]:
+                if mouse.selectedYChange < self.verticalBlockReach:
+                    mouse.selectedYChange += 1
+                
+            if keysPressed[pygame.K_COMMA]:
+                if mouse.selectedYChange > -self.verticalBlockReach:
+                    mouse.selectedYChange -= 1
 
-        if keysPressed[pygame.K_PERIOD]:
-            if mouse.selectedYChange < self.verticalBlockReach:
-                mouse.selectedYChange += 1
+            mouse.selectedY += mouse.selectedYChange * blockSize
             
-        if keysPressed[pygame.K_COMMA]:
-            if mouse.selectedYChange > -self.verticalBlockReach:
-                mouse.selectedYChange -= 1
 
-        mouse.selectedY += mouse.selectedYChange * blockSize
-        
-
-        if mouse.selectedY <= 0:
-            mouse.selectedY = blockSize
-        if mouse.selectedY >= chunkSize[1] * blockSize:
-            mouse.selectedY = chunkSize[1] * (blockSize - 1)
+            if mouse.selectedY <= 0:
+                mouse.selectedY = blockSize
+            if mouse.selectedY >= chunkSize[1] * blockSize:
+                mouse.selectedY = chunkSize[1] * (blockSize - 1)
+        adjustMouseSelectedBlockHeight()
 
         def changeSelectedHotbarSlot(numberPress):
             if not self.otherInventoryData["open"]:
@@ -737,32 +779,34 @@ class Player():
         for i in range(1, 10):
             changeSelectedHotbarSlot(i)
 
-        # drop items from the hotbar
-        if keysPressed[pygame.K_q]:
-            if not self.otherInventoryData["open"]:
-                currentHotbarSlot = self.otherInventoryData["currentHotbarSlot"]
-                item = self.hotbar[currentHotbarSlot]["contents"]
+        def dropItems():
+            # drop items from the hotbar
+            if keysPressed[pygame.K_q]:
+                if not self.otherInventoryData["open"]:
+                    currentHotbarSlot = self.otherInventoryData["currentHotbarSlot"]
+                    item = self.hotbar[currentHotbarSlot]["contents"]
 
-                if item != "empty":
+                    if item != "empty":
 
-                    x = self.x + self.width/2 - itemEntitySize/2
-                    y = self.y - self.height/2
-                    z = self.z + self.width/2 - itemEntitySize/2
+                        x = self.x + self.width/2 - itemEntitySize/2
+                        y = self.y - self.height/2
+                        z = self.z + self.width/2 - itemEntitySize/2
 
-                    # figure out velocity for angle of player to mouse
+                        # figure out velocity for angle of player to mouse
 
-                    xDiff = mouse.cameraRelativeX - x
-                    yDiff = mouse.cameraRelativeZ - z
+                        xDiff = mouse.cameraRelativeX - x
+                        yDiff = mouse.cameraRelativeZ - z
 
-                    angle = math.atan2(yDiff, xDiff)                        
+                        angle = math.atan2(yDiff, xDiff)                        
 
-                    xv = math.cos(angle) * 3
-                    yv = 2
-                    zv = math.sin(angle) * 3
+                        xv = math.cos(angle) * 3
+                        yv = 2
+                        zv = math.sin(angle) * 3
 
-                    count = 1
+                        count = 1
 
-                    item.drop(x, y, z, xv, yv, zv, self, count)
+                        item.drop(x, y, z, xv, yv, zv, self, count)
+        dropItems()
 
 
         
@@ -797,6 +841,9 @@ class Player():
                 elif container == "inventory":
                     invSection = self.inventory
                     otherInvSection = self.hotbar
+                elif container == "craftingAndArmor":
+                    invSection = self.craftingAndArmor
+                    otherInvSection = self.inventory
 
                 for slot in invSection:
                     item = slot["contents"]
@@ -805,7 +852,8 @@ class Player():
                         # communicate rendering information via the mouse
                         mouse.hoveredSlotId = slot["slotId"]
                         mouse.inASlot = True
-
+                        # NEED TO DO:
+                        # add logic for crafting slots and also the result slot
 
                         def checkStackablesInOtherInvSection(amountToMove, done):
                             """
@@ -967,9 +1015,11 @@ class Player():
                     inventoryContentInteraction("inventory")
                 if mouse.inPlayerHotbar:
                     inventoryContentInteraction("hotbar")
+                if mouse.inPlayerCraftingAndArmor:
+                    inventoryContentInteraction("craftingAndArmor")
         
 
-            # do stuff with items in the mouse when the inventory is closed
+            # attempt to place mouse's item back in the player's inventory
             if not self.otherInventoryData["open"]:
 
                 if mouse.heldItem["contents"] != "empty":
