@@ -157,15 +157,15 @@ class Player():
 
             slotId = 0
 
-            # create the slots
+            # create and blit the crafting slots
             for x in range(2):
                 for y in range(2):
                     
                     
 
                     slotId += 1
-                    slotX = ((slotSizeInPixels) * (widthOfInventoryInSlots - 2 + x))
-                    slotY = x*slotSizeInPixels + (slotSizeInPixels*0.75)
+                    slotX = ((widthOfInventoryInSlots - 4) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
+                    slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
                     renderX = slotX + craftingAndArmorXForBlit + itemIconShift
                     renderY = slotY + craftingAndArmorYForBlit + itemIconShift
@@ -185,7 +185,16 @@ class Player():
 
                     self.crafting.append(newCraftingSlot)
 
-                    
+            a = (widthOfInventoryInSlots - 3) * slotSizeInPixels
+            b = (slotSizeInPixels*0.75) + slotSizeInPixels * 2
+
+            c = (a, b)
+            d = (a + (slotSizeInPixels/2), b + (slotSizeInPixels/3))
+            e = (a, b + slotSizeInPixels/1.75)
+
+            f = (c, d, e)
+
+            pygame.draw.polygon(craftingAndArmorBackground, selectedSlotColor, f)
 
 
             craftingAndArmorSurface = craftingAndArmorBackground

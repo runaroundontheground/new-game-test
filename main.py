@@ -29,7 +29,8 @@ to do list/ideas for things:
 
 
     blocks needed to make simple structures (like a small hut, or something)
-        none more thus far
+        glass?
+        same rule as water (or similar at least), uses alpha by default
 
     
     problem with smallScaleBlockUpdates
