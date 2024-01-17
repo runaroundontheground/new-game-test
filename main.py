@@ -16,14 +16,11 @@ clock = pygame.time.Clock()
 """
 to do list/ideas for things:
 
-    add right click interaction with inventory
-    take half the stack (math.ceil) and make sure the other stack has the correct amount
-    if placing stuff into slot, only place one thing
-
     make sure inventory management is fully functioning and doesn't break
 
-    add mouse logic for the crafting slots
-    can't do fast transfer into them, can do fast transfer out, can pick up/swap around items and stuff in them
+    
+    finally start adding recipes (starting with exact and shapeless, those are easiest)
+    and also make the crafting actually look for recipes, that's gonna be a process...
 
 
     set up some kind of function to call when messing with the inventory in a way that would require

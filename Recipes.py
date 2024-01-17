@@ -1,11 +1,11 @@
-from GlobalVariables import recipes
+from GlobalVariables import recipes, items
 
 
 
 # make recipes here
 
 
-def addRecipe(recipeType, recipeName, requiredItems, recipeShape = None):
+def addRecipe(recipeType, recipeName, requiredItems, output, outputCount = 1, recipeShape = None):
     """
     recipeType:
         can be "exact", "nearExact", or "shapeless"
@@ -18,6 +18,10 @@ def addRecipe(recipeType, recipeName, requiredItems, recipeShape = None):
         shovel as an example
             [{"name": "stick", "count": 2},
             {"name": "cobblestone", "count": 1}]
+    
+    output and outputCount:
+        what item should be gived from crafting this (items["itemname"])
+        how many of this items should be given from crafting it?
 
     recipeShape:
         only required for exact and nearExact recipes, 
@@ -26,7 +30,12 @@ def addRecipe(recipeType, recipeName, requiredItems, recipeShape = None):
 
     recipe = {"recipeType": recipeType,
               "requiredItems": requiredItems,
+              "itemOutput": output,
+              "itemOutputCount": outputCount
               }
+    
+    if recipeType == "exact":
+        recipe["recipeShape"] = recipeShape
     
 
 
@@ -38,8 +47,4 @@ def addRecipe(recipeType, recipeName, requiredItems, recipeShape = None):
 
 
 
-
-
-
-
-addRecipe("nearExact", "stick", [{"name": "planks", "count": 2}])
+addRecipe("shapeless", "planks", [{"name": "log", "count": 1}], items["planks"], 4)

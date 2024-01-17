@@ -1,4 +1,4 @@
-from GlobalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities
+from GlobalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items
 from GlobalVariables import screenWidth, screenHeight, chunks, font, FPS, itemEntitySize
 from Worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
 from Controls import keysPressed, keys, mouse
@@ -1000,7 +1000,7 @@ class Player():
                                                                 slot["count"] = maxStackSize
                                                                 mouse.heldItem["count"] = newMouseSlotCount
                                                         elif clickType == "left click": # not stacking the item, swap it with mouse's item
-                                                            
+
                                                             newSlotCount = mouse.heldItem["count"]
                                                             newSlotItem = mouse.heldItem["contents"]
 
@@ -1212,6 +1212,11 @@ class Player():
 
         mouseInteractionWithInventory()   
 
+
+        def recipeChecksAndStuff():
+            pass
+
+        recipeChecksAndStuff()
         
     def handleTimers(self):
         for key, timerValue in self.timers.items():
