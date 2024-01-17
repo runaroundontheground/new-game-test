@@ -28,7 +28,7 @@ def addRecipe(recipeType, recipeName, requiredItems, output, outputCount = 1, re
     """
     
 
-    recipe = {"recipeType": recipeType,
+    recipe = {
               "requiredItems": requiredItems,
               "itemOutput": output,
               "itemOutputCount": outputCount
@@ -39,7 +39,7 @@ def addRecipe(recipeType, recipeName, requiredItems, output, outputCount = 1, re
     
 
 
-    recipes[recipeName] = recipe
+    recipes[recipeType][recipeName] = recipe
 
 
 
@@ -47,4 +47,4 @@ def addRecipe(recipeType, recipeName, requiredItems, output, outputCount = 1, re
 
 
 
-addRecipe("shapeless", "planks", [{"name": "log", "count": 1}], items["planks"], 4)
+addRecipe("shapeless", "logToPlanks", [{"name": "log", "count": 1}], items["planks"], 4)

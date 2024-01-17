@@ -75,9 +75,15 @@ FPS = 60
 
 maxStackSize = 64
 
-recipes = {}
+recipes = {
+    "exact": {},
+    "nearExact": {},
+    "shapeless": {}
+}
 
-
+listOfIntermediateItems = [
+    "stick"
+]
 
 listOfBlockNames = []
 

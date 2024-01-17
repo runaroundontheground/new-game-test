@@ -1,4 +1,4 @@
-from GlobalVariables import entities, items, chunks, listOfBlockNames, blockSize, gravity, dictOfBlockBreakingStuff
+from GlobalVariables import entities, items, chunks, listOfBlockNames, listOfIntermediateItems, blockSize, gravity, dictOfBlockBreakingStuff
 from Worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from Controls import mouse
 from Entities import ItemEntity
@@ -120,6 +120,8 @@ def addItem(name = "air", itemType = "none", toolData = {}):
 def makeItemsExist():
     for itemName in listOfBlockNames:
         addItem(itemName, "placeable")
+    for itemName in listOfIntermediateItems:
+        pass
     addItem("stone pickaxe", "tool",
             {"attack": 3, "knockback": 1, "breakingPower": 3,
             "breakingSpeed": 20, "breakingType": "pickaxe"})

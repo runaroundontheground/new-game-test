@@ -171,6 +171,7 @@ class Player():
             self.crafting = {0: craftingSlot, 1: craftingSlot,
                              2: craftingSlot, 3: craftingSlot,
                              "resultSlot": 0}
+            self.totalCraftingContents = {}
             self.armor = {
                 "head": armorSlot,
                 "chest": armorSlot,
@@ -703,7 +704,6 @@ class Player():
 
 
 
-
     def giveItem(self, item, count = 1):
         
         def checkForStackables(container, done, count, item):
@@ -794,13 +794,13 @@ class Player():
         adjustMouseSelectedBlockHeight()
 
 
-        def changeSelectedHotbarSlot(numberPress):
+        def changeSelectedHotbarSlot():
             if not self.otherInventoryData["open"]:
-                keyboardInput = getattr(pygame, "K_" + str(numberPress))
-                if keysPressed[keyboardInput]:
-                    self.otherInventoryData["currentHotbarSlot"] = numberPress - 1
-        for i in range(1, 10):
-            changeSelectedHotbarSlot(i)
+                for i in range(1, 10):
+                    keyboardInput = getattr(pygame, "K_" + str(i))
+                    if keysPressed[keyboardInput]:
+                        self.otherInventoryData["currentHotbarSlot"] = i - 1
+        changeSelectedHotbarSlot()
 
 
         def dropItems():
@@ -1215,8 +1215,49 @@ class Player():
 
 
         def recipeChecksAndStuff():
-            pass
+            # dict with total amount of each item in crafting slots
+            self.totalCraftingContents = {}
+            for key, slot in self.crafting.items():
+                if key != "resultSlot":
+                    if slot["contents"] != "empty":
+                        self.totalCraftingContents[key] = slot["count"]
+
+
+            
+            """
+            recipe checking order:
+            exact, nearExact, then shapeless
+            """
+            foundARecipe = False
+            recipeThatWasFound = None
+
+            for recipe in recipes["exact"].values():
+                pass
+
+            if not foundARecipe:
+                for recipe in recipes["nearExact"].values():
+                    pass
+            
+            if not foundARecipe:
+                for recipe in recipes["shapeless"].values():
+                    if self.totalCraftingContents == recipe["requiredItems"]:
+                        foundARecipe = True
+                        recipeThatWasFound = recipe
+                        break
+
+                
+            if foundARecipe:
+                self.crafting["resultSlot"]["contents"] = recipeThatWasFound["output"]
+                self.crafting["resultSlot"]["count"] = recipeThatWasFound["outputCount"]
+
+
+
+            
+                        
+
         recipeChecksAndStuff()
+
+
         
     def handleTimers(self):
         for key, timerValue in self.timers.items():
@@ -1230,7 +1271,6 @@ class Player():
 
 
 
-
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = self.y
@@ -1240,14 +1280,12 @@ class Player():
 
 
 
-
     def updateImageThings(self):
         imageX = self.x - camera.x
         imageY = self.z - camera.z
         
         coordinate = (imageX, imageY)
         self.imageData = (self.image, coordinate)
-
 
 
 
@@ -1264,7 +1302,6 @@ class Player():
         
         self.updateCamera()
         self.updateImageThings()
-
 
 
 

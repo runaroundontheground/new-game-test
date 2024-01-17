@@ -22,6 +22,8 @@ to do list/ideas for things:
     finally start adding recipes (starting with exact and shapeless, those are easiest)
     and also make the crafting actually look for recipes, that's gonna be a process...
 
+    actually use images for items, but not block/placable items
+
 
     set up some kind of function to call when messing with the inventory in a way that would require
     changing the interaction points of inventory slots
