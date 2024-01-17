@@ -150,11 +150,6 @@ class Player():
                 "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
             }
 
-
-            self.crafting = []
-            self.armor = []# head, chest, legs, feet
-
-            # actually add content spots to the armor/crafting
             craftingSlot = {
                 "contents": "empty",
                 "count": 0,
@@ -164,6 +159,27 @@ class Player():
                 "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
                 "slotId": 0
             }
+
+            armorSlot = {
+                "contents": "empty",
+                "renderPosition": (0, 0),
+                "selectedSlotRenderPosition": (0, 0),
+                "rect": pygame.Rect(0, 0, 0, 0),
+                "slotId": 0
+            }
+
+            self.crafting = {0: craftingSlot, 1: craftingSlot,
+                             2: craftingSlot, 3: craftingSlot,
+                             "resultSlot": 0}
+            self.armor = {
+                "head": armorSlot,
+                "chest": armorSlot,
+                "legs": armorSlot,
+                "feet": armorSlot
+            }
+
+            # actually add content spots to the armor/crafting
+            
 
 
 
@@ -180,11 +196,13 @@ class Player():
             
             craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
 
-            self.craftingResultSlot["renderPosition"] = (renderX, renderY)
-            self.craftingResultSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            self.craftingResultSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
-            self.craftingResultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+            craftingSlot["renderPosition"] = (renderX, renderY)
+            craftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            craftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
+            craftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+            craftingSlot["slotId"] = "resultSlot"
 
+            self.crafting["resultSlot"] = craftingSlot.copy()
            
 
 
@@ -196,7 +214,7 @@ class Player():
                     
                     
 
-                    slotId += 1
+                    
                     slotX = ((widthOfInventoryInSlots - 4) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
@@ -214,9 +232,11 @@ class Player():
                     newCraftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
                     newCraftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
                     newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
-                    newCraftingSlot["slotId"] = 0
+                    newCraftingSlot["slotId"] = slotId
 
-                    self.crafting.append(newCraftingSlot)
+                    self.crafting[slotId] = newCraftingSlot
+
+                    slotId += 1
 
 
             # put an arrow that goes towards the result slot for crafting
@@ -841,25 +861,19 @@ class Player():
                 elif container == "inventory":
                     invSection = self.inventory
                     otherInvSection = self.hotbar
-                elif container == "craftingAndArmor":
-                    invSection = self.craftingAndArmor
+                elif container == "crafting":
+                    invSection = self.crafting
                     otherInvSection = self.inventory
-
-                for slot in invSection:
-                    item = slot["contents"]
-
-                    if slot["rect"].collidepoint(mouse.x, mouse.y):
-                        # communicate rendering information via the mouse
-                        mouse.hoveredSlotId = slot["slotId"]
-                        mouse.inASlot = True
-                        # NEED TO DO:
-                        # add logic for crafting slots and also the result slot
-
-                        def checkStackablesInOtherInvSection(amountToMove, done):
+                elif container == "armor":
+                    invSection = self.armor
+                    otherInvSection = self.inventory
+                
+                def checkStackablesInOtherInvSection(amountToMove, item, done):
                             """
                             amountToMove: either "max" or an int less than 64 \n
                             done: used to see if the interaction is done
                             """
+
                             if item != "empty" and not done:
                                 if item.stackable:
                                     for otherSlot in otherInvSection:
@@ -902,107 +916,190 @@ class Player():
                                                         return True
                             return done
 
-                        def checkEmptySlotsInOtherInvSection(amountToMove, done):
-                            """
-                            amountToMove: either "max" or an int less than 64 \n
-                            done: used to see if the interaction is done
-                            """
-                            if item != "empty" and not done:
-                                for otherSlot in otherInvSection:
-                                    otherItem = otherSlot["contents"]
+                def checkEmptySlotsInOtherInvSection(amountToMove, item, done):
+                    """
+                    amountToMove: either "max" or an int less than 64 \n
+                    done: used to see if the interaction is done
+                    """
+                    if item != "empty" and not done:
+                        for otherSlot in otherInvSection:
+                            otherItem = otherSlot["contents"]
 
-                                    if otherItem == "empty":
-                                        if amountToMove == "max":
-                                            otherSlot["contents"] = slot["contents"]
-                                            otherSlot["count"] = slot["count"]
+                            if otherItem == "empty":
+                                if amountToMove == "max":
+                                    otherSlot["contents"] = slot["contents"]
+                                    otherSlot["count"] = slot["count"]
 
-                                            slot["contents"] = "empty"
-                                            slot["count"] = 0
-                                                
-                                            
-                                            return True
-
-                                        else: # not moving max amount
-                                            slotNewCount = slot["count"] - amountToMove
-
-                                            # subtract from first slot, add to the second if possible
-                                            if slotNewCount >= 0:
-                                                slot["count"] = slotNewCount
-                                                otherSlot["count"] = amountToMove
-                                                otherSlot["contents"] = slot["contents"]
-
-                                                if slotNewCount == 0:
-                                                    slot["contents"] = "empty"
-                                            
-                                                
-                                                return True
-                            return done
-
-                        # fast transfer options
-                        if mouse.buttons["pressed"]["left"]:
-                            done = False
-                            
-                            if keys[0][pygame.K_LSHIFT]:
-                                # move all items from this slot (if possible)
-                                done = checkStackablesInOtherInvSection("max", done)
-                                done = checkEmptySlotsInOtherInvSection("max", done)
-                                
-                                
-                        
-                            if keys[0][pygame.K_LCTRL]:
-                                # move a single item from this slot (if possible)
-                                done = checkStackablesInOtherInvSection(1, done)
-                                done = checkEmptySlotsInOtherInvSection(1, done)
+                                    slot["contents"] = "empty"
+                                    slot["count"] = 0
+                                        
                                     
+                                    return True
+
+                                else: # not moving max amount
+                                    slotNewCount = slot["count"] - amountToMove
+
+                                    # subtract from first slot, add to the second if possible
+                                    if slotNewCount >= 0:
+                                        slot["count"] = slotNewCount
+                                        otherSlot["count"] = amountToMove
+                                        otherSlot["contents"] = slot["contents"]
+
+                                        if slotNewCount == 0:
+                                            slot["contents"] = "empty"
+                                    
+                                        
+                                        return True
+                    return done
+
+
+
+                def interactionForThisSlot(slot):
+                        
+                        item = slot["contents"]
+
+                        if slot["rect"].collidepoint(mouse.x, mouse.y):
+                            # communicate rendering information via the mouse
+                            
+                            mouse.hoveredSlotId = slot["slotId"]
+                            mouse.inASlot = True
+
+
+                            def slotInteractionWithMouseItem(clickType):
+                                        if not keys[0][pygame.K_LSHIFT] and not keys[0][pygame.K_LCTRL]:
+                                            # try to pick up or swap the item in slot and mouse.heldItem
+                                            mouseItem = mouse.heldItem["contents"]
+                                            if mouseItem != "empty":
+                                                if slot["slotId"] != "resultSlot":
+                                                    if item != "empty":
+                                                        if mouseItem.stackable and item.stackable and mouseItem.name == item.name:
+                                                        
+                                                            if clickType == "left click":
+                                                                addedCount = mouse.heldItem["count"] + slot["count"]
+                                                            elif clickType == "right click":
+                                                                addedCount = slot["count"] + 1
+                                                            
+                                                            if addedCount <= maxStackSize:
+                                                                if clickType == "left click":
+
+                                                                    mouse.heldItem["contents"] = "empty"
+                                                                    mouse.heldItem["count"] = 0
+                                                                    
+                                                                elif clickType == "right click":
+                                                                    mouse.heldItem["count"] -= 1
+                                                                    if mouse.heldItem["count"] <= 0:
+                                                                        mouse.heldItem["contents"] = "empty"
+
+
+                                                                slot["count"] = addedCount
+
+
+                                                            elif addedCount > maxStackSize and clickType == "left click":
+                                                                newMouseSlotCount = addedCount - maxStackSize
+
+                                                                slot["count"] = maxStackSize
+                                                                mouse.heldItem["count"] = newMouseSlotCount
+                                                        elif clickType == "left click": # not stacking the item, swap it with mouse's item
+                                                            
+                                                            newSlotCount = mouse.heldItem["count"]
+                                                            newSlotItem = mouse.heldItem["contents"]
+
+                                                            mouse.heldItem["count"] = slot["count"]
+                                                            mouse.heldItem["contents"] = slot["contents"]
+
+                                                            slot["count"] = newSlotCount
+                                                            slot["contents"] = newSlotItem
+
+
+                                                    else: # clicked item has nothing there, put mouse contents there
+                                                        if clickType == "left click":
+
+                                                            slot["contents"] = mouse.heldItem["contents"]
+                                                            slot["count"] = mouse.heldItem["count"]
+
+                                                            mouse.heldItem["count"] = 0
+                                                            mouse.heldItem["contents"] = "empty"
+                                                        elif clickType == "right click":
+
+                                                            slot["contents"] = mouse.heldItem["contents"]
+                                                            slot["count"] = 1
+                                                            mouse.heldItem["count"] -= 1
+                                                            if mouse.heldItem["count"] <= 0:
+                                                                mouse.heldItem["contents"] = "empty"
+
+
+                                            else: # mouse has no item in it, see if the item can be picked up
+                                                if item != "empty":
+
+                                                    if clickType == "left click":
+
+                                                        mouse.heldItem["count"] = slot["count"]
+                                                        mouse.heldItem["contents"] = slot["contents"]
+
+                                                        slot["count"] = 0
+                                                        slot["contents"] = "empty"
+
+                                                        # do special things if its the crafting result
+                                                        if slot == player.crafting["resultSlot"]:
+                                                            for craftingSlot in player.crafting.values():
+
+                                                                # subtract one item from the slot, since it's consumed
+                                                                if craftingSlot["count"] > 1:
+
+                                                                    craftingSlot["count"] -= 1
+                                                                else: # just remove the item entirely
+
+                                                                    craftingSlot["count"] = 0
+                                                                    craftingSlot["contents"] = "empty"
+
+                                                    elif clickType == "right click":
+                                                        # just disable right clicking on a result slot
+                                                        if slot != player.crafting["resultSlot"]:
+                                                            # you can't do this with unstackable items
+                                                            if slot["contents"].stackable:
+
+                                                                newMouseCount = math.ceil(slot["count"]/2)
+                                                                newSlotCount = slot["count"] - newMouseCount
+
+                                                                mouse.heldItem["contents"] = slot["contents"]
+                                                                mouse.heldItem["count"] = newMouseCount
+
+                                                                slot["count"] = newSlotCount
+                            
+                            done = False
+                            # fast transfer options
+                            if mouse.buttons["pressed"]["left"]:
+                                
+                                if keys[0][pygame.K_LSHIFT]:
+                                    # move all items from this slot (if possible)
+                                    done = checkStackablesInOtherInvSection("max", item, done)
+                                    done = checkEmptySlotsInOtherInvSection("max", item, done)
+                                    
+                                    
+                            
+                                if keys[0][pygame.K_LCTRL]:
+                                    # move a single item from this slot (if possible)
+                                    done = checkStackablesInOtherInvSection(1, item, done)
+                                    done = checkEmptySlotsInOtherInvSection(1, item, done)
+                                       
 
                             if not done:
-                                if not keys[0][pygame.K_LSHIFT] and not keys[0][pygame.K_LCTRL]:
-                                    # try to pick up or swap the item in slot and mouse helditem
-                                    mouseItem = mouse.heldItem["contents"]
-                                    if mouseItem != "empty":
-                                        if item != "empty":
-                                            if mouseItem.stackable and item.stackable and mouseItem.name == item.name:
-                                            
-                                                addedCount = mouse.heldItem["count"] + slot["count"]
-                                                
-                                                if addedCount <= maxStackSize:
-                                                    mouse.heldItem["contents"] = "empty"
-                                                    mouse.heldItem["count"] = 0
-
-                                                    slot["count"] = addedCount
+                                if mouse.buttons["pressed"]["left"]:
+                                    slotInteractionWithMouseItem("left click")
+                                elif mouse.buttons["pressed"]["right"]:
+                                    slotInteractionWithMouseItem("right click")
+                                    
 
 
-                                                elif addedCount > maxStackSize:
-                                                    newMouseSlotCount = addedCount - maxStackSize
-
-                                                    slot["count"] = maxStackSize
-                                                    mouse.heldItem["count"] = newMouseSlotCount
-                                            else: # not stacking the item, swap it with mouse's item
-                                                newSlotCount = mouse.heldItem["count"]
-                                                newSlotItem = mouse.heldItem["contents"]
-
-                                                mouse.heldItem["count"] = slot["count"]
-                                                mouse.heldItem["contents"] = slot["contents"]
-
-                                                slot["count"] = newSlotCount
-                                                slot["contents"] = newSlotItem
 
 
-                                        else: # clicked item has nothing there, put mouse contents there
-                                            slot["contents"] = mouse.heldItem["contents"]
-                                            slot["count"] = mouse.heldItem["count"]
+                if container != "crafting" and container != "armor":
+                    for slot in invSection:
+                        interactionForThisSlot(slot)
+                else:
+                    for slot in invSection.values():
+                        interactionForThisSlot(slot)
 
-                                            mouse.heldItem["count"] = 0
-                                            mouse.heldItem["contents"] = "empty"
-
-
-                                    else: # mouse has no item in it
-                                        if item != "empty":
-                                            mouse.heldItem["count"] = slot["count"]
-                                            mouse.heldItem["contents"] = slot["contents"]
-
-                                            slot["count"] = 0
-                                            slot["contents"] = "empty"
 
 
 
@@ -1016,7 +1113,8 @@ class Player():
                 if mouse.inPlayerHotbar:
                     inventoryContentInteraction("hotbar")
                 if mouse.inPlayerCraftingAndArmor:
-                    inventoryContentInteraction("craftingAndArmor")
+                    inventoryContentInteraction("crafting")
+                    inventoryContentInteraction("armor")
         
 
             # attempt to place mouse's item back in the player's inventory

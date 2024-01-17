@@ -16,6 +16,9 @@ clock = pygame.time.Clock()
 """
 to do list/ideas for things:
 
+    add right click interaction with inventory
+    take half the stack (math.ceil) and make sure the other stack has the correct amount
+    if placing stuff into slot, only place one thing
 
     make sure inventory management is fully functioning and doesn't break
 
