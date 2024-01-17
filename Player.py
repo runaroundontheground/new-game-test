@@ -400,7 +400,6 @@ class Player():
 
 
 
-
     def generalMovement(self, deltaTime):
 
         left = keys[0][pygame.K_a]
@@ -702,6 +701,9 @@ class Player():
 
         self.position = (self.x, self.y, self.z)
 
+
+
+
     def giveItem(self, item, count = 1):
         
         def checkForStackables(container, done, count, item):
@@ -750,6 +752,7 @@ class Player():
         return done
 
 
+
     def doInventoryThings(self):
 
         
@@ -790,14 +793,15 @@ class Player():
                 mouse.selectedY = chunkSize[1] * (blockSize - 1)
         adjustMouseSelectedBlockHeight()
 
+
         def changeSelectedHotbarSlot(numberPress):
             if not self.otherInventoryData["open"]:
                 keyboardInput = getattr(pygame, "K_" + str(numberPress))
                 if keysPressed[keyboardInput]:
                     self.otherInventoryData["currentHotbarSlot"] = numberPress - 1
-        
         for i in range(1, 10):
             changeSelectedHotbarSlot(i)
+
 
         def dropItems():
             # drop items from the hotbar
@@ -829,8 +833,6 @@ class Player():
         dropItems()
 
 
-        
-
         def hotbarHeldItemStuff():
             if not self.otherInventoryData["open"]:
                 index = self.otherInventoryData["currentHotbarSlot"]
@@ -846,8 +848,8 @@ class Player():
                         item.RMBPressedAction(self)
                     elif mouse.buttons["right"]:
                         item.RMBAction(self)
-
         hotbarHeldItemStuff()
+
 
         def mouseInteractionWithInventory():
             mouse.inPlayerInventory = False
@@ -1209,13 +1211,11 @@ class Player():
                         zv = math.sin(angle) * 3
 
                         item.drop(x, y, z, xv, yv, zv)
-
         mouseInteractionWithInventory()   
 
 
         def recipeChecksAndStuff():
             pass
-
         recipeChecksAndStuff()
         
     def handleTimers(self):
@@ -1228,6 +1228,9 @@ class Player():
                 print(str(key) + " " + str(timerValue))
             self.timers[key] = timerValue
 
+
+
+
     def updateCamera(self):
         camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = self.y
@@ -1235,12 +1238,18 @@ class Player():
         
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
 
+
+
+
     def updateImageThings(self):
         imageX = self.x - camera.x
         imageY = self.z - camera.z
         
         coordinate = (imageX, imageY)
         self.imageData = (self.image, coordinate)
+
+
+
 
     def doStuff(self, deltaTime):
         # need to update mouse's camera relative things here, don't want circular imports
@@ -1256,6 +1265,9 @@ class Player():
         self.updateCamera()
         self.updateImageThings()
 
+
+
+
     def positionInSpawnArea(self):
         for y in range(chunkSize[1] - 1):
             if findBlock(0, y * blockSize, 0):
@@ -1264,6 +1276,9 @@ class Player():
                     break
             else:
                 self.y = chunkSize[1] * blockSize
+
+
+
 
     def doStuffOnLeftClick(self, currentlyHeldItem = "empty"):
         item = currentlyHeldItem
