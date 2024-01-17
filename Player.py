@@ -152,31 +152,46 @@ class Player():
                 "slotId": 0
             }
 
-            craftingSlot0 = craftingSlot.copy()
-            craftingSlot0["slotId"] = 0
+            fontShift = font.size("1")
 
-            slotX = craftingAndArmorXForBlit + (slotSizeInPixels * (widthOfInventoryInSlots - 4))
-            slotY = craftingAndArmorYForBlit + (slotSizeInPixels*0.75)
 
-            
-            craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
+            slotId = 0
 
-           # craftingSlot0["renderPosition"] = (renderX, renderY)
+            # create the slots
+            for x in range(2):
+                for y in range(2):
+                    
+                    
 
-            
-            
+                    slotId += 1
+                    slotX = ((slotSizeInPixels) * (widthOfInventoryInSlots - 2 + x))
+                    slotY = x*slotSizeInPixels + (slotSizeInPixels*0.75)
 
-            craftingSlot0 = craftingSlot.copy()
-            craftingSlot0["slotId"] = 1
+                    renderX = slotX + craftingAndArmorXForBlit + itemIconShift
+                    renderY = slotY + craftingAndArmorYForBlit + itemIconShift
 
-            craftingSlot0 = craftingSlot.copy()
-            craftingSlot0["slotId"] = 2
+                    rectX = renderX - itemIconShift
+                    rectY = renderY - itemIconShift
 
-            craftingSlot0 = craftingSlot.copy()
-            craftingSlot0["slotId"] = 3
+                    newCraftingSlot = craftingSlot.copy()
+                    
+                    
+                    craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
+                    newCraftingSlot["renderPosition"] = (renderX, renderY)
+                    newCraftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    newCraftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
+                    newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+                    newCraftingSlot["slotId"] = 0
+
+                    self.crafting.append(newCraftingSlot)
+
+                    
 
 
             craftingAndArmorSurface = craftingAndArmorBackground
+
+
+
 
             inventoryXForBlit = (screenWidth - inventoryWidthInPixels) / 2 
             inventoryYForBlit = craftingAndArmorYForBlit + craftingAndArmorHeightInPixels
@@ -215,9 +230,8 @@ class Player():
 
                     updatedInventorySlot = inventorySlot.copy()
                     
-                    fontShift = font.size("1")
-
-                    print((renderX, renderY))      
+                    
+   
                     
 
                     updatedInventorySlot["renderPosition"] = (renderX, renderY)

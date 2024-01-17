@@ -1,5 +1,5 @@
 from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed
-import Worldgen, Controls, Items, Rendering # do this so command line works for everything? from here
+import Worldgen, Controls, Items, Rendering, Recipes # do this so command line works for everything probably from here
 from Items import makeItemsExist
 from Controls import updateMouseAndKeys
 from Rendering import render, generateSpawnArea, doCommandStuff, showInvalidCommand
@@ -19,6 +19,14 @@ to do list/ideas for things:
 
     make sure inventory management is fully functioning and doesn't break
 
+    add in somewhat functional recipe slots (can hold items, work with mouse, don't allow for extra storage, etc)
+
+
+    set up some kind of function to call when messing with the inventory in a way that would require
+    changing the interaction points of inventory slots
+    normalInventoryPosition = (x, y)?
+    reset it to that when things
+
 
     blocks needed to make simple structures (like a small hut, or something)
         none more thus far
@@ -32,8 +40,7 @@ to do list/ideas for things:
     
     
 
-    add some crappy images for the tools (aka drawing a line on a surf, then another line)
-    to make the icons
+    add a crappy image for a shovel
 
     add 3? surfaces to represent breaking blocks
     probably at the mouse's position, with math.floor and blocksize to put it
@@ -94,7 +101,7 @@ to do list/ideas for things:
 oh. welp, uhh dropped items and other entites need to be scaled based on
 height from the player and stuff
 that could be annoying
-attempted this^, and didn't get it just now
+attempted this^, and didn't get it to work quickly so it'll be done later
 
 
     
