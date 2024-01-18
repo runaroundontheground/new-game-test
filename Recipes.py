@@ -70,7 +70,7 @@ def makeRecipesExist():
     addRecipe("nearExact", "planksToSticks", {"planks": 2}, items["stick"], 4,
               requiredGridSize = 2,
               recipeInstructions = {
-                  "startingItem": "planks",
+                  "startingItemName": "planks",
                   "directions": ["up", "down"],
                   "operators": "xor",
                   "items": ["planks", "planks"]

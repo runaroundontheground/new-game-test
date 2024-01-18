@@ -23,6 +23,9 @@ to do list/ideas for things:
     make shift clicking actually work correctly for crafting
     aka, craft all items
 
+    also new right click interaction
+    hold control and right click something, pick up one item from that stack
+
     actually use images for items, but not block/placable items
 
 
