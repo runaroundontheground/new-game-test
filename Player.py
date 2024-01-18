@@ -904,6 +904,19 @@ class Player():
                                                     # combine the count
                                                     if movingCount <= maxStackSize:
                                                         otherSlot["count"] = movingCount
+
+                                                        if slot == player.crafting["slots"]["resultSlot"]:
+                                                            for key, craftingSlot in player.crafting["slots"].items():
+                                                                if key != "resultSlot":
+                                                                    # subtract one item from the slot, since it's consumed
+                                                                    if craftingSlot["count"] > 1:
+
+                                                                        craftingSlot["count"] -= 1
+                                                                    else: # just remove the item entirely
+
+                                                                        craftingSlot["count"] = 0
+                                                                        craftingSlot["contents"] = "empty"
+                                                                        
                                                         slot["count"] = 0
                                                         slot["contents"] = "empty"
 
@@ -919,18 +932,19 @@ class Player():
                                                         otherSlot["count"] = maxStackSize
 
                                                 else: # not moving max amount
-                                                    otherSlotNewCount = otherSlot["count"] + amountToMove
-                                                    slotNewCount = slot["count"] - amountToMove
+                                                    if slot != self.crafting["slots"]["resultSlot"]:
+                                                        otherSlotNewCount = otherSlot["count"] + amountToMove
+                                                        slotNewCount = slot["count"] - amountToMove
 
-                                                    # subtract from first slot, add to the second if possible
-                                                    if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
-                                                        slot["count"] = slotNewCount
-                                                        otherSlot["count"] = otherSlotNewCount
+                                                        # subtract from first slot, add to the second if possible
+                                                        if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
+                                                            slot["count"] = slotNewCount
+                                                            otherSlot["count"] = otherSlotNewCount
 
-                                                        if slotNewCount == 0:
-                                                            slot["contents"] = "empty"
+                                                            if slotNewCount == 0:
+                                                                slot["contents"] = "empty"
 
-                                                        return True
+                                                            return True
                             return done
 
                 def checkEmptySlotsInOtherInvSection(amountToMove, item, done):
@@ -947,6 +961,18 @@ class Player():
                                     otherSlot["contents"] = slot["contents"]
                                     otherSlot["count"] = slot["count"]
 
+                                    if slot == player.crafting["slots"]["resultSlot"]:
+                                        for key, craftingSlot in player.crafting["slots"].items():
+                                            if key != "resultSlot":
+                                                # subtract one item from the slot, since it's consumed
+                                                if craftingSlot["count"] > 1:
+
+                                                    craftingSlot["count"] -= 1
+                                                else: # just remove the item entirely
+
+                                                    craftingSlot["count"] = 0
+                                                    craftingSlot["contents"] = "empty"
+
                                     slot["contents"] = "empty"
                                     slot["count"] = 0
                                         
@@ -954,19 +980,21 @@ class Player():
                                     return True
 
                                 else: # not moving max amount
-                                    slotNewCount = slot["count"] - amountToMove
+                                    if slot != self.crafting["slots"]["resultSlot"]:
 
-                                    # subtract from first slot, add to the second if possible
-                                    if slotNewCount >= 0:
-                                        slot["count"] = slotNewCount
-                                        otherSlot["count"] = amountToMove
-                                        otherSlot["contents"] = slot["contents"]
+                                        slotNewCount = slot["count"] - amountToMove
 
-                                        if slotNewCount == 0:
-                                            slot["contents"] = "empty"
-                                    
+                                        # subtract from first slot, add to the second if possible
+                                        if slotNewCount >= 0:
+                                            slot["count"] = slotNewCount
+                                            otherSlot["count"] = amountToMove
+                                            otherSlot["contents"] = slot["contents"]
+
+                                            if slotNewCount == 0:
+                                                slot["contents"] = "empty"
                                         
-                                        return True
+                                            
+                                            return True
                     return done
 
 
