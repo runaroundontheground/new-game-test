@@ -59,6 +59,29 @@ to do list/ideas for things:
 
 
     recipe detection ideas:
+        did brainstorming, have a new idea that is good
+            when there's something in the crafting grid, player.isCrafting = True
+            when player.isCrafting = True, or when it's set to true, set player.crafting["gridSize"] to
+            whatever the gridsize for the crafting table is, so 2x2 would be 2, because it's assumed the grid
+            will always be square
+
+            ways to check for up, down, left, right in the crafting grid
+            up/down is + or - the grid size, left or right is just add or subtract 1
+
+            recipes also will have a requiredGridSize, which is just equal to like 2 or 3
+            only attempt to find those recipes if the grid meets or exceeds that size
+
+            when doing near exact recipes, they have a starting block, and then steps to go from that block
+            to check for up/down, etc, and can also have an operators
+
+            example for sticks:
+            starting block, then direction, then what item to look for there
+            possible operator inputs: "or", "and", "not", "xor" (i think xor is correct there)
+            oh boy, i actually need to make a system for dynamic condition operation stuff
+            yikes
+            ["planks", {"direction": "up", "item": "planks", "operator": "or", }]
+
+
         go through the crafting slots, and then count how many of each item there is in it
         ex: sticks recipe, req's two planks, and nothing else
         and then after than, if it's a shapeless recipe, that's all that needs to be done
