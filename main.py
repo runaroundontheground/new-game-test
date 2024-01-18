@@ -21,7 +21,7 @@ to do list/ideas for things:
 
     
     make shift clicking actually work correctly for crafting
-    and disable control clicking
+    aka, craft all items
 
     actually use images for items, but not block/placable items
 

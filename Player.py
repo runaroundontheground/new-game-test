@@ -909,10 +909,9 @@ class Player():
                                                             for key, craftingSlot in player.crafting["slots"].items():
                                                                 if key != "resultSlot":
                                                                     # subtract one item from the slot, since it's consumed
-                                                                    if craftingSlot["count"] > 1:
+                                                                    craftingSlot["count"] -= self.totalCraftingContents["possibleCrafts"]
 
-                                                                        craftingSlot["count"] -= 1
-                                                                    else: # just remove the item entirely
+                                                                    if craftingSlot["count"] <= 0:
 
                                                                         craftingSlot["count"] = 0
                                                                         craftingSlot["contents"] = "empty"
@@ -930,6 +929,17 @@ class Player():
                                                     elif movingCount > maxStackSize:
                                                         slot["count"] = movingCount - maxStackSize
                                                         otherSlot["count"] = maxStackSize
+
+                                                        if slot == player.crafting["slots"]["resultSlot"]:
+                                                            for key, craftingSlot in player.crafting["slots"].items():
+                                                                if key != "resultSlot":
+                                                                    # subtract one item from the slot, since it's consumed
+                                                                    craftingSlot["count"] -= self.totalCraftingContents["possibleCrafts"]
+
+                                                                    if craftingSlot["count"] <= 0:
+
+                                                                        craftingSlot["count"] = 0
+                                                                        craftingSlot["contents"] = "empty"
 
                                                 else: # not moving max amount
                                                     if slot != self.crafting["slots"]["resultSlot"]:
@@ -1261,21 +1271,29 @@ class Player():
             # dict with total amount of each item in crafting slots
             self.totalCraftingContents = {}
             self.isCrafting = False
+            self.crafting["possibleCrafts"] = 0
 
             
             for key, slot in self.crafting["slots"].items():
                 if key != "resultSlot":
                     if slot["contents"] != "empty":
-                        if not self.totalCraftingContents.get(slot["contents"].name):
+                        if not self.totalCraftingContents.get(slot["contents"].name, False):
                             
                             self.totalCraftingContents[slot["contents"].name] = 0
                         
                         self.totalCraftingContents[slot["contents"].name] += 1
+            
+            lowestItemCount = maxStackSize
+
+            for itemCount in self.totalCraftingContents.values():
+                if itemCount < lowestItemCount:
+                    lowestItemCount = itemCount
+            
+            self.crafting["possibleCrafts"] = lowestItemCount
 
 
 
-
-            if self.totalCraftingContents != {}:
+            if self.crafting["possibleCrafts"] > 0:
                 self.isCrafting = True
 
             foundARecipe = False
