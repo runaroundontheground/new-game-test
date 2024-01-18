@@ -906,6 +906,8 @@ class Player():
                                                         otherSlot["count"] = movingCount
                                                         slot["count"] = 0
                                                         slot["contents"] = "empty"
+
+                                                        
                                                         
                                                         done = True
                                                         return True

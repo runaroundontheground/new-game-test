@@ -20,8 +20,8 @@ to do list/ideas for things:
     make sure inventory management is fully functioning and doesn't break
 
     
-    finally start adding recipes (starting with exact and shapeless, those are easiest)
-    and also make the crafting actually look for recipes, that's gonna be a process...
+    make shift clicking actually work correctly for crafting
+    and disable control clicking
 
     actually use images for items, but not block/placable items
 
