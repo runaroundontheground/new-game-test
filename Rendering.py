@@ -587,7 +587,7 @@ def render(deltaTime):
 
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
                 image = player.inventoryRenderingData["selectedSlotSurface"]
-                slot = player.crafting[mouse.hoveredSlotId]
+                slot = player.crafting["slots"][mouse.hoveredSlotId]
                 position = slot["selectedSlotRenderPosition"]
                 
                 imageData = (image, position)
@@ -617,7 +617,7 @@ def render(deltaTime):
                     renderingData.append(imageData)
 
 
-        for slot in player.crafting.values():
+        for slot in player.crafting["slots"].values():
             item = slot["contents"]
             if item != "empty":
                 image = itemIcons[item.name]

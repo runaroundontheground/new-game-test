@@ -76,9 +76,18 @@ FPS = 60
 maxStackSize = 64
 
 recipes = {
+    # the first numer is what size of grid is required, should be faster to check only a single time
+    # so the player doesn't loop through the size 3 grid when they only have access to size 2
+    2: {
     "exact": {},
     "nearExact": {},
     "shapeless": {}
+    },
+    3: {
+        "exact": {},
+        "nearExact": {},
+        "shapeless": {}
+    }
 }
 
 listOfIntermediateItems = [

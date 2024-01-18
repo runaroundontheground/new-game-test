@@ -168,9 +168,22 @@ class Player():
                 "slotId": 0
             }
 
-            self.crafting = {0: craftingSlot, 1: craftingSlot,
-                             2: craftingSlot, 3: craftingSlot,
-                             "resultSlot": 0}
+            self.isCrafting = False
+
+            self.crafting = {
+                "slots": {
+                0: craftingSlot, 1: craftingSlot,
+                2: craftingSlot, 3: craftingSlot,
+                # 0 - 3 are player's inventory crafting,
+                # 4 - 8 are crafting table
+                4: craftingSlot, 5: craftingSlot,
+                6: craftingSlot, 7: craftingSlot,
+                8: craftingSlot,
+                "resultSlot": 0,
+                },
+                "gridSize": 2
+
+                             }
             self.totalCraftingContents = {}
             self.armor = {
                 "head": armorSlot,
@@ -203,7 +216,7 @@ class Player():
             craftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
             craftingSlot["slotId"] = "resultSlot"
 
-            self.crafting["resultSlot"] = craftingSlot.copy()
+            self.crafting["slots"]["resultSlot"] = craftingSlot.copy()
            
 
 
@@ -235,7 +248,7 @@ class Player():
                     newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
                     newCraftingSlot["slotId"] = slotId
 
-                    self.crafting[slotId] = newCraftingSlot
+                    self.crafting["slots"][slotId] = newCraftingSlot
 
                     slotId += 1
 
@@ -864,7 +877,7 @@ class Player():
                     invSection = self.inventory
                     otherInvSection = self.hotbar
                 elif container == "crafting":
-                    invSection = self.crafting
+                    invSection = self.crafting["slots"]
                     otherInvSection = self.inventory
                 elif container == "armor":
                     invSection = self.armor
@@ -1042,21 +1055,21 @@ class Player():
                                                         slot["contents"] = "empty"
 
                                                         # do special things if its the crafting result
-                                                        if slot == player.crafting["resultSlot"]:
-                                                            for craftingSlot in player.crafting.values():
+                                                        if slot == player.crafting["slots"]["resultSlot"]:
+                                                            for key, craftingSlot in player.crafting["slots"].items():
+                                                                if key != "resultSlot":
+                                                                    # subtract one item from the slot, since it's consumed
+                                                                    if craftingSlot["count"] > 1:
 
-                                                                # subtract one item from the slot, since it's consumed
-                                                                if craftingSlot["count"] > 1:
+                                                                        craftingSlot["count"] -= 1
+                                                                    else: # just remove the item entirely
 
-                                                                    craftingSlot["count"] -= 1
-                                                                else: # just remove the item entirely
-
-                                                                    craftingSlot["count"] = 0
-                                                                    craftingSlot["contents"] = "empty"
+                                                                        craftingSlot["count"] = 0
+                                                                        craftingSlot["contents"] = "empty"
 
                                                     elif clickType == "right click":
                                                         # just disable right clicking on a result slot
-                                                        if slot != player.crafting["resultSlot"]:
+                                                        if slot != player.crafting["slots"]["resultSlot"]:
                                                             # you can't do this with unstackable items
                                                             if slot["contents"].stackable:
 
@@ -1099,7 +1112,7 @@ class Player():
                     for slot in invSection:
                         interactionForThisSlot(slot)
                 else:
-                    for slot in invSection.values():
+                    for key, slot in invSection.items():
                         interactionForThisSlot(slot)
 
 
@@ -1217,38 +1230,107 @@ class Player():
         def recipeChecksAndStuff():
             # dict with total amount of each item in crafting slots
             self.totalCraftingContents = {}
-            for key, slot in self.crafting.items():
-                if key != "resultSlot":
-                    if slot["contents"] != "empty":
-                        self.totalCraftingContents[key] = slot["count"]
-
+            self.isCrafting = False
 
             
-            """
-            recipe checking order:
-            exact, nearExact, then shapeless
-            """
+            for key, slot in self.crafting["slots"].items():
+                if key != "resultSlot":
+                    if slot["contents"] != "empty":
+                        if not self.totalCraftingContents.get(slot["contents"].name):
+                            
+                            self.totalCraftingContents[slot["contents"].name] = 0
+                        
+                        self.totalCraftingContents[slot["contents"].name] += 1
+
+
+
+
+            if self.totalCraftingContents != {}:
+                self.isCrafting = True
+
             foundARecipe = False
             recipeThatWasFound = None
 
-            for recipe in recipes["exact"].values():
-                pass
-
-            if not foundARecipe:
-                for recipe in recipes["nearExact"].values():
+            def exactRecipeDetection(recipe):
+                
+                
+                if self.totalCraftingContents == recipe["requiredItems"]:
                     pass
+
             
-            if not foundARecipe:
-                for recipe in recipes["shapeless"].values():
-                    if self.totalCraftingContents == recipe["requiredItems"]:
-                        foundARecipe = True
-                        recipeThatWasFound = recipe
+
+                return False, None
+            
+            def nearExactRecipeLogic(recipe):
+                
+                def checkForSpecificItemInSlot(instructions):
+                    """
+                    startingItem, directions, operators, and items are contained in instructions
+
+                    example:
+                    direction = ["left", "right"], operator = ["xor"], item = ["planks", "planks"]
+                    
+                    
+                    checks for "planks" in the slot to the left and the slot to the right
+                    
+                    compares the values of does this slot have this specific item
+                    """
+                    for key, item in self.crafting["slots"].items():
+                        if key != "resultSlot":
+                            if item != "empty":
+                                if item.name == instructions["startingItem"]:
+                                    print("test")
+                    
+                    
+                if self.totalCraftingContents == recipe["requiredItems"]:
+                    print("it should show the recipe thing")
+            
+                    instructions = recipe["recipeInstructions"]
+
+                    foundARecipeHere = checkForSpecificItemInSlot(instructions)
+
+                    if foundARecipeHere:
+                        return True, recipe
+
+
+                return False, None
+
+            def shapelessRecipeLogic(recipe):
+               
+                if self.totalCraftingContents == recipe["requiredItems"]:
+                    return True, recipe
+                
+
+
+
+                return False, None
+
+            
+            
+            
+            if self.isCrafting:
+
+                for recipe in recipes[self.crafting["gridSize"]]["exact"].values():
+                    foundARecipe, recipeThatWasFound = exactRecipeDetection(recipe)
+                    if foundARecipe:
                         break
 
+                if not foundARecipe:
+                    for recipe in recipes[self.crafting["gridSize"]]["nearExact"].values():
+                        foundARecipe, recipeThatWasFound = nearExactRecipeLogic(recipe)
+                        if foundARecipe:
+                            break
                 
-            if foundARecipe:
-                self.crafting["resultSlot"]["contents"] = recipeThatWasFound["output"]
-                self.crafting["resultSlot"]["count"] = recipeThatWasFound["outputCount"]
+                if not foundARecipe:
+                    for recipe in recipes[self.crafting["gridSize"]]["shapeless"].values():
+                        foundARecipe, recipeThatWasFound = shapelessRecipeLogic(recipe)
+                        if foundARecipe:
+                            break
+
+                    
+                if foundARecipe:
+                    self.crafting["slots"]["resultSlot"]["contents"] = recipeThatWasFound["output"]
+                    self.crafting["slots"]["resultSlot"]["count"] = recipeThatWasFound["outputCount"]
 
 
 

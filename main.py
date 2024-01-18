@@ -78,8 +78,11 @@ to do list/ideas for things:
             starting block, then direction, then what item to look for there
             possible operator inputs: "or", "and", "not", "xor" (i think xor is correct there)
             oh boy, i actually need to make a system for dynamic condition operation stuff
+            use eval() to allow operators to work
             yikes
-            ["planks", {"direction": "up", "item": "planks", "operator": "or", }]
+            more robust system idea
+            each thing is a list, first item in each list corresponds to the first operation or something
+            ["planks", {"direction": ["up"], "item": ["planks"], "operators": ["or"]}]
 
 
         go through the crafting slots, and then count how many of each item there is in it
