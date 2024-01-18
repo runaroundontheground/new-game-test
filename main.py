@@ -1,6 +1,7 @@
 from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed
 import Worldgen, Controls, Items, Rendering, Recipes # do this so command line works for everything probably from here
 from Items import makeItemsExist
+from Recipes import makeRecipesExist
 from Controls import updateMouseAndKeys
 from Rendering import render, generateSpawnArea, doCommandStuff, showInvalidCommand
 from Player import player
@@ -179,6 +180,7 @@ def gameLoop():
     generateSpawnArea()
     player.positionInSpawnArea()
     makeItemsExist()
+    makeRecipesExist()
 
     # hooray for adding a function to do this!
     player.giveItem(items["log"], 3)

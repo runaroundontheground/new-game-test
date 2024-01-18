@@ -44,7 +44,7 @@ def addRecipe(recipeType, recipeName, requiredItems, output, outputCount = 1, re
 
 
 
+def makeRecipesExist():
 
 
-
-addRecipe("shapeless", "logToPlanks", [{"name": "log", "count": 1}], items["planks"], 4)
+    addRecipe("shapeless", "logToPlanks", [{"name": "log", "count": 1}], items["planks"], 4)

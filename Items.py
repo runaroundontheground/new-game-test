@@ -28,14 +28,14 @@ class Item():
 
 # an item that can be placed, like wood or something
 class PlaceableItem(Item):
-    def __init__(self, name, tooltip = ""):
+    def __init__(self, name, tooltip = "", stackable = True):
         super().__init__(name)
         self.tooltip = self.name
         if tooltip != "":
             self.tooltip = tooltip
         self.slotId = 0
         self.itemType = "PlaceableItem"
-        self.stackable = True
+        self.stackable = stackable
         self.placedBlock = {
             "type": self.name,
             "render": False,
@@ -45,6 +45,7 @@ class PlaceableItem(Item):
         }
         self.placedBlock["hardness"] = dictOfBlockBreakingStuff[self.name]["hardness"]
         self.placedBlock["effectiveTool"] = dictOfBlockBreakingStuff[self.name]["effectiveTool"]
+
     def placeItem(self, player):
 
         if player.canReachSelectedBlock:
@@ -82,14 +83,14 @@ class ToolItem(Item):
     def __init__(self, name, toolData = {"attack": 1, "knockback": 1,
                                          "breakingPower": 1, "breakingSpeed": 1,
                                          "breakingType": "none"},
-                                         tooltip = ""):
+                                         tooltip = "", stackable = False):
         super().__init__(name)
         self.slotId = 0
         self.itemType = "ToolItem"
         self.tooltip = self.name
         if tooltip != "":
             self.tooltip = tooltip
-        self.stackable = False
+        self.stackable = stackable
         
         self.attack = toolData["attack"]
         self.knockback = toolData["knockback"]
@@ -105,23 +106,31 @@ class ToolItem(Item):
     def RMBAction(self, player):
         pass
 
+class IntermediateItem(Item):
+    def __init__(self, name, stackable = True):
+        super().__init__(name)
+        self.stackable = stackable
+        self.tooltip = self.name
+        self.slotId = 0
 
 # adding items to the game
-def addItem(name = "air", itemType = "none", toolData = {}):
+def addItem(name = "air", itemType = "none", toolData = {}, stackable = False):
 
     if itemType == "placeable":
-        item = PlaceableItem(name)
+        item = PlaceableItem(name, stackable = True)
     
     if itemType == "tool":
         item = ToolItem(name, toolData)
+    if itemType == "intermediate":
+        item = IntermediateItem(name, stackable)
 
     items[name] = item
 
 def makeItemsExist():
     for itemName in listOfBlockNames:
-        addItem(itemName, "placeable")
+        addItem(itemName, "placeable", stackable = True)
     for itemName in listOfIntermediateItems:
-        pass
+        addItem(itemName, "intermediate", stackable = True)
     addItem("stone pickaxe", "tool",
             {"attack": 3, "knockback": 1, "breakingPower": 3,
             "breakingSpeed": 20, "breakingType": "pickaxe"})
