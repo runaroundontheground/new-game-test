@@ -1028,10 +1028,11 @@ class Player():
 
 
                             def slotInteractionWithMouseItem(clickType):
-                                        if not keys[0][pygame.K_LSHIFT] and not keys[0][pygame.K_LCTRL]:
+                                        ctrlPressed = keys[0][pygame.K_LCTRL]
+                                        if not keys[0][pygame.K_LSHIFT]:
                                             # try to pick up or swap the item in slot and mouse.heldItem
                                             mouseItem = mouse.heldItem["contents"]
-                                            if mouseItem != "empty":
+                                            if mouseItem != "empty" and not ctrlPressed:
                                                 if slot["slotId"] != "resultSlot":
                                                     if item != "empty":
                                                         if mouseItem.stackable and item.stackable and mouseItem.name == item.name:
@@ -1119,14 +1120,24 @@ class Player():
                                                         if slot != player.crafting["slots"]["resultSlot"]:
                                                             # you can't do this with unstackable items
                                                             if slot["contents"].stackable:
+                                                                if slot["count"] > 1:
+                                                                    if not ctrlPressed:
+                                                                    
 
-                                                                newMouseCount = math.ceil(slot["count"]/2)
-                                                                newSlotCount = slot["count"] - newMouseCount
+                                                                        newMouseCount = math.ceil(slot["count"]/2)
+                                                                        newSlotCount = slot["count"] - newMouseCount
 
-                                                                mouse.heldItem["contents"] = slot["contents"]
-                                                                mouse.heldItem["count"] = newMouseCount
+                                                                        mouse.heldItem["contents"] = slot["contents"]
+                                                                        mouse.heldItem["count"] = newMouseCount
 
-                                                                slot["count"] = newSlotCount
+                                                                        slot["count"] = newSlotCount
+                                                                    else: # put one item into mouse
+                                                                        mouse.heldItem["count"] = 1
+                                                                        mouse.heldItem["contents"] = slot["contents"]
+
+                                                                        slot["count"] -= 1
+
+
                             
                             done = False
                             # fast transfer options
