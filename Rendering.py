@@ -91,11 +91,6 @@ def convertTextToImageData(textValue, position, centeredOnPosition = False,):
 
 screen.fill((0, 0, 0))
 
-position = (screenWidth/3, screenHeight/2)
-temporaryText = font.render("generating world", 0, (255, 255, 255))
-screen.blit(temporaryText, position)
-pygame.display.flip()
-
 blockImages = {
     "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
 }
@@ -111,105 +106,25 @@ blockHighlightSurface.set_colorkey((255, 255, 255))
 
 itemIconSize = player.inventoryRenderingData["slotSize"] - player.inventoryRenderingData["itemIconShift"] * 2
 
+print(itemIconSize)
 
+def loadImage(path, name):
+    image = pygame.image.load("Images/" + path).convert_alpha()
+    itemIcons[name] = image
 
-baseToolSurface = pygame.Surface((itemIconSize, itemIconSize)) # a wooden stick
-baseToolSurface.fill((255, 255, 255))
-baseToolSurface.set_colorkey((255, 255, 255))
-line = pygame.draw.line(baseToolSurface, (150, 75, 0), (0, itemIconSize), (itemIconSize - 5, 5), 3)
+    itemEntityImage = image.copy()
+    size = (itemEntitySize, itemEntitySize)
+    itemEntityImage = pygame.transform.scale(itemEntityImage, size)
+    itemEntityIcons[name] = itemEntityImage
 
-uneditedTools = {
-"pickaxe": baseToolSurface.copy(),
-"axe": baseToolSurface.copy(),
-"shovel": baseToolSurface.copy()
+    return image
+
+images = {
+    "stick": loadImage("stick.png", "stick"),
+    "stone pickaxe": loadImage("tools/stone pickaxe.png", "stone pickaxe"),
+    "stone axe": loadImage("tools/stone axe.png", "stone axe")
 }
 
-def cleanUpImage(surface, rgbValueToRemove, rangeOfRemoval = 5):
-    r = rgbValueToRemove[0]
-    g = rgbValueToRemove[1]
-    b = rgbValueToRemove[2]
-    newSurface = surface
-
-    size = newSurface.get_size()
-
-    for x in range(size[0]):
-        for y in range(size[1]):
-            color = newSurface.get_at((x, y))
-            r2 = color[0]
-            g2 = color[1]
-            b2 = color[2]
-
-            conditionA = r2 + rangeOfRemoval > r and r2 - rangeOfRemoval < r
-            conditionB = g2 + rangeOfRemoval > g and g2 - rangeOfRemoval < g
-            conditionC = b2 + rangeOfRemoval > b and b2 - rangeOfRemoval < b
-
-            if conditionA and conditionB and conditionC:
-                newSurface.set_at((x, y), (255, 255, 255))
-    return newSurface
-
-pickaxeHead = pygame.Surface((itemIconSize, itemIconSize))
-rect = pygame.Rect(itemIconSize/2 - (itemIconSize/2)/2, itemIconSize/2 - (5)/2, itemIconSize, itemIconSize/10)
-pickaxeHead.fill((51, 52, 53), rect)
-rotatedImage, rect = rotatePoint(pickaxeHead, 45, [itemIconSize/2, itemIconSize/2], pygame.math.Vector2([-7, -10]))
-rotatedImage.set_colorkey((255, 255, 255))
-rotatedImage.set_colorkey((0, 0, 0))
-uneditedTools["pickaxe"].blit(rotatedImage, rect)
-
-axeHead = pygame.Surface((itemIconSize, itemIconSize))
-rect = pygame.Rect(itemIconSize/3, 2.5, (itemIconSize/3), (itemIconSize/3))
-axeHead.fill((255, 255, 255))
-axeHead.fill((51, 52, 53), rect)
-rect = pygame.Rect((itemIconSize/5)+itemIconSize/3, 0, itemIconSize/4, itemIconSize/2)
-axeHead.fill((51, 52, 53), rect)
-axeHead = pygame.transform.scale_by(axeHead, 0.9)
-rotatedImage, rect = rotatePoint(axeHead, 45, [itemIconSize/5 + itemIconSize/2.5, itemIconSize - itemIconSize/8], pygame.math.Vector2([-10, -10]))
-rotatedImage.set_colorkey((255, 255, 255))
-rotatedImage.set_colorkey((0, 0, 0))
-
-rotatedImage = cleanUpImage(rotatedImage.copy(), (230, 230, 230), 100)
-
-uneditedTools["axe"].blit(rotatedImage, rect)
-uneditedTools["axe"].blit(baseToolSurface, (0, 0))
-
-
-def addAToolIcon(toolName, toolType, toolHeadColor = (100, 100, 100)):
-    
-    toolIcon = uneditedTools[toolType].copy()
-
-    for x in range(math.floor(itemIconSize)):
-        for y in range(math.floor(itemIconSize)):
-            color = pygame.Surface.get_at(toolIcon, (x, y))
-            c, d, e, hasAlpha = False, False, False, False
-            r, g, b = color[0], color[1], color[2]
-
-            if len(color) >= 4:
-                hasAlpha = True
-            if r - 5 < 51 and r + 5 > 51:
-                c = True
-            if g - 5 < 52 and g + 5 > 52:
-                d = True
-            if b - 5 < 53 and b + 5 > 53:
-                e = True
-            
-            if (c or d or e) and not hasAlpha:
-                pygame.Surface.set_at(toolIcon, (x, y), toolHeadColor)
-
-    
-    itemIcons[toolName] = toolIcon
-
-    itemEntityIcon = toolIcon.copy()
-    scale = itemEntitySize / blockSize
-
-    itemEntityIcon = pygame.transform.scale_by(itemEntityIcon, scale)
-    itemEntityIcons[toolName] = itemEntityIcon
-
-addAToolIcon("stone pickaxe", "pickaxe", (200, 200, 200))
-addAToolIcon("stone axe", "axe", (200, 200, 200))
-#addAToolIcon("stone shovel", "shovel", (200, 200, 200))
-
-imageData = convertTextToImageData("tool images generated", (100, 50))
-screen.blits([imageData])
-pygame.display.flip()
 
 def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
               hasAlpha = False, alphaValue = 255):
@@ -766,6 +681,7 @@ def render(deltaTime):
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)
     debugRenderingStuff2 += "player yv " + str(player.yv)
     debugRenderingStuff3 = "mouse pos: " + str(mouse.pos) + ", mouseRelativePos: " + str(mouse.cameraRelativePos)
+
     
     thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
     thing3 = font.render(debugRenderingStuff3, 0, (255, 0, 0))
