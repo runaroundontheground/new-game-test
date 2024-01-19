@@ -904,13 +904,13 @@ class Player():
                                                     if movingCount <= maxStackSize:
                                                         
 
-                                                        if slot == player.crafting["slots"]["resultSlot"]:
+                                                        if slot == self.crafting["slots"]["resultSlot"]:
 
                                                             movingCount *= self.crafting["possibleCrafts"]
 
                                                             if movingCount <= maxStackSize:
 
-                                                                for key, craftingSlot in player.crafting["slots"].items():
+                                                                for key, craftingSlot in self.crafting["slots"].items():
                                                                     if key != "resultSlot":
                                                                         # subtract one item from the slot, since it's consumed
                                                                         craftingSlot["count"] -= self.crafting["possibleCrafts"]
@@ -936,7 +936,7 @@ class Player():
                                                     # make the other stack full, reduce item count
                                                     # in first slot so the later update catches it
                                                     elif movingCount > maxStackSize:
-                                                        if slot != player.crafting["slots"]["resultSlot"]:
+                                                        if slot != self.crafting["slots"]["resultSlot"]:
                                                             slot["count"] = movingCount - maxStackSize
                                                             otherSlot["count"] = maxStackSize
 
@@ -971,14 +971,14 @@ class Player():
                                     otherSlot["contents"] = slot["contents"]
                                     
 
-                                    if slot == player.crafting["slots"]["resultSlot"]:
+                                    if slot == self.crafting["slots"]["resultSlot"]:
 
                                         craftedCount = slot["count"] * self.crafting["possibleCrafts"]
                                         if craftedCount <= maxStackSize:
 
                                             otherSlot["count"] = craftedCount
 
-                                            for key, craftingSlot in player.crafting["slots"].items():
+                                            for key, craftingSlot in self.crafting["slots"].items():
                                                 if key != "resultSlot":
                                                     # subtract one item from the slot, since it's consumed
                                                     craftingSlot["count"] -= self.crafting["possibleCrafts"]
@@ -1103,8 +1103,8 @@ class Player():
                                                         slot["contents"] = "empty"
 
                                                         # do special things if its the crafting result
-                                                        if slot == player.crafting["slots"]["resultSlot"]:
-                                                            for key, craftingSlot in player.crafting["slots"].items():
+                                                        if slot == self.crafting["slots"]["resultSlot"]:
+                                                            for key, craftingSlot in self.crafting["slots"].items():
                                                                 if key != "resultSlot":
                                                                     # subtract one item from the slot, since it's consumed
                                                                     if craftingSlot["count"] > 1:
@@ -1117,7 +1117,7 @@ class Player():
 
                                                     elif clickType == "right click":
                                                         # just disable right clicking on a result slot
-                                                        if slot != player.crafting["slots"]["resultSlot"]:
+                                                        if slot != self.crafting["slots"]["resultSlot"]:
                                                             # you can't do this with unstackable items
                                                             if slot["contents"].stackable:
                                                                 if slot["count"] > 1:
@@ -1342,13 +1342,35 @@ class Player():
                     startingItemName, directions, operators, and items are contained in instructions
 
                     example:
-                    direction = ["left", "right"], operator = ["xor"], item = ["planks", "planks"]
+                    direction = ["left", "right"], operator = ["xor"], items = ["planks", "planks"]
                     
                     
                     checks for "planks" in the slot to the left and the slot to the right
                     
                     compares the values of does this slot have this specific item
                     """
+
+                    def checkADirection(direction, slotIdToCheckFrom):
+                        gridSize = self.crafting["gridSize"]
+                        if direction == "up":
+
+                            testSlotId = slotIdToCheckFrom - gridSize
+                            if testSlotId >= 0 and testSlotId < (gridSize**gridSize - 1):
+
+                                item = self.crafting[testSlotId]["contents"]
+                                if item != "empty":
+                                    return item.name
+                            else:
+                                
+                                return "empty"
+                        
+
+                        return "empty"
+
+
+                            
+
+                
                     for key, slot in self.crafting["slots"].items():
                         if key != "resultSlot":
                             item = slot["contents"]
@@ -1358,7 +1380,21 @@ class Player():
                                     usesOperators = len(instructions["operators"]) > 0
 
                                     if not usesOperators:
-                                        pass
+                                        # only checks one direction (not gonna be common)
+                                        slotFound = checkADirection(instructions["directions"][0], key)
+                                        if slotFound == instructions["items"][0]:
+                                            return True
+
+                                    else: # this recipe uses operators, will be more complicated
+                                        # use range() of len(directions), accessing operators is 
+                                        # len(directions) - 1
+                                        # check for the first item in the direction,
+
+
+
+                    return False
+
+                                    
 
 
 
@@ -1367,9 +1403,9 @@ class Player():
             
                     instructions = recipe["recipeInstructions"]
 
-                    foundARecipeHere = checkForSpecificItemInSlot(instructions)
+                    foundARecipe = checkForSpecificItemInSlot(instructions)
 
-                    if foundARecipeHere:
+                    if foundARecipe:
                         return True, recipe
 
 
