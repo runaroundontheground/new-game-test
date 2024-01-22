@@ -1358,9 +1358,10 @@ class Player():
                             testSlotId = startingSlotId - gridSize
                             if testSlotId >= 0 and testSlotId < (gridSize**gridSize - 1):
 
-                                item = self.crafting[testSlotId]["contents"]
+                                item = self.crafting["slots"][testSlotId]["contents"]
                                 if item != "empty":
                                     return item.name
+                                return "empty"
                             else:
                                 
                                 return "no item"
@@ -1369,28 +1370,36 @@ class Player():
                             testSlotId = startingSlotId + gridSize
                             if testSlotId >= 0 and testSlotId < (gridSize**gridSize -1):
 
-                                item = self.crafting[testSlotId]["contents"]
+                                item = self.crafting["slots"][testSlotId]["contents"]
 
                                 if item != "empty":
                                     return item.name
+                                return "empty"
                                 
-                                else:
-                                    return "no item"
+                            else:
+                                return "no item"
                                 
                         if direction == "right":
                             testSlotId = startingSlotId + 1
                             temporaryGridSize = gridSize - 1
-                            if testSlotId == gridSize:
-                                return "no item"
-                            
-                            if testSlotId > temporaryGridSize:
-                                temporaryGridSize += gridSize
+
+                            if testSlotId >= 0 and testSlotId < (gridSize ** gridSize - 1):
+
+                                if testSlotId == gridSize:
+                                    return "no item"
+
+                                
+                                while testSlotId > temporaryGridSize:
 
                             
-                            # if it's > than the new number created, then 
+                                    temporaryGridSize += gridSize
 
-                            # if during any of the additions, the new grid size is more than the current grid
-                            # size, then return "no item"
+                                    if temporaryGridSize >= gridSize:
+                                        return "no item"
+                                    if testSlotId == temporaryGridSize - 1:
+                                        return "no item"
+
+                                item = self.crafting["slots"][testSlotId]["contents"]
                                 
                         
 
