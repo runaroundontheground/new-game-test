@@ -1350,11 +1350,12 @@ class Player():
                     compares the values of does this slot have this specific item
                     """
 
-                    def checkADirection(direction, slotIdToCheckFrom):
+                    def checkADirection(direction, startingSlotId):
                         gridSize = self.crafting["gridSize"]
+
                         if direction == "up":
 
-                            testSlotId = slotIdToCheckFrom - gridSize
+                            testSlotId = startingSlotId - gridSize
                             if testSlotId >= 0 and testSlotId < (gridSize**gridSize - 1):
 
                                 item = self.crafting[testSlotId]["contents"]
@@ -1362,30 +1363,68 @@ class Player():
                                     return item.name
                             else:
                                 
-                                return "empty"
+                                return "no item"
+                            
+                        if direction == "down":
+                            testSlotId = startingSlotId + gridSize
+                            if testSlotId >= 0 and testSlotId < (gridSize**gridSize -1):
+
+                                item = self.crafting[testSlotId]["contents"]
+
+                                if item != "empty":
+                                    return item.name
+                                
+                                else:
+                                    return "no item"
+                                
+                        if direction == "right":
+                            testSlotId = startingSlotId + 1
+                            temporaryGridSize = gridSize - 1
+                            if testSlotId == gridSize:
+                                return "no item"
+                            
+                            if testSlotId > temporaryGridSize:
+                                temporaryGridSize += gridSize
+
+                            
+                            # if it's > than the new number created, then 
+
+                            # if during any of the additions, the new grid size is more than the current grid
+                            # size, then return "no item"
+                                
                         
 
-                        return "empty"
+                        return "no item"
 
 
                             
 
                 
-                    for key, slot in self.crafting["slots"].items():
-                        if key != "resultSlot":
+                    for slotId, slot in self.crafting["slots"].items():
+                        if slotId != "resultSlot":
                             item = slot["contents"]
                             if item != "empty":
                                 if item.name == instructions["startingItemName"]:
                                     
                                     usesOperators = len(instructions["operators"]) > 0
 
+                                    directions = instructions["directions"]
+                                    operators = instructions["operators"]
+                                    items = instructions["items"]
+
                                     if not usesOperators:
                                         # only checks one direction (not gonna be common)
-                                        slotFound = checkADirection(instructions["directions"][0], key)
-                                        if slotFound == instructions["items"][0]:
+                                        slotFound = checkADirection(directions[0], slotId)
+                                        if slotFound == items[0]:
                                             return True
 
                                     else: # this recipe uses operators, will be more complicated
+                                        lenOfDirections = len(directions)
+                                        lenOfItems = len(items)
+                                        lenOfOperators = len(operators)
+
+                                        for i in range(lenOfDirections):
+                                            currentDirection = directions[i]
                                         # use range() of len(directions), accessing operators is 
                                         # len(directions) - 1
                                         # check for the first item in the direction,
