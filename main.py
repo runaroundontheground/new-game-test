@@ -26,7 +26,7 @@ to do list/ideas for things:
     now all i need to do is add in a shovel, and make a crafting table, and make
     a crafting table UI that uses all of the player's crafting slots, and that removes
     the items from the crafting slots if the player closes the ui aka inventory
-    
+
 
 
     set up some kind of function to call when messing with the inventory in a way that would require
@@ -55,74 +55,7 @@ to do list/ideas for things:
     on top of the block
     based on % of break progress, put that kind of breaking progress surf there
     
-    recipes: complicated wow
-
-    make sure that if the crafting item result is taken, remove one of each of the items in the crafting
-    slots (or remove every item if there's only one item in each slot)
-
-
-    recipe detection ideas:
-        did brainstorming, have a new idea that is good
-            when there's something in the crafting grid, player.isCrafting = True
-            when player.isCrafting = True, or when it's set to true, set player.crafting["gridSize"] to
-            whatever the gridsize for the crafting table is, so 2x2 would be 2, because it's assumed the grid
-            will always be square
-
-            ways to check for up, down, left, right in the crafting grid
-            up/down is + or - the grid size, left or right is just add or subtract 1
-
-            recipes also will have a requiredGridSize, which is just equal to like 2 or 3
-            only attempt to find those recipes if the grid meets or exceeds that size
-
-            when doing near exact recipes, they have a starting block, and then steps to go from that block
-            to check for up/down, etc, and can also have an operators
-
-            example for sticks:
-            starting block, then direction, then what item to look for there
-            possible operator inputs: "or", "and", "not", "xor" (i think xor is correct there)
-            oh boy, i actually need to make a system for dynamic condition operation stuff
-            use eval() to allow operators to work
-            yikes
-            more robust system idea
-            each thing is a list, first item in each list corresponds to the first operation or something
-            ["planks", {"direction": ["up"], "item": ["planks"], "operators": ["or"]}]
-
-
-        go through the crafting slots, and then count how many of each item there is in it
-        ex: sticks recipe, req's two planks, and nothing else
-        and then after than, if it's a shapeless recipe, that's all that needs to be done
-        if it's shaped, like sticks, but can be crafted in multiple spots, then
-        define some functions to check whether the recipe has items in the right spots, so for sticks
-        it would look through the list until it finds a plank, and then looks if theres a plank above 
-        or under it
-
-        the way to begin searching for recipes:
-        if something is put into the crafting grid, count the number of items and stuff
-        using all the keys from what is in the crafting grid
-        use dict.get and check that against all recipes, if it returns false while checking a recipe then
-        just stop checking that one
-
-        nearExact recipe detection:
-            check for the correct number of items
-            look until it finds one of the items
-
-            with a 3x3 and 2x2 crafting grid, even sticks only has 8 possible combinations
-
-            for the moment, i'll just do that, don't want to deal with it yet
-            that's a problem for future me
-
-
-
-    adding recipes:
-        3 recipe types?
-        shapeless, exact, and nearExact
-        for all recipes, input a dict that has the count of whatever items need to be in the crafting grid
-        for shapeless recipes, all it needs is the count of items
-        exact recipes:
-        input a dict with items in specific slots/slot ids, and dont include empty slots
-        nearExact recipes:
-        hopefully there can't be too many of these, they probably need specific code to work
-        maybe have it so that a specific layout is inputed, and some functions will try to find that layout
+    hooray, recipes have been somewhat figured out
         
 
 

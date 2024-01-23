@@ -502,7 +502,7 @@ def render(deltaTime):
 
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
                 image = player.inventoryRenderingData["selectedSlotSurface"]
-                slot = player.crafting["slots"][mouse.hoveredSlotId]
+                slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
                 position = slot["selectedSlotRenderPosition"]
                 
                 imageData = (image, position)
@@ -531,35 +531,35 @@ def render(deltaTime):
                     imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
                     renderingData.append(imageData)
 
+        if player.otherInventoryData["showCraftingAndArmor"]:
+            for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
+                item = slot["contents"]
+                if item != "empty":
+                    image = itemIcons[item.name]
+                    position = slot["renderPosition"]
 
-        for slot in player.crafting["slots"].values():
-            item = slot["contents"]
-            if item != "empty":
-                image = itemIcons[item.name]
-                position = slot["renderPosition"]
-
-                imageData = (image, position)
-                renderingData.append(imageData)
-
-                if mouse.inPlayerInventory and mouse.inASlot:
-                    if player.inventory[mouse.hoveredSlotId]["contents"] == item:
-                        tooltip = item.tooltip
-                        if tooltip != "":
-                            position = (mouse.x + 10, mouse.y + 5)
-
-                            imageData = convertTextToImageData(tooltip, position)
-                            renderingData.append(imageData)
-
-
-                if slot["count"] > 1:
-                    imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                    imageData = (image, position)
                     renderingData.append(imageData)
+
+                    if mouse.inPlayerInventory and mouse.inASlot:
+                        if player.inventory[mouse.hoveredSlotId]["contents"] == item:
+                            tooltip = item.tooltip
+                            if tooltip != "":
+                                position = (mouse.x + 10, mouse.y + 5)
+
+                                imageData = convertTextToImageData(tooltip, position)
+                                renderingData.append(imageData)
+
+
+                    if slot["count"] > 1:
+                        imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                        renderingData.append(imageData)
 
 
         
 
-        for slot in player.armor.values():
-            pass
+            for slot in player.armor.values():
+                pass
             
         
 
@@ -674,7 +674,7 @@ def render(deltaTime):
     
     screen.blits(renderingData)
 
-    
+    screen.blit(player.inventoryRenderingData["craftingTableSurface"], (50, 50))
 
     # pretty much just debug after this
     
