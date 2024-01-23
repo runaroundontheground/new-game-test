@@ -103,10 +103,15 @@ class Player():
             craftingAndArmorHeightInPixels = (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorHeightInPixels += (gapBetweenSlots * craftingAndArmorHeightInSlots + 1)
 
+            craftingTableSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels + slotSizeInPixels))
+
+
             craftingAndArmorSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
             
             craftingAndArmorBackground = pygame.surface.Surface(craftingAndArmorSizeInPixels)
             craftingAndArmorBackground.fill(backgroundColor)
+
+            craftingTableBackground = pygame.Surface(craftingTableSizeInPixels).fill(backgroundColor)
 
             inventorySizeInPixels = (round(inventoryWidthInPixels), round(inventoryHeightInPixels))
 
@@ -138,6 +143,8 @@ class Player():
             craftingAndArmorYForBlit = (screenHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))# - (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorYForBlit /= 2
 
+            craftingTableXForBlit = craftingAndArmorXForBlit
+            craftingTableYForBlit = craftingAndArmorYForBlit - slotSizeInPixels
 
             fontShift = font.size("1")
 
@@ -175,7 +182,8 @@ class Player():
                 0: craftingSlot, 1: craftingSlot,
                 2: craftingSlot, 3: craftingSlot,
                 # 0 - 3 are player's inventory crafting,
-                # 4 - 8 are crafting table
+                # 4 - 8 are crafting table, but must also include the first 4 slots as well within it
+                # probably a bad way to di this lol
                 4: craftingSlot, 5: craftingSlot,
                 6: craftingSlot, 7: craftingSlot,
                 8: craftingSlot,
@@ -196,7 +204,7 @@ class Player():
             
 
 
-
+            # this is the output slot
             slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
             slotY = (slotSizeInPixels * 1.5)
 
@@ -217,18 +225,49 @@ class Player():
             craftingSlot["slotId"] = "resultSlot"
 
             self.crafting["slots"]["resultSlot"] = craftingSlot.copy()
+
+
+            craftingTableBackground.blit(slotSurface, (slotX, slotY))
            
 
 
             slotId = 0
 
-            # create and blit the crafting slots
-            for x in range(2):
-                for y in range(2):
+            # create and blit the crafting slots for the player's crafting grid
+            for y in range(2):
+                for x in range(2):
                     
                     
 
                     
+                    slotX = ((widthOfInventoryInSlots - 4) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
+                    slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
+
+                    renderX = slotX + craftingAndArmorXForBlit + itemIconShift
+                    renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+
+                    rectX = renderX - itemIconShift
+                    rectY = renderY - itemIconShift
+
+                    newCraftingSlot = craftingSlot.copy()
+                    
+                    
+                    craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
+                    newCraftingSlot["renderPosition"] = (renderX, renderY)
+                    newCraftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    newCraftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
+                    newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+                    newCraftingSlot["slotId"] = slotId
+
+                    self.crafting["slots"][slotId] = newCraftingSlot
+
+                    slotId += 1
+
+
+            slotId = 0
+            # create and blit slots for the crafting table grid
+            for y in range(3):
+                for x in range(3):
                     slotX = ((widthOfInventoryInSlots - 4) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
@@ -1356,9 +1395,10 @@ class Player():
                         if direction == "up":
 
                             testSlotId = startingSlotId - gridSize
-                            if testSlotId >= 0 and testSlotId < (gridSize**2 - 1):
+                            if testSlotId >= 0 and testSlotId < (gridSize**2):
 
                                 item = self.crafting["slots"][testSlotId]["contents"]
+                                
                                 if item != "empty":
                                     return item.name
                                 return "empty"
@@ -1366,12 +1406,13 @@ class Player():
                                 
                                 return "no item"
                             
-                        if direction == "down":
+                        elif direction == "down":
                             testSlotId = startingSlotId + gridSize
-                            if testSlotId >= 0 and testSlotId < (gridSize**2 -1):
-
+                            
+                            if testSlotId >= 0 and testSlotId < (gridSize**2):
+                                
                                 item = self.crafting["slots"][testSlotId]["contents"]
-
+                                
                                 if item != "empty":
                                     return item.name
                                 return "empty"
@@ -1379,11 +1420,11 @@ class Player():
                             else:
                                 return "no item"
                                 
-                        if direction == "right":
+                        elif direction == "right":
                             testSlotId = startingSlotId + 1
                             temporaryGridSize = gridSize - 1
 
-                            if testSlotId >= 0 and testSlotId < (gridSize**2 - 1):
+                            if testSlotId >= 0 and testSlotId < (gridSize**2):
 
                                 if testSlotId == gridSize:
                                     return "no item"
@@ -1403,6 +1444,9 @@ class Player():
                                 if item != "empty":
                                     return item.name
                                 return "empty"
+                            
+                        elif direction == "left":
+                            print("no code written for left yet lol")
                                 
                         
 
@@ -1436,6 +1480,7 @@ class Player():
                                         lenOfOperators = len(operators)
 
                                         slotsChecked = []
+
                                         
 
                                         for i in range(lenOfDirections):
@@ -1449,7 +1494,8 @@ class Player():
 
                                             itemName = checkADirection(currentDirection, slotId)
 
-                                            if itemName != ("empty" or "no item"):
+                                            if itemName == items[i]:
+                                                
                                                 slotDictThing["containsCorrectItem"] = True
 
 
@@ -1457,8 +1503,8 @@ class Player():
 
                                         conditions = []
 
-                                        for i in slotsChecked.values():
-                                            conditions.append(i)                                        
+                                        for i in slotsChecked:
+                                            conditions.append(i["containsCorrectItem"])                                        
 
                                         hasAnEvenNumberOfConditions = len(conditions)%2 == 0
                                         
@@ -1466,16 +1512,56 @@ class Player():
                                         length = len(conditions)
                                         if not hasAnEvenNumberOfConditions:
                                             length -= 1
+                                        i = 1
 
-                                        
+                                        betterConditionsList = []
+
+                                        while i < length:
+
+                                            conditionA = conditions[i - 1]
+                                            conditionB = conditions[i]
+
+                                            conditionList = [conditionA, conditionB]
+                                            
+                                            betterConditionsList.append(conditionList)
+
+                                            i += 2 # increment by two, grouping together conditions
+
 
 
                                         for i in range(lenOfOperators):
                                             # i should probably modify how i am doing operators to specify which
                                             # directions should use what operators (example: right "and" left)
                                             # another example: up "neither" down
+                                            # and also should probably add in the ability to specify multiple
+                                            # directions for something, ex top right is up and right
+                                            # or i could just have "top right" be a valid direction
+                                            # yeah ima just do that
+                                            # or i could have the directions be like {up: 2}, {right: 1},
+                                            # that would be up 2 slots, right 1 slot
+                                            # operators still need to be grouped with directions at some point though
 
-                                            if 
+                                            operator = operators[i]
+                                            conditionA, conditionB = betterConditionsList[i]
+                                            
+
+                                            if operator == "xor":
+                                                if (conditionA or conditionB) and (conditionA != conditionB):
+                                                    return True
+
+                                            if operator == "and":
+                                                if conditionA and conditionB:
+                                                    return True
+
+                                            if operator == "neither":
+                                                if not conditionA and not conditionB:
+                                                    return True
+
+                                            if operator == "or":
+                                                if conditionA or conditionB:
+                                                    return True
+                                                
+                                            #print("didn't fulfill any checks")
 
 
 

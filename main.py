@@ -20,13 +20,13 @@ to do list/ideas for things:
     make sure inventory management is fully functioning and doesn't break
 
     
-    make shift clicking actually work correctly for crafting
-    aka, craft all items
+    lets goooooo
+    crafting sticks works now
 
-    also new right click interaction
-    hold control and right click something, pick up one item from that stack
-
-    actually use images for items, but not block/placable items
+    now all i need to do is add in a shovel, and make a crafting table, and make
+    a crafting table UI that uses all of the player's crafting slots, and that removes
+    the items from the crafting slots if the player closes the ui aka inventory
+    
 
 
     set up some kind of function to call when messing with the inventory in a way that would require

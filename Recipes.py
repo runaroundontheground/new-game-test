@@ -63,7 +63,21 @@ def addRecipe(
 
 
 def makeRecipesExist():
-
+    # new better way to do recipes for nearExact to implement later
+    # have a lot of thigns in one list + dicts
+    # each item is a dict, dict contains: the first direction, its item, and the operator between the second direction
+    # directionItemPairs will look like this: {"up": "itemName"}
+    # an example for how to write this?
+    # recipeInstructions = {
+    #   {"slotA": {
+    #       "up": "planks",
+    #       "operator": "xor",
+    #       "down": "planks"
+    #}  }
+    #}
+    # if at any point there needs to be multiple directions to find something (it's not just adjacent)
+    # then this can be used: "up,up,right": "planks"
+    # comma separated directions as the str key thingy will be how that works
 
     addRecipe("shapeless", "logToPlanks", {"log": 1}, items["planks"], 4)
     
@@ -72,7 +86,19 @@ def makeRecipesExist():
               recipeInstructions = {
                   "startingItemName": "planks",
                   "directions": ["up", "down"],
-                  "operators": "xor",
+                  "operators": ["xor"],
                   "items": ["planks", "planks"]
-                                    }
+              }
               )
+"""
+    addRecipe("exact", "stone pickaxe", {"stick": 2, "cobblestone": 3}, items["stone pickaxe"], 
+              recipeShape = {
+                  0: "cobblestone",
+                  1: "cobblestone",
+                  2: "cobblestone",
+                  4: "stick",
+                  7: "stick"
+              }, requiredGridSize = 3
+
+)
+"""
