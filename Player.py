@@ -1356,7 +1356,7 @@ class Player():
                         if direction == "up":
 
                             testSlotId = startingSlotId - gridSize
-                            if testSlotId >= 0 and testSlotId < (gridSize**gridSize - 1):
+                            if testSlotId >= 0 and testSlotId < (gridSize**2 - 1):
 
                                 item = self.crafting["slots"][testSlotId]["contents"]
                                 if item != "empty":
@@ -1368,7 +1368,7 @@ class Player():
                             
                         if direction == "down":
                             testSlotId = startingSlotId + gridSize
-                            if testSlotId >= 0 and testSlotId < (gridSize**gridSize -1):
+                            if testSlotId >= 0 and testSlotId < (gridSize**2 -1):
 
                                 item = self.crafting["slots"][testSlotId]["contents"]
 
@@ -1383,7 +1383,7 @@ class Player():
                             testSlotId = startingSlotId + 1
                             temporaryGridSize = gridSize - 1
 
-                            if testSlotId >= 0 and testSlotId < (gridSize ** gridSize - 1):
+                            if testSlotId >= 0 and testSlotId < (gridSize**2 - 1):
 
                                 if testSlotId == gridSize:
                                     return "no item"
@@ -1400,6 +1400,9 @@ class Player():
                                         return "no item"
 
                                 item = self.crafting["slots"][testSlotId]["contents"]
+                                if item != "empty":
+                                    return item.name
+                                return "empty"
                                 
                         
 
@@ -1432,11 +1435,48 @@ class Player():
                                         lenOfItems = len(items)
                                         lenOfOperators = len(operators)
 
+                                        slotsChecked = []
+                                        
+
                                         for i in range(lenOfDirections):
                                             currentDirection = directions[i]
-                                        # use range() of len(directions), accessing operators is 
-                                        # len(directions) - 1
-                                        # check for the first item in the direction,
+                                            currentItem = items[i]
+                                            
+                                            slotDictThing = {
+                                                "direction": currentDirection,
+                                                "containsCorrectItem": False
+                                            }
+
+                                            itemName = checkADirection(currentDirection, slotId)
+
+                                            if itemName != ("empty" or "no item"):
+                                                slotDictThing["containsCorrectItem"] = True
+
+
+                                            slotsChecked.append(slotDictThing)
+
+                                        conditions = []
+
+                                        for i in slotsChecked.values():
+                                            conditions.append(i)                                        
+
+                                        hasAnEvenNumberOfConditions = len(conditions)%2 == 0
+                                        
+
+                                        length = len(conditions)
+                                        if not hasAnEvenNumberOfConditions:
+                                            length -= 1
+
+                                        
+
+
+                                        for i in range(lenOfOperators):
+                                            # i should probably modify how i am doing operators to specify which
+                                            # directions should use what operators (example: right "and" left)
+                                            # another example: up "neither" down
+
+                                            if 
+
 
 
 
