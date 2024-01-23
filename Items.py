@@ -39,7 +39,7 @@ class PlaceableItem(Item):
         self.placedBlock = {
             "type": self.name,
             "render": False,
-            "alphaValue": 0,
+            "alphaValue": 255,
             "hardness": 0,
             "effectiveTool": "none"
         }
@@ -66,7 +66,7 @@ class PlaceableItem(Item):
                 blockCoord = mouse.hoveredBlock["blockCoord"]
                 
 
-                chunks[chunkCoord]["data"][blockCoord] = self.placedBlock
+                chunks[chunkCoord]["data"][blockCoord] = self.placedBlock.copy()
 
                 smallScaleBlockUpdates(chunkCoord, blockCoord)
 

@@ -254,8 +254,8 @@ class Player():
 
 
             # create output slot for the 3x3 grid
-            slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
-            slotY = (slotSizeInPixels * 2)
+            slotX = ((widthOfInventoryInSlots - 2) * slotSizeInPixels) + slotSizeInPixels * 1.7
+            slotY = (slotSizeInPixels * 2.1)
 
             renderX = slotX + craftingAndArmorXForBlit + itemIconShift
             renderY = slotY + craftingAndArmorYForBlit + itemIconShift
@@ -317,7 +317,7 @@ class Player():
             # create and blit slots for the crafting table grid
             for y in range(3):
                 for x in range(3):
-                    slotX = ((widthOfInventoryInSlots - 4) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
+                    slotX = ((widthOfInventoryInSlots - 6) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
                     renderX = slotX + craftingAndArmorXForBlit + itemIconShift
@@ -363,10 +363,10 @@ class Player():
 
 
             # put an arrow that goes towards the result slot for crafting in the 3x3 grid
-            a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels
-            b = (slotSizeInPixels*0.75) + slotSizeInPixels * 1.1 + slotSizeInPixels / 2
+            a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels - slotSizeInPixels * 0.8
+            b = (slotSizeInPixels*0.75) + slotSizeInPixels * 1.1 + slotSizeInPixels / 1.8
 
-            c = (a, b2)
+            c = (a, b)
             d = (a + (slotSizeInPixels/3), b + (slotSizeInPixels/3)/2)
             e = (a, b + slotSizeInPixels/3)
 
@@ -1858,12 +1858,12 @@ class Player():
                     air = {
                         "type": "air",
                         "render": False,
-                        "alphaValue": 0,
+                        "alphaValue": 255,
                         "hardness": "infinity",
                         "effectiveTool": "none"
                     }
 
-                    chunks[chunkCoord]["data"][blockCoord] = air
+                    chunks[chunkCoord]["data"][blockCoord] = air.copy()
 
                     smallScaleBlockUpdates(chunkCoord, blockCoord)
 
