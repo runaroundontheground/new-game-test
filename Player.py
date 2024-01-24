@@ -1872,7 +1872,8 @@ class Player():
 
             
 
-
+    def editOwnProperties(property, value, key = ""):
+        pass
             
 
 player = Player()

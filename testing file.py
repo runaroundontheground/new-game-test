@@ -6,12 +6,14 @@ in normal python or something
 
 
 
-test = True
-test2 = True
+class Test():
+    def __init__(self):
+        self.property1 = {
+            "a": "nah",
+            "b": "cheese"
+        }
 
-test3 = test2 == test
-
-print(test3)
+test = Test()
 
 
 
