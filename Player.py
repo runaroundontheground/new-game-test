@@ -511,7 +511,8 @@ class Player():
             "currentHotbarSlot": 0, # id/index of the slot in the hotbar
             "open": False,
             "slotId": 0,
-            "showCraftingAndArmor": True # will be set to false if player is looking in a chest or something
+            "showCraftingAndArmor": True, # will be set to false if player is looking in a chest or something
+            "showCraftingTable": False
             }
 
         createALotOfInventoryThings()
@@ -1871,9 +1872,14 @@ class Player():
                 
 
             
-
-    def editOwnProperties(property, value, key = ""):
-        pass
+    # this lets me edit the player's dicts using my eval() command line thingy
+    # couldn't do it before
+    def editOwnDicts(self, property, dictKeys, value):
+        if len(dictKeys) != 0:
+            for key in dictKeys:
+                propertyOfSelf = getattr(self, property)
+                propertyOfSelf[key] = value
+        
             
 
 player = Player()

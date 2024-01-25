@@ -478,12 +478,14 @@ def render(deltaTime):
         
     # run inventory rendering
     if player.otherInventoryData["open"]:
+        # render the base part of the inventory
         image = player.inventoryRenderingData["inventorySurface"]
         position = player.inventoryRenderingData["inventoryRenderPosition"]
         imageData = (image, position)
 
         renderingData.append(imageData)
 
+        # render the 2x2 crafting grid and armor slots (if they're visible)
         if player.otherInventoryData["showCraftingAndArmor"]:
             image = player.inventoryRenderingData["craftingAndArmorSurface"]
             position = player.inventoryRenderingData["craftingAndArmorRenderPosition"]
@@ -491,7 +493,7 @@ def render(deltaTime):
 
             renderingData.append(imageData)
 
-
+        # draw a rect thingy over the hovered slot, highlights it
         if mouse.inPlayerInventory and mouse.inASlot:
                 image = player.inventoryRenderingData["selectedSlotSurface"]
                 slot = player.inventory[mouse.hoveredSlotId]
@@ -500,6 +502,11 @@ def render(deltaTime):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
+        # highlight selected slots in crafting table
+        if mouse.inASlot and mouse.inCraftingTable and player.otherInventoryData["showCraftingTable"]:
+            pass
+
+        # also highlight hovered slots, but only in the crafting and armor slots, if they're visible
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
                 image = player.inventoryRenderingData["selectedSlotSurface"]
                 slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
@@ -508,6 +515,7 @@ def render(deltaTime):
                 imageData = (image, position)
                 renderingData.append(imageData)
 
+        # render all the items of the base player inventory
         for slot in player.inventory:
             item = slot["contents"]
             if item != "empty":
@@ -531,6 +539,7 @@ def render(deltaTime):
                     imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
                     renderingData.append(imageData)
 
+        # render items in 2x2 crafting and armor, only if they're visible
         if player.otherInventoryData["showCraftingAndArmor"]:
             for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
                 item = slot["contents"]
@@ -559,6 +568,7 @@ def render(deltaTime):
         
 
             for slot in player.armor.values():
+                #whoops, no armor exists, neither do the slots
                 pass
             
         
@@ -611,7 +621,7 @@ def render(deltaTime):
 
     
     # run mouse's held item rendering
-    # also figure out selecting a block in the world, highlighting it, ect
+    # also highlights and tells what block you're hovering over
     if not player.otherInventoryData["open"]:
         x = math.floor(mouse.cameraRelativeX / blockSize)
         z = math.floor(mouse.cameraRelativeZ / blockSize)
