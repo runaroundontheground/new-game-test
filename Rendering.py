@@ -122,7 +122,9 @@ def loadImage(path, name):
 images = {
     "stick": loadImage("stick.png", "stick"),
     "stone pickaxe": loadImage("tools/stone pickaxe.png", "stone pickaxe"),
-    "stone axe": loadImage("tools/stone axe.png", "stone axe")
+    "stone axe": loadImage("tools/stone axe.png", "stone axe"),
+    "wood pickaxe": loadImage("tools/wood pickaxe.png", "wood pickaxe"),
+    "wood axe": loadImage("tools/wood axe.png", "wood axe")
 }
 
 

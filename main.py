@@ -156,13 +156,6 @@ def gameLoop():
     player.positionInSpawnArea()
     makeItemsExist()
     makeRecipesExist()
-
-    # hooray for adding a function to do this!
-    player.giveItem(items["log"], 3)
-    player.giveItem(items["grass"], 64)
-    player.giveItem(items["stone pickaxe"])
-    player.giveItem(items["stone axe"])
-    player.giveItem(items["stone"], 8)
     
     
     while running:
