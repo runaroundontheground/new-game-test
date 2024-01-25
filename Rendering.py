@@ -493,27 +493,40 @@ def render(deltaTime):
 
             renderingData.append(imageData)
 
+        # render the 3x3 crafting ui if its visible
+        if player.otherInventoryData["showCraftingTable"]:
+            image = player.inventoryRenderingData["craftingTableSurface"]
+            position = player.inventoryRenderingData["craftingTableRenderPosition"]
+            
+            imageData = (image, position)
+            renderingData.append(imageData)
+
         # draw a rect thingy over the hovered slot, highlights it
         if mouse.inPlayerInventory and mouse.inASlot:
-                image = player.inventoryRenderingData["selectedSlotSurface"]
-                slot = player.inventory[mouse.hoveredSlotId]
-                position = slot["selectedSlotRenderPosition"]
-                
-                imageData = (image, position)
-                renderingData.append(imageData)
+            image = player.inventoryRenderingData["selectedSlotSurface"]
+            slot = player.inventory[mouse.hoveredSlotId]
+            position = slot["selectedSlotRenderPosition"]
+            
+            imageData = (image, position)
+            renderingData.append(imageData)
 
         # highlight selected slots in crafting table
-        if mouse.inASlot and mouse.inCraftingTable and player.otherInventoryData["showCraftingTable"]:
-            pass
+        if mouse.inASlot and mouse.inPlayerCraftingTable and player.otherInventoryData["showCraftingTable"]:
+            image = player.inventoryRenderingData["selectedSlotSurface"]
+            slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
+            position = slot["selectedSlotRenderPosition"]
+
+            imageData = (image, position)
+            renderingData.append(imageData)
 
         # also highlight hovered slots, but only in the crafting and armor slots, if they're visible
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
-                image = player.inventoryRenderingData["selectedSlotSurface"]
-                slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
-                position = slot["selectedSlotRenderPosition"]
-                
-                imageData = (image, position)
-                renderingData.append(imageData)
+            image = player.inventoryRenderingData["selectedSlotSurface"]
+            slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
+            position = slot["selectedSlotRenderPosition"]
+            
+            imageData = (image, position)
+            renderingData.append(imageData)
 
         # render all the items of the base player inventory
         for slot in player.inventory:
@@ -571,7 +584,30 @@ def render(deltaTime):
                 #whoops, no armor exists, neither do the slots
                 pass
             
-        
+        # render stuff in the 3x3 crafting grid if its visible
+        if player.otherInventoryData["showCraftingTable"]:
+            for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
+                item = slot["contents"]
+                if item != "empty":
+                    image = itemIcons[item.name]
+                    position = slot["renderPosition"]
+
+                    imageData = (image, position)
+                    renderingData.append(imageData)
+
+                    if mouse.inPlayerInventory and mouse.inASlot:
+                        if player.inventory[mouse.hoveredSlotId]["contents"] == item:
+                            tooltip = item.tooltip
+                            if tooltip != "":
+                                position = (mouse.x + 10, mouse.y + 5)
+
+                                imageData = convertTextToImageData(tooltip, position)
+                                renderingData.append(imageData)
+
+
+                    if slot["count"] > 1:
+                        imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
+                        renderingData.append(imageData)
 
         
 
@@ -683,8 +719,6 @@ def render(deltaTime):
 
     
     screen.blits(renderingData)
-
-    screen.blit(player.inventoryRenderingData["craftingTableSurface"], (50, 50))
 
     # pretty much just debug after this
     

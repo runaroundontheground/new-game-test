@@ -145,7 +145,7 @@ class Player():
             craftingAndArmorYForBlit /= 2
 
             craftingTableXForBlit = craftingAndArmorXForBlit
-            craftingTableYForBlit = craftingAndArmorYForBlit - slotSizeInPixels
+            craftingTableYForBlit = craftingAndArmorYForBlit - slotSizeInPixels * 0
 
             fontShift = font.size("1")
 
@@ -257,8 +257,8 @@ class Player():
             slotX = ((widthOfInventoryInSlots - 2) * slotSizeInPixels) + slotSizeInPixels * 1.7
             slotY = (slotSizeInPixels * 2.1)
 
-            renderX = slotX + craftingAndArmorXForBlit + itemIconShift
-            renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+            renderX = slotX + craftingTableXForBlit + itemIconShift
+            renderY = slotY + craftingTableYForBlit + itemIconShift
 
             rectX = renderX - itemIconShift
             rectY = renderY - itemIconShift
@@ -267,11 +267,11 @@ class Player():
             
             craftingTableBackground.blit(slotSurface, (slotX, slotY))
 
-            craftingSlot["renderPosition"] = (renderX, renderY)
-            craftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            craftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
-            craftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
-            craftingSlot["slotId"] = "resultSlot"
+            resultSlot["renderPosition"] = (renderX, renderY)
+            resultSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            resultSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
+            resultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+            resultSlot["slotId"] = "resultSlot"
 
             self.crafting[3]["slots"]["resultSlot"] = resultSlot.copy()
 
@@ -320,15 +320,15 @@ class Player():
                     slotX = ((widthOfInventoryInSlots - 6) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
-                    renderX = slotX + craftingAndArmorXForBlit + itemIconShift
-                    renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+                    renderX = slotX + craftingTableXForBlit + itemIconShift
+                    renderY = slotY + craftingTableYForBlit + itemIconShift
 
                     rectX = renderX - itemIconShift
                     rectY = renderY - itemIconShift
 
                     
                     
-                    newCraftingSlot = craftingSlot.copy()
+                    newCraftingSlot = craftingSlot
                     
                     
                     craftingTableBackground.blit(slotSurface, (slotX, slotY))
@@ -338,7 +338,7 @@ class Player():
                     newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
                     newCraftingSlot["slotId"] = slotId
 
-                    self.crafting[3]["slots"][slotId] = newCraftingSlot
+                    self.crafting[3]["slots"][slotId] = newCraftingSlot.copy()
 
                     slotId += 1
 
@@ -503,15 +503,16 @@ class Player():
             }
 
             self.otherInventoryData = {
+            # rects are here
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
             "craftingAndArmorRect": craftingAndArmorRect,
             "craftingTableRect": craftingTableRect,
-
+            # thigns that aren't rects are here
             "currentHotbarSlot": 0, # id/index of the slot in the hotbar
             "open": False,
             "slotId": 0,
-            "showCraftingAndArmor": True, # will be set to false if player is looking in a chest or something
+            "showCraftingAndArmor": True,
             "showCraftingTable": False
             }
 
@@ -985,6 +986,8 @@ class Player():
         def mouseInteractionWithInventory():
             mouse.inPlayerInventory = False
             mouse.inPlayerHotbar = False
+            mouse.inPlayerCraftingAndArmor = False
+            mouse.inPlayerCraftingTable = False
             mouse.inASlot = False
 
             def inventoryContentInteraction(container):
@@ -1023,22 +1026,23 @@ class Player():
                                                         
 
                                                         if slot == self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
-
+                                                            movingCount = slot["count"]
                                                             movingCount *= self.crafting["possibleCrafts"]
 
-                                                            if movingCount <= maxStackSize:
+                                                            if movingCount + otherSlot["count"] <= maxStackSize:
 
                                                                 for key, craftingSlot in self.crafting[self.crafting["gridSize"]]["slots"].items():
                                                                     if key != "resultSlot":
-                                                                        # subtract one item from the slot, since it's consumed
+                                                                        # subtract the amount of items crafted
                                                                         craftingSlot["count"] -= self.crafting["possibleCrafts"]
+                                                                        
 
                                                                         if craftingSlot["count"] <= 0:
 
                                                                             craftingSlot["count"] = 0
                                                                             craftingSlot["contents"] = "empty"
                                                             
-                                                                otherSlot["count"] = movingCount
+                                                                otherSlot["count"] += movingCount
 
                                                         else:
                                                             otherSlot["count"] = movingCount
@@ -1222,6 +1226,7 @@ class Player():
 
                                                         # do special things if its the crafting result
                                                         if slot == self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                            #self.crafting["possibleCrafts"] -= 1
                                                             for key, craftingSlot in self.crafting[self.crafting["gridSize"]]["slots"].items():
                                                                 if key != "resultSlot":
                                                                     # subtract one item from the slot, since it's consumed
@@ -1298,6 +1303,7 @@ class Player():
                 mouse.inPlayerCraftingAndArmor = self.otherInventoryData["craftingAndArmorRect"].collidepoint(mouse.x, mouse.y)
                 mouse.inPlayerInventory = self.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
                 mouse.inPlayerHotbar = self.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
+                mouse.inPlayerCraftingTable = self.otherInventoryData["craftingTableRect"].collidepoint(mouse.x, mouse.y)
 
                 if mouse.inPlayerInventory:
                     inventoryContentInteraction("inventory")
@@ -1409,7 +1415,6 @@ class Player():
             self.isCrafting = False
             self.crafting["possibleCrafts"] = 0
 
-            totalOfEachItem = {}
 
             
             for key, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
@@ -1871,14 +1876,7 @@ class Player():
                 
                 
 
-            
-    # this lets me edit the player's dicts using my eval() command line thingy
-    # couldn't do it before
-    def editOwnDicts(self, property, dictKeys, value):
-        if len(dictKeys) != 0:
-            for key in dictKeys:
-                propertyOfSelf = getattr(self, property)
-                propertyOfSelf[key] = value
+
         
             
 

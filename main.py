@@ -13,11 +13,24 @@ pygame.init()
 clock = pygame.time.Clock()
 
 
+def edit(targetClass, property, value, key = ""):
+    # should allow me to modify stuff in classes, should also work with dicts
+    # this is here to make the command line better for debugging and testing stuff
+    if key != "":
+        propertyOfClass = getattr(targetClass, property)
+        propertyOfClass[key] = value
+    else:
+        setattr(targetClass, property, value)
+
 
 """
 to do list/ideas for things:
 
     make sure inventory management is fully functioning and doesn't break
+
+
+    need to add some wood tools, in order to get the stone tools
+    pickaxe, axe, shovel, no weapons exist yet
 
     
     lets goooooo
@@ -156,6 +169,16 @@ def gameLoop():
         currentTime = time.time()
 
         updateMouseAndKeys()
+
+        if keysPressed[pygame.K_y]:
+            player.otherInventoryData["showCraftingAndArmor"] = False
+            player.otherInventoryData["showCraftingTable"] = True
+            player.crafting["gridSize"] = 3
+
+        if keysPressed[pygame.K_u]:
+            player.otherInventoryData["showCraftingAndArmor"] = True
+            player.otherInventoryData["showCraftingTable"] = False
+            player.crafting["gridSize"] = 2
             
 
         for event in pygame.event.get():
