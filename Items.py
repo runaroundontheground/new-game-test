@@ -141,19 +141,19 @@ def makeItemsExist():
     
     addItem("stone shovel", "tool",
             {"attack": 2, "knockback": 1, "breakingPower": 1,
-            "breakingSpeed": 20, "breakingType": "shovel"})
+            "breakingSpeed": 25, "breakingType": "shovel"})
 
 
     addItem("wood pickaxe", "tool",
-            {"attack": 3, "knockback": 1, "breakingPower": 2,
+            {"attack": 2, "knockback": 1, "breakingPower": 2,
             "breakingSpeed": 10, "breakingType": "pickaxe"})
     
     addItem("wood axe", "tool",
-            {"attack": 7, "knockback": 1, "breakingPower": 2,
+            {"attack": 6, "knockback": 1, "breakingPower": 2,
             "breakingSpeed": 10, "breakingType": "axe"})
     
     addItem("wood shovel", "tool",
-            {"attack": 2, "knockback": 1, "breakingPower": 1,
+            {"attack": 1, "knockback": 1, "breakingPower": 1,
             "breakingSpeed": 15, "breakingType": "shovel"})
 
 

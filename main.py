@@ -162,16 +162,6 @@ def gameLoop():
         currentTime = time.time()
 
         updateMouseAndKeys()
-
-        if keysPressed[pygame.K_y]:
-            player.otherInventoryData["showCraftingAndArmor"] = False
-            player.otherInventoryData["showCraftingTable"] = True
-            player.crafting["gridSize"] = 3
-
-        if keysPressed[pygame.K_u]:
-            player.otherInventoryData["showCraftingAndArmor"] = True
-            player.otherInventoryData["showCraftingTable"] = False
-            player.crafting["gridSize"] = 2
             
 
         for event in pygame.event.get():

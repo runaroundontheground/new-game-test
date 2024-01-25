@@ -980,6 +980,8 @@ class Player():
                         item.RMBPressedAction(self)
                     elif mouse.buttons["right"]:
                         item.RMBAction(self)
+                else:
+                    self.doStuffOnRightClick
         hotbarHeldItemStuff()
 
 
@@ -1775,6 +1777,14 @@ class Player():
 
 
 
+    def doStuffOnRightClick(self, heldItem = "empty"):
+        hoveredBlockType = mouse.hoveredBlock["block"]["type"]
+        
+        if hoveredBlockType == "crafting table":
+            self.otherInventoryData["showCraftingAndArmor"] = False
+            self.otherInventoryData["showCraftingTable"] = True
+            self.crafting["gridSize"] = 3
+
 
     def doStuffOnLeftClick(self, currentlyHeldItem = "empty"):
         item = currentlyHeldItem
@@ -1784,7 +1794,7 @@ class Player():
         breakingType = "none"
         attack = 1
         knockback = 1
-        slowestBreakSpeed = 1
+        slowestBreakSpeed = 20/FPS
 
         if item != "empty":
             if item.itemType == "ToolItem":
@@ -1821,6 +1831,7 @@ class Player():
                 if powerfulEnoughTool and correctTool:
                     self.blockBreakProgress += breakingSpeed / FPS
                 else:
+
                     self.blockBreakProgress += slowestBreakSpeed / FPS
 
 
@@ -1828,9 +1839,10 @@ class Player():
 
 
 
+                # breaking stuff is based on seconds of time,
+                # in tools, the breaking speed is a percentage of a second per frame
 
-
-                if self.blockBreakProgress >= block["hardness"]:
+                if self.blockBreakProgress >= FPS:
                     self.blockBreakProgress = 0
 
                     if correctTool or block["dropsWithNoTool"]:
@@ -1876,7 +1888,87 @@ class Player():
                 
                 
 
+    def changeCraftingGrid(self, gridSize):
+        
 
+        # attempt to place items back into inventory
+        
+        done = False
+
+        def checkStackables(slot, done):
+            if slot["contents"] != "empty":
+                if slot["contents"].stackable:
+                    for otherSlot in self.inventory.values():
+                        if otherSlot["contents"] != "empty":
+                            if otherSlot["contents"].stackable:
+                                newOtherSlotCount = slot["count"] + otherSlot["count"]
+                                if newOtherSlotCount <= maxStackSize:
+                                    otherSlot["count"] = newOtherSlotCount
+                                    slot["count"] = 0
+                                    slot["contents"] = 0
+                                    return True
+                                
+                                else:
+                                    slot["count"] -= newOtherSlotCount - maxStackSize
+                                    otherSlot["count"] = maxStackSize
+            return done
+        
+        def checkEmptySlots(slot, done):
+            if slot["contents"] != "empty":
+                for otherSlot in self.inventory.values():
+                    if otherSlot["contents"] == "empty":
+                        otherSlot["contents"] = slot["contents"]
+                        otherSlot["count"] = slot["count"]
+                        slot["contents"] = "empty"
+                        slot["count"] = 0
+                        return True
+
+
+
+
+            return done
+
+        for slotId, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+            if slotId != "resultSlot":
+                done = checkStackables(slot, done)
+                done = checkEmptySlots(slot, done)
+
+            else:
+                slot["contents"] = "empty"
+                slot["count"] = 0
+
+
+                    
+
+        if not done:
+
+            # center of player
+            x = self.x + self.width/2
+            y = self.y - self.height/2
+            z = self.z + self.width/2
+
+            # figure out velocity for angle of player to mouse
+
+            xDiff = mouse.cameraRelativeX - x
+            yDiff = mouse.cameraRelativeZ - z
+
+            angle = math.atan2(yDiff, xDiff)                        
+
+            xv = math.cos(angle) * 3
+            yv = 2
+            zv = math.sin(angle) * 3
+
+            item.drop(x, y, z, xv, yv, zv)
+
+
+        if gridSize == 2:
+            self.otherInventoryData["showCraftingAndArmor"] = True
+            self.otherInventoryData["showCraftingTable"] = False
+            self.crafting["gridSize"] = gridSize
+        elif gridSize == 3:
+            self.otherInventoryData["showCraftingAndArmor"] = False
+            self.otherInventoryData["showCraftingTable"] = True
+            self.crafting["gridSize"] = gridSize
         
             
 

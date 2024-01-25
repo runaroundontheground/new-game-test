@@ -37,14 +37,15 @@ dictOfBlockBreakingStuff = {
     "sand": {"hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": True},
     
     # stone/pickaxe effective type blocks
-    "stone": {"hardness": 3, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
-    "snowy stone": {"hardness": 3, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
-    "cobblestone": {"hardness": 3, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
+    "stone": {"hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
+    "snowy stone": {"hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
+    "cobblestone": {"hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": False},
     
     # wood/axe effective type blocks
     "log": {"hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": True},
     "planks": {"hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": True},
     "leaves": {"hardness": 0, "effectiveTool": "axe", "dropsWithNoTool": False},
+    "crafting table": {"hardness": 1, "effectiveTool": "axe", "dropsWithNoTool": True},
 
     # any new tools types to add here? this is where they go
 
