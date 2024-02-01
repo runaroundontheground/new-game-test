@@ -4,7 +4,12 @@
 	"name": "Python 3",
 	"image": "mcr.microsoft.com/devcontainers/python:3.10",
 	"features": {
-		"ghcr.io/devcontainers/features/desktop-lite:1": {}
+		"ghcr.io/devcontainers/features/desktop-lite:1": {},
+		"desktop-lite": {
+			"password": "test",
+			"webPort": "6080",
+			"vncPort": "5901"
+		}
 	}
     /*"features": {
         "desktop-lite": {
