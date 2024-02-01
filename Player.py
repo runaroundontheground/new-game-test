@@ -1928,12 +1928,15 @@ class Player():
 
             return done
 
+
+
         for slotId, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
             if slotId != "resultSlot":
                 done = checkStackables(slot, done)
                 done = checkEmptySlots(slot, done)
 
             else:
+                # figure out dropping these into inventory or ground
                 slot["contents"] = "empty"
                 slot["count"] = 0
 
@@ -1958,7 +1961,9 @@ class Player():
             yv = 2
             zv = math.sin(angle) * 3
 
-            item.drop(x, y, z, xv, yv, zv)
+            for slotId, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+
+                item.drop(x, y, z, xv, yv, zv)
 
 
         if gridSize == 2:
