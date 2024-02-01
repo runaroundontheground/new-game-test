@@ -157,6 +157,8 @@ def gameLoop():
     makeItemsExist()
     makeRecipesExist()
     
+
+    
     
     while running:
         currentTime = time.time()
