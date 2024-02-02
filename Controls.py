@@ -48,14 +48,8 @@ mouse = Mouse()
 
 
 def updateMouseAndKeys():
-    
-    tempKeys = pygame.key.get_pressed()
         
-    for keyID, thing in enumerate(tempKeys):
-        keysPressed[keyID] = False
-        if not keys[0][keyID] and tempKeys[keyID]:
-            keysPressed[keyID] = True
-    keys[0] = tempKeys
+    keysPressed = pygame.key.get_just_pressed()
 
     mouse.pos = pygame.mouse.get_pos()
     mouse.x, mouse.y = mouse.pos[0], mouse.pos[1]

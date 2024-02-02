@@ -20,7 +20,8 @@ chunks = {}
 keys = []
 keys.append(pygame.key.get_pressed())
 keysPressed = []
-for index, num in enumerate(keys[0]):
+print(len(keys[0]))
+for index in range(len(keys[0])):
     keysPressed.append(False)
 
 deltaTime = 1

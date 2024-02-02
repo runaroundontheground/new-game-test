@@ -147,7 +147,7 @@ day/night cycle and lighting
 running = True
 
 def gameLoop():
-    global deltaTime
+    global deltaTime, running
     typingCommands = False
     commandString = ""
     # hopefully i did deltatime correctly
@@ -158,13 +158,14 @@ def gameLoop():
     makeRecipesExist()
     
 
-    
+
     
     while running:
+        
         currentTime = time.time()
 
         updateMouseAndKeys()
-            
+        
 
         for event in pygame.event.get():
             if event.type == exit:
