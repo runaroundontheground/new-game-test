@@ -1,4 +1,6 @@
-import pygame, math
+blockSize = 30;
+
+/*import pygame, math
 pygame.display.init()
 pygame.font.init()
 
@@ -17,12 +19,8 @@ itemEntitySize = blockSize/2
 
 chunks = {}
 
-keys = []
-keys.append(pygame.key.get_pressed())
-keysPressed = []
-print(len(keys[0]))
-for index in range(len(keys[0])):
-    keysPressed.append(False)
+keys = {}
+keysPressed = {}
 
 deltaTime = 1
 
