@@ -1,34 +1,34 @@
 from Worldgen import getBlockCoord, getChunkCoord, generateChunkTerrain
 from GlobalVariables import chunks, keys, keysPressed
-import pygame
 
 
-class Mouse():
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.pos = (0, 0)
-        self.cameraRelativeX = 0
-        self.cameraRelativeZ = 0
-        self.cameraRelativePos = (0, 0)
+
+class Mouse {
+    constructor():
+        this.x = 0
+        this.y = 0
+        this.pos = (0, 0)
+        this.cameraRelativeX = 0
+        this.cameraRelativeZ = 0
+        this.cameraRelativePos = (0, 0)
         # block height for mining / placing
-        self.selectedY = 0
-        self.selectedYChange = 0
+        this.selectedY = 0
+        this.selectedYChange = 0
         # detection for blocks and stuff
-        self.hoveredBlock = {}
-        self.hoveredSlotId = 0
+        this.hoveredBlock = {}
+        this.hoveredSlotId = 0
         
 
-        self.inPlayerInventory = False
-        self.inPlayerHotbar = False
-        self.inASlot = False
+        this.inPlayerInventory = False
+        this.inPlayerHotbar = False
+        this.inASlot = False
         # needs to have these two in order to tranfer item data properly
-        self.heldItem = {
+        this.heldItem = {
             "contents": "empty",
             "count": 0
         }
 
-        self.buttons = {
+        this.buttons = {
             "left": False,
             "middle": False,
             "right": False,
@@ -43,6 +43,7 @@ class Mouse():
                 "right": False
             }
         }
+}
 
 mouse = Mouse()
 
