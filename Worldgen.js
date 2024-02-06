@@ -1,4 +1,4 @@
-from GlobalVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
+/*from GlobalVariables import chunkSize, chunks, blockSize, totalChunkSize, camera
 from GlobalVariables import screenHeightInChunks, screenWidthInChunks, listOfBlockNames, dictOfBlockBreakingStuff
 from perlin_noise import PerlinNoise
 import random
@@ -290,8 +290,11 @@ def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
                 chunks[chunkCoord]["data"][(x, y, z)] = block
                                 
                     
-    chunks[chunkCoord]["blocksUpdated"] = True    
+    chunks[chunkCoord]["blocksUpdated"] = True
+*/ 
+// here is our break for next thing
 
+/*
 def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
    
     x = blockCoord[0]
@@ -525,3 +528,324 @@ def getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord):
 
 
 print("worldgen initialized")
+*/
+
+
+
+// part one of the thing
+
+// Import statements are not applicable in this context
+
+const chunkSize = [16, 16, 16]; // Assuming chunkSize is a 3-element array
+const chunks = {};
+const blockSize = 1; // Assuming blockSize is a single value
+const totalChunkSize = 16; // Assuming totalChunkSize is a single value
+const camera = {}; // Assuming camera is an object
+const screenHeightInChunks = 16; // Assuming screenHeightInChunks is a single value
+const screenWidthInChunks = 16; // Assuming screenWidthInChunks is a single value
+const listOfBlockNames = []; // Assuming listOfBlockNames is an array
+const dictOfBlockBreakingStuff = {}; // Assuming dictOfBlockBreakingStuff is an object
+
+class PerlinNoise {
+  constructor(octaves) {
+    // Implementation of PerlinNoise class (not provided)
+  }
+}
+
+const noise = new PerlinNoise(0.5);
+
+const structures = {
+  "tree 1": {}
+};
+
+function makeTree1() {
+  for (let x = 0; x < 5; x++) {
+    for (let z = 0; z < 5; z++) {
+      structures["tree 1"][`${x},${3},${z}`] = { type: "leaves" };
+      if (x !== 0 && x !== 4 && z !== 0 && z !== 4) {
+        structures["tree 1"][`${x},${4},${z}`] = { type: "leaves" };
+      }
+    }
+
+    structures["tree 1"][`${2},${3},${2}`] = { type: "log" };
+    structures["tree 1"][`${2},${0},${2}`] = { type: "log" };
+    structures["tree 1"][`${2},${1},${2}`] = { type: "log" };
+    structures["tree 1"][`${2},${2},${2}`] = { type: "log" };
+  }
+}
+
+makeTree1();
+
+const copiedStructures = { ...structures };
+
+function fixStructureData() {
+  for (const [structureName, structureData] of Object.entries(copiedStructures)) {
+    for (const [, block] of Object.entries(copiedStructures[structureName])) {
+      block.render = false;
+      block.alphaValue = 255;
+      block.hardness = dictOfBlockBreakingStuff[block.type].hardness;
+      block.effectiveTool = dictOfBlockBreakingStuff[block.type].effectiveTool;
+      block.dropsWithNoTool = dictOfBlockBreakingStuff[block.type].dropsWithNoTool;
+    }
+  }
+}
+
+fixStructureData();
+
+const waterHeight = 4;
+
+function generateChunkTerrain(chunkCoords = [0, 0]) {
+  const chunkData = {};
+
+  function initialTerrainGeneration() {
+    for (let x = 0; x < chunkSize[0]; x++) {
+      for (let y = 0; y < chunkSize[1]; y++) {
+        for (let z = 0; z < chunkSize[0]; z++) {
+          const blockData = {
+            type: "air",
+            render: false,
+            alphaValue: 255,
+            hardness: 0,
+            effectiveTool: "none",
+            dropsWithNoTool: false
+          };
+
+          const noiseCoordinate = [x, z];
+          const noiseIntensity = 25;
+
+          noiseCoordinate[0] += chunkSize[0] * chunkCoords[0];
+          noiseCoordinate[1] += chunkSize[0] * chunkCoords[1];
+
+          noiseCoordinate[0] /= noiseIntensity;
+          noiseCoordinate[1] /= noiseIntensity;
+
+          let surfaceYLevel = noise(noiseCoordinate);
+          surfaceYLevel = Math.round(Math.abs(surfaceYLevel * noiseIntensity));
+          surfaceYLevel += 1;
+
+          if (y > surfaceYLevel) {
+            if (y <= waterHeight) {
+              blockData.type = "water";
+            }
+          }
+
+          if (y < surfaceYLevel) {
+            if (y < 8) {
+              blockData.type = "dirt";
+            }
+            if (y >= 8) {
+              blockData.type = "stone";
+            }
+          }
+
+          if (y === surfaceYLevel) {
+            blockData.type = "grass";
+            if (y < 6) {
+              blockData.type = "sand";
+              if (y < waterHeight) {
+                const randomNumber = Math.floor(Math.random() * 3);
+                if (randomNumber === 0) {
+                  blockData.type = "sand";
+                } else if (randomNumber === 1) {
+                  blockData.type = "clay";
+                } else if (randomNumber === 2) {
+                  blockData.type = "gravel";
+                }
+              }
+            }
+            if (y >= 8) {
+              blockData.type = "stone";
+              if (y < 10) {
+                blockData.type = "dirt";
+              }
+            }
+            if (y > 15) {
+              blockData.type = "snowy stone";
+            }
+          }
+
+          if (y === 0) {
+            blockData.type = "bedrock";
+          }
+
+          const hardness = dictOfBlockBreakingStuff[blockData.type].hardness;
+          const effectiveTool = dictOfBlockBreakingStuff[blockData.type].effectiveTool;
+          const dropsWithNoTool = dictOfBlockBreakingStuff[blockData.type].dropsWithNoTool;
+
+          blockData.hardness = hardness;
+          blockData.effectiveTool = effectiveTool;
+          blockData.dropsWithNoTool = dropsWithNoTool;
+
+          chunkData[`${x},${y},${z}`] = blockData;
+        }
+      }
+    }
+  }
+
+  initialTerrainGeneration();
+
+  chunks[`${chunkCoords[0]},${chunkCoords[1]}`] = {
+    data: chunkData,
+    blocksUpdated: false,
+    structuresGenerated: false
+  };
+}
+
+function generateChunkStructures(inputChunkCoord = [0, 0]) {
+  function generateStructure(structureName, blockCoord) {
+    const thisStructure = copiedStructures[structureName];
+
+    for (const [structureBlockCoord, block] of Object.entries(thisStructure)) {
+      const [x, y, z] = structureBlockCoord.split(",").map(Number);
+
+      let chunkX = inputChunkCoord[0];
+      let chunkZ = inputChunkCoord[1];
+
+      let newX = blockCoord[0] + x;
+      let newY = blockCoord[1] + y;
+      let newZ = blockCoord[2] + z;
+
+      while (newX >= chunkSize[0]) {
+        newX -= chunkSize[0];
+        chunkX += 1;
+      }
+      while (newX < 0) {
+        newX += chunkSize[0];
+        chunkX -= 1;
+      }
+
+      while (newZ >= chunkSize[0]) {
+        newZ -= chunkSize[0];
+        chunkZ += 1;
+      }
+      while (newZ < 0) {
+        newZ += chunkSize[0];
+        chunkZ -= 1;
+      }
+
+      if (newY <= 0) {
+        newY = 1;
+      }
+      if (newY >= chunkSize[1]) {
+       
+// part two of the thing
+
+
+function smallScaleBlockUpdates(chunkCoord = [0, 0], blockCoord = [0, 0, 0]) {
+    const x = blockCoord[0];
+    const y = blockCoord[1];
+    const z = blockCoord[2];
+  
+    const block = chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${x},${y},${z}`];
+  
+    function checkForSolidBlock(block) {
+      return block.type !== "water" && block.type !== "air";
+    }
+  
+    const blockAbove = findBlock(x, y + 1, z, true, chunkCoord);
+    const blockBelow = findBlock(x, y - 1, z, true, chunkCoord);
+    const blockToRight = findBlock(x + 1, y, z, true, chunkCoord);
+    const blockToLeft = findBlock(x - 1, y, z, true, chunkCoord);
+    const blockToUp = findBlock(x, y, z - 1, true, chunkCoord);
+    const blockToDown = findBlock(x, y, z + 1, true, chunkCoord);
+  
+    const above = checkForSolidBlock(blockAbove);
+    const below = checkForSolidBlock(blockBelow);
+    const toRight = checkForSolidBlock(blockToRight);
+    const toLeft = checkForSolidBlock(blockToLeft);
+    const toUp = checkForSolidBlock(blockToUp);
+    const toDown = checkForSolidBlock(blockToDown);
+  
+    const surrounded = toRight && toLeft && toUp && toDown;
+  
+    function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
+      const [localBlockCoord, localChunkCoord] = getBlockAndChunkCoord(x, y, z, chunkCoord);
+  
+      if (render !== "no change") {
+        chunks[`${localChunkCoord[0]},${localChunkCoord[1]}`].data[`${localBlockCoord[0]},${localBlockCoord[1]},${localBlockCoord[2]}`].render = render;
+      }
+      if (alphaValue !== "no change") {
+        chunks[`${localChunkCoord[0]},${localChunkCoord[1]}`].data[`${localBlockCoord[0]},${localBlockCoord[1]},${localBlockCoord[2]}`].alphaValue = alphaValue;
+      }
+    }
+  
+    function checkSidesOfBlock(x, y, z) {
+      const left = findBlock(x - 1, y, z, chunkCoord);
+      const right = findBlock(x + 1, y, z, chunkCoord);
+      const down = findBlock(x, y, z + 1, chunkCoord);
+      const up = findBlock(x, y, z - 1, chunkCoord);
+      return left && right && down && up;
+    }
+  
+    if (block.type !== "air") {
+      if (above) { // there's a block above this one
+        if (!surrounded) {
+          block.render = true;
+        }
+  
+        if (below) {
+          if (blockBelow.alphaValue < 255) {
+            block.alphaValue = 100;
+            modifyOtherBlock(x, y - 1, z, false);
+          } else {
+            const belowSurrounded = checkSidesOfBlock(x, y - 1, z);
+            if (belowSurrounded) {
+              modifyOtherBlock(x, y - 1, z, false);
+            }
+          }
+        } else {
+          block.alphaValue = 100;
+        }
+      }
+  
+      if (!above) { // no block above this one
+        block.render = true;
+        if (below) {
+          if (blockBelow.alphaValue < 255) {
+            block.alphaValue = 100;
+            modifyOtherBlock(x, y - 1, z, false);
+          } else {
+            const belowSurrounded = checkSidesOfBlock(x, y - 1, z);
+            if (belowSurrounded) {
+              modifyOtherBlock(x, y - 1, z, false);
+            }
+          }
+        } else {
+          block.alphaValue = 100;
+        }
+      }
+    } else { // this current block is air
+      if (below) {
+        modifyOtherBlock(x, y - 1, z, true);
+        const blockBelow2 = findBlock(x, y - 2, z, true, chunkCoord);
+        const below2 = checkForSolidBlock(blockBelow2);
+  
+        if (!below2) {
+          modifyOtherBlock(x, y - 1, z, true, 100);
+        } else { // there's a block 2 blocks below
+          if (blockBelow2.alphaValue < 255) {
+            modifyOtherBlock(x, y - 2, z, false);
+            modifyOtherBlock(x, y - 1, z, 100);
+          }
+        }
+      }
+    }
+  
+    chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${x},${y},${z}`] = block;
+  }
+  
+  function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = false, chunkCoordInput = null) {
+    let x, y, z, chunkX, chunkZ;
+  
+    if (chunkCoordInput !== null) {
+      x = xPos;
+      y = yPos;
+      z = zPos;
+  
+      chunkX = chunkCoordInput[0];
+      chunkZ = chunkCoordInput[1];
+  
+      while (x >= chunkSize[0]) {
+        x -= chunkSize[0];
+        chunkX
+  

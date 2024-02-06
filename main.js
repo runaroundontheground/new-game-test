@@ -1,4 +1,4 @@
-from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed
+/*from GlobalVariables import deltaTime, items, entities, projectiles, FPS, keysPressed
 import Worldgen, Controls, Items, Rendering, Recipes # do this so command line works for everything probably from here
 from Items import makeItemsExist
 from Recipes import makeRecipesExist
@@ -268,3 +268,103 @@ lighting system ideas:
 crafting system:
     copy minecraft?
 """
+*/
+
+
+
+// Assume you have equivalent implementations for deltaTime, items, entities, projectiles, FPS, keysPressed
+// Also, assume you have equivalent implementations for Worldgen, Controls, Items, Rendering, Recipes, and Player
+
+const pygame = require('pygame');
+const time = require('time');  // Assuming you have an equivalent library for time functions
+
+pygame.init();
+
+const clock = new pygame.time.Clock();
+
+function edit(targetClass, property, value, key = "") {
+    if (key !== "") {
+        targetClass[property][key] = value;
+    } else {
+        targetClass[property] = value;
+    }
+}
+
+let running = true;
+
+function gameLoop() {
+    let deltaTime;
+    let typingCommands = false;
+    let commandString = "";
+
+    generateSpawnArea();
+    player.positionInSpawnArea();
+    makeItemsExist();
+    makeRecipesExist();
+
+    while (running) {
+        const currentTime = time.time();
+
+        updateMouseAndKeys();
+
+        pygame.event.pump();
+
+        if (!typingCommands) {
+            if (keysPressed[pygame.K_SLASH]) {
+                typingCommands = true;
+                commandString = "";
+                time.sleep(.25);
+                pygame.key.start_text_input();
+            }
+
+            player.doStuff(deltaTime);
+
+            function makeStuffInAListDoThings(list) {
+                for (let i = list.length - 1; i >= 0; i--) {
+                    list[i].doStuff(player);
+                    if (list[i].deleteSelf) {
+                        list.splice(i, 1);
+                    }
+                }
+            }
+
+            makeStuffInAListDoThings(entities);
+            makeStuffInAListDoThings(projectiles);
+
+            render(deltaTime);
+
+            clock.tick(FPS);
+
+            const newCurrentTime = time.time();
+            deltaTime = 1 + (newCurrentTime - currentTime);
+        } else { // currently typing commands
+            let submitCommand = false;
+            const previousCommandString = commandString;
+
+            if (keysPressed[pygame.K_BACKSPACE]) {
+                commandString = commandString.slice(0, -1);
+            }
+
+            submitCommand = doCommandStuff(commandString, previousCommandString, submitCommand);
+
+            if (submitCommand) {
+                try {
+                    eval(commandString);
+                } catch (error) {
+                    console.log("Invalid command");
+                    showInvalidCommand();
+                    time.sleep(1);
+                }
+
+                typingCommands = false;
+                commandString = "";
+            }
+
+            clock.tick(FPS);
+        }
+    }
+
+    pygame.quit();
+}
+
+gameLoop();

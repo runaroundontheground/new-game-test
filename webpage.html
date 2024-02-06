@@ -20,35 +20,25 @@
         </div>
 
 
-
-
-
-        <!--put file imports here-->
-
+        
 
 
 
         <!-- here's the spot where the main file's stuff will go, will have a lot of references
         to the other files-->
         <script>
-            /*
-            import {blockSize} from "./GlobalVariables.js";
-*/
+            import {blockSize} from "./GlobalVariables.js"
+
+
+
             function consoleLog (message) {
                 myConsole = document.getElementById("console")
-                myConsole.innerHTML += message
+                myConsole.innerHTML = message
             };
+            
             consoleLog("test")
+            //consoleLog(blockSize)
 
-            document.addEventListener("keydown", function (event) {
-    
-                //keys[event.key] = true;
-                consoleLog(event.key)
-                if (event.key == "Enter") { // have a line break
-                    consoleLog("<br />")
-                }
-    
-            });
 
 
 

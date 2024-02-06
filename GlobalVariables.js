@@ -1,5 +1,3 @@
-blockSize = 30;
-
 /*import pygame, math
 pygame.display.init()
 pygame.font.init()
@@ -133,3 +131,132 @@ def rotatePoint(surface, angle, pivot, offset = pygame.math.Vector2(0, 0)):
 
 
 print("global variables initialized")
+*/
+
+const canvas = document.createElement("canvas");
+document.body.appendChild(canvas);
+
+const ctx = canvas.getContext("2d");
+
+const screenWidth = 1000;
+const screenHeight = 500;
+
+const font = "24px Arial";
+
+const blockSize = 30; // pixels
+const chunkSize = [10, 30]; // width or length, then height (both in blocks)
+
+const totalChunkSize = chunkSize[0] * blockSize;
+
+const gravity = 1;
+
+const itemEntitySize = blockSize / 2;
+
+const chunks = {};
+
+const keys = {};
+const keysPressed = {};
+
+const deltaTime = 1;
+
+const dictOfBlockBreakingStuff = {
+    "grass": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    "dirt": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    "snowy dirt": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    "clay": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    "gravel": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    "sand": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    "stone": { "hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": false },
+    "snowy stone": { "hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": false },
+    "cobblestone": { "hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": false },
+    "log": { "hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": true },
+    "planks": { "hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": true },
+    "leaves": { "hardness": 0, "effectiveTool": "axe", "dropsWithNoTool": false },
+    "crafting table": { "hardness": 1, "effectiveTool": "axe", "dropsWithNoTool": true },
+    "bedrock": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false },
+    "air": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false },
+    "water": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false }
+};
+
+const screenWidthInChunks = Math.floor(screenWidth / totalChunkSize);
+const screenHeightInChunks = Math.floor(screenHeight / totalChunkSize);
+
+const entities = [];
+const projectiles = [];
+
+const items = {};
+const itemIcons = {};
+
+const FPS = 60;
+
+const maxStackSize = 64;
+
+const recipes = {
+    2: {
+        "exact": {},
+        "nearExact": {},
+        "shapeless": {}
+    },
+    3: {
+        "exact": {},
+        "nearExact": {},
+        "shapeless": {}
+    }
+};
+
+const listOfIntermediateItems = ["stick"];
+
+const listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
+
+class Camera {
+    constructor() {
+        this.smoothness = 10;
+        this.centerTheCamera = [screenWidth / 2, screenHeight / 2];
+        this.x = -this.centerTheCamera[0];
+        this.y = 0;
+        this.z = -this.centerTheCamera[1];
+        this.currentChunk = [0, 0];
+    }
+}
+
+const camera = new Camera();
+
+function rotatePoint(surface, angle, pivot, offset = { x: 0, y: 0 }) {
+    const rotatedImage = rotateSurface(surface, -angle, 1);
+    const rotatedOffset = rotateVector(offset, angle);
+    const rect = rotatedImage.getClientRects()[0];
+
+    return {
+        rotatedImage,
+        rect: {
+            x: pivot.x + rotatedOffset.x - rect.width / 2,
+            y: pivot.y + rotatedOffset.y - rect.height / 2,
+            width: rect.width,
+            height: rect.height
+        }
+    };
+}
+
+function rotateSurface(surface, angle, scale) {
+    const rotatedSurface = document.createElement("canvas");
+    const rotatedCtx = rotatedSurface.getContext("2d");
+
+    rotatedSurface.width = surface.width;
+    rotatedSurface.height = surface.height;
+
+    rotatedCtx.translate(surface.width / 2, surface.height / 2);
+    rotatedCtx.rotate(angle);
+    rotatedCtx.scale(scale, scale);
+    rotatedCtx.drawImage(surface, -surface.width / 2, -surface.height / 2);
+
+    return rotatedSurface;
+}
+
+function rotateVector(vector, angle) {
+    const x = vector.x * Math.cos(angle) - vector.y * Math.sin(angle);
+    const y = vector.x * Math.sin(angle) + vector.y * Math.cos(angle);
+
+    return { x, y };
+}
+
+console.log("global variables initialized");

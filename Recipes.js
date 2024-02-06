@@ -1,4 +1,4 @@
-from GlobalVariables import recipes, items
+/*from GlobalVariables import recipes, items
 
 
 
@@ -102,3 +102,102 @@ def makeRecipesExist():
 
 )
 """
+
+
+
+*/
+
+
+
+
+// Assuming 'recipes' and 'items' are defined globally in your JavaScript environment
+
+function addRecipe(
+    recipeType,
+    recipeName,
+    requiredItems,
+    output,
+    outputCount = 1,
+    recipeShape = null,
+    requiredGridSize = 2,
+    recipeInstructions = null
+  ) {
+    let recipe = {
+      requiredItems: requiredItems,
+      output: output,
+      outputCount: outputCount,
+    };
+  
+    if (recipeType === "exact") {
+      recipe.recipeShape = recipeShape;
+    }
+  
+    if (recipeType === "nearExact") {
+      recipe.recipeInstructions = recipeInstructions;
+    }
+  
+    if (!recipes[requiredGridSize]) {
+      recipes[requiredGridSize] = {};
+    }
+    if (!recipes[requiredGridSize][recipeType]) {
+      recipes[requiredGridSize][recipeType] = {};
+    }
+  
+    recipes[requiredGridSize][recipeType][recipeName] = recipe;
+  
+    if (requiredGridSize !== 3) {
+      if (!recipes[3]) {
+        recipes[3] = {};
+      }
+      if (!recipes[3][recipeType]) {
+        recipes[3][recipeType] = {};
+      }
+      recipes[3][recipeType][recipeName] = recipe;
+    }
+  }
+  
+  function makeRecipesExist() {
+    addRecipe(
+      "shapeless",
+      "logToPlanks",
+      { log: 1 },
+      items["planks"],
+      4
+    );
+  
+    addRecipe(
+      "nearExact",
+      "planksToSticks",
+      { planks: 2 },
+      items["stick"],
+      4,
+      2,
+      {
+        startingItemName: "planks",
+        directions: ["up", "down"],
+        operators: ["xor"],
+        items: ["planks", "planks"],
+      }
+    );
+  
+    /*
+    addRecipe(
+      "exact",
+      "stone pickaxe",
+      { stick: 2, cobblestone: 3 },
+      items["stone pickaxe"],
+      1,
+      {
+        0: "cobblestone",
+        1: "cobblestone",
+        2: "cobblestone",
+        4: "stick",
+        7: "stick",
+      },
+      3
+    );
+    */
+  }
+  
+  // Uncomment the block above if you want to include the commented-out recipe
+  
