@@ -1,6 +1,6 @@
 // this file is used only for testing things
 
-export const blockSize = 30;
+const blockSize = 30;
 
 
 
