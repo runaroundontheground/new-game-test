@@ -69,7 +69,7 @@ projectiles = []
 items = {}
 itemIcons = {}
 
-FPS = 60
+fps = 60
 
 maxStackSize = 64
 
@@ -187,7 +187,7 @@ const projectiles = [];
 const items = {};
 const itemIcons = {};
 
-const FPS = 60;
+const fps = 60;
 
 const maxStackSize = 64;
 

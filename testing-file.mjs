@@ -2,5 +2,3 @@
 
 
 
-export const test = "hi!"
-

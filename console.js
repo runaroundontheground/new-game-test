@@ -1,6 +1,6 @@
 
 
-const myConsole = document.getElementById("console");
+let myConsole = document.getElementById("console");
 
 
 function consoleLog(message) {
@@ -20,3 +20,4 @@ window.onerror = function (message, source, lineno, colno, error) {
 document.addEventListener("keydown", function (event) {
     consoleLog(event.key);
 });
+

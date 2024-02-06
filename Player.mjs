@@ -1,5 +1,5 @@
 from GlobalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items
-from GlobalVariables import screenWidth, screenHeight, chunks, font, FPS, itemEntitySize
+from GlobalVariables import screenWidth, screenHeight, chunks, font, fps, itemEntitySize
 from Worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
 from Controls import keysPressed, keys, mouse
 from Entities import ItemEntity
@@ -1788,7 +1788,7 @@ class Player():
         breakingType = "none"
         attack = 1
         knockback = 1
-        slowestBreakSpeed = 20/FPS
+        slowestBreakSpeed = 20/fps
 
         if item != "empty":
             if item.itemType == "ToolItem":
@@ -1823,10 +1823,10 @@ class Player():
                 
                 
                 if powerfulEnoughTool and correctTool:
-                    self.blockBreakProgress += breakingSpeed / FPS
+                    self.blockBreakProgress += breakingSpeed / fps
                 else:
 
-                    self.blockBreakProgress += slowestBreakSpeed / FPS
+                    self.blockBreakProgress += slowestBreakSpeed / fps
 
 
                 
@@ -1836,7 +1836,7 @@ class Player():
                 # breaking stuff is based on seconds of time,
                 # in tools, the breaking speed is a percentage of a second per frame
 
-                if self.blockBreakProgress >= FPS:
+                if self.blockBreakProgress >= fps:
                     self.blockBreakProgress = 0
 
                     if correctTool or block["dropsWithNoTool"]:
