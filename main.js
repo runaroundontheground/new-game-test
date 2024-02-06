@@ -275,6 +275,18 @@ crafting system:
 // Assume you have equivalent implementations for deltaTime, items, entities, projectiles, FPS, keysPressed
 // Also, assume you have equivalent implementations for Worldgen, Controls, Items, Rendering, Recipes, and Player
 
+
+//import consoleLog from "./console.js";
+
+
+fetch("./testing-file.mjs").then(function (result) { consoleLog(result.ok) });
+import test from "./testing-file.mjs";
+//consoleLog(test)
+
+
+
+// stuff that was kinda converted
+/*
 const pygame = require('pygame');
 const time = require('time');  // Assuming you have an equivalent library for time functions
 
@@ -368,3 +380,4 @@ function gameLoop() {
 }
 
 gameLoop();
+*/
