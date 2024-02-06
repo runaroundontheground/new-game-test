@@ -143,7 +143,7 @@ const screenHeight = 500;
 
 const font = "24px Arial";
 
-const blockSize = 30; // pixels
+export const blockSize = 30; // pixels
 const chunkSize = [10, 30]; // width or length, then height (both in blocks)
 
 const totalChunkSize = chunkSize[0] * blockSize;

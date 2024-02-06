@@ -14,12 +14,10 @@
         <canvas id = "canvas" width = "400" height = "400" style = "border: 1px solid #000;"></canvas>
     
         <!--put the divs and stuff here i guess-->
-        <p> heres the console</p>
-        <div id = "console">
-            a
-        </div>
+        <p> heres the console (it's below this)</p>
+        <div id = "console"></div>
 
-
+        <script type = "module", src = "testing file.js"></script>
         
 
 
@@ -27,17 +25,31 @@
         <!-- here's the spot where the main file's stuff will go, will have a lot of references
         to the other files-->
         <script>
-            import {blockSize} from "./GlobalVariables.js"
-
-
+            import { blockSize } from "testing file.js";
+            
+            let myConsole = document.getElementById("console");
+            
+            function logAnError (message) {
+                
+                myConsole.innerHTML += message;
+                myConsole.innerHTML += "<br />";
+                
+            };
+           
+            window.onerror = function (message, source, lineno, colno, error) {
+                logAnError(message);
+            };
 
             function consoleLog (message) {
-                myConsole = document.getElementById("console")
-                myConsole.innerHTML = message
+                myConsole.innerHTML += message;
+                myConsole.innerHTML += "<br />";
             };
+
+            consoleLog("test");
             
-            consoleLog("test")
-            //consoleLog(blockSize)
+            
+            
+            
 
 
 

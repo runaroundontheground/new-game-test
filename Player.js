@@ -252,7 +252,6 @@ class Player():
 
 
 
-
             # create output slot for the 3x3 grid
             slotX = ((widthOfInventoryInSlots - 2) * slotSizeInPixels) + slotSizeInPixels * 1.7
             slotY = (slotSizeInPixels * 2.1)
@@ -420,7 +419,6 @@ class Player():
 
                     updatedInventorySlot = inventorySlot.copy()
                     
-                    
    
                     
 
@@ -564,7 +562,6 @@ class Player():
             bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = True)
             if topLeft or topRight or bottomLeft or bottomRight:
                 self.collision["below"] = True
-        
         doCollisionBelow()
 
         def doCollisionAbove():
@@ -736,7 +733,6 @@ class Player():
                 self.z += abs(self.zv)
                 self.zv = 0
                 self.z += 1
-
         if self.collision["right"]:
             a = self.collision["below"]
             b = not self.collision["aboveRight"]
@@ -1005,7 +1001,6 @@ class Player():
                 elif container == "armor":
                     invSection = self.armor
                     otherInvSection = self.inventory
-                
                 def checkStackablesInOtherInvSection(amountToMove, item, done):
                             """
                             amountToMove: either "max" or an int less than 64 \n
@@ -1409,7 +1404,6 @@ class Player():
 
                         item.drop(x, y, z, xv, yv, zv)
         mouseInteractionWithInventory()   
-
 
         def recipeChecksAndStuff():
             # dict with total amount of each item in crafting slots
@@ -1985,3 +1979,7 @@ player = Player()
 
 
 print("player initialized")
+
+
+
+

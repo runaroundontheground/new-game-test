@@ -727,9 +727,46 @@ function generateChunkStructures(inputChunkCoord = [0, 0]) {
         newY = 1;
       }
       if (newY >= chunkSize[1]) {
+        newY = chunkSize[1] - 1;
+    }
+
+    const newBlockCoord = [newX, newY, newZ];
+    const newChunkCoord = [chunkX, chunkZ];
+
+    if (newBlockCoord in chunks[`${newChunkCoord[0]},${newChunkCoord[1]}`].data) {
+      const existingBlock = chunks[`${newChunkCoord[0]},${newChunkCoord[1]}`].data[`${newBlockCoord[0]},${newBlockCoord[1]},${newBlockCoord[2]}`];
+      existingBlock.type = block.type;
+      existingBlock.render = block.render;
+      existingBlock.alphaValue = block.alphaValue;
+      existingBlock.hardness = block.hardness;
+      existingBlock.effectiveTool = block.effectiveTool;
+      existingBlock.dropsWithNoTool = block.dropsWithNoTool;
+    }
+  }
+}
+
+for (let x = 0; x < screenWidthInChunks; x++) {
+  for (let z = 0; z < screenHeightInChunks; z++) {
+    if (!chunks[`${inputChunkCoord[0] + x},${inputChunkCoord[1] + z}`]?.structuresGenerated) {
+      continue;
+    }
+
+    const randomStructureChance = Math.random();
+    const randomStructureName = listOfBlockNames[Math.floor(Math.random() * listOfBlockNames.length)];
+
+    if (randomStructureChance > 0.95 && randomStructureName in copiedStructures) {
+      const randomX = Math.floor(Math.random() * chunkSize[0]);
+      const randomZ = Math.floor(Math.random() * chunkSize[0]);
+
+      const structureBlockCoord = [randomX, waterHeight + 1, randomZ];
+      generateStructure(randomStructureName, structureBlockCoord);
+    }
+  }
+}
+
+
        
 // part two of the thing
-
 
 function smallScaleBlockUpdates(chunkCoord = [0, 0], blockCoord = [0, 0, 0]) {
     const x = blockCoord[0];
@@ -847,5 +884,138 @@ function smallScaleBlockUpdates(chunkCoord = [0, 0], blockCoord = [0, 0, 0]) {
   
       while (x >= chunkSize[0]) {
         x -= chunkSize[0];
-        chunkX
+        chunkX += 1;
+      }
+      while (x < 0) {
+        x += chunkSize[0];
+        chunkX -= 1;
+      }
+  
+      if (y >= chunkSize[1]) {
+        y = chunkSize[1] - 1;
+      }
+      if (y < 0) {
+        y = 0;
+      }
+  
+      while (z >= chunkSize[0]) {
+        z -= chunkSize[0];
+        chunkZ += 1;
+      }
+      while (z < 0) {
+        z += chunkSize[0];
+        chunkZ -= 1;
+      }
+  
+      const blockCoord = [x, y, z];
+      const chunkCoord = [chunkX, chunkZ];
+    } else {
+      const blockCoord = getBlockCoord(xPos, yPos, zPos);
+      const chunkCoord = getChunkCoord(xPos, zPos);
+    }
+  
+    if (blockCoord not in chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data) {
+      generateChunkTerrain(chunkCoord);
+    }
+  
+    const block = chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${blockCoord[0]},${blockCoord[1]},${blockCoord[2]}`];
+  
+    if (extraInfo) {
+      return block;
+    }
+  
+    if (block.type !== "air") {
+      if (block.type === "water" && ignoreWater) {
+        return false;
+      }
+      return true;
+    }
+  
+    return false;
+  }
+  
+  function getChunkCoord(xPos = 1, zPos = 1) {
+    const x = Math.floor(xPos / totalChunkSize);
+    const z = Math.floor(zPos / totalChunkSize);
+    const chunkCoord = [x, z];
+    return chunkCoord;
+  }
+  
+  function getBlockCoord(xPos = 1, yPos = 1, zPos = 1, usesSimpleInputs = false) {
+    let x, y, z;
+  
+    if (!usesSimpleInputs) {
+      x = Math.floor(xPos / blockSize);
+      y = Math.floor(yPos / blockSize);
+      z = Math.floor(zPos / blockSize);
+    } else {
+      x = xPos;
+      y = yPos;
+      z = zPos;
+    }
+  
+    while (x < 0) {
+      x += chunkSize[0];
+    }
+    while (x >= chunkSize[0]) {
+      x -= chunkSize[0];
+    }
+  
+    if (y >= chunkSize[1]) {
+      y = chunkSize[1] - 1;
+    }
+    if (y < 0) {
+      y = 0;
+    }
+  
+    while (z < 0) {
+      z += chunkSize[0];
+    }
+    while (z >= chunkSize[0]) {
+      z -= chunkSize[0];
+    }
+  
+    const blockCoord = [x, y, z];
+    return blockCoord;
+  }
+  
+  function getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord) {
+    let x = xPos;
+    let y = yPos;
+    let z = zPos;
+    let chunkX = inputChunkCoord[0];
+    let chunkZ = inputChunkCoord[1];
+  
+    while (x < 0) {
+      x += chunkSize[0];
+      chunkX -= 1;
+    }
+    while (x >= chunkSize[0]) {
+      x -= chunkSize[0];
+      chunkX += 1;
+    }
+  
+    if (y >= chunkSize[1]) {
+      y = chunkSize[1] - 1;
+    }
+    if (y < 0) {
+      y = 0;
+    }
+  
+    while (z < 0) {
+      z += chunkSize[0];
+      chunkZ -= 1;
+    }
+    while (z >= chunkSize[0]) {
+      z -= chunkSize[0];
+      chunkZ += 1;
+    }
+  
+    const blockCoord = [x, y, z];
+    const chunkCoord = [chunkX, chunkZ];
+  
+    return [blockCoord, chunkCoord];
+  }
+  
+  console.log("worldgen initialized");
   
