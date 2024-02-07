@@ -166,6 +166,11 @@ print("items initialized")
 */
 
 
+function consoleLog(message) {
+    let myConsole = document.getElementById("console")
+    myConsole.innerHTML += message + "<br />"
+    myConsole.scrollTop = myConsole.scrollHeight
+};
 
 // Assume you have equivalent implementations for entities, items, chunks, 
 // listOfBlockNames, listOfIntermediateItems, blockSize, gravity, and dictOfBlockBreakingStuff
@@ -173,6 +178,9 @@ print("items initialized")
 // getBlockCoord, smallScaleBlockUpdates, and mouse
 // Also, assume you have equivalent implementations for ItemEntity, PlaceableItem, ToolItem, 
 // IntermediateItem, and any required utility functions
+
+
+
 
 class Item {
     constructor(name = "air") {

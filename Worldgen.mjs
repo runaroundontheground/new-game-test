@@ -532,7 +532,11 @@ print("worldgen initialized")
 
 
 
-// part one of the thing
+function consoleLog(message) {
+  let myConsole = document.getElementById("console")
+  myConsole.innerHTML += message + "<br />"
+  myConsole.scrollTop = myConsole.scrollHeight
+};
 
 // Import statements are not applicable in this context
 

@@ -107,7 +107,11 @@ def makeRecipesExist():
 
 */
 
-
+function consoleLog(message) {
+  let myConsole = document.getElementById("console")
+  myConsole.innerHTML += message + "<br />"
+  myConsole.scrollTop = myConsole.scrollHeight
+};
 
 
 // Assuming 'recipes' and 'items' are defined globally in your JavaScript environment

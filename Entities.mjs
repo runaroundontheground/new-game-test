@@ -141,16 +141,18 @@ print("entities initialized")
 from Worldgen import findBlock
 import math, pygame, random
 */
+
+function consoleLog(message) {
+    let myConsole = document.getElementById("console")
+    myConsole.innerHTML += message + "<br />"
+    myConsole.scrollTop = myConsole.scrollHeight
+};
+
+
 import {blockSize, gravity, maxStackSize, itemEntitySize} from "./GlobalVariables.js"
 
-console.log(blockSize)
 
-// Assuming you have equivalent functions for findBlock and pygame.rect in your JavaScript environment
 
-const blockSize = 16; // replace with the appropriate value
-const gravity = 0.5; // replace with the appropriate value
-const maxStackSize = 64; // replace with the appropriate value
-const itemEntitySize = 16; // replace with the appropriate value
 
 class Entity {
     constructor(x = 0, y = 0, z = 0, xv = 0, yv = 0, zv = 0) {

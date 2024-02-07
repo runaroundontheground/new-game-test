@@ -1983,3 +1983,10 @@ print("player initialized")
 
 
 
+
+
+function consoleLog(message) {
+    let myConsole = document.getElementById("console")
+    myConsole.innerHTML += message + "<br />"
+    myConsole.scrollTop = myConsole.scrollHeight
+};

@@ -104,7 +104,14 @@ print("controls initialized")
 
 */
 
-// Assuming appropriate imports for Worldgen and GlobalVariables are in place
+function consoleLog(message) {
+    let myConsole = document.getElementById("console")
+    myConsole.innerHTML += message + "<br />"
+    myConsole.scrollTop = myConsole.scrollHeight
+};
+
+import { getBlockCoord, getChunkCoord, generateChunkTerrain } from "./Worldgen.mjs";
+import { chunks, keys, keysPressed } from "./GlobalVariables.mjs";
 
 class Mouse {
     constructor() {

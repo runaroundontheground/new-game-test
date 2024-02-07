@@ -133,7 +133,7 @@ function consoleLog(message) {
 
 
 // this should be all the imports, hopefully that's good now
-import { deltaTime, items, entities, projectiles, fps, keysPressed } from "./GlobalVariables.mjs";
+import { deltaTime, items, entities, projectiles, fps, keysPressed, timeScale } from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
 import { updateMouseAndKeys } from "./Controls.mjs";
@@ -151,16 +151,22 @@ function initializeGame() {
 let previousTime = performance.now();
 function gameLoop() {
     // do things, then call self using setTimeout at the bottom/end
+    updateMouseAndKeys();
 
-    
-    
 
-    let delayBetweenFramesInMilliseconds = 1000 / fps // later, add some stuff for timescale, just in case
-    setTimeout(gameLoop, delayBetweenFramesInMilliseconds)
+
+    let delayBetweenFramesInMilliseconds = (1000 / fps) * timeScale;
+    if (running) {
+        setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
+    };
 };
 
-initializeGame();
-gameLoop();
+//initializeGame();
+//gameLoop();
+
+consoleLog("main was able to load successfully")
+
+
 // stuff that was kinda converted
 /*
 const pygame = require('pygame');

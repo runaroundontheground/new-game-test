@@ -133,6 +133,12 @@ def rotatePoint(surface, angle, pivot, offset = pygame.math.Vector2(0, 0)):
 print("global variables initialized")
 */
 
+function consoleLog(message) {
+    let myConsole = document.getElementById("console")
+    myConsole.innerHTML += message + "<br />"
+    myConsole.scrollTop = myConsole.scrollHeight
+};
+
 const canvas = document.createElement("canvas");
 document.body.appendChild(canvas);
 
@@ -140,8 +146,6 @@ const ctx = canvas.getContext("2d");
 
 const screenWidth = 1000;
 const screenHeight = 500;
-
-const font = "24px Arial";
 
 export const blockSize = 30; // pixels
 const chunkSize = [10, 30]; // width or length, then height (both in blocks)
@@ -152,14 +156,24 @@ const gravity = 1;
 
 const itemEntitySize = blockSize / 2;
 
-const chunks = {};
+export let chunks = {};
 
-const keys = {};
-const keysPressed = {};
+export let keys = {};
+export let keysPressed = {};
 
-const deltaTime = 1;
+export let deltaTime = 1;
 
-const dictOfBlockBreakingStuff = {
+export function Rect(x, y, width, height) {
+    let rect = {
+        "x": x,
+        "y": y,
+        "width": width,
+        "height": height
+    }
+    return rect
+}
+
+export const dictOfBlockBreakingStuff = {
     "grass": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "dirt": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "snowy dirt": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
@@ -181,17 +195,18 @@ const dictOfBlockBreakingStuff = {
 const screenWidthInChunks = Math.floor(screenWidth / totalChunkSize);
 const screenHeightInChunks = Math.floor(screenHeight / totalChunkSize);
 
-const entities = [];
-const projectiles = [];
+export let entities = [];
+export let projectiles = [];
 
-const items = {};
+export let items = {};
 const itemIcons = {};
 
-const fps = 60;
+export const fps = 60;
+export let timeScale = 1
 
-const maxStackSize = 64;
+export const maxStackSize = 64;
 
-const recipes = {
+let recipes = {
     2: {
         "exact": {},
         "nearExact": {},
@@ -204,9 +219,9 @@ const recipes = {
     }
 };
 
-const listOfIntermediateItems = ["stick"];
+export const listOfIntermediateItems = ["stick"];
 
-const listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
+export const listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
 
 class Camera {
     constructor() {
@@ -219,44 +234,6 @@ class Camera {
     }
 }
 
-const camera = new Camera();
+export let camera = new Camera();
 
-function rotatePoint(surface, angle, pivot, offset = { x: 0, y: 0 }) {
-    const rotatedImage = rotateSurface(surface, -angle, 1);
-    const rotatedOffset = rotateVector(offset, angle);
-    const rect = rotatedImage.getClientRects()[0];
-
-    return {
-        rotatedImage,
-        rect: {
-            x: pivot.x + rotatedOffset.x - rect.width / 2,
-            y: pivot.y + rotatedOffset.y - rect.height / 2,
-            width: rect.width,
-            height: rect.height
-        }
-    };
-}
-
-function rotateSurface(surface, angle, scale) {
-    const rotatedSurface = document.createElement("canvas");
-    const rotatedCtx = rotatedSurface.getContext("2d");
-
-    rotatedSurface.width = surface.width;
-    rotatedSurface.height = surface.height;
-
-    rotatedCtx.translate(surface.width / 2, surface.height / 2);
-    rotatedCtx.rotate(angle);
-    rotatedCtx.scale(scale, scale);
-    rotatedCtx.drawImage(surface, -surface.width / 2, -surface.height / 2);
-
-    return rotatedSurface;
-}
-
-function rotateVector(vector, angle) {
-    const x = vector.x * Math.cos(angle) - vector.y * Math.sin(angle);
-    const y = vector.x * Math.sin(angle) + vector.y * Math.cos(angle);
-
-    return { x, y };
-}
-
-console.log("global variables initialized");
+consoleLog("global variables initialized");
