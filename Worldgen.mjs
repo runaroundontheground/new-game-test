@@ -556,10 +556,16 @@ let test = (0, 4, 3)
 function makeTree1() {
   for (let x = 0; x < 5; x++) {
     for (let z = 0; z < 5; z++) {
-      
+      let middleNum = 3
+      if (x !== 0 && x !== 4 && z !== 0 && z !== 4) {
+
+      }
+
+      structures["tree 1"][`${x},${4},${z}`] = { type: "leaves" };
+
       structures["tree 1"][(x, 3, z)] = { type: "leaves" };
       if (x !== 0 && x !== 4 && z !== 0 && z !== 4) {
-        structures["tree 1"][`${x},${4},${z}`] = { type: "leaves" };
+
       }
     }
 
@@ -590,7 +596,7 @@ fixStructureData();
 
 const waterHeight = 4;
 
-function generateChunkTerrain(chunkCoords = [0, 0]) {
+function generateChunkTerrain(chunkCoord = [0, 0]) {
   const chunkData = {};
 
   function initialTerrainGeneration() {
@@ -609,8 +615,8 @@ function generateChunkTerrain(chunkCoords = [0, 0]) {
           const noiseCoordinate = [x, z];
           const noiseIntensity = 25;
 
-          noiseCoordinate[0] += chunkSize[0] * chunkCoords[0];
-          noiseCoordinate[1] += chunkSize[0] * chunkCoords[1];
+          noiseCoordinate[0] += chunkSize[0] * chunkCoord[0];
+          noiseCoordinate[1] += chunkSize[0] * chunkCoord[1];
 
           noiseCoordinate[0] /= noiseIntensity;
           noiseCoordinate[1] /= noiseIntensity;
@@ -680,7 +686,7 @@ function generateChunkTerrain(chunkCoords = [0, 0]) {
 
   initialTerrainGeneration();
 
-  chunks[`${chunkCoords[0]},${chunkCoords[1]}`] = {
+  chunks[chunkCoord] = {
     data: chunkData,
     blocksUpdated: false,
     structuresGenerated: false
@@ -729,7 +735,7 @@ function generateChunkStructures(inputChunkCoord = [0, 0]) {
       const newBlockCoord = [newX, newY, newZ];
       const newChunkCoord = [chunkX, chunkZ];
 
-      if (newBlockCoord in chunks[`${newChunkCoord[0]},${newChunkCoord[1]}`].data) {
+      if (!(newBlockCoord in chunks[`${newChunkCoord[0]},${newChunkCoord[1]}`].data)) {
         const existingBlock = chunks[`${newChunkCoord[0]},${newChunkCoord[1]}`].data[`${newBlockCoord[0]},${newBlockCoord[1]},${newBlockCoord[2]}`];
         existingBlock.type = block.type;
         existingBlock.render = block.render;
@@ -759,237 +765,133 @@ function generateChunkStructures(inputChunkCoord = [0, 0]) {
       }
     }
   }
+}
 
 
+// part two of the thing
 
-  // part two of the thing
+function smallScaleBlockUpdates(chunkCoord = [0, 0], blockCoord = [0, 0, 0]) {
+  const x = blockCoord[0];
+  const y = blockCoord[1];
+  const z = blockCoord[2];
 
-  function smallScaleBlockUpdates(chunkCoord = [0, 0], blockCoord = [0, 0, 0]) {
-    const x = blockCoord[0];
-    const y = blockCoord[1];
-    const z = blockCoord[2];
+  const block = chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${x},${y},${z}`];
 
-    const block = chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${x},${y},${z}`];
+  function checkForSolidBlock(block) {
+    return block.type !== "water" && block.type !== "air";
+  }
 
-    function checkForSolidBlock(block) {
-      return block.type !== "water" && block.type !== "air";
+  const blockAbove = findBlock(x, y + 1, z, true, chunkCoord);
+  const blockBelow = findBlock(x, y - 1, z, true, chunkCoord);
+  const blockToRight = findBlock(x + 1, y, z, true, chunkCoord);
+  const blockToLeft = findBlock(x - 1, y, z, true, chunkCoord);
+  const blockToUp = findBlock(x, y, z - 1, true, chunkCoord);
+  const blockToDown = findBlock(x, y, z + 1, true, chunkCoord);
+
+  const above = checkForSolidBlock(blockAbove);
+  const below = checkForSolidBlock(blockBelow);
+  const toRight = checkForSolidBlock(blockToRight);
+  const toLeft = checkForSolidBlock(blockToLeft);
+  const toUp = checkForSolidBlock(blockToUp);
+  const toDown = checkForSolidBlock(blockToDown);
+
+  const surrounded = toRight && toLeft && toUp && toDown;
+
+  function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
+    const [localBlockCoord, localChunkCoord] = getBlockAndChunkCoord(x, y, z, chunkCoord);
+
+    if (render !== "no change") {
+      chunks[`${localChunkCoord[0]},${localChunkCoord[1]}`].data[`${localBlockCoord[0]},${localBlockCoord[1]},${localBlockCoord[2]}`].render = render;
     }
-
-    const blockAbove = findBlock(x, y + 1, z, true, chunkCoord);
-    const blockBelow = findBlock(x, y - 1, z, true, chunkCoord);
-    const blockToRight = findBlock(x + 1, y, z, true, chunkCoord);
-    const blockToLeft = findBlock(x - 1, y, z, true, chunkCoord);
-    const blockToUp = findBlock(x, y, z - 1, true, chunkCoord);
-    const blockToDown = findBlock(x, y, z + 1, true, chunkCoord);
-
-    const above = checkForSolidBlock(blockAbove);
-    const below = checkForSolidBlock(blockBelow);
-    const toRight = checkForSolidBlock(blockToRight);
-    const toLeft = checkForSolidBlock(blockToLeft);
-    const toUp = checkForSolidBlock(blockToUp);
-    const toDown = checkForSolidBlock(blockToDown);
-
-    const surrounded = toRight && toLeft && toUp && toDown;
-
-    function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
-      const [localBlockCoord, localChunkCoord] = getBlockAndChunkCoord(x, y, z, chunkCoord);
-
-      if (render !== "no change") {
-        chunks[`${localChunkCoord[0]},${localChunkCoord[1]}`].data[`${localBlockCoord[0]},${localBlockCoord[1]},${localBlockCoord[2]}`].render = render;
-      }
-      if (alphaValue !== "no change") {
-        chunks[`${localChunkCoord[0]},${localChunkCoord[1]}`].data[`${localBlockCoord[0]},${localBlockCoord[1]},${localBlockCoord[2]}`].alphaValue = alphaValue;
-      }
+    if (alphaValue !== "no change") {
+      chunks[`${localChunkCoord[0]},${localChunkCoord[1]}`].data[`${localBlockCoord[0]},${localBlockCoord[1]},${localBlockCoord[2]}`].alphaValue = alphaValue;
     }
+  }
 
-    function checkSidesOfBlock(x, y, z) {
-      const left = findBlock(x - 1, y, z, chunkCoord);
-      const right = findBlock(x + 1, y, z, chunkCoord);
-      const down = findBlock(x, y, z + 1, chunkCoord);
-      const up = findBlock(x, y, z - 1, chunkCoord);
-      return left && right && down && up;
-    }
+  function checkSidesOfBlock(x, y, z) {
+    const left = findBlock(x - 1, y, z, chunkCoord);
+    const right = findBlock(x + 1, y, z, chunkCoord);
+    const down = findBlock(x, y, z + 1, chunkCoord);
+    const up = findBlock(x, y, z - 1, chunkCoord);
+    return left && right && down && up;
+  }
 
-    if (block.type !== "air") {
-      if (above) { // there's a block above this one
-        if (!surrounded) {
-          block.render = true;
-        }
-
-        if (below) {
-          if (blockBelow.alphaValue < 255) {
-            block.alphaValue = 100;
-            modifyOtherBlock(x, y - 1, z, false);
-          } else {
-            const belowSurrounded = checkSidesOfBlock(x, y - 1, z);
-            if (belowSurrounded) {
-              modifyOtherBlock(x, y - 1, z, false);
-            }
-          }
-        } else {
-          block.alphaValue = 100;
-        }
-      }
-
-      if (!above) { // no block above this one
+  if (block.type !== "air") {
+    if (above) { // there's a block above this one
+      if (!surrounded) {
         block.render = true;
-        if (below) {
-          if (blockBelow.alphaValue < 255) {
-            block.alphaValue = 100;
-            modifyOtherBlock(x, y - 1, z, false);
-          } else {
-            const belowSurrounded = checkSidesOfBlock(x, y - 1, z);
-            if (belowSurrounded) {
-              modifyOtherBlock(x, y - 1, z, false);
-            }
-          }
-        } else {
-          block.alphaValue = 100;
-        }
       }
-    } else { // this current block is air
+
       if (below) {
-        modifyOtherBlock(x, y - 1, z, true);
-        const blockBelow2 = findBlock(x, y - 2, z, true, chunkCoord);
-        const below2 = checkForSolidBlock(blockBelow2);
-
-        if (!below2) {
-          modifyOtherBlock(x, y - 1, z, true, 100);
-        } else { // there's a block 2 blocks below
-          if (blockBelow2.alphaValue < 255) {
-            modifyOtherBlock(x, y - 2, z, false);
-            modifyOtherBlock(x, y - 1, z, 100);
+        if (blockBelow.alphaValue < 255) {
+          block.alphaValue = 100;
+          modifyOtherBlock(x, y - 1, z, false);
+        } else {
+          const belowSurrounded = checkSidesOfBlock(x, y - 1, z);
+          if (belowSurrounded) {
+            modifyOtherBlock(x, y - 1, z, false);
           }
+        }
+      } else {
+        block.alphaValue = 100;
+      }
+    }
+
+    if (!above) { // no block above this one
+      block.render = true;
+      if (below) {
+        if (blockBelow.alphaValue < 255) {
+          block.alphaValue = 100;
+          modifyOtherBlock(x, y - 1, z, false);
+        } else {
+          const belowSurrounded = checkSidesOfBlock(x, y - 1, z);
+          if (belowSurrounded) {
+            modifyOtherBlock(x, y - 1, z, false);
+          }
+        }
+      } else {
+        block.alphaValue = 100;
+      }
+    }
+  } else { // this current block is air
+    if (below) {
+      modifyOtherBlock(x, y - 1, z, true);
+      const blockBelow2 = findBlock(x, y - 2, z, true, chunkCoord);
+      const below2 = checkForSolidBlock(blockBelow2);
+
+      if (!below2) {
+        modifyOtherBlock(x, y - 1, z, true, 100);
+      } else { // there's a block 2 blocks below
+        if (blockBelow2.alphaValue < 255) {
+          modifyOtherBlock(x, y - 2, z, false);
+          modifyOtherBlock(x, y - 1, z, 100);
         }
       }
     }
-
-    chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${x},${y},${z}`] = block;
   }
 
-  function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = false, chunkCoordInput = null) {
-    let x, y, z, chunkX, chunkZ;
+  chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${x},${y},${z}`] = block;
+}
 
-    if (chunkCoordInput !== null) {
-      x = xPos;
-      y = yPos;
-      z = zPos;
+function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = false, chunkCoordInput = null) {
+  let x, y, z, chunkX, chunkZ;
 
-      chunkX = chunkCoordInput[0];
-      chunkZ = chunkCoordInput[1];
+  if (chunkCoordInput !== null) {
+    x = xPos;
+    y = yPos;
+    z = zPos;
 
-      while (x >= chunkSize[0]) {
-        x -= chunkSize[0];
-        chunkX += 1;
-      }
-      while (x < 0) {
-        x += chunkSize[0];
-        chunkX -= 1;
-      }
+    chunkX = chunkCoordInput[0];
+    chunkZ = chunkCoordInput[1];
 
-      if (y >= chunkSize[1]) {
-        y = chunkSize[1] - 1;
-      }
-      if (y < 0) {
-        y = 0;
-      }
-
-      while (z >= chunkSize[0]) {
-        z -= chunkSize[0];
-        chunkZ += 1;
-      }
-      while (z < 0) {
-        z += chunkSize[0];
-        chunkZ -= 1;
-      }
-
-      const blockCoord = [x, y, z];
-      const chunkCoord = [chunkX, chunkZ];
-    } else {
-      const blockCoord = getBlockCoord(xPos, yPos, zPos);
-      const chunkCoord = getChunkCoord(xPos, zPos);
-    }
-
-    if (blockCoord not in chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data) {
-      generateChunkTerrain(chunkCoord);
-    }
-
-    const block = chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${blockCoord[0]},${blockCoord[1]},${blockCoord[2]}`];
-
-    if (extraInfo) {
-      return block;
-    }
-
-    if (block.type !== "air") {
-      if (block.type === "water" && ignoreWater) {
-        return false;
-      }
-      return true;
-    }
-
-    return false;
-  }
-
-  function getChunkCoord(xPos = 1, zPos = 1) {
-    const x = Math.floor(xPos / totalChunkSize);
-    const z = Math.floor(zPos / totalChunkSize);
-    const chunkCoord = [x, z];
-    return chunkCoord;
-  }
-
-  function getBlockCoord(xPos = 1, yPos = 1, zPos = 1, usesSimpleInputs = false) {
-    let x, y, z;
-
-    if (!usesSimpleInputs) {
-      x = Math.floor(xPos / blockSize);
-      y = Math.floor(yPos / blockSize);
-      z = Math.floor(zPos / blockSize);
-    } else {
-      x = xPos;
-      y = yPos;
-      z = zPos;
-    }
-
-    while (x < 0) {
-      x += chunkSize[0];
-    }
-    while (x >= chunkSize[0]) {
-      x -= chunkSize[0];
-    }
-
-    if (y >= chunkSize[1]) {
-      y = chunkSize[1] - 1;
-    }
-    if (y < 0) {
-      y = 0;
-    }
-
-    while (z < 0) {
-      z += chunkSize[0];
-    }
-    while (z >= chunkSize[0]) {
-      z -= chunkSize[0];
-    }
-
-    const blockCoord = [x, y, z];
-    return blockCoord;
-  }
-
-  function getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord) {
-    let x = xPos;
-    let y = yPos;
-    let z = zPos;
-    let chunkX = inputChunkCoord[0];
-    let chunkZ = inputChunkCoord[1];
-
-    while (x < 0) {
-      x += chunkSize[0];
-      chunkX -= 1;
-    }
     while (x >= chunkSize[0]) {
       x -= chunkSize[0];
       chunkX += 1;
     }
+    while (x < 0) {
+      x += chunkSize[0];
+      chunkX -= 1;
+    }
 
     if (y >= chunkSize[1]) {
       y = chunkSize[1] - 1;
@@ -998,19 +900,123 @@ function generateChunkStructures(inputChunkCoord = [0, 0]) {
       y = 0;
     }
 
-    while (z < 0) {
-      z += chunkSize[0];
-      chunkZ -= 1;
-    }
     while (z >= chunkSize[0]) {
       z -= chunkSize[0];
       chunkZ += 1;
     }
+    while (z < 0) {
+      z += chunkSize[0];
+      chunkZ -= 1;
+    }
 
     const blockCoord = [x, y, z];
     const chunkCoord = [chunkX, chunkZ];
-
-    return [blockCoord, chunkCoord];
+  } else {
+    const blockCoord = getBlockCoord(xPos, yPos, zPos);
+    const chunkCoord = getChunkCoord(xPos, zPos);
   }
 
-  console.log("worldgen initialized");
+  if (!(chunks[chunkCoord].data === undefined)) {
+    generateChunkTerrain(chunkCoord);
+  };
+
+  const block = chunks[`${chunkCoord[0]},${chunkCoord[1]}`].data[`${blockCoord[0]},${blockCoord[1]},${blockCoord[2]}`];
+
+  if (extraInfo) {
+    return block;
+  }
+
+  if (block.type !== "air") {
+    if (block.type === "water" && ignoreWater) {
+      return false;
+    }
+    return true;
+  }
+
+  return false;
+}
+
+function getChunkCoord(xPos = 1, zPos = 1) {
+  const x = Math.floor(xPos / totalChunkSize);
+  const z = Math.floor(zPos / totalChunkSize);
+  const chunkCoord = [x, z];
+  return chunkCoord;
+}
+
+function getBlockCoord(xPos = 1, yPos = 1, zPos = 1, usesSimpleInputs = false) {
+  let x, y, z;
+
+  if (!usesSimpleInputs) {
+    x = Math.floor(xPos / blockSize);
+    y = Math.floor(yPos / blockSize);
+    z = Math.floor(zPos / blockSize);
+  } else {
+    x = xPos;
+    y = yPos;
+    z = zPos;
+  }
+
+  while (x < 0) {
+    x += chunkSize[0];
+  }
+  while (x >= chunkSize[0]) {
+    x -= chunkSize[0];
+  }
+
+  if (y >= chunkSize[1]) {
+    y = chunkSize[1] - 1;
+  }
+  if (y < 0) {
+    y = 0;
+  }
+
+  while (z < 0) {
+    z += chunkSize[0];
+  }
+  while (z >= chunkSize[0]) {
+    z -= chunkSize[0];
+  }
+
+  const blockCoord = [x, y, z].toString();
+  return blockCoord;
+}
+
+function getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord) {
+  let x = xPos;
+  let y = yPos;
+  let z = zPos;
+  let chunkX = inputChunkCoord[0];
+  let chunkZ = inputChunkCoord[1];
+
+  while (x < 0) {
+    x += chunkSize[0];
+    chunkX -= 1;
+  }
+  while (x >= chunkSize[0]) {
+    x -= chunkSize[0];
+    chunkX += 1;
+  }
+
+  if (y >= chunkSize[1]) {
+    y = chunkSize[1] - 1;
+  }
+  if (y < 0) {
+    y = 0;
+  }
+
+  while (z < 0) {
+    z += chunkSize[0];
+    chunkZ -= 1;
+  }
+  while (z >= chunkSize[0]) {
+    z -= chunkSize[0];
+    chunkZ += 1;
+  }
+
+  const blockCoord = [x, y, z].toString();
+  const chunkCoord = [chunkX, chunkZ].toString();
+
+  return [blockCoord, chunkCoord];
+}
+
+consoleLog("worldgen initialized");

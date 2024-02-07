@@ -6,10 +6,5 @@ function consoleLog(message) {
     myConsole.scrollTop = myConsole.scrollHeight
 };
 
-let test = (1, 5, 3)
-let test2 = toString(test)
-
-consoleLog(test2)
-
 
 
