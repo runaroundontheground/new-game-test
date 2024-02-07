@@ -125,15 +125,12 @@ pygame.quit()
 // Assume you have equivalent implementations for deltaTime, items, entities, projectiles, fps, keysPressed
 // Also, assume you have equivalent implementations for Worldgen, Controls, Items, Rendering, Recipes, and Player
 
-function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
-
 
 // this should be all the imports, hopefully that's good now
-import { deltaTime, items, entities, projectiles, fps, keysPressed, timeScale } from "./GlobalVariables.mjs";
+import {
+    deltaTime, items, entities, projectiles, fps, keysPressed,
+    timeScale, consoleLog
+} from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
 import { updateMouseAndKeys } from "./Controls.mjs";

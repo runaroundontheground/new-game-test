@@ -133,7 +133,7 @@ def rotatePoint(surface, angle, pivot, offset = pygame.math.Vector2(0, 0)):
 print("global variables initialized")
 */
 
-function consoleLog(message) {
+export function consoleLog(message) {
     let myConsole = document.getElementById("console")
     myConsole.innerHTML += message + "<br />"
     myConsole.scrollTop = myConsole.scrollHeight

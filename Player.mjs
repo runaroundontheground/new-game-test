@@ -1,4 +1,5 @@
-from GlobalVariables import camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items
+from GlobalVariables import { consoleLog } from "./GlobalVariables.mjs"
+import camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items
 from GlobalVariables import screenWidth, screenHeight, chunks, font, fps, itemEntitySize
 from Worldgen import getChunkCoord, getBlockCoord, findBlock, generateChunkTerrain, smallScaleBlockUpdates
 from Controls import keysPressed, keys, mouse
@@ -1985,8 +1986,4 @@ print("player initialized")
 
 
 
-function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
+consoleLog("player initialized")

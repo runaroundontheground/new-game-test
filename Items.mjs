@@ -166,11 +166,6 @@ print("items initialized")
 */
 
 
-function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
 
 // Assume you have equivalent implementations for entities, items, chunks, 
 // listOfBlockNames, listOfIntermediateItems, blockSize, gravity, and dictOfBlockBreakingStuff
@@ -179,6 +174,11 @@ function consoleLog(message) {
 // Also, assume you have equivalent implementations for ItemEntity, PlaceableItem, ToolItem, 
 // IntermediateItem, and any required utility functions
 
+import {
+    entities, items, chunks, blockSize, gravity, dictOfBlockBreakingStuff,
+    listOfBlockNames, listOfIntermediateItems, consoleLog
+} from "./GlobalVariables.mjs";
+import { findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates } from "./Worldgen.mjs";
 
 
 
@@ -226,22 +226,22 @@ class PlaceableItem extends Item {
 
     placeItem(player) {
         if (player.canReachSelectedBlock) {
-            const blockType = mouse.hoveredBlock["block"]["type"];
+            const blockType = mouse.hoveredBlock.block.type;
             if (blockType === "air" || blockType === "water") {
-                const count = player.hotbar[this.slotId]["count"];
+                const count = player.hotbar[this.slotId].count;
                 if (count > 1) {
-                    player.hotbar[this.slotId]["count"] -= 1;
+                    player.hotbar[this.slotId].count -= 1;
                 } else if (count === 1) {
-                    player.hotbar[this.slotId]["count"] = 0;
-                    player.hotbar[this.slotId]["contents"] = "empty";
+                    player.hotbar[this.slotId].count = 0;
+                    player.hotbar[this.slotId].contents = "empty";
                 } else if (count <= 0) {
-                    console.log("what the heck, how did you do that??\nthe item count is invalid or something");
+                    consoleLog("what the heck, how did you do that??<br />the item count is invalid or something");
                 }
 
-                const chunkCoord = mouse.hoveredBlock["chunkCoord"];
-                const blockCoord = mouse.hoveredBlock["blockCoord"];
+                const chunkCoord = mouse.hoveredBlock.chunkCoord;
+                const blockCoord = mouse.hoveredBlock.blockCoord;
 
-                chunks[chunkCoord]["data"][blockCoord] = Object.assign({}, this.placedBlock);
+                chunks[chunkCoord].data[blockCoord] = this.placedBlock;
 
                 smallScaleBlockUpdates(chunkCoord, blockCoord);
             }
@@ -258,8 +258,8 @@ class PlaceableItem extends Item {
 }
 
 class ToolItem extends Item {
-    constructor(name, toolData = {"attack": 1, "knockback": 1, "breakingPower": 1, "breakingSpeed": 1, "breakingType": "none"},
-                        tooltip = "", stackable = false) {
+    constructor(name, toolData = { "attack": 1, "knockback": 1, "breakingPower": 1, "breakingSpeed": 1, "breakingType": "none" },
+        tooltip = "", stackable = false) {
         super(name);
         this.slotId = 0;
         this.itemType = "ToolItem";
@@ -268,11 +268,11 @@ class ToolItem extends Item {
             this.tooltip = tooltip;
         }
         this.stackable = stackable;
-        this.attack = toolData["attack"];
-        this.knockback = toolData["knockback"];
-        this.breakingPower = toolData["breakingPower"];
-        this.breakingSpeed = toolData["breakingSpeed"];
-        this.breakingType = toolData["breakingType"];
+        this.attack = toolData.attack;
+        this.knockback = toolData.knockback;
+        this.breakingPower = toolData.breakingPower;
+        this.breakingSpeed = toolData.breakingSpeed;
+        this.breakingType = toolData.breakingType;
         this.durability = 100; // durability will exist when the game actually functions
     }
 
@@ -321,23 +321,35 @@ function makeItemsExist() {
         addItem(itemName, "intermediate", {}, true);
     }
 
-    addItem("stone pickaxe", "tool", {"attack": 3, "knockback": 1, "breakingPower": 3,
-                                     "breakingSpeed": 20, "breakingType": "pickaxe"}, false);
+    addItem("stone pickaxe", "tool", {
+        "attack": 3, "knockback": 1, "breakingPower": 3,
+        "breakingSpeed": 20, "breakingType": "pickaxe"
+    }, false);
 
-    addItem("stone axe", "tool", {"attack": 7, "knockback": 1, "breakingPower": 3,
-                                  "breakingSpeed": 20, "breakingType": "axe"}, false);
+    addItem("stone axe", "tool", {
+        "attack": 7, "knockback": 1, "breakingPower": 3,
+        "breakingSpeed": 20, "breakingType": "axe"
+    }, false);
 
-    addItem("stone shovel", "tool", {"attack": 2, "knockback": 1, "breakingPower": 1,
-                                     "breakingSpeed": 25, "breakingType": "shovel"}, false);
+    addItem("stone shovel", "tool", {
+        "attack": 2, "knockback": 1, "breakingPower": 1,
+        "breakingSpeed": 25, "breakingType": "shovel"
+    }, false);
 
-    addItem("wood pickaxe", "tool", {"attack": 2, "knockback": 1, "breakingPower": 2,
-                                     "breakingSpeed": 10, "breakingType": "pickaxe"}, false);
+    addItem("wood pickaxe", "tool", {
+        "attack": 2, "knockback": 1, "breakingPower": 2,
+        "breakingSpeed": 10, "breakingType": "pickaxe"
+    }, false);
 
-    addItem("wood axe", "tool", {"attack": 6, "knockback": 1, "breakingPower": 2,
-                                  "breakingSpeed": 10, "breakingType": "axe"}, false);
+    addItem("wood axe", "tool", {
+        "attack": 6, "knockback": 1, "breakingPower": 2,
+        "breakingSpeed": 10, "breakingType": "axe"
+    }, false);
 
-    addItem("wood shovel", "tool", {"attack": 1, "knockback": 1, "breakingPower": 1,
-                                     "breakingSpeed": 15, "breakingType": "shovel"}, false);
+    addItem("wood shovel", "tool", {
+        "attack": 1, "knockback": 1, "breakingPower": 1,
+        "breakingSpeed": 15, "breakingType": "shovel"
+    }, false);
 }
 
-console.log("items initialized");
+consoleLog("items initialized");

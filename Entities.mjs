@@ -142,14 +142,9 @@ from Worldgen import findBlock
 import math, pygame, random
 */
 
-function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
 
 
-import {blockSize, gravity, maxStackSize, itemEntitySize} from "./GlobalVariables.js"
+import {blockSize, gravity, maxStackSize, itemEntitySize, consoleLog} from "./GlobalVariables.js"
 
 
 

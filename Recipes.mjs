@@ -107,12 +107,7 @@ def makeRecipesExist():
 
 */
 
-function consoleLog(message) {
-  let myConsole = document.getElementById("console")
-  myConsole.innerHTML += message + "<br />"
-  myConsole.scrollTop = myConsole.scrollHeight
-};
-
+import { recipes, items, consoleLog } from "./GlobalVariables.mjs";
 
 // Assuming 'recipes' and 'items' are defined globally in your JavaScript environment
 
