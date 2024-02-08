@@ -1,6 +1,6 @@
 import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
 chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed,
-itemEntitySize, camera, itemIcons, consoleLog } from "./GlobalVariables.mjs";
+itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx } from "./GlobalVariables.mjs";
 consoleLog("loading Rendering.mjs");
 
 import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
@@ -8,118 +8,35 @@ generateChunkStructures, findBlock } from "./Worldgen.mjs";
 import { mouse } from "./Controls.mjs";
 import { player } from "./Player.mjs";
 
-// import { noise } from "./PerlinNoise.mjs";
-
-// need to probably import canvas and ctx as well
-screen = pygame.display.set_mode((canvasWidth, canvasHeight))
 
 
-letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-    ]
 
-capitalLetters = []
-for letter in letters:
-    capitalLetters.append(letter.upper())
+let blockImageRenderData = {
+    "air": {"color": "black", "widthAndHeight": blockSize, "alpha": 255}
+};
+let itemEntityIcons = {}
 
-characters = {}
+let images = {};
 
-defaultTextColor = (255, 255, 255)
-def addACharacter(character):
-    characters[character] = {
-        "text": font.render(character, 0, defaultTextColor),
-        "size": font.size(character)
-    }
-def addMostCharacters():
-    letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-    ]
-    otherChars = [
-             ".", "-", "_", ",", "<", ">", "/", "?", ":", ";", "'", '"', " ",
-             "(", ")", "[", "]", "{", "}", "+", "="
-    ]
+let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha": 255}
 
-    for numericalCharacter in range(10):
-        addACharacter(str(numericalCharacter))
 
-    for letter in letters:
-        characters[letter] = {
-            "text": font.render(letter, 0, defaultTextColor),
-            "size": font.size(letter)
-        }
-        characters[letter.upper()] = {
-            "text": font.render(letter.upper(), 0, defaultTextColor),
-            "size": font.size(letter.upper())
-        }
-    for character in otherChars:
-        characters[character] = {
-            "text": font.render(character, 0, defaultTextColor),
-            "size": font.size(character)
-        }
-addMostCharacters()
+let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2
 
-def convertTextToImageData(textValue, position, centeredOnPosition = False,):
-    text = str(textValue)
 
-    x = 0
-    y = 0
+
+function loadImage(path, name) {
+    let image = new Image()
     
-    for character in text:
-        size = characters[character]["size"]
-        x += size[0]
-        if size[1] > y:
-            y = size[1]
-
-    temporarySurface = pygame.Surface((x, y))
-    temporarySurface.fill((0, 0, 0))
-    temporarySurface.set_colorkey((0, 0, 0))
-    
-    if centeredOnPosition:
-        for character in text:
-            pass
-    else:
-        x = 0
-        for character in text:
-            renderedText = characters[character]["text"]
-            temporarySurface.blit(renderedText, (x, 0))
-
-            x += characters[character]["size"][0]
-        imageData = (temporarySurface, position)
-        
-        return imageData
-
-
-
-screen.fill((0, 0, 0))
-
-blockImages = {
-    "air": {"data": 0, "scaled": False, "dataWithAlpha": 0}
-}
-itemEntityIcons = {}
-
-blockHighlightSurface = pygame.Surface((blockSize, blockSize))
-blockHighlightSurface.fill((255, 255, 150)) # yellow?
-
-rect = pygame.Rect(5, 5, blockSize - 10, blockSize - 10)
-blockHighlightSurface.fill((255, 255, 255), rect)
-blockHighlightSurface.set_colorkey((255, 255, 255))
-
-
-itemIconSize = player.inventoryRenderingData["slotSize"] - player.inventoryRenderingData["itemIconShift"] * 2
-
-print(itemIconSize)
-
-def loadImage(path, name):
-    image = pygame.image.load("Images/" + path).convert_alpha()
-    itemIcons[name] = image
+    images[name] = image;
 
     itemEntityImage = image.copy()
     size = (itemEntitySize, itemEntitySize)
     itemEntityImage = pygame.transform.scale(itemEntityImage, size)
     itemEntityIcons[name] = itemEntityImage
 
-    return image
-
+    return image;
+}
 images = {
     "stick": loadImage("stick.png", "stick"),
     "stone pickaxe": loadImage("tools/stone pickaxe.png", "stone pickaxe"),
