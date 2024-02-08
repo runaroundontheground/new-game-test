@@ -1,3 +1,6 @@
+
+
+
 /*from GlobalVariables import entities, items, chunks, listOfBlockNames, listOfIntermediateItems, blockSize, gravity, dictOfBlockBreakingStuff
 from Worldgen import findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates
 from Controls import mouse
@@ -173,11 +176,12 @@ print("items initialized")
 // getBlockCoord, smallScaleBlockUpdates, and mouse
 // Also, assume you have equivalent implementations for ItemEntity, PlaceableItem, ToolItem, 
 // IntermediateItem, and any required utility functions
-
 import {
     entities, items, chunks, blockSize, gravity, dictOfBlockBreakingStuff,
     listOfBlockNames, listOfIntermediateItems, consoleLog
 } from "./GlobalVariables.mjs";
+consoleLog("loading Items.mjs")
+
 import { findBlock, getChunkCoord, getBlockCoord, smallScaleBlockUpdates } from "./Worldgen.mjs";
 
 

@@ -134,8 +134,10 @@ import {
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
 import { updateMouseAndKeys } from "./Controls.mjs";
-import { render, generateSpawnArea, doCommandStuff, } from "./Rendering.mjs";
+import { render, generateSpawnArea, doCommandStuff } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
+
+consoleLog("loading main.mjs")
 
 let running = true
 function initializeGame() {

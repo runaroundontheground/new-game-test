@@ -2,7 +2,7 @@
 pygame.display.init()
 pygame.font.init()
 
-screenWidth, screenHeight = 1000, 500
+canvasWidth, canvasHeight = 1000, 500
 
 font = pygame.font.Font(size = 24)
 
@@ -55,8 +55,8 @@ dictOfBlockBreakingStuff = {
 
 
 
-screenWidthInChunks = math.floor( screenWidth / totalChunkSize )
-screenHeightInChunks = math.floor( screenHeight / totalChunkSize )
+canvasWidthInChunks = math.floor( canvasWidth / totalChunkSize )
+canvasHeightInChunks = math.floor( canvasHeight / totalChunkSize )
 
 # every entity will be here, besides player
 # hopefully doing the stuff for these entities isn't super laggy
@@ -101,7 +101,7 @@ for key in dictOfBlockBreakingStuff.keys():
 class Camera():
     def __init__(self):
         self.smoothness = 10
-        self.centerTheCamera = (screenWidth/2, screenHeight/2)
+        self.centerTheCamera = (canvasWidth/2, canvasHeight/2)
         self.x = -self.centerTheCamera[0]
         self.y = 0
         self.z = -self.centerTheCamera[1]
@@ -138,23 +138,25 @@ export function consoleLog(message) {
     myConsole.innerHTML += message + "<br />"
     myConsole.scrollTop = myConsole.scrollHeight
 };
+consoleLog("loading GlobalVariables.mjs");
 
-const canvas = document.createElement("canvas");
-document.body.appendChild(canvas);
 
-const ctx = canvas.getContext("2d");
 
-const screenWidth = 1000;
-const screenHeight = 500;
-
+export const canvasWidth = 1000;
+export const canvasHeight = 500;
 export const blockSize = 30; // pixels
-const chunkSize = [10, 30]; // width or length, then height (both in blocks)
+export const chunkSize = [10, 30]; // width or length, then height (both in blocks)
 
-const totalChunkSize = chunkSize[0] * blockSize;
+export let canvas = document.getElementById("canvas");
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
+export const ctx = canvas.getContext("2d");
 
-const gravity = 1;
+export const totalChunkSize = chunkSize[0] * blockSize;
 
-const itemEntitySize = blockSize / 2;
+export const gravity = 1;
+
+export const itemEntitySize = blockSize / 2;
 
 export let chunks = {};
 
@@ -192,21 +194,21 @@ export const dictOfBlockBreakingStuff = {
     "water": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false }
 };
 
-const screenWidthInChunks = Math.floor(screenWidth / totalChunkSize);
-const screenHeightInChunks = Math.floor(screenHeight / totalChunkSize);
+export const canvasWidthInChunks = Math.floor(canvasWidth / totalChunkSize);
+export const canvasHeightInChunks = Math.floor(canvasHeight / totalChunkSize);
 
 export let entities = [];
 export let projectiles = [];
 
 export let items = {};
-const itemIcons = {};
+export let itemIcons = {};
 
 export const fps = 60;
 export let timeScale = 1
 
 export const maxStackSize = 64;
 
-let recipes = {
+export let recipes = {
     2: {
         "exact": {},
         "nearExact": {},
@@ -226,7 +228,7 @@ export const listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
 class Camera {
     constructor() {
         this.smoothness = 10;
-        this.centerTheCamera = [screenWidth / 2, screenHeight / 2];
+        this.centerTheCamera = [canvasWidth / 2, canvasHeight / 2];
         this.x = -this.centerTheCamera[0];
         this.y = 0;
         this.z = -this.centerTheCamera[1];

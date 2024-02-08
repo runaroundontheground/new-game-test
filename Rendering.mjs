@@ -1,16 +1,17 @@
-from GlobalVariables import screenWidth, screenHeight, totalChunkSize, blockSize, chunks, keys
-from GlobalVariables import chunkSize, screenWidthInChunks, screenHeightInChunks, entities, keysPressed
-from GlobalVariables import itemEntitySize, camera, itemIcons, font, rotatePoint
-from Worldgen import generateChunkTerrain, runBlockUpdatesAfterGeneration
-from Worldgen import generateChunkStructures, findBlock
-from Controls import mouse
-from Player import player
-from perlin_noise import PerlinNoise
-import pygame, math
+import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
+chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed,
+itemEntitySize, camera, itemIcons, consoleLog } from "./GlobalVariables.mjs";
+consoleLog("loading Rendering.mjs");
 
-pygame.init()
+import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
+generateChunkStructures, findBlock } from "./Worldgen.mjs";
+import { mouse } from "./Controls.mjs";
+import { player } from "./Player.mjs";
 
-screen = pygame.display.set_mode((screenWidth, screenHeight))
+// import { noise } from "./PerlinNoise.mjs";
+
+// need to probably import canvas and ctx as well
+screen = pygame.display.set_mode((canvasWidth, canvasHeight))
 
 
 letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
@@ -219,9 +220,9 @@ def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
     screenExtension = 1
 
     xRange = cameraChunk[0] - screenExtension
-    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension + 1
+    maxXRange = cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
     zRange = cameraChunk[1] - screenExtension
-    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension + 1
+    maxZRange = cameraChunk[1] + canvasHeightInChunks + screenExtension + 1
 
     # initial generation in a larger area
     for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
@@ -253,9 +254,9 @@ def generateSpawnArea():
     screenExtension = 1
 
     xRange = cameraChunk[0] - screenExtension
-    maxXRange = cameraChunk[0] + screenWidthInChunks + screenExtension + 1
+    maxXRange = cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
     zRange = cameraChunk[1] - screenExtension
-    maxZRange = cameraChunk[1] + screenHeightInChunks + screenExtension + 1
+    maxZRange = cameraChunk[1] + canvasHeightInChunks + screenExtension + 1
 
     rangeOfGeneration = 3
 
@@ -742,9 +743,9 @@ def doCommandStuff(commandString, previousCommandString, submitCommand):
 
     if previousCommandString != commandString or keysPressed[pygame.K_BACKSPACE]:
 
-        imageData = convertTextToImageData(commandString, (30, screenHeight - 100))
+        imageData = convertTextToImageData(commandString, (30, canvasHeight - 100))
         size = font.size(commandString + "       ")
-        rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+        rect = pygame.rect.Rect(30, canvasHeight - 100, size[0], size[1])
         pygame.draw.rect(screen, (0, 0, 0), rect)
         screen.blit(imageData[0], imageData[1])
         pygame.display.flip()
@@ -756,9 +757,9 @@ def doCommandStuff(commandString, previousCommandString, submitCommand):
 
 def showInvalidCommand():
     string = "invalid command"
-    imageData = convertTextToImageData(string, (30, screenHeight - 100))
+    imageData = convertTextToImageData(string, (30, canvasHeight - 100))
     size = font.size(string)
-    rect = pygame.rect.Rect(30, screenHeight - 100, size[0], size[1])
+    rect = pygame.rect.Rect(30, canvasHeight - 100, size[0], size[1])
     pygame.draw.rect(screen, (0, 0, 0), rect)
     screen.blit(imageData[0], imageData[1])
     pygame.display.flip()
