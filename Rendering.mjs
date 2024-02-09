@@ -1,6 +1,6 @@
 import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
 chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed,
-itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx } from "./GlobalVariables.mjs";
+itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, images } from "./GlobalVariables.mjs";
 consoleLog("loading Rendering.mjs");
 
 import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
@@ -11,12 +11,11 @@ import { player } from "./Player.mjs";
 
 
 
-let blockImageRenderData = {
+let blockRenderingData = {
     "air": {"color": "black", "widthAndHeight": blockSize, "alpha": 255}
 };
 let itemEntityIcons = {}
 
-let images = {};
 
 let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha": 255}
 

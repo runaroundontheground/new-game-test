@@ -150,6 +150,8 @@ canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 export const ctx = canvas.getContext("2d");
 
+export let images = {};
+
 export const totalChunkSize = chunkSize[0] * blockSize;
 
 export const gravity = 1;
