@@ -1,10 +1,18 @@
 // this file is used only for testing things
 
-function consoleLogAAAA(message) {
+function consoleLog(message) {
     let myConsole = document.getElementById("console")
     myConsole.innerHTML += message + "<br />"
     myConsole.scrollTop = myConsole.scrollHeight
 };
+
+/*
+let testArray = [3,5,32,34,54,32,34,45]
+testArray.forEach(function(arrayItem) {
+    consoleLog(arrayItem)
+});*/
+
+
 /*
 class testingClass {
     constructor() {
