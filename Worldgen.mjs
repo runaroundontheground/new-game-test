@@ -94,6 +94,9 @@ let chunkData = {};
             blockData.type = "water";
           }
         }
+        if (y === surfaceYLevel) {
+          blockData.type = "grass";
+        }
 
         if (y < surfaceYLevel) {
           if (y < 8) {
@@ -102,118 +105,131 @@ let chunkData = {};
           if (y >= 8) {
             blockData.type = "stone";
           }
-          if (y === surfaceYLevel) {
-            blockData.type = "grass";
-          }
           if (y < 6) {
             blockData.type = "sand";
           }
           if (y < waterHeight) {
             let randomNum = Math.floor(Math.random() * 3);
+            switch (randomNum) {
+              case randomNum === 0:
+                blockData.type = "sand";
+                break;
+              case randomNum === 1:
+                blockData.type = "clay";
+                break;
+              case randomNum === 2:
+                blockData.type = "gravel";
+                break;
+              break;
+            }
             
-          }
+          };
+
         }
 
-        if y < waterHeight:
-          randomNumber = random.randint(0, 2)
-        if randomNumber == 0:
-          blockData["type"] = "sand"
-                                        elif randomNumber == 1:
-        blockData["type"] = "clay"
-                                        elif randomNumber == 2:
-        blockData["type"] = "gravel"
-        if y >= 8:
-          blockData["type"] = "stone"
-        if y < 10:
-          blockData["type"] = "dirt"
-        if y > 15:
-          blockData["type"] = "snowy stone"
-                            
-                            # bottom layer of world, at least have something
-        if y == 0:
-          blockData["type"] = "bedrock"
+        if (y >= 8) {blockData.type = "stone";};
+        if (y < 10) {blockData.type = "dirt";};
+        if (y > 15) {blockData.type = "snowy stone";};
 
-        hardness = dictOfBlockBreakingStuff[blockData["type"]]["hardness"]
-        effectiveTool = dictOfBlockBreakingStuff[blockData["type"]]["effectiveTool"]
-        dropsWithNoTool = dictOfBlockBreakingStuff[blockData["type"]]["dropsWithNoTool"]
 
-        blockData["hardness"] = hardness
-        blockData["effectiveTool"] = effectiveTool
-        blockData["dropsWithNoTool"] = dropsWithNoTool
 
-        chunkData[(x, y, z)] = blockData
+        if (y === 0) {blockData.type = "bedrock";};
+
+        let accessedBreakingInfo = dictOfBlockBreakingStuff[blockData.type];
+
+        blockData["hardness"] = accessedBreakingInfo.hardness;
+        blockData["effectiveTool"] = accessedBreakingInfo.effectiveTool;
+        blockData["dropsWithNoTool"] = accessedBreakingInfo.dropsWithNoTool;
+
+        
+        chunkData[[x, y, z].toString()] = blockData;
+
+      }
+    }
+  }
+}
+initialTerrainGeneration()
+
+chunks[chunkCoords] = {
+  "data": chunkData,
+  "blocksUpdated": false,
+  "structuresGenerated": false
+};
+}
+
+
+function generateChunkStructures(inputChunkCoord) {
+  function generateStructure(structureName, blockCoord) {
+    let thisStructure = structures[structureName];
+    let thisStructureKeys = Object.keys(thisStructure);
+
+    for (let i = 0; i < thisStructureKeys.length; i++) {
+      let chunkX = inputChunkCoord[0];
+      let chunkZ = inputChunkCoord[1];
+
+      let structureBlockCoord = thisStructureKeys[i];
+      let block = thisStructure[structureBlockCoord];
+
+      let x = blockCoord[0] + structureBlockCoord[0];
+      let y = blockCoord[1] + structureBlockCoord[1];
+      let z = blockCoord[2] + structureBlockCoord[2];
+
+      while (x >= chunkSize[0]) {
+        x -= chunkSize;
+        chunkX += 1;
+      }
+      while (x < 0) {
+        x += chunkSize[0];
+        chunkX -= 1;
+      }
+      while (z >= chunkSize[0]) {
+        z -= chunkSize[0];
+        chunkZ += 1;
+      }
+      while (z < 0) {
+        z += chunkSize[0];
+        chunkZ -= 1;
+      };
+
+      if (y <= 0) {
+        y = 1
+      };
+      if (y >= chunkSize[1]) {
+        y = chunkSize[0] - 1;
+      };
+
+      let newBlockCoord = [x, y, z].toString();
+      let chunkCoord = [chunkX, chunkZ].toString();
+
+      if (chunks[chunkCoord]["data"] === undefined) {
+        generateChunkTerrain(chunkCoord);
+      };
+
+      chunks[chunkCoord]["data"][newBlockCoord] = block;
+    };
+  };
+  for (let x = 0; x < chunkSize[0]; x++) {
+    for (let y = 0; y < chunkSize[1]; y++) {
+      for (let z = 0; z < chunkSize[0]; y++) {
+
+        let blockCoord = [x, y, z].toString();
+        let block = chunks[inputChunkCoord]["data"][blockCoord];
+        
 
       }
     }
   }
   
 
-
-
-        
-            }
-initialTerrainGeneration()
-
-chunks[chunkCoords] = {
-  "data": chunkData,
-  "blocksUpdated": False,
-  "structuresGenerated": False
-}
-}
-
-def generateChunkStructures(inputChunkCoord = (0, 0)):
-
-    def generateStructure(structureName, blockCoord):
-thisStructure = structures[structureName]
-
-for structureBlockCoord, block in thisStructure.items():
-
-
-  chunkX = inputChunkCoord[0]
-chunkZ = inputChunkCoord[1]
-
-x = blockCoord[0] + structureBlockCoord[0]
-y = blockCoord[1] + structureBlockCoord[1]
-z = blockCoord[2] + structureBlockCoord[2]
-
-while x >= chunkSize[0]:
-  x -= chunkSize[0]
-chunkX += 1
-while x < 0:
-  x += chunkSize[0]
-chunkX -= 1
-
-while z >= chunkSize[0]:
-  z -= chunkSize[0]
-chunkZ += 1
-while z < 0:
-  z += chunkSize[0]
-chunkZ -= 1
-
-if y <= 0:
-  y = 1
-if y >= chunkSize[1]:
-  y = chunkSize[1] - 1
-
-newBlockCoord = (x, y, z)
-chunkCoord = (chunkX, chunkZ)
-
-if newBlockCoord not in chunks[chunkCoord]["data"]:
-generateChunkTerrain(chunkCoord)
-
-chunks[chunkCoord]["data"][newBlockCoord] = block.copy()
-
-
-for x in range(chunkSize[0]):
-  for y in range(chunkSize[1]):
-    for z in range(chunkSize[0]):
-      block = chunks[inputChunkCoord]["data"][(x, y, z)]
-blockCoord = (x, y, z)
-
 if block["type"] == "grass":
   if random.randint(0, 20) == 0:
     generateStructure("tree 1", blockCoord)
 chunks[inputChunkCoord]["structuresGenerated"] = True
+
+};
+
+
+
 
 def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
 
