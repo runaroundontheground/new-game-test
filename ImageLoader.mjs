@@ -1,20 +1,16 @@
-import { consoleLog, allImagesLoaded } from "./GlobalVariables.mjs";
+
+function consoleLog(message) {
+    let myConsole = document.getElementById("console")
+    myConsole.innerHTML += message + "<br />"
+    myConsole.scrollTop = myConsole.scrollHeight
+};
 
 let imageDiv = document.getElementById("imageHolder");
-/*
-based on a list that i make manually, load all of those images, put them into imageHolder
-with display: none; and then once document.all images are loaded or whatever the actual thing is
-set allImagesLoaded to true (in main i guess?)
-*/
-let imagesHaveBeenAdded = false;
 
-window.addEventListener("load", function () {
-    if (imagesHaveBeenAdded) {
-        allImagesLoaded = true
-    };
-    consoleLog("allImagesLoaded: " + allImagesLoaded);
-    consoleLog("imagesHaveBeenAdded: " + imagesHaveBeenAdded);
-});
+
+let imagesHaveBeenAdded = false;
+var allImagesLoaded = false;
+export { allImagesLoaded };
 
 let imageUrls = [
     "./Images/stick.png",
@@ -25,7 +21,6 @@ let imageUrls = [
 ];
 
 
-
 imageUrls.forEach(function (url) {
     let image = document.createElement("img");
     image.style.display = "none";
@@ -34,3 +29,13 @@ imageUrls.forEach(function (url) {
 });
 
 imagesHaveBeenAdded = true;
+
+
+window.addEventListener("load", function () {
+    if (imagesHaveBeenAdded === true) {
+        allImagesLoaded = true;
+    };
+    consoleLog("allImagesLoaded: " + allImagesLoaded);
+    consoleLog("imagesHaveBeenAdded: " + imagesHaveBeenAdded);
+});
+

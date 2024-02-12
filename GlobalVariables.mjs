@@ -140,7 +140,8 @@ export function consoleLog(message) {
 };
 consoleLog("loading GlobalVariables.mjs");
 
-export let allImagesLoaded = false;
+var allImagesLoaded = false;
+export { allImagesLoaded };
 
 export const canvasWidth = 1000;
 export const canvasHeight = 500;
@@ -150,7 +151,7 @@ export const chunkSize = [10, 30]; // width or length, then height (both in bloc
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
-export const ctx = canvas.getContext("2d");
+export let ctx = canvas.getContext("2d");
 
 export let images = {};
 

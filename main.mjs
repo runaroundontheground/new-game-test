@@ -126,10 +126,9 @@ pygame.quit()
 // Also, assume you have equivalent implementations for Worldgen, Controls, Items, Rendering, Recipes, and Player
 
 
-// this should be all the imports, hopefully that's good now
 import {
     deltaTime, items, entities, projectiles, fps, keysPressed,
-    timeScale, consoleLog
+    timeScale, consoleLog, allImagesLoaded
 } from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
@@ -164,6 +163,18 @@ function gameLoop() {
 //gameLoop();
 
 consoleLog("main was able to load successfully")
+
+
+window.addEventListener("load", function () {
+    if (allImagesLoaded) {
+        consoleLog("game is starting maybe")
+        initializeGame()
+        gameLoop()
+    };
+});
+
+
+
 
 
 // stuff that was kinda converted
