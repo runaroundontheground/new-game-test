@@ -6,6 +6,7 @@ function consoleLog(message) {
     myConsole.scrollTop = myConsole.scrollHeight
 };
 
+
 /*
 let testArray = [3,5,32,34,54,32,34,45]
 testArray.forEach(function(arrayItem) {

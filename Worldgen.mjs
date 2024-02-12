@@ -5,10 +5,10 @@ import {
 } from "./GlobalVariables.mjs";
 consoleLog("loading Worldgen.mjs");
 
-//import { noise } from "./PerlinNoise.mjs";
+import { noise } from "./PerlinNoise.mjs";
 
-
-
+// set the seed for this world
+noise.seed(Math.random());
 
 
 structures = {
@@ -38,101 +38,127 @@ makeTree1();
 // add any additional things that all blocks require in their data automatically such as render
 
 function fixStructureData() {
-for structureName, structureData in structures.items():
-  for key, block in structures[structureName].items():
+  let structureNames = Object.keys(structures);
+  for (let i = 0; i < structureNames.length; i++) {
+    let structureName = structureNames[i];
+    let blocks = Object.keys(structures[structureName]);
 
-    block.render = false;
-block["alphaValue"] = 255
-block["hardness"] = dictOfBlockBreakingStuff[block["type"]]["hardness"]
-block["effectiveTool"] = dictOfBlockBreakingStuff[block["type"]]["effectiveTool"]
-block["dropsWithNoTool"] = dictOfBlockBreakingStuff[block["type"]]["dropsWithNoTool"]
-};
-fixStructureData()
+    for (let i2 = 0; i2 < blocks.length; i2++) {
+      let block = blocks[i2];
 
-waterHeight = 4
+      block.render = false;
+      block.alphaValue = 255;
 
-def generateChunkTerrain(chunkCoords = (0, 0)):
-chunkData = {}
+      let accessedBreakingInfo = dictOfBlockBreakingStuff[block.type];
+      block.hardness = accessedBreakingInfo.hardness;
+      block.effectiveTool = accessedBreakingInfo.effectiveTool;
+      block.dropsWithNoTool = accessedBreakingInfo.dropsWithNoTool;
+      blocks[i2] = block;
+    }
+  }
+}
+fixStructureData();
 
-    def initialTerrainGeneration():
+let waterHeight = 4;
 
-for x in range(chunkSize[0]):
-  for y in range(chunkSize[1]):
-    for z in range(chunkSize[0]):
-      blockData = {
-        "type": "air",
-        "render": False,
-        "alphaValue": 255,
-        "hardness": 0,
-        "effectiveTool": "none",
-        "dropsWithNoTool": False
+function generateChunkTerrain (chunkCoords) {
+let chunkData = {};
+
+  function initialTerrainGeneration() {
+
+  for (let x = 0; x < chunkSize[0]; x++) {
+    for (let y = 0; y < chunkSize[1]; y++) {
+      for (let z = 0; z < chunkSize[0]; z++) {
+        let blockData = {
+          "type": "air",
+          "render": False,
+          "alphaValue": 255,
+          "hardness": 0,
+          "effectiveTool": "none",
+          "dropsWithNoTool": false
+        }
+
+        let noiseX = x;
+        let noiseZ = z;
+        let noiseIntensity = 25;
+        noiseX += chunkSize[0] * chunkCoords[0];
+        noiseZ += chunkSize[0] * chunkCoords[1];
+
+        noiseX /= noiseIntensity;
+        noiseZ /= noiseIntensity;
+
+        let surfaceYLevel = Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
+
+        if (y > surfaceYLevel) {
+          if (y <= waterHeight) {
+            blockData.type = "water";
+          }
+        }
+
+        if (y < surfaceYLevel) {
+          if (y < 8) {
+            blockData.type = "dirt";
+          }
+          if (y >= 8) {
+            blockData.type = "stone";
+          }
+          if (y === surfaceYLevel) {
+            blockData.type = "grass";
+          }
+          if (y < 6) {
+            blockData.type = "sand";
+          }
+          if (y < waterHeight) {
+            let randomNum = Math.floor(Math.random() * 3);
+            
+          }
+        }
+
+        if y < waterHeight:
+          randomNumber = random.randint(0, 2)
+        if randomNumber == 0:
+          blockData["type"] = "sand"
+                                        elif randomNumber == 1:
+        blockData["type"] = "clay"
+                                        elif randomNumber == 2:
+        blockData["type"] = "gravel"
+        if y >= 8:
+          blockData["type"] = "stone"
+        if y < 10:
+          blockData["type"] = "dirt"
+        if y > 15:
+          blockData["type"] = "snowy stone"
+                            
+                            # bottom layer of world, at least have something
+        if y == 0:
+          blockData["type"] = "bedrock"
+
+        hardness = dictOfBlockBreakingStuff[blockData["type"]]["hardness"]
+        effectiveTool = dictOfBlockBreakingStuff[blockData["type"]]["effectiveTool"]
+        dropsWithNoTool = dictOfBlockBreakingStuff[blockData["type"]]["dropsWithNoTool"]
+
+        blockData["hardness"] = hardness
+        blockData["effectiveTool"] = effectiveTool
+        blockData["dropsWithNoTool"] = dropsWithNoTool
+
+        chunkData[(x, y, z)] = blockData
+
       }
-
-noiseCoordinate = [x, z]
-noiseIntensity = 25 # is this a good name ?
-
-  noiseCoordinate[0] += chunkSize[0] * chunkCoords[0]
-                    noiseCoordinate[1] += chunkSize[0] * chunkCoords[1]
-
-noiseCoordinate[0] /= noiseIntensity
-noiseCoordinate[1] /= noiseIntensity
+    }
+  }
+  
 
 
 
-surfaceYLevel = noise(noiseCoordinate)
-surfaceYLevel = round(abs(surfaceYLevel * noiseIntensity))
-surfaceYLevel += 1 # make bottom layer be bedrock
-
-
-
-if y > surfaceYLevel: # above ground
-if y <= waterHeight:
-  blockData["type"] = "water"
-
-if y < surfaceYLevel: # underground
-if y < 8:
-  blockData["type"] = "dirt"
-if y >= 8:
-  blockData["type"] = "stone"
-
-if y == surfaceYLevel: # surface level
-blockData["type"] = "grass"
-if y < 6:
-  blockData["type"] = "sand"
-if y < waterHeight:
-  randomNumber = random.randint(0, 2)
-if randomNumber == 0:
-  blockData["type"] = "sand"
-                                elif randomNumber == 1:
-blockData["type"] = "clay"
-                                elif randomNumber == 2:
-blockData["type"] = "gravel"
-if y >= 8:
-  blockData["type"] = "stone"
-if y < 10:
-  blockData["type"] = "dirt"
-if y > 15:
-  blockData["type"] = "snowy stone"
-                    
-                    # bottom layer of world, at least have something
-if y == 0:
-  blockData["type"] = "bedrock"
-
-hardness = dictOfBlockBreakingStuff[blockData["type"]]["hardness"]
-effectiveTool = dictOfBlockBreakingStuff[blockData["type"]]["effectiveTool"]
-dropsWithNoTool = dictOfBlockBreakingStuff[blockData["type"]]["dropsWithNoTool"]
-
-blockData["hardness"] = hardness
-blockData["effectiveTool"] = effectiveTool
-blockData["dropsWithNoTool"] = dropsWithNoTool
-
-chunkData[(x, y, z)] = blockData
+        
+            }
 initialTerrainGeneration()
 
 chunks[chunkCoords] = {
   "data": chunkData,
   "blocksUpdated": False,
   "structuresGenerated": False
+}
 }
 
 def generateChunkStructures(inputChunkCoord = (0, 0)):
