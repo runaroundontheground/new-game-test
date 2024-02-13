@@ -214,18 +214,18 @@ function generateChunkStructures(inputChunkCoord) {
 
         let blockCoord = [x, y, z].toString();
         let block = chunks[inputChunkCoord]["data"][blockCoord];
+
+        if (block.type === "grass") {
+          if (random.intFromRange(0, 20) === 0) {
+            generateStructure("tree 1", blockCoord);
+          };
+        };
+        chunks[inputChunkCoord].structuresGenerated = true;
         
 
-      }
-    }
-  }
-  
-
-if block["type"] == "grass":
-  if random.randint(0, 20) == 0:
-    generateStructure("tree 1", blockCoord)
-chunks[inputChunkCoord]["structuresGenerated"] = True
-
+      };
+    };
+  };
 };
 
 

@@ -241,4 +241,19 @@ class Camera {
 
 export let camera = new Camera();
 
+class Random {
+    constructor() {
+        this.integer = function (startInt, inclusiveEndInt) {
+            // go look ath the documentation and change var names to make sense
+            return Math.floor(Math.random() * (inclusiveEndInt - minCeiled) + minCeiled);
+        };
+
+    };
+};
+
+export let random = new Random();
+
+
+
+
 consoleLog("global variables initialized");
