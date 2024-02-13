@@ -1,6 +1,6 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
-    canvasWidth, canvasHeight, chunks, fps, itemEntitySize
+    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random
 } from "./GlobalVariables.mjs";
 consoleLog("loading Player.mjs");
 
@@ -9,17 +9,14 @@ import {
     generateChunkTerrain, smallScaleBlockUpdates
 } from "./Worldgen.mjs";
 
-import { keysPressed, keys } from "./GlobalVariables.mjs";
-/*
-from Controls import keysPressed, keys, mouse
-from Entities import ItemEntity
-from Items import PlaceableItem
-import pygame, math, random*/
+import { ItemEntity } from "./Entities.mjs";
+import { PlaceableItem } from "./Items.mjs";
 
-/*
+
+
  
-class Player():
-    def __init__(self):
+class Player() {
+    constructor() {
         # player's actual coordinate is
         # top left and above corner
         self.x = 0
@@ -538,7 +535,7 @@ class Player():
  
         self.blockBreakProgress = 0
         self.currentBreakingBlock = None
- 
+    };
  
  
     def generalMovement(self, deltaTime):
@@ -1978,21 +1975,13 @@ class Player():
             self.otherInventoryData["showCraftingAndArmor"] = False
             self.otherInventoryData["showCraftingTable"] = True
             self.crafting["gridSize"] = gridSize
-        
+};
             
  
-player = Player()
+export let player = new Player();
  
  
- 
- 
- 
- 
-print("player initialized")
- 
-*/
+  
 
 
-
-
-consoleLog("player initialized")
+consoleLog("Player.mjs initialized")

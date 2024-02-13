@@ -8,17 +8,14 @@ function consoleLog(message) {
 
 
 /*
-let testArray = [3,5,32,34,54,32,34,45]
-testArray.forEach(function(arrayItem) {
-    consoleLog(arrayItem)
-});*/
 
-
-/*
 class testingClass {
     constructor() {
         this.a = 5
         this.b = 3
+        this.testingClassFunction = function () {
+            return "test value";
+        }
     }
 }
 let testingClassObject = new testingClass()
@@ -27,10 +24,5 @@ let testObject = {
     "b": 2
 }
 
-for (let entry of Object.entries(testingClassObject)) {
-    let property = entry[0]
-    let key = entry[1]
-    consoleLogAAAA(property + " that was property");
-    consoleLogAAAA(key + " that was key");
-}
+
 */
