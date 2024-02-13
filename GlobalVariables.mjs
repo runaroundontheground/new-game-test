@@ -243,10 +243,14 @@ export let camera = new Camera();
 
 class Random {
     constructor() {
-        this.integer = function (startInt, inclusiveEndInt) {
-            // go look ath the documentation and change var names to make sense
-            return Math.floor(Math.random() * (inclusiveEndInt - minCeiled) + minCeiled);
+        this.integer = function (startInt, endInt) {
+            // inclusive with end int
+            return Math.floor(Math.random() * (endInt - startInt + 1) + startInt);
         };
+        
+        this.float = function (startNum, endNum) {
+            return Math.random() * (endNum - startNum) + startNum;
+        }
 
     };
 };

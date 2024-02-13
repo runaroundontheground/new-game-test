@@ -1,7 +1,7 @@
 
 import {
   chunkSize, chunks, blockSize, totalChunkSize, camera, canvasHeightInChunks, canvasWidthInChunks,
-  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog
+  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog, random
 } from "./GlobalVariables.mjs";
 consoleLog("loading Worldgen.mjs");
 
@@ -216,7 +216,7 @@ function generateChunkStructures(inputChunkCoord) {
         let block = chunks[inputChunkCoord]["data"][blockCoord];
 
         if (block.type === "grass") {
-          if (random.intFromRange(0, 20) === 0) {
+          if (random.integer(0, 20) === 0) {
             generateStructure("tree 1", blockCoord);
           };
         };
@@ -229,89 +229,138 @@ function generateChunkStructures(inputChunkCoord) {
 };
 
 
+function runBlockUpdatesAfterGeneration(chunkCoord) {
+  for (let x = 0; x < chunkSize[0]; x++) {
+    for (let y = 0; y < chunkSize[1]; y++) {
+      for (let z = 0; z < chunkSize[0]; z++) {
+        let blockCoord = [x, y, z].toString();
+        let block = chunks[chunkCoord].data[blockCoord];
+
+        function checkForSolidBlock(block) {
+          if (block.type != "air" && block.type != "water") {
+            return true;
+          };
+          return false;
+
+        };
+
+        function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
+          let localBlockAndChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord);
+          let localBlockCoord = localBlockAndChunkCoord[0];
+          let localChunkCoord = localBlockAndChunkCoord[1];
+
+          if (render != "no change") {
+            chunks[localChunkCoord].data[localBlockCoord].render = render;
+          };
+          if (alphaValue != "no change") {
+            chunks[localChunkCoord].data[localBlockCoord].alphaValue = alphaValue;
+          };
+        };
 
 
-def runBlockUpdatesAfterGeneration(chunkCoord = (0, 0)):
+      if (block.type == "water") {
+        let hopefullyAir = findBlock(x, y + 1, z, extraInfo = true, chunkCoordInput = chunkCoord);
 
-for x in range(chunkSize[0]):
-  for y in range(chunkSize[1]):
-    for z in range(chunkSize[0]):
-      block = chunks[chunkCoord]["data"][(x, y, z)]
+        if (hopefullyAir.type == "air") {
+          block.alphaValue = 100;
+          block.render = true;
 
-if block["type"] != "air":
-                    
-                    def checkForSolidBlock(block):
-if block["type"] != "water" and block["type"] != "air":
-return True
-return False
-                    
-                    def modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change"):
-localBlockCoord, localChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord)
+          let didntFindWater = true;
 
-if render != "no change":
-  chunks[localChunkCoord]["data"][localBlockCoord]["render"] = render
-if alphaValue != "no change":
-  chunks[localChunkCoord]["data"][localBlockCoord]["alphaValue"] = alphaValue
+          let subtractY = 1;
 
-if block["type"] == "water":
+          while (didntFindWater) {
+            // make sure no blocks underneath are rendered, make top water less transparent
+            let hopefullyWater = findBlock(x, y - subtractY, z, extraInfo = true, chunkCoordInput = chunkCoord);
 
-  blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
-if blockAbove["type"] == "air":
+            if (hopefullyWater.type == "water") {
+              block.alphaValue += 25;
+            } else {didntFindWater = false;}
 
-                            # don't render water that's underneath other water, instead make
-                            # the top water harder to see through
-                            # and also in scale make sure water becomes bigger as a fix to this
-                            # or just actually figure out how to make the scale and rendering work correctly
+            if (block.alphaValue >= 255) {
+              block.alphaValue = 255;
+              break;
+            }
 
-block["alphaValue"] = 100
-block["render"] = True
-foundNotWater = False
-subtracYy = 1
-while not foundNotWater:
-  blockBelow = findBlock(x, y - subtracYy, z, extraInfo = True, chunkCoordInput = chunkCoord)
-
-if blockBelow["type"] == "water":
-  block["alphaValue"] += 25
-else:
-foundNotWater = True
-
-if block["alphaValue"] >= 255:
-  block["alphaValue"] = 255
-break
+            if (subtractY <= -chunkSize[1] || !didntFindWater) {
+              break;
+            }
 
 
-subtracYy -= 1
 
-if subtracYy < -100 or foundNotWater:
-break
-                        
+            subtractY -= 1;
+          }; // end of while loop
+        };
 
-                    else: # this block isn't water
-blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
-blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord)
-blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
-blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord)
-blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord)
-blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord)
 
-above = checkForSolidBlock(blockAbove)
-below = checkForSolidBlock(blockBelow)
-toRight = checkForSolidBlock(blockToRight)
-toLeft = checkForSolidBlock(blockToLeft)
-toUp = checkForSolidBlock(blockToUp)
-toDown = checkForSolidBlock(blockToDown)
+          let blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord);
+          let blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord);
+          let blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord);
+          let blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord);
+          let blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord);
+          let blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord);
 
-surrounded = False
-if toRight and toLeft and toUp and toDown:
-surrounded = True
+          let above = checkForSolidBlock(blockAbove);
+          let below = checkForSolidBlock(blockBelow);
+          let toRight = checkForSolidBlock(blockToRight);
+          let toLeft = checkForSolidBlock(blockToLeft);
+          let toUp = checkForSolidBlock(blockToUp);
+          let toDown = checkForSolidBlock(blockToDown);
 
-if above: # there's a block above this one
-if below: # there's a block below this one
+          let surrounded = false;
+          if (toLeft && toUp && toDown && toRight) {surrounded = true;};
 
-if blockBelow["alphaValue"] < 255:
-  block["alphaValue"] = 100
-block["render"] = True
-modifyOtherBlock(x, y - 1, z, render = False)
+
+          if (above) {
+            if (blockBelow.alphaValue < 255) {
+              // current block should have alpha, hide the block underneath
+              block.alphaValue = 150;
+              block.render = true;
+              modifyOtherBlock(x, y - 1, z, render = false);
+            };
+
+            if (!surrounded) {
+              block.render = true;
+            };
+          } else {
+            // no block is above, should probably be rendered
+            block.render = true;
+          };
+
+          if (below) {
+            if (!above) {block.render = true;}
+            if (blockBelow.alphaValue < 255) {
+              block.alphaValue = 150;
+              block.render = true;
+              modifyOtherBlock(x, y - 1, z, render = false);
+            };
+            if (block.render) {modifyOtherBlock(x, y - 1, z, render = false);};
+
+          } else {
+            // no block is under this one
+            if (!above) {
+            block.render = true;
+            block.alphaValue = 100;
+            };
+          }
+
+
+          };
+        };
+        
+      };
+
+
+
+
+
+
+
+      chunks[chunkCoord].data[blockCoord] = block;
+    };
+  };
+};
+
 
 if not surrounded:
   block["render"] = True
@@ -342,10 +391,9 @@ chunks[chunkCoord]["data"][(x, y, z)] = block
 
 
 chunks[chunkCoord]["blocksUpdated"] = True
-  * /
-// here is our break for next thing
+  
 
-/*
+
 def smallScaleBlockUpdates(chunkCoord = (0, 0), blockCoord = (0, 0, 0)):
    
     x = blockCoord[0]
@@ -581,4 +629,3 @@ def getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord):
 print("worldgen initialized")
 
 
-*/
