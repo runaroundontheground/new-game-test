@@ -149,10 +149,11 @@ function initializeGame() {
 let previousTime = performance.now();
 function gameLoop() {
     // do things, then call self using setTimeout at the bottom/end
+    
+
+
+
     updateMouseAndKeys();
-
-
-
     let delayBetweenFramesInMilliseconds = (1000 / fps) * timeScale;
     if (running) {
         setTimeout(gameLoop, delayBetweenFramesInMilliseconds);

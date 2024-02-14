@@ -17,7 +17,3 @@ window.onerror = function (message, source, lineno, colno, error) {
 };
 
 
-document.addEventListener("keydown", function (event) {
-    consoleLogAAA(event.key);
-});
-
