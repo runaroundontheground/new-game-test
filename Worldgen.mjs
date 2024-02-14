@@ -1,9 +1,9 @@
 
 import {
   chunkSize, chunks, blockSize, totalChunkSize, camera, canvasHeightInChunks, canvasWidthInChunks,
-  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog, random
+  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog, random, showLoadingProgress
 } from "./GlobalVariables.mjs";
-consoleLog("loading Worldgen.mjs");
+showLoadingProgress("loading Worldgen.mjs");
 
 import { noise } from "./PerlinNoise.mjs";
 
@@ -469,7 +469,7 @@ function smallScaleBlockUpdates(chunkCoord, blockCoord) {
   chunks[chunkCoord].data[blockCoord] = block;
 };
 
-function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = false,
+export function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = false,
   chunkCoordInput = undefined) {
   let blockCoord = [0, 0, 0];
   let chunkCoord = [0, 0];
@@ -598,7 +598,7 @@ function getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord) {
 }
 
 
-consoleLog("worldgen initialized");
+showLoadingProgress("worldgen initialized");
 
 
 

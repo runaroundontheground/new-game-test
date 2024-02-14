@@ -128,7 +128,7 @@ pygame.quit()
 
 import {
     deltaTime, items, entities, projectiles, fps, keysPressed,
-    timeScale, consoleLog, allImagesLoaded
+    timeScale, consoleLog, allImagesLoaded, showLoadingProgress
 } from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
@@ -136,7 +136,7 @@ import { updateMouseAndKeys } from "./Controls.mjs";
 import { render, generateSpawnArea, doCommandStuff } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
 
-consoleLog("loading main.mjs")
+showLoadingProgress("loading main.mjs")
 
 let running = true
 function initializeGame() {
@@ -159,17 +159,13 @@ function gameLoop() {
     };
 };
 
-//initializeGame();
-//gameLoop();
-
-consoleLog("main was able to load successfully")
 
 
 window.addEventListener("load", function () {
     if (allImagesLoaded) {
-        consoleLog("game is starting maybe")
-        initializeGame()
-        gameLoop()
+        initializeGame();
+        showLoadingProgress("main was able to load successfully");
+        gameLoop();
     };
 });
 

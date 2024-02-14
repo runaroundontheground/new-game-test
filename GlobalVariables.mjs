@@ -3,7 +3,12 @@ export function consoleLog(message) {
     myConsole.innerHTML += message + "<br />"
     myConsole.scrollTop = myConsole.scrollHeight
 };
-consoleLog("loading GlobalVariables.mjs");
+export function showLoadingProgress(message) {
+    let loadingDiv = document.getElementById("loadingProgressDiv");
+    loadingDiv.innerHTML += message + "<br />";
+    loadingDiv.scrollTop = loadingDiv.scrollHeight;
+}
+showLoadingProgress("loading GlobalVariables.mjs");
 
 var allImagesLoaded = false;
 export { allImagesLoaded };
@@ -145,4 +150,4 @@ export let random = new Random();
 
 
 
-consoleLog("global variables initialized");
+showLoadingProgress("global variables initialized");

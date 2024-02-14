@@ -2,7 +2,9 @@
 
 import { entities, items, chunks,  listOfBlockNames, 
     listOfIntermediatItems, blockSize, gravity, 
-    dictOfBlockBreakingStuff} from "./GlobalVariables.mjs";
+    dictOfBlockBreakingStuff,
+    showLoadingProgress} from "./GlobalVariables.mjs";
+showLoadingProgress("loading Items.mjs")
 
 import { mouse } from "./Controls.mjs";
 import { ItemEntity } from "./Entities.mjs";
@@ -164,4 +166,4 @@ def makeItemsExist():
 
 
 
-consoleLog("items initialized");
+showLoadingProgress("Items.mjs loaded");

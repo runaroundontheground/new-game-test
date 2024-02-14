@@ -5,6 +5,12 @@ function consoleLog(message) {
     myConsole.scrollTop = myConsole.scrollHeight
 };
 
+function showLoadingProgress(message) {
+    let loadingDiv = document.getElementById("loadingProgressDiv");
+    loadingDiv.innerHTML += message + "<br />";
+    loadingDiv.scrollTop = loadingDiv.scrollHeight;
+}
+
 let imageDiv = document.getElementById("imageHolder");
 
 
@@ -34,8 +40,7 @@ imagesHaveBeenAdded = true;
 window.addEventListener("load", function () {
     if (imagesHaveBeenAdded === true) {
         allImagesLoaded = true;
+        showLoadingProgress("images have been loaded");
     };
-    consoleLog("allImagesLoaded: " + allImagesLoaded);
-    consoleLog("imagesHaveBeenAdded: " + imagesHaveBeenAdded);
 });
 

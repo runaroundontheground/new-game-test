@@ -1,8 +1,8 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
-    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random
+    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress
 } from "./GlobalVariables.mjs";
-consoleLog("loading Player.mjs");
+showLoadingProgress("loading Player.mjs");
 
 import {
     getChunkCoord, getBlockCoord, findBlock,
@@ -1984,4 +1984,4 @@ export let player = new Player();
   
 
 
-consoleLog("Player.mjs initialized")
+showLoadingProgress("Player.mjs initialized")

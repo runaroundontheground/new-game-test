@@ -1,7 +1,7 @@
 import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
 chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed,
-itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, images } from "./GlobalVariables.mjs";
-consoleLog("loading Rendering.mjs");
+itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, images, showLoadingProgress } from "./GlobalVariables.mjs";
+showLoadingProgress("loading Rendering.mjs");
 
 import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
 generateChunkStructures, findBlock } from "./Worldgen.mjs";
@@ -683,8 +683,6 @@ def showInvalidCommand():
 
 
 
-print("rendering initialized")
+showLoadingProgress("rendering initialized")
 
 
-
-import { consoleLog } from "./GlobalVariables.mjs";
