@@ -13,6 +13,7 @@ showLoadingProgress("loading GlobalVariables.mjs");
 var allImagesLoaded = false;
 export { allImagesLoaded };
 
+
 export const canvasWidth = 1000;
 export const canvasHeight = 500;
 export const blockSize = 30; // pixels
