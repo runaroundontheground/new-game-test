@@ -1,104 +1,102 @@
-from Worldgen import getBlockCoord, getChunkCoord, generateChunkTerrain
-from GlobalVariables import chunks, keys, keysPressed
-
+import { chunks, keys, keysPressed, showLoadingProgress, canvas, Rect } from "./GlobalVariables.mjs";
+showLoadingProgress("loading Controls.mjs");
+import { getBlockCoord, getChunkCoord, generateChunkTerrain } from "./Worldgen.mjs";
 
 
 class Mouse {
-    constructor():
+    constructor() {
         this.x = 0
         this.y = 0
-        this.pos = (0, 0)
+        this.pos = [0, 0]
         this.cameraRelativeX = 0
         this.cameraRelativeZ = 0
-        this.cameraRelativePos = (0, 0)
-        # block height for mining / placing
-        this.selectedY = 0
-        this.selectedYChange = 0
-        # detection for blocks and stuff
+        this.cameraRelativePos = [0, 0]
+        // block height for mining / placing
+        this.selectedY = 0;
+        this.selectedYChange = 0;
+        // detection for blocks and stuff
         this.hoveredBlock = {}
         this.hoveredSlotId = 0
         
 
-        this.inPlayerInventory = False
-        this.inPlayerHotbar = False
-        this.inASlot = False
-        # needs to have these two in order to tranfer item data properly
+        this.inPlayerInventory = false
+        this.inPlayerHotbar = false
+        this.inASlot = false
+        // needs to have these two in order to tranfer item data properly
         this.heldItem = {
             "contents": "empty",
             "count": 0
         }
 
         this.buttons = {
-            "left": False,
-            "middle": False,
-            "right": False,
+            "left": false,
+            "middle": false,
+            "right": false,
             "pressed": {
-                "left": False,
-                "middle": False,
-                "right": False
+                "left": false,
+                "middle": false,
+                "right": false
             },
             "held": {
-                "left": False,
-                "middle": False,
-                "right": False
+                "left": false,
+                "middle": false,
+                "right": false
             }
         }
+    };
 }
 
-mouse = Mouse()
+export var mouse = new Mouse();
+
+canvas.addEventListener("mousemove", function (event) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const x = event.clientX - canvasRect.left;
+    const y = event.clientY - canvasRect.top;
+    mouse.pos = [x, y];
+    mouse.x = x;
+    mouse.y = y;
+});
+// add an event listener for clicking, keys down, keys up, and maybe some others?
+
+export function updateMouseAndKeys () {
+
+    let x = mouse.cameraRelativeX;
+    let y = mouse.selectedY;
+    let z = mouse.cameraRelativeZ;
+    
+    let chunkCoord = getChunkCoord(x, z);
+    let blockCoord = getBlockCoord(x, y, z);
+
+    if (chunks[chunkCoord].data[blockCoord] === undefined) {generateChunkTerrain(chunkCoord);};
+
+    mouse.hoveredBlock["block"] = chunks[chunkCoord]["data"][blockCoord]
+    mouse.hoveredBlock["chunkCoord"] = chunkCoord
+    mouse.hoveredBlock["blockCoord"] = blockCoord
 
 
-def updateMouseAndKeys():
-        
-    keysPressed = pygame.key.get_just_pressed()
-
-    mouse.pos = pygame.mouse.get_pos()
-    mouse.x, mouse.y = mouse.pos[0], mouse.pos[1]
-
-    mouse.buttons["pressed"]["left"] = False
-    mouse.buttons["pressed"]["middle"] = False
-    mouse.buttons["pressed"]["right"] = False
+    mouse.buttons["pressed"]["left"] = false
+    mouse.buttons["pressed"]["middle"] = false
+    mouse.buttons["pressed"]["right"] = false
 
 
     mouseButtons = pygame.mouse.get_pressed()
 
     if not mouse.buttons["left"]:
         if mouseButtons[0]:
-            mouse.buttons["pressed"]["left"] = True
+            mouse.buttons["pressed"]["left"] = true
 
     if not mouse.buttons["middle"]:
         if mouseButtons[1]:
-            mouse.buttons["pressed"]["middle"] = True
+            mouse.buttons["pressed"]["middle"] = true
 
     if not mouse.buttons["right"]:
         if mouseButtons[2]:
-            mouse.buttons["pressed"]["right"] = True
+            mouse.buttons["pressed"]["right"] = true
 
     mouse.buttons["left"] = mouseButtons[0]
     mouse.buttons["middle"] = mouseButtons[1]
     mouse.buttons["right"] = mouseButtons[2]
-
-    x = mouse.cameraRelativeX
-    y = mouse.selectedY
-    z = mouse.cameraRelativeZ
+}
     
-    chunkCoord = getChunkCoord(x, z)
-    blockCoord = getBlockCoord(x, y, z)
-
-    if blockCoord not in chunks[chunkCoord]["data"]:
-        generateChunkTerrain(chunkCoord)
-    mouse.hoveredBlock["block"] = chunks[chunkCoord]["data"][blockCoord]
-    mouse.hoveredBlock["chunkCoord"] = chunkCoord
-    mouse.hoveredBlock["blockCoord"] = blockCoord
-    
-    
-
-
-
-
-
-
-    
-
-("controls initialized")
+showLoadingProgress("controls initialized");
 
