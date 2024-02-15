@@ -1,9 +1,10 @@
 
 
 import { entities, items, chunks,  listOfBlockNames, 
-    listOfIntermediatItems, blockSize, gravity, 
+    listOfIntermediateItems, blockSize, gravity, 
     dictOfBlockBreakingStuff,
-    showLoadingProgress} from "./GlobalVariables.mjs";
+    showLoadingProgress,
+    } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Items.mjs")
 
 import { mouse } from "./Controls.mjs";
@@ -90,67 +91,82 @@ class PlaceableItem extends Item {
 
     };
 
-    def RMBAction(this, player):
-        pass
+    this.RMBAction = function (player) {
+
+    };
         
 
-    def RMBPressedAction(this, player):
-        this.placeItem(player)
+    this.RMBPressedAction = function (player) {
+        this.placeItem(player);
+    };
     };
 };
 
-class ToolItem(Item):
-    def __init__(this, name, toolData = {"attack": 1, "knockback": 1,
+class ToolItem extends Item {
+    constructor(name, toolData = {"attack": 1, "knockback": 1,
                                          "breakingPower": 1, "breakingSpeed": 1,
                                          "breakingType": "none"},
-                                         tooltip = "", stackable = false):
-        super().__init__(name)
+                                         tooltip, stackable) {
+        super([name])
         this.slotId = 0
         this.itemType = "ToolItem"
-        this.tooltip = this.name
-        if tooltip != "":
-            this.tooltip = tooltip
-        this.stackable = stackable
+        this.tooltip = tooltip || this.name;
         
-        this.attack = toolData["attack"]
-        this.knockback = toolData["knockback"]
-        this.breakingPower = toolData["breakingPower"]
-        this.breakingSpeed = toolData["breakingSpeed"]
-        this.breakingType = toolData["breakingType"]
+        this.stackable = stackable || false;
+        
+        this.attack = toolData.attack
+        this.knockback = toolData.knockback
+        this.breakingPower = toolData.breakingPower
+        this.breakingSpeed = toolData.breakingSpeed
+        this.breakingType = toolData.breakingType
 
-        this.durability = 100 # durability will exist when the game actually functions
+        this.durability = 100; // durabilty does nothing atm
     
-    def RMBPressedAction(this, player):
-        pass
+    this.RMBPressedAction = function (player) {
 
-    def RMBAction(this, player):
-        pass
+    };
+        
 
-class IntermediateItem(Item):
-    def __init__(this, name, stackable = true):
-        super().__init__(name)
-        this.stackable = stackable
+    this.RMBAction = function (player) {
+
+    };
+};
+};
+
+class IntermediateItem extends Item {
+    constructor (name, stackable) {
+        super(slotId)
+        this.name = name;
+        this.stackable = stackable || true;
         this.tooltip = this.name
         this.slotId = 0
+    };
+}
 
-# adding items to the game
-def addItem(name = "air", itemType = "none", toolData = {}, stackable = false):
 
-    if itemType == "placeable":
-        item = PlaceableItem(name, stackable = true)
-    
-    if itemType == "tool":
-        item = ToolItem(name, toolData)
-    if itemType == "intermediate":
-        item = IntermediateItem(name, stackable)
+function addItem(name = "air", itemType = "none", toolData = {}, stackable = false) {
 
-    items[name] = item
+    let item = undefined;
+    if (itemType == "placeable") {
+        item = PlaceableItem(name, stackable = true);
+    };
+    if (itemType == "tool") {
+        item = ToolItem(name, toolData);
+    };
+    if (itemType == "intermediate") {
+        item = IntermediateItem(name, stackable);
+    };
 
-def makeItemsExist():
-    for itemName in listOfBlockNames:
-        addItem(itemName, "placeable", stackable = true)
-    for itemName in listOfIntermediateItems:
-        addItem(itemName, "intermediate", stackable = true)
+    if (item !== undefined) {items[name] = item;};
+};
+
+export function makeItemsExist () {
+    listOfBlockNames.forEach( function (itemName) {
+        addItem(itemName, "placeable", stackable = true);
+    });
+    listOfIntermediateItems.forEach ( function (itemName ) {
+        addItem(itemName, "intermediate", stackable = true);
+    });
     addItem("stone pickaxe", "tool",
             {"attack": 3, "knockback": 1, "breakingPower": 3,
             "breakingSpeed": 20, "breakingType": "pickaxe"})
@@ -175,6 +191,7 @@ def makeItemsExist():
     addItem("wood shovel", "tool",
             {"attack": 1, "knockback": 1, "breakingPower": 1,
             "breakingSpeed": 15, "breakingType": "shovel"})
+};
 
 
 
