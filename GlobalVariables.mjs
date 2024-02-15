@@ -78,6 +78,11 @@ export function Rect(x, y, width, height) {
         if ((y >= myRect.y) && (y <= myRect.y + myRect.height)) {
             meetsY = true;
         }
+
+        if (meetsX && meetsY) {
+            return true;
+        };
+        return false;
     }
 
     return rect
