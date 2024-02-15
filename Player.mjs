@@ -1,6 +1,6 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
-    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress
+    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress, Rect
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Player.mjs");
 
@@ -86,9 +86,9 @@ class Player {
         function createALotOfInventoryThings() {
     
             let inventoryWidthInPixels = canvasWidth / 3;
-            let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
+            let slotSizeInPixels = Math.Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
  
-            let gapBetweenSlots = Math.round(slotSizeInPixels / 5);
+            let gapBetweenSlots = Math.Math.round(slotSizeInPixels / 5);
  
  
             let backgroundColor = [150, 150, 150]
@@ -112,10 +112,10 @@ class Player {
             let craftingAndArmorHeightInPixels = (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorHeightInPixels += (gapBetweenSlots * craftingAndArmorHeightInSlots + 1)
  
-            let craftingTableSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
+            let craftingTableSizeInPixels = (Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels))
  
  
-            let craftingAndArmorSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
+            let craftingAndArmorSizeInPixels = (Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels))
             
             let craftingAndArmorBackground = pygame.surface.Surface(craftingAndArmorSizeInPixels)
             craftingAndArmorBackground.fill(backgroundColor)
@@ -123,7 +123,7 @@ class Player {
             let craftingTableBackground = pygame.Surface(craftingTableSizeInPixels)
             craftingTableBackground.fill(backgroundColor)
  
-            let inventorySizeInPixels = (round(inventoryWidthInPixels), round(inventoryHeightInPixels))
+            let inventorySizeInPixels = (Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels))
  
             let inventoryBackground = pygame.surface.Surface(inventorySizeInPixels)
             inventoryBackground.fill(backgroundColor)
@@ -140,7 +140,7 @@ class Player {
             selectedSlotSurface.fill((255, 255, 255), fillRect)
             selectedSlotSurface.set_colorkey((255, 255, 255))
  
-            let hotbarSizeInPixels = (round(inventorySizeInPixels[0]), round(slotSizeInPixels + (gapBetweenSlots * 2)))
+            let hotbarSizeInPixels = (Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2)))
             let hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
             hotbarSurface.fill(backgroundColor)
  
@@ -152,7 +152,7 @@ class Player {
             };
  
             let craftingAndArmorXForBlit = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2 
-            let craftingAndArmorYForBlit = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))# - (slotSizeInPixels * craftingAndArmorHeightInSlots)
+            let craftingAndArmorYForBlit = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))// - (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorYForBlit /= 2
  
             let craftingTableXForBlit = craftingAndArmorXForBlit
@@ -164,42 +164,42 @@ class Player {
                 "contents": "empty",
                 "count": 0,
                 2: {
-                    "renderPosition": (0, 0),
-                    "selectedSlotRenderPosition": (0, 0),
-                    "itemCountRenderPosition": (0, 0),
+                    "renderPosition": [0, 0],
+                    "selectedSlotRenderPosition": [0, 0],
+                    "itemCountRenderPosition": [0, 0],
                     "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
                 3: {
-                    "renderPosition": (0, 0),
-                    "selectedSlotRenderPosition": (0, 0),
-                    "itemCountRenderPosition": (0, 0),
+                    "renderPosition": [0, 0],
+                    "selectedSlotRenderPosition": [0, 0],
+                    "itemCountRenderPosition": [0, 0],
                     "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 }
             }
  
-            craftingSlot = {
+            let craftingSlot = {
                 "contents": "empty",
                 "count": 0,
                 2: {
-                    "renderPosition": (0, 0),
-                    "selectedSlotRenderPosition": (0, 0),
-                    "itemCountRenderPosition": (0, 0),
-                    "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                    "renderPosition": [0, 0],
+                    "selectedSlotRenderPosition": [0, 0],
+                    "itemCountRenderPosition": [0, 0],
+                    "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
                 3: {
-                    "renderPosition": (0, 0),
-                    "selectedSlotRenderPosition": (0, 0),
-                    "itemCountRenderPosition": (0, 0),
-                    "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                    "renderPosition": [0, 0],
+                    "selectedSlotRenderPosition": [0, 0],
+                    "itemCountRenderPosition": [0, 0],
+                    "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
                 "slotId": 0
             }
  
-            armorSlot = {
+            let armorSlot = {
                 "contents": "empty",
-                "renderPosition": (0, 0),
-                "selectedSlotRenderPosition": (0, 0),
-                "rect": pygame.Rect(0, 0, 0, 0),
+                "renderPosition": [0, 0],
+                "selectedSlotRenderPosition": [0, 0],
+                "rect": Rect(0, 0, 0, 0),
                 "slotId": 0
             }
  
@@ -231,39 +231,39 @@ class Player {
                 "feet": armorSlot
             }
  
-            # actually add content spots to the armor/crafting
+            // actually add content spots to the armor/crafting
             
  
-            resultSlot = craftingSlot.copy()
+            let resultSlot = craftingSlot
  
-            # create output slot for player's crafting 2x2 grid
-            slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
-            slotY = (slotSizeInPixels * 1.5)
+            // create output slot for player's crafting 2x2 grid
+            let slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
+            let slotY = (slotSizeInPixels * 1.5)
  
-            renderX = slotX + craftingAndArmorXForBlit + itemIconShift
-            renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+            let renderX = slotX + craftingAndArmorXForBlit + itemIconShift
+            let renderY = slotY + craftingAndArmorYForBlit + itemIconShift
  
-            rectX = renderX - itemIconShift
-            rectY = renderY - itemIconShift
+            let rectX = renderX - itemIconShift
+            let rectY = renderY - itemIconShift
  
             
             
             craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
  
-            resultSlot["renderPosition"] = (renderX, renderY)
-            resultSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            resultSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
-            resultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+            resultSlot["renderPosition"] = [renderX, renderY]
+            resultSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            resultSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+            resultSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
             resultSlot["slotId"] = "resultSlot"
  
-            this.crafting[2]["slots"]["resultSlot"] = resultSlot.copy()
+            this.crafting[2]["slots"]["resultSlot"] = resultSlot
  
  
  
  
  
  
-            # create output slot for the 3x3 grid
+            // create output slot for the 3x3 grid
             slotX = ((widthOfInventoryInSlots - 2) * slotSizeInPixels) + slotSizeInPixels * 1.7
             slotY = (slotSizeInPixels * 2.1)
  
@@ -277,24 +277,24 @@ class Player {
             
             craftingTableBackground.blit(slotSurface, (slotX, slotY))
  
-            resultSlot["renderPosition"] = (renderX, renderY)
-            resultSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            resultSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
-            resultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+            resultSlot["renderPosition"] = [renderX, renderY]
+            resultSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            resultSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+            resultSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
             resultSlot["slotId"] = "resultSlot"
  
-            this.crafting[3]["slots"]["resultSlot"] = resultSlot.copy()
+            this.crafting[3]["slots"]["resultSlot"] = resultSlot
  
  
             craftingTableBackground.blit(slotSurface, (slotX, slotY))
            
  
  
-            slotId = 0
+            let slotId = 0
  
-            # create and blit the crafting slots for the player's crafting grid
-            for y in range(2):
-                for x in range(2):
+            // create and blit the crafting slots for the player's crafting grid
+            for (let y = 0; y < 2; y++) {
+                for (let x = 0; x < 2; x++) {
                     
                     
  
@@ -308,25 +308,27 @@ class Player {
                     rectX = renderX - itemIconShift
                     rectY = renderY - itemIconShift
  
-                    newCraftingSlot = craftingSlot.copy()
+                    let newCraftingSlot = craftingSlot
                     
                     
                     craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
-                    newCraftingSlot["renderPosition"] = (renderX, renderY)
-                    newCraftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                    newCraftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
-                    newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+                    newCraftingSlot["renderPosition"] = [renderX, renderY]
+                    newCraftingSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    newCraftingSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                    newCraftingSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
                     newCraftingSlot["slotId"] = slotId
  
                     this.crafting[2]["slots"][slotId] = newCraftingSlot
  
                     slotId += 1
+            };
+        };
  
  
             slotId = 0
-            # create and blit slots for the crafting table grid
-            for y in range(3):
-                for x in range(3):
+            // create and blit slots for the crafting table grid
+            for (let y = 0; y < 3; y++) {
+                for (let x = 0; x < 3; x++) {
                     slotX = ((widthOfInventoryInSlots - 6) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
  
@@ -338,41 +340,43 @@ class Player {
  
                     
                     
-                    newCraftingSlot = craftingSlot
+                    let newCraftingSlot = craftingSlot
                     
                     
                     craftingTableBackground.blit(slotSurface, (slotX, slotY))
-                    newCraftingSlot["renderPosition"] = (renderX, renderY)
-                    newCraftingSlot["rect"] = pygame.Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                    newCraftingSlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots, rectY - gapBetweenSlots)
-                    newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
+                    newCraftingSlot["renderPosition"] = [renderX, renderY]
+                    newCraftingSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    newCraftingSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                    newCraftingSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
                     newCraftingSlot["slotId"] = slotId
  
-                    this.crafting[3]["slots"][slotId] = newCraftingSlot.copy()
+                    this.crafting[3]["slots"][slotId] = newCraftingSlot
  
                     slotId += 1
+            };
+        };
  
  
-            # put an arrow that goes towards the result slot for crafting in the 2x2 grid
-            a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels
-            b = (slotSizeInPixels*0.75) + slotSizeInPixels * 1.1
+            // put an arrow that goes towards the result slot for crafting in the 2x2 grid
+            let a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels
+            let b = (slotSizeInPixels*0.75) + slotSizeInPixels * 1.1
  
-            c = (a, b)
-            d = (a + (slotSizeInPixels/3), b + (slotSizeInPixels/3)/2)
-            e = (a, b + slotSizeInPixels/3)
+            let c = (a, b)
+            let d = (a + (slotSizeInPixels/3), b + (slotSizeInPixels/3)/2)
+            let e = (a, b + slotSizeInPixels/3)
  
-            f = (c, d, e)
+            let f = (c, d, e)
  
             pygame.draw.polygon(craftingAndArmorBackground, selectedSlotColor, f)
  
-            rect = pygame.Rect(a - slotSizeInPixels/1.4, b + slotSizeInPixels/8.5,
+            let rect = Rect(a - slotSizeInPixels/1.4, b + slotSizeInPixels/8.5,
                                slotSizeInPixels/1.3, slotSizeInPixels/9)
             pygame.draw.rect(craftingAndArmorBackground, selectedSlotColor, rect)
  
-            craftingAndArmorSurface = craftingAndArmorBackground
+            let craftingAndArmorSurface = craftingAndArmorBackground
  
  
-            # put an arrow that goes towards the result slot for crafting in the 3x3 grid
+            // put an arrow that goes towards the result slot for crafting in the 3x3 grid
             a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels - slotSizeInPixels * 0.8
             b = (slotSizeInPixels*0.75) + slotSizeInPixels * 1.1 + slotSizeInPixels / 1.8
  
@@ -388,24 +392,24 @@ class Player {
                                slotSizeInPixels/1.3, slotSizeInPixels/9)
             pygame.draw.rect(craftingTableBackground, selectedSlotColor, rect)
  
-            craftingTableSurface = craftingTableBackground
+            let craftingTableSurface = craftingTableBackground
  
  
  
  
-            inventoryXForBlit = (canvasWidth - inventoryWidthInPixels) / 2 
-            inventoryYForBlit = craftingAndArmorYForBlit + craftingAndArmorHeightInPixels
+            let inventoryXForBlit = (canvasWidth - inventoryWidthInPixels) / 2 
+            let inventoryYForBlit = craftingAndArmorYForBlit + craftingAndArmorHeightInPixels
  
-            hotbarXForBlit = inventoryXForBlit
-            hotbarYForBlit = (canvasHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
+            let hotbarXForBlit = inventoryXForBlit
+            let hotbarYForBlit = (canvasHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
  
-            inventorySlot = {
-                "contents": "empty", # this is where itemData goes
-                "count": 0, # how many of x item is in this slot
+            let inventorySlot = {
+                "contents": "empty", // this is where itemData goes
+                "count": 0, // how many of x item is in this slot
                 "renderPosition": (0, 0),
                 "selectedSlotRenderPosition": (0, 0),
                 "itemCountRenderPosition": (0, 0),
-                "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 "slotId": 0
             }
  
@@ -414,8 +418,8 @@ class Player {
  
             slotId = 0
  
-            for y in range(heightOfInventoryInSlots):
-                for x in range(widthOfInventoryInSlots):
+            for (let y = 0; y < heightOfInventoryInSlots; y++) {
+                for (let x = 0; x < widthOfInventoryInSlots; x++) {
  
                     slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
@@ -428,33 +432,35 @@ class Player {
                     rectX = renderX - itemIconShift
                     rectY = renderY - itemIconShift
  
-                    updatedInventorySlot = inventorySlot.copy()
+                    updatedInventorySlot = inventorySlot
                     
    
                     
  
-                    updatedInventorySlot["renderPosition"] = (renderX, renderY)
-                    updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
-                    updatedInventorySlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots,
-                                                                        rectY - gapBetweenSlots)
-                    updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
+                    updatedInventorySlot["renderPosition"] = [renderX, renderY]
+                    updatedInventorySlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    updatedInventorySlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots,
+                                                                        rectY - gapBetweenSlots]
+                    updatedInventorySlot["rect"] = Rect(rectX, rectY,
                                                             slotSizeInPixels, slotSizeInPixels)
                     updatedInventorySlot["slotId"] = slotId
                     slotId += 1
                     
  
-                    this.inventory.append(updatedInventorySlot)
+                    this.inventory.push(updatedInventorySlot)
+            };
+        };
  
  
             
  
  
  
-            inventorySurface = inventoryBackground        
+            let inventorySurface = inventoryBackground        
         
-            # create hotbar data
+            // create hotbar data
             slotId = 0
-            for x in range(widthOfInventoryInSlots):
+            for (let x = 0; x < widthOfInventoryInSlots; x++) {
  
                 slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                 slotY = gapBetweenSlots
@@ -467,7 +473,7 @@ class Player {
  
                 fontShift = font.size("1")
  
-                updatedInventorySlot = inventorySlot.copy()
+                updatedInventorySlot = inventorySlot
  
                 updatedInventorySlot["renderPosition"] = (renderX, renderY)
                 updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
@@ -480,18 +486,19 @@ class Player {
  
                 hotbarSurface.blit(slotSurface, (slotX, slotY))
  
-                this.hotbar.append(updatedInventorySlot)
+                this.hotbar.push(updatedInventorySlot)
+            };
             
-            inventoryRect = pygame.Rect(inventoryXForBlit, inventoryYForBlit,
+            let inventoryRect = Rect(inventoryXForBlit, inventoryYForBlit,
                                         inventoryWidthInPixels, inventoryHeightInPixels)
             
-            hotbarRect = pygame.Rect(hotbarXForBlit, hotbarYForBlit,
+            let hotbarRect = Rect(hotbarXForBlit, hotbarYForBlit,
                                     inventoryWidthInPixels, hotbarSizeInPixels[1])
-        
-            craftingAndArmorRect = pygame.Rect(craftingAndArmorXForBlit, craftingAndArmorYForBlit,
+                
+            let craftingAndArmorRect = Rect(craftingAndArmorXForBlit, craftingAndArmorYForBlit,
                                                craftingAndArmorWidthInPixels, craftingAndArmorHeightInPixels)
             
-            craftingTableRect = pygame.Rect(
+            let craftingTableRect = Rect(
                 craftingTableXForBlit, craftingTableYForBlit,
                 craftingTableSizeInPixels[0], craftingTableSizeInPixels[1]
             )
@@ -512,13 +519,13 @@ class Player {
             }
  
             this.otherInventoryData = {
-            # rects are here
+            // rects are here
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
             "craftingAndArmorRect": craftingAndArmorRect,
             "craftingTableRect": craftingTableRect,
-            # thigns that aren't rects are here
-            "currentHotbarSlot": 0, # id/index of the slot in the hotbar
+            // thigns that aren't rects are here
+            "currentHotbarSlot": 0, // id/index of the slot in the hotbar
             "open": false,
             "slotId": 0,
             "showCraftingAndArmor": true,
@@ -534,7 +541,7 @@ class Player {
  
         }
  
-        # blocks up AND down of reach
+        // blocks up AND down of reach
         this.verticalBlockReach = 3
         this.horizontalBlockReach = 3
         this.canReachSelectedBlock = false
@@ -544,57 +551,56 @@ class Player {
     
  
  
-    def generalMovement(this, deltaTime):
- 
-        left = keys[0][pygame.K_a]
-        right = keys[0][pygame.K_d]
-        up = keys[0][pygame.K_w]
-        down = keys[0][pygame.K_s]
-        space = keys[0][pygame.K_SPACE]
+    this.generalMovement = function (deltaTime) {
         
         this.chunkCoord = getChunkCoord(this.x, this.z)
         this.blockCoord = getBlockCoord(this.x, this.y, this.z)
  
-        this.rect.x = this.x
-        this.rect.y = this.z
+        this.rect.x = this.x;
+        this.rect.y = this.z;
  
     
-        
-        for dictKey in this.collision.keys():
-            this.collision[dictKey] = false
+        Object.keys(this.collision).forEach( function (key) {
+            this.collision[key] = false;
+        })
  
-        # faster? access to variables that need to be used a lot in collision
-        rightSide = this.x + this.width
-        bottomSide = this.z + this.width
-        underSide = this.y - this.height
+        // faster? access to variables that need to be used a lot in collision
+        rightSide = this.x + this.width;
+        bottomSide = this.z + this.width;
+        underSide = this.y - this.height;
         
-        def doCollisionBelow():
+        function doCollisionBelow() {
             topLeft = findBlock(this.x, underSide - 3, this.z, ignoreWater = true)
             topRight = findBlock(rightSide, underSide - 3, this.z, ignoreWater = true)
             bottomLeft = findBlock(this.x, underSide - 3, bottomSide, ignoreWater = true)
             bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = true)
-            if topLeft or topRight or bottomLeft or bottomRight:
-                this.collision["below"] = true
+            if (topLeft || topRight || bottomLeft || bottomRight) {
+                this.collision["below"] = true;
+            };
+        };
         doCollisionBelow()
  
-        def doCollisionAbove():
+        function doCollisionAbove() {
             topLeft = findBlock(this.x, this.y, this.z, ignoreWater = true)
             topRight = findBlock(rightSide, this.y, this.z, ignoreWater = true)
             bottomLeft = findBlock(this.x, this.y, bottomSide, ignoreWater = true)
             bottomRight = findBlock(rightSide, this.y, bottomSide, ignoreWater = true)
-            if topLeft or topRight or bottomLeft or bottomRight:
+            if (topLeft || topRight || bottomLeft || bottomRight) {
                 this.collision["above"] = true
-        
+            };
+        };
         doCollisionAbove()
  
-        def doCollisionToRight():
+        function doCollisionToRight() {
             temporaryNumber = rightSide + 1
             aboveTopRight = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
             aboveBottomRight = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
             belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
             belowTopRight = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
-            if aboveTopRight or aboveBottomRight or belowBottomRight or belowTopRight:
-                this.collision["right"] = true
+            if (aboveTopRight or aboveBottomRight or belowBottomRight or belowTopRight) {
+                this.collision["right"] = true;
+            };
+        };
  
         doCollisionToRight()
         
@@ -830,9 +836,9 @@ class Player {
         
  
          # do all the position updates that other things use
-        this.xv = round(this.xv * 100) / 100
-        this.yv = round(this.yv * 100) / 100
-        this.zv = round(this.zv * 100) / 100
+        this.xv = Math.round(this.xv * 100) / 100
+        this.yv = Math.round(this.yv * 100) / 100
+        this.zv = Math.round(this.zv * 100) / 100
  
         this.x += (this.xv * deltaTime)
         this.y += (this.yv * deltaTime)
@@ -843,7 +849,7 @@ class Player {
  
         this.position = (this.x, this.y, this.z)
  
- 
+         };
  
     def giveItem(this, item, count = 1):
         
@@ -1740,9 +1746,9 @@ class Player {
  
  
     def updateCamera(this):
-        camera.x -= round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
+        camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = this.y
-        camera.z -= round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
+        camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
         
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
  
@@ -1759,8 +1765,8 @@ class Player {
  
     def doStuff(this, deltaTime):
         # need to update mouse's camera relative things here, don't want circular imports
-        mouse.cameraRelativeX = round((this.x + mouse.x) - canvasWidth/2)
-        mouse.cameraRelativeZ = round((this.z + mouse.y) - canvasHeight/2)
+        mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth/2)
+        mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight/2)
         mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ)
         
         this.generalMovement(deltaTime)
