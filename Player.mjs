@@ -565,15 +565,15 @@ class Player {
         })
  
         // faster? access to variables that need to be used a lot in collision
-        rightSide = this.x + this.width;
-        bottomSide = this.z + this.width;
-        underSide = this.y - this.height;
+        let rightSide = this.x + this.width;
+        let bottomSide = this.z + this.width;
+        let underSide = this.y - this.height;
         
         function doCollisionBelow() {
-            topLeft = findBlock(this.x, underSide - 3, this.z, ignoreWater = true)
-            topRight = findBlock(rightSide, underSide - 3, this.z, ignoreWater = true)
-            bottomLeft = findBlock(this.x, underSide - 3, bottomSide, ignoreWater = true)
-            bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = true)
+            let topLeft = findBlock(this.x, underSide - 3, this.z, ignoreWater = true)
+            let topRight = findBlock(rightSide, underSide - 3, this.z, ignoreWater = true)
+            let bottomLeft = findBlock(this.x, underSide - 3, bottomSide, ignoreWater = true)
+            let bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = true)
             if (topLeft || topRight || bottomLeft || bottomRight) {
                 this.collision["below"] = true;
             };
@@ -581,10 +581,10 @@ class Player {
         doCollisionBelow()
  
         function doCollisionAbove() {
-            topLeft = findBlock(this.x, this.y, this.z, ignoreWater = true)
-            topRight = findBlock(rightSide, this.y, this.z, ignoreWater = true)
-            bottomLeft = findBlock(this.x, this.y, bottomSide, ignoreWater = true)
-            bottomRight = findBlock(rightSide, this.y, bottomSide, ignoreWater = true)
+            let topLeft = findBlock(this.x, this.y, this.z, ignoreWater = true)
+            let topRight = findBlock(rightSide, this.y, this.z, ignoreWater = true)
+            let bottomLeft = findBlock(this.x, this.y, bottomSide, ignoreWater = true)
+            let bottomRight = findBlock(rightSide, this.y, bottomSide, ignoreWater = true)
             if (topLeft || topRight || bottomLeft || bottomRight) {
                 this.collision["above"] = true
             };
@@ -592,171 +592,202 @@ class Player {
         doCollisionAbove()
  
         function doCollisionToRight() {
-            temporaryNumber = rightSide + 1
-            aboveTopRight = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
-            aboveBottomRight = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
-            belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
-            belowTopRight = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
-            if (aboveTopRight or aboveBottomRight or belowBottomRight or belowTopRight) {
+            let temporaryNumber = rightSide + 1
+            let aboveTopRight = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
+            let aboveBottomRight = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
+            let belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
+            let belowTopRight = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
+            if (aboveTopRight || aboveBottomRight || belowBottomRight || belowTopRight) {
                 this.collision["right"] = true;
             };
         };
  
         doCollisionToRight()
         
-        def doCollisionToLeft():
-            temporaryNumber = this.x - 1
-            aboveTopLeft = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
-            aboveBottomLeft = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
-            belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
-            belowTopLeft = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
-            if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
+        function doCollisionToLeft() {
+            let temporaryNumber = this.x - 1
+            let aboveTopLeft = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
+            let aboveBottomLeft = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
+            let belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
+            let belowTopLeft = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
+            if (aboveBottomLeft || aboveTopLeft || belowBottomLeft || belowTopLeft) {
                 this.collision["left"] = true
- 
+            };
+        };
         doCollisionToLeft()
  
-        def doCollisionToUp():
-            aboveTopLeft = findBlock(this.x, this.y, this.z - 1, ignoreWater = true)
-            aboveTopRight = findBlock(rightSide, this.y, this.z - 1, ignoreWater = true)
-            belowTopRight = findBlock(rightSide, underSide, this.z - 1, ignoreWater = true)
-            belowTopLeft = findBlock(this.x, underSide, this.z - 1, ignoreWater = true)
-            if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
+        function doCollisionToUp() {
+            let aboveTopLeft = findBlock(this.x, this.y, this.z - 1, ignoreWater = true)
+            let aboveTopRight = findBlock(rightSide, this.y, this.z - 1, ignoreWater = true)
+            let belowTopRight = findBlock(rightSide, underSide, this.z - 1, ignoreWater = true)
+            let belowTopLeft = findBlock(this.x, underSide, this.z - 1, ignoreWater = true)
+            if (aboveTopLeft || aboveTopRight || belowTopLeft || belowTopRight) {
                 this.collision["up"] = true
+            };
+        };
  
         doCollisionToUp()
  
-        def doCollisionToDown():
-            aboveBottomLeft = findBlock(this.x, this.y, bottomSide + 1, ignoreWater = true)
-            aboveBottomRight = findBlock(rightSide, this.y, bottomSide + 1, ignoreWater = true)
-            belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = true)
-            belowBottomLeft = findBlock(this.x, underSide, bottomSide + 1, ignoreWater = true)
-            if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
+        function doCollisionToDown() {
+            let aboveBottomLeft = findBlock(this.x, this.y, bottomSide + 1, ignoreWater = true)
+            let aboveBottomRight = findBlock(rightSide, this.y, bottomSide + 1, ignoreWater = true)
+            let belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = true)
+            let belowBottomLeft = findBlock(this.x, underSide, bottomSide + 1, ignoreWater = true)
+            if (aboveBottomLeft || aboveBottomRight || belowBottomRight || belowBottomLeft) {
                 this.collision["down"] = true
+            };
+        };
  
         doCollisionToDown()
  
-        def checkForBeingInsideOfABlock():
-            center = findBlock(this.x + this.width/2, this.y - this.height/2, this.z + this.width/2, extraInfo = true)
+        function checkForBeingInsideOfABlock() {
+            let center = findBlock(this.x + this.width/2, this.y - this.height/2, this.z + this.width/2, extraInfo = true)
             this.collision["insideOfBlock"] = center["type"]
- 
+        };
         checkForBeingInsideOfABlock()
  
-        temporaryNumber = (this.y - this.height) + blockSize + 3
-        # SEPARATE THESE LATER INTO FUNCTIONS
-        aboveToTopRight = findBlock(rightSide + this.xv + 3, temporaryNumber, this.z, ignoreWater = true)
-        aboveToBottomRight = findBlock(rightSide + this.xv + 3, temporaryNumber, bottomSide, ignoreWater = true)
-        if aboveToTopRight or aboveToBottomRight:
+        let temporaryNumber = (this.y - this.height) + blockSize + 3
+        // SEPARATE THESE LATER INTO FUNCTIONS
+        let aboveToTopRight = findBlock(rightSide + this.xv + 3, temporaryNumber, this.z, ignoreWater = true)
+        let aboveToBottomRight = findBlock(rightSide + this.xv + 3, temporaryNumber, bottomSide, ignoreWater = true)
+        if (aboveToTopRight || aboveToBottomRight) {
             this.collision["aboveRight"] = true
+        };
  
-        aboveToTopLeft = findBlock(this.x + this.xv - 3, temporaryNumber, this.z, ignoreWater = true)
-        aboveToBottomLeft = findBlock(this.x + this.xv - 3, temporaryNumber, bottomSide, ignoreWater = true)
-        if aboveToTopLeft or aboveToBottomLeft:
+        let aboveToTopLeft = findBlock(this.x + this.xv - 3, temporaryNumber, this.z, ignoreWater = true)
+        let aboveToBottomLeft = findBlock(this.x + this.xv - 3, temporaryNumber, bottomSide, ignoreWater = true)
+        if (aboveToTopLeft || aboveToBottomLeft) {
             this.collision["aboveLeft"] = true
+        }
  
-        aboveToLeftUp = findBlock(this.x, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
-        aboveToRightUp = findBlock(rightSide, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
-        if aboveToLeftUp or aboveToRightUp:
+        let aboveToLeftUp = findBlock(this.x, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
+        let aboveToRightUp = findBlock(rightSide, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
+        if (aboveToLeftUp || aboveToRightUp) {
             this.collision["aboveUp"] = true
+        };
         
-        aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
-        aboveToLeftDown = findBlock(this.x, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
-        if aboveToLeftDown or aboveToRightDown:
+        let aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
+        let aboveToLeftDown = findBlock(this.x, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
+        if (aboveToLeftDown || aboveToRightDown) {
             this.collision["aboveDown"] = true
+        };
  
  
  
  
  
-        currentMaxHorizontalSpeed = this.maxHorizontalSpeed
-        if this.collision["insideOfBlock"] == "water":
+        let currentMaxHorizontalSpeed = this.maxHorizontalSpeed;
+        if (this.collision["insideOfBlock"] == "water") {
             currentMaxHorizontalSpeed = this.maxHorizontalSpeed / 2
- 
-         # x and z axis movement
-        if right and not this.collision["right"]:
-            if this.xv < currentMaxHorizontalSpeed:
+        };
+
+         // x and z axis movement
+        if (keys.d && !this.collision["right"]) {
+            if (this.xv < currentMaxHorizontalSpeed) {
                 this.xv += this.acceleration
+            };
+        };
+        
  
-        if left and not this.collision["left"]:
-            if this.xv > -currentMaxHorizontalSpeed:
+        if (keys.a && !this.collision["left"]) {
+            if (this.xv > -currentMaxHorizontalSpeed) {
                 this.xv -= this.acceleration
+            };
+        };
  
-        if up and not this.collision["up"]:
-            if this.zv > -currentMaxHorizontalSpeed:
+        if (keys.w && !this.collision["up"]) {
+
+            if (this.zv > -currentMaxHorizontalSpeed) {
                 this.zv -= this.acceleration
+            };
+        };
  
-        if down and not this.collision["down"]:
-            if this.zv < currentMaxHorizontalSpeed:
+        if (keys.s && !this.collision["down"]) {
+            if (this.zv < currentMaxHorizontalSpeed) {
                 this.zv += this.acceleration
+            };
+        };
  
-         # y axis movement
-        if space:
-            if this.collision["insideOfBlock"] == "water":
-                # do water stuff
-                jumpForce = this.normalJumpForce / 3
+        // y axis movement
+        if (keys[" "]) {
+            if (this.collision["insideOfBlock"] == "water") {
+                // do water stuff
+                let jumpForce = this.normalJumpForce / 3
  
                 this.yv = jumpForce
-            else:
-                if this.collision["below"]:
-                    # do jump stuff
-                    jumpForce = this.normalJumpForce
+            } else {
+                if (this.collision["below"]) {
+                    // do jump stuff
+                    let jumpForce = this.normalJumpForce
  
                     this.yv = jumpForce
+                };
+            };
+        };
             
  
  
-         # do gravity
-        if not this.collision["below"]:
-            yvChange = gravity
-            if this.collision["insideOfBlock"] == "water":
+         // do gravity
+        if (!this.collision["below"]) {
+            let yvChange = gravity
+            if (this.collision["insideOfBlock"] == "water") {
                 yvChange /= 5
+            };
             this.yv -= yvChange
-        elif this.yv < 0:
+        } else { if (this.yv < 0) {
             this.yv = 0
             this.y = this.blockCoord[1] * blockSize + this.height
-            # re-do collisions, hopefully fixes colliding with walls while hitting
-            # the ground hard, looks like it didn't fix it?
-            #doCollisionToDown()
-            #doCollisionToLeft()
-            #doCollisionToUp()
-            #doCollisionToRight()
-         # don't let player fall out of the world
-        if this.y < -300:
+            // re-do collisions, hopefully fixes colliding with walls while hitting
+            // the ground hard, looks like it didn't fix it?
+            //doCollisionToDown()
+            //doCollisionToLeft()
+            //doCollisionToUp()
+            //doCollisionToRight()
+        };
+         // don't let player fall out of the world
+        if (this.y < -300) {
             this.y = chunkSize[1] * blockSize
             this.yv = 0
+        };
  
-         # don't let player go through ceilings
-        if this.collision["above"]:
-            if this.yv > 0:
+        // don't let player go through ceilings
+        if (this.collision["above"]) {
+            if (this.yv > 0) {
                 this.y -= this.yv
                 this.yv = 0
+            };
+        };
  
-         # wall collision
-         # and block step up (go up blocks without jumping
+        // wall collision
+        // and block step up (go up blocks without jumping
  
  
         this.booleans["blockStepUsed"] = false
  
-        if this.collision["up"]:
-            a = this.collision["below"]
-            b = not this.collision["aboveUp"]
-            c = not this.booleans["blockStepUsed"]
-            d = up
-            if a and b and c and d:
+        if (this.collision["up"]) {
+            let a = this.collision["below"]
+            let b = !this.collision["aboveUp"]
+            let c = !this.booleans["blockStepUsed"]
+            let d = keys.w
+            if (a && b && c && d) {
                 this.y += blockSize
-                # update collision, since player's been moved a lot
+                // update collision, since player's been moved a lot
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToRight()
                 this.booleans["blockStepUsed"] = true
-            else:
+            } else {
                 this.z += abs(this.zv)
                 this.zv = 0
                 this.z += 1
-        if this.collision["right"]:
-            a = this.collision["below"]
-            b = not this.collision["aboveRight"]
-            c = not this.booleans["blockStepUsed"]
-            d = right
+            };
+        };
+
+        if (this.collision["right"]) {
+            let a = this.collision["below"]
+            let b = !this.collision["aboveRight"]
+            let c = !this.booleans["blockStepUsed"]
+            let d = keys.d
             if a and b and c and d:
                 this.y += blockSize
                 # update collision, since player's been moved a lot
@@ -768,6 +799,7 @@ class Player {
                 this.x -= abs(this.xv)
                 this.xv = 0
                 this.x -= 1
+        };
  
         if this.collision["left"]:
             a = this.collision["below"]
