@@ -788,132 +788,146 @@ class Player {
             let b = !this.collision["aboveRight"]
             let c = !this.booleans["blockStepUsed"]
             let d = keys.d
-            if a and b and c and d:
+            if (a && b && c && d) {
                 this.y += blockSize
-                # update collision, since player's been moved a lot
+                // update collision, since player's been moved a lot
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
-            else: 
+            } else {
                 this.x -= abs(this.xv)
                 this.xv = 0
                 this.x -= 1
+            };
         };
  
-        if this.collision["left"]:
-            a = this.collision["below"]
-            b = not this.collision["aboveLeft"]
-            c = not this.booleans["blockStepUsed"]
-            d = left
-            if a and b and c and d:
+        if (this.collision["left"]) {
+            let a = this.collision["below"]
+            let b = !this.collision["aboveLeft"]
+            let c = !this.booleans["blockStepUsed"]
+            let d = keys.a
+            if (a && b && c && d) {
                 this.y += blockSize
-                # update collision, since player's been moved a lot
+                // update collision, since player's been moved a lot
                 doCollisionToDown()
                 doCollisionToRight()
                 doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
-            else:
+            } else {
                 this.x += abs(this.xv)
                 this.xv = 0
                 this.x += 1
+            };
+        };
             
-        if this.collision["down"]:
-            a = this.collision["below"]
-            b = not this.collision["aboveDown"]
-            c = not this.booleans["blockStepUsed"]
-            d = down
-            if a and b and c and d:
+        if (this.collision["down"]) {
+            let a = this.collision["below"]
+            let b = !this.collision["aboveDown"]
+            let c = !this.booleans["blockStepUsed"]
+            let d = keys.s
+            if (a && b && c && d) {
                 this.y += blockSize
-                # update collision, since player's been moved a lot
+                // update collision, since player's been moved a lot
                 doCollisionToLeft()
                 doCollisionToRight()
                 doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
-            else:
+            } else {
                 this.x -= abs(this.zv)
                 this.zv = 0
                 this.z -= 1
+            };
+        };
        
  
  
          
-        # force player speed cap
-        if this.xv > currentMaxHorizontalSpeed:
-            this.xv = currentMaxHorizontalSpeed
-        if this.xv < -currentMaxHorizontalSpeed:
-            this.xv = -currentMaxHorizontalSpeed
+        // force player speed cap
+        if (this.xv > currentMaxHorizontalSpeed) {this.xv = currentMaxHorizontalSpeed;};
+        if (this.xv < -currentMaxHorizontalSpeed) {this.xv = -currentMaxHorizontalSpeed;};
  
-        if this.zv > currentMaxHorizontalSpeed:
-            this.zv = currentMaxHorizontalSpeed
-        if this.zv < -currentMaxHorizontalSpeed:
-            this.zv = -currentMaxHorizontalSpeed
+        if (this.zv > currentMaxHorizontalSpeed) {this.zv = currentMaxHorizontalSpeed;};
+        if (this.zv < -currentMaxHorizontalSpeed) {this.zv = -currentMaxHorizontalSpeed;};
         
-         # friction is handled below
-        if (not left and not right) or (left and right):
-            this.xv -= this.xv / this.slipperyness
-            if this.xv > -0.1 and this.xv < 0.1:
-                this.xv = 0
-        if (not up and not down) or (up and down):
+        // friction
+        if ((!keys.a && !keys.d) || (keys.a && keys.d)) {
+            this.xv -= this.xv / this.slipperyness;
+            if (Math.abs(this.xv) < 0.1) {this.xv = 0;};
+        };
+        if ((!keys.w && !keys.s) || (keys.w && keys.s)) {
             this.zv -= this.zv / this.slipperyness
-            if this.zv > -0.1 and this.zv < 0.1:
-                this.zv = 0
+            if (Math.abs(this.zv) < 0.1) {this.zv = 0;};
+        };
         
  
  
-         # don't let player get stuck inside of blocks
-        if this.collision["insideOfBlock"] != "air":
-            if this.collision["insideOfBlock"] != "water":
-                this.y += 5
+        // don't let player get stuck inside of blocks
+        if (this.collision["insideOfBlock"] != "air" && 
+            this.collision["insideOfBlock"] != "water") {this.y += 5;};
         
  
-         # do all the position updates that other things use
-        this.xv = Math.round(this.xv * 100) / 100
-        this.yv = Math.round(this.yv * 100) / 100
-        this.zv = Math.round(this.zv * 100) / 100
+        // do all the position updates that other things use
+        this.xv = Math.round(this.xv * 100) / 100;
+        this.yv = Math.round(this.yv * 100) / 100;
+        this.zv = Math.round(this.zv * 100) / 100;
  
-        this.x += (this.xv * deltaTime)
-        this.y += (this.yv * deltaTime)
-        this.z += (this.zv * deltaTime)
+        this.x += (this.xv * deltaTime);
+        this.y += (this.yv * deltaTime);
+        this.z += (this.zv * deltaTime);
  
         
         
  
-        this.position = (this.x, this.y, this.z)
+        this.position = [this.x, this.y, this.z];
  
          };
  
-    def giveItem(this, item, count = 1):
+    this.giveItem = function (item, count = 1) {
         
-        def checkForStackables(container, done, count, item):
-            if not done and item.stackable:
-                for slot in container:
-                    if slot["contents"] != "empty":
-                        if slot["contents"].name == item.name:
-                            if slot["count"] != maxStackSize:
-                                
- 
-                                addedCount = count + slot["count"]
-                                if addedCount <= maxStackSize:
- 
-                                    slot["count"] = addedCount
-                                    return true
-                                elif addedCount > maxStackSize:
-                                    slot["count"] = maxStackSize
-                                    count = addedCount - maxStackSize
-                                    break
-            return done
-            
-        def checkForEmptySlots(container, done, count, item):
-            if not done:
-                for slot in container:
-                    if slot["contents"] == "empty":
-                        slot["contents"] = item
-                        slot["count"] = count
-                        
-                        
+        function checkForStackables(container, done, count, item) {
+            if (!done && item.stackable) {
+                for (let i = 0; i < container.length; i++) {
+
+                    let slot = container[i];
+                    if (slot.contents == "empty" || slot.contents.name != item.name ||
+                        slot.contents.cound == maxStackSize)
+                    {
+                        return done;
+                    }
+        
+
+                    let addedCount = count + slot["count"]
+                    if (addedCount <= maxStackSize) {
+
+                        slot["count"] = addedCount
                         return true
+                    } else {if (addedCount > maxStackSize) {
+                        slot["count"] = maxStackSize
+                        count = addedCount - maxStackSize
+                        break
+                    }};
+                    container[i] = slot;
+
+                };
+
+            }
             return done
+        };
+    
+        function checkForEmptySlots(container, done, count, item) {
+            if (!done) {
+                container.forEach( function (slot) {
+                    if (slot.contents == "empty") {
+                        slot.contents = item;
+                        slot.count = count;
+
+                        return true;
+                    }
+                });
+            };
+            return done
+        };
  
             
  
@@ -925,207 +939,226 @@ class Player {
         done = checkForEmptySlots(this.hotbar, done, count, item)
         done = checkForEmptySlots(this.inventory, done, count, item)
  
-        if not done:
-            print("giving the item failed")
+        if (!done) {consoleLog("failed to give item");};
  
         return done
+    };
  
  
  
-    def doInventoryThings(this):
- 
+    this.doInventoryThings = function () {
+
         
-        def toggleInventoryVisibility():
-            if keysPressed[pygame.K_e]:
-                if this.otherInventoryData["open"]:
-                    this.otherInventoryData["open"] = false
-                else:
-                    this.otherInventoryData["open"] = true
- 
-            for slot in this.inventory:
-                if slot["contents"] != "empty":
-                    slot["contents"].slotId = slot["slotId"]
-            for slot in this.hotbar:
-                if slot["contents"] != "empty":
-                    slot["contents"].slotId = slot["slotId"]
-        toggleInventoryVisibility()
+        if (keysPressed.e) {this.otherInventoryData.open = !this.otherInventoryData.open;};
+
+
+        this.inventory.forEach( function(slot) {
+            if (slot.contents != "empty") {slot.contents.slotId = slot.slotId;};
+        })
+        this.hotbar.forEach( function(slot) {
+            if (slot.contents != "empty") {slot.contents.slotId = slot.slotId;};
+        })
  
  
-        def adjustMouseSelectedBlockHeight():
-            # change the selected height of the mouse
+        function adjustMouseSelectedBlockHeight() {
+            // change the selected height of the mouse
             mouse.selectedY = this.y
  
-            if keysPressed[pygame.K_PERIOD]:
-                if mouse.selectedYChange < this.verticalBlockReach:
-                    mouse.selectedYChange += 1
+            if (keysPressed["."]) {
+                if (mouse.selectedYChange < this.verticalBlockReach) {
+                    mouse.selectedYChange += 1;};
+            };
                 
-            if keysPressed[pygame.K_COMMA]:
-                if mouse.selectedYChange > -this.verticalBlockReach:
-                    mouse.selectedYChange -= 1
+            if (keysPressed[","]) {
+                if (mouse.selectedYChange > -this.verticalBlockReach) {
+                    mouse.selectedYChange -= 1;
+                };
+            };
  
-            mouse.selectedY += mouse.selectedYChange * blockSize
+            mouse.selectedY += mouse.selectedYChange * blockSize;
             
  
-            if mouse.selectedY <= 0:
-                mouse.selectedY = blockSize
-            if mouse.selectedY >= chunkSize[1] * blockSize:
-                mouse.selectedY = chunkSize[1] * (blockSize - 1)
+            if (mouse.selectedY <= 0) {mouse.selectedY = blockSize;};
+            if (mouse.selectedY >= chunkSize[1] * blockSize) {mouse.selectedY = chunkSize[1] * (blockSize - 1);};
+        };
         adjustMouseSelectedBlockHeight()
  
  
-        def changeSelectedHotbarSlot():
-            if not this.otherInventoryData["open"]:
-                for i in range(1, 10):
-                    keyboardInput = getattr(pygame, "K_" + str(i))
-                    if keysPressed[keyboardInput]:
-                        this.otherInventoryData["currentHotbarSlot"] = i - 1
-        changeSelectedHotbarSlot()
+        // change hotbar slot based on pressing stuff
+        let numberList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        numberList.forEach( function (number) {
+            if (key[number]) {this.otherInventoryData.currentHotbarSlot = Number(number);};
+        })
  
  
-        def dropItems():
-            # drop items from the hotbar
-            if keysPressed[pygame.K_q]:
-                if not this.otherInventoryData["open"]:
-                    currentHotbarSlot = this.otherInventoryData["currentHotbarSlot"]
-                    item = this.hotbar[currentHotbarSlot]["contents"]
+        function dropItems() {
+            // drop items from the hotbar
+            if (keysPressed.q) {
+                if (!this.otherInventoryData.open) {
+                    let currentHotbarSlot = this.otherInventoryData.currentHotbarSlot;
+                    let item = this.hotbar[currentHotbarSlot].contents;
  
-                    if item != "empty":
+                    if (item != "empty") {
  
-                        x = this.x + this.width/2 - itemEntitySize/2
-                        y = this.y - this.height/2
-                        z = this.z + this.width/2 - itemEntitySize/2
+                        let x = this.x + this.width/2 - itemEntitySize/2;
+                        let y = this.y - this.height/2;
+                        let z = this.z + this.width/2 - itemEntitySize/2;
  
-                        # figure out velocity for angle of player to mouse
+                        // figure out velocity for angle of player to mouse
  
-                        xDiff = mouse.cameraRelativeX - x
-                        yDiff = mouse.cameraRelativeZ - z
+                        let xDiff = mouse.cameraRelativeX - x;
+                        let yDiff = mouse.cameraRelativeZ - z;
  
-                        angle = math.atan2(yDiff, xDiff)                        
+                        let angle = math.atan2(yDiff, xDiff);
  
-                        xv = math.cos(angle) * 3
-                        yv = 2
-                        zv = math.sin(angle) * 3
+                        let xv = math.cos(angle) * 3;
+                        let yv = 2;
+                        let zv = math.sin(angle) * 3;
  
-                        count = 1
+                        let count = 1;
  
-                        item.drop(x, y, z, xv, yv, zv, this, count)
+                        item.drop(x, y, z, xv, yv, zv, this, count);
+                    };
+                };
+            };
+        };
         dropItems()
  
  
-        def hotbarHeldItemStuff():
-            if not this.otherInventoryData["open"]:
-                index = this.otherInventoryData["currentHotbarSlot"]
-                slotData = this.hotbar[index]
-                item = slotData["contents"]
+        function hotbarHeldItemStuff() {
+            if (!this.otherInventoryData.open) {
+                let index = this.otherInventoryData.currentHotbarSlot;
+                let slotData = this.hotbar[index];
+                let item = slotData.contents;
  
-                if mouse.buttons["pressed"]["left"] or mouse.buttons["left"]:
+                if (mouse.buttons.pressed.left || mouse.buttons["left"]) {
                     this.doStuffOnLeftClick(item)
+                };
  
-                if item != "empty":
+                if (item != "empty") {
  
-                    if mouse.buttons["pressed"]["right"]:
-                        item.RMBPressedAction(this)
-                    elif mouse.buttons["right"]:
-                        item.RMBAction(this)
-                else:
-                    this.doStuffOnRightClick
+                    if (mouse.buttons["pressed"]["right"]) {
+                        item.RMBPressedAction(this);
+                    } else {if (mouse.buttons.right) {item.RMBAction(this); }};
+                } else {
+                    this.doStuffOnRightClick(item)
+                };
+            };
+        };
         hotbarHeldItemStuff()
  
  
-        def mouseInteractionWithInventory():
-            mouse.inPlayerInventory = false
-            mouse.inPlayerHotbar = false
-            mouse.inPlayerCraftingAndArmor = false
-            mouse.inPlayerCraftingTable = false
-            mouse.inASlot = false
+        function mouseInteractionWithInventory() {
+            mouse.inPlayerInventory = false;
+            mouse.inPlayerHotbar = false;
+            mouse.inPlayerCraftingAndArmor = false;
+            mouse.inPlayerCraftingTable = false;
+            mouse.inASlot = false;
  
-            def inventoryContentInteraction(container):
-                if container == "hotbar":
-                    invSection = this.hotbar
-                    otherInvSection = this.inventory
-                elif container == "inventory":
-                    invSection = this.inventory
-                    otherInvSection = this.hotbar
-                elif container == "crafting":
-                    invSection = this.crafting[this.crafting["gridSize"]]["slots"]
-                    otherInvSection = this.inventory
-                elif container == "armor":
-                    invSection = this.armor
-                    otherInvSection = this.inventory
-                def checkStackablesInOtherInvSection(amountToMove, item, done):
-                            """
+            function inventoryContentInteraction(container) {
+                let invSection = undefined;
+                let otherInvSection = undefined;
+
+                switch (container) {
+                    case "hotbar":
+                        invSection = this.hotbar;
+                        otherInvSection = this.inventory;
+                        break;
+                    case "inventory":
+                        invSection = this.inventory;
+                        otherInvSection = this.hotbar;
+                        break;
+                    case "crafting":
+                        invSection = this.crafting[this.crafting.gridSize].slots;
+                        otherInvSection = this.inventory;
+                        break;
+                    case "armor":
+                        invSection = this.armor;
+                        otherInvSection = this.inventory;
+                        break;
+                    break;
+                }
+                
+                function checkStackablesInOtherInvSection(amountToMove, item, done) {
+                            /*
                             amountToMove: either "max" or an int less than 64 \n
                             done: used to see if the interaction is done
-                            """
- 
-                            if item != "empty" and not done:
-                                if item.stackable:
-                                    for otherSlot in otherInvSection:
-                                        otherItem = otherSlot["contents"]
- 
-                                        if otherItem != "empty" and otherSlot["count"] < maxStackSize:
-                                            if otherItem.stackable and item.name == otherItem.name:
-                                                if otherSlot["count"] == maxStackSize:
-                                                    break
-                                                if amountToMove == "max":
-                                                    movingCount = slot["count"] + otherSlot["count"]
-                                                        # combine the count
-                                                    if movingCount <= maxStackSize:
-                                                        
- 
-                                                        if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                            movingCount = slot["count"]
-                                                            movingCount *= this.crafting["possibleCrafts"]
- 
-                                                            if movingCount + otherSlot["count"] <= maxStackSize:
- 
-                                                                for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
-                                                                    if key != "resultSlot":
-                                                                        # subtract the amount of items crafted
-                                                                        craftingSlot["count"] -= this.crafting["possibleCrafts"]
-                                                                        
- 
-                                                                        if craftingSlot["count"] <= 0:
- 
-                                                                            craftingSlot["count"] = 0
-                                                                            craftingSlot["contents"] = "empty"
-                                                            
-                                                                otherSlot["count"] += movingCount
- 
-                                                        else:
-                                                            otherSlot["count"] = movingCount
-                                                                        
-                                                            slot["count"] = 0
-                                                            slot["contents"] = "empty"
- 
-                                                        
-                                                        
-                                                        done = true
-                                                        return true
- 
-                                                    # make the other stack full, reduce item count
-                                                    # in first slot so the later update catches it
-                                                    elif movingCount > maxStackSize:
-                                                        if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                            slot["count"] = movingCount - maxStackSize
-                                                            otherSlot["count"] = maxStackSize
- 
- 
-                                                else: # not moving max amount
-                                                    if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                        otherSlotNewCount = otherSlot["count"] + amountToMove
-                                                        slotNewCount = slot["count"] - amountToMove
- 
-                                                        # subtract from first slot, add to the second if possible
-                                                        if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
-                                                            slot["count"] = slotNewCount
-                                                            otherSlot["count"] = otherSlotNewCount
- 
-                                                            if slotNewCount == 0:
-                                                                slot["contents"] = "empty"
- 
-                                                            return true
+                            */
+
+                            if (done || item == "empty" || !item.stackable) {
+                                return done;
+                            }
+                            
+                            otherInvSection.forEach( function (otherSlot) {
+                                let otherItem = otherSlot.contents
+
+                                if 
+                                if otherItem != "empty" and otherSlot["count"] < maxStackSize:
+                                    if otherItem.stackable and item.name == otherItem.name:
+                                        if otherSlot["count"] == maxStackSize:
+                                            break
+                                        if amountToMove == "max":
+                                            movingCount = slot["count"] + otherSlot["count"]
+                                                // combine the count
+                                            if movingCount <= maxStackSize:
+                                                
+
+                                                if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                    movingCount = slot["count"]
+                                                    movingCount *= this.crafting["possibleCrafts"]
+
+                                                    if movingCount + otherSlot["count"] <= maxStackSize:
+
+                                                        for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
+                                                            if key != "resultSlot":
+                                                                // subtract the amount of items crafted
+                                                                craftingSlot["count"] -= this.crafting["possibleCrafts"]
+                                                                
+
+                                                                if craftingSlot["count"] <= 0:
+
+                                                                    craftingSlot["count"] = 0
+                                                                    craftingSlot["contents"] = "empty"
+                                                    
+                                                        otherSlot["count"] += movingCount
+
+                                                else:
+                                                    otherSlot["count"] = movingCount
+                                                                
+                                                    slot["count"] = 0
+                                                    slot["contents"] = "empty"
+
+                                                
+                                                
+                                                done = true
+                                                return true
+
+                                            // make the other stack full, reduce item count
+                                            // in first slot so the later update catches it
+                                            elif movingCount > maxStackSize:
+                                                if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                    slot["count"] = movingCount - maxStackSize
+                                                    otherSlot["count"] = maxStackSize
+
+
+                                        else: // not moving max amount
+                                            if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                otherSlotNewCount = otherSlot["count"] + amountToMove
+                                                slotNewCount = slot["count"] - amountToMove
+
+                                                // subtract from first slot, add to the second if possible
+                                                if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
+                                                    slot["count"] = slotNewCount
+                                                    otherSlot["count"] = otherSlotNewCount
+
+                                                    if slotNewCount == 0:
+                                                        slot["contents"] = "empty"
+
+                                                    return true
+                            })
+                                
                             return done
+                };
  
                 def checkEmptySlotsInOtherInvSection(amountToMove, item, done):
                     """
@@ -1150,7 +1183,7 @@ class Player {
  
                                             for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                                                 if key != "resultSlot":
-                                                    # subtract one item from the slot, since it's consumed
+                                                    // subtract one item from the slot, since it's consumed
                                                     craftingSlot["count"] -= this.crafting["possibleCrafts"]
  
                                                     if craftingSlot["count"] <= 0:
@@ -1166,12 +1199,12 @@ class Player {
                                     
                                     return true
  
-                                else: # not moving max amount
+                                else: // not moving max amount
                                     if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
  
                                         slotNewCount = slot["count"] - amountToMove
  
-                                        # subtract from first slot, add to the second if possible
+                                        // subtract from first slot, add to the second if possible
                                         if slotNewCount >= 0:
                                             slot["count"] = slotNewCount
                                             otherSlot["count"] = amountToMove
@@ -1191,7 +1224,7 @@ class Player {
                         item = slot["contents"]
                         
                         if slot["rect"].collidepoint(mouse.x, mouse.y):
-                            # communicate rendering information via the mouse
+                            // communicate rendering information via the mouse
                             
                             mouse.hoveredSlotId = slot["slotId"]
                             mouse.inASlot = true
@@ -1200,7 +1233,7 @@ class Player {
                             def slotInteractionWithMouseItem(clickType):
                                         ctrlPressed = keys[0][pygame.K_LCTRL]
                                         if not keys[0][pygame.K_LSHIFT]:
-                                            # try to pick up or swap the item in slot and mouse.heldItem
+                                            // try to pick up or swap the item in slot and mouse.heldItem
                                             mouseItem = mouse.heldItem["contents"]
                                             if mouseItem != "empty" and not ctrlPressed:
                                                 if slot["slotId"] != "resultSlot":
@@ -1232,7 +1265,7 @@ class Player {
  
                                                                 slot["count"] = maxStackSize
                                                                 mouse.heldItem["count"] = newMouseSlotCount
-                                                        elif clickType == "left click": # not stacking the item, swap it with mouse's item
+                                                        elif clickType == "left click": // not stacking the item, swap it with mouse's item
  
                                                             newSlotCount = mouse.heldItem["count"]
                                                             newSlotItem = mouse.heldItem["contents"]
@@ -1244,7 +1277,7 @@ class Player {
                                                             slot["contents"] = newSlotItem
  
  
-                                                    else: # clicked item has nothing there, put mouse contents there
+                                                    else: // clicked item has nothing there, put mouse contents there
                                                         if clickType == "left click":
  
                                                             slot["contents"] = mouse.heldItem["contents"]
@@ -1261,7 +1294,7 @@ class Player {
                                                                 mouse.heldItem["contents"] = "empty"
  
  
-                                            else: # mouse has no item in it, see if the item can be picked up
+                                            else: // mouse has no item in it, see if the item can be picked up
                                                 if item != "empty":
  
                                                     if clickType == "left click":
@@ -1272,24 +1305,24 @@ class Player {
                                                         slot["count"] = 0
                                                         slot["contents"] = "empty"
  
-                                                        # do special things if its the crafting result
+                                                        // do special things if its the crafting result
                                                         if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                            #this.crafting["possibleCrafts"] -= 1
+                                                            //this.crafting["possibleCrafts"] -= 1
                                                             for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                                                                 if key != "resultSlot":
-                                                                    # subtract one item from the slot, since it's consumed
+                                                                    // subtract one item from the slot, since it's consumed
                                                                     if craftingSlot["count"] > 1:
  
                                                                         craftingSlot["count"] -= 1
-                                                                    else: # just remove the item entirely
+                                                                    else: // just remove the item entirely
  
                                                                         craftingSlot["count"] = 0
                                                                         craftingSlot["contents"] = "empty"
  
                                                     elif clickType == "right click":
-                                                        # just disable right clicking on a result slot
+                                                        // just disable right clicking on a result slot
                                                         if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                            # you can't do this with unstackable items
+                                                            // you can't do this with unstackable items
                                                             if slot["contents"].stackable:
                                                                 if slot["count"] > 1:
                                                                     if not ctrlPressed:
@@ -1302,7 +1335,7 @@ class Player {
                                                                         mouse.heldItem["count"] = newMouseCount
  
                                                                         slot["count"] = newSlotCount
-                                                                    else: # put one item into mouse
+                                                                    else: // put one item into mouse
                                                                         mouse.heldItem["count"] = 1
                                                                         mouse.heldItem["contents"] = slot["contents"]
  
@@ -1311,18 +1344,18 @@ class Player {
  
                             
                             done = false
-                            # fast transfer options
+                            // fast transfer options
                             if mouse.buttons["pressed"]["left"]:
                                 
                                 if keys[0][pygame.K_LSHIFT]:
-                                    # move all items from this slot (if possible)
+                                    // move all items from this slot (if possible)
                                     done = checkStackablesInOtherInvSection("max", item, done)
                                     done = checkEmptySlotsInOtherInvSection("max", item, done)
                                     
                                     
                             
                                 if keys[0][pygame.K_LCTRL]:
-                                    # move a single item from this slot (if possible)
+                                    // move a single item from this slot (if possible)
                                     done = checkStackablesInOtherInvSection(1, item, done)
                                     done = checkEmptySlotsInOtherInvSection(1, item, done)
                                        
@@ -1345,7 +1378,7 @@ class Player {
                         interactionForThisSlot(slot)
  
  
- 
+            };
  
             if this.otherInventoryData["open"]:
                 mouse.inPlayerCraftingAndArmor = this.otherInventoryData["craftingAndArmorRect"].collidepoint(mouse.x, mouse.y)
@@ -1362,7 +1395,7 @@ class Player {
                     inventoryContentInteraction("armor")
         
  
-            # attempt to place mouse's item back in the player's inventory
+            // attempt to place mouse's item back in the player's inventory
             if not this.otherInventoryData["open"]:
  
                 if mouse.heldItem["contents"] != "empty":
@@ -1437,12 +1470,12 @@ class Player {
  
                     if not done:
  
-                        # center of player
+                        // center of player
                         x = this.x + this.width/2
                         y = this.y - this.height/2
                         z = this.z + this.width/2
  
-                        # figure out velocity for angle of player to mouse
+                        // figure out velocity for angle of player to mouse
  
                         xDiff = mouse.cameraRelativeX - x
                         yDiff = mouse.cameraRelativeZ - z
@@ -1454,10 +1487,11 @@ class Player {
                         zv = math.sin(angle) * 3
  
                         item.drop(x, y, z, xv, yv, zv)
+        };
         mouseInteractionWithInventory()   
  
         def recipeChecksAndStuff():
-            # dict with total amount of each item in crafting slots
+            // dict with total amount of each item in crafting slots
             this.totalCraftingContents = {}
             this.isCrafting = false
             this.crafting["possibleCrafts"] = 0
@@ -1600,12 +1634,12 @@ class Player {
                                     items = instructions["items"]
  
                                     if not usesOperators:
-                                        # only checks one direction (not gonna be common)
+                                        // only checks one direction (not gonna be common)
                                         slotFound = checkADirection(directions[0], slotId)
                                         if slotFound == items[0]:
                                             return true
  
-                                    else: # this recipe uses operators, will be more complicated
+                                    else: // this recipe uses operators, will be more complicated
                                         lenOfDirections = len(directions)
                                         lenOfItems = len(items)
                                         lenOfOperators = len(operators)
@@ -1656,21 +1690,21 @@ class Player {
                                             
                                             betterConditionsList.append(conditionList)
  
-                                            i += 2 # increment by two, grouping together conditions
+                                            i += 2 // increment by two, grouping together conditions
  
  
  
                                         for i in range(lenOfOperators):
-                                            # i should probably modify how i am doing operators to specify which
-                                            # directions should use what operators (example: right "and" left)
-                                            # another example: up "neither" down
-                                            # and also should probably add in the ability to specify multiple
-                                            # directions for something, ex top right is up and right
-                                            # or i could just have "top right" be a valid direction
-                                            # yeah ima just do that
-                                            # or i could have the directions be like {up: 2}, {right: 1},
-                                            # that would be up 2 slots, right 1 slot
-                                            # operators still need to be grouped with directions at some point though
+                                            // i should probably modify how i am doing operators to specify which
+                                            // directions should use what operators (example: right "and" left)
+                                            // another example: up "neither" down
+                                            // and also should probably add in the ability to specify multiple
+                                            // directions for something, ex top right is up and right
+                                            // or i could just have "top right" be a valid direction
+                                            // yeah ima just do that
+                                            // or i could have the directions be like {up: 2}, {right: 1},
+                                            // that would be up 2 slots, right 1 slot
+                                            // operators still need to be grouped with directions at some point though
  
                                             operator = operators[i]
                                             conditionA, conditionB = betterConditionsList[i]
@@ -1692,7 +1726,7 @@ class Player {
                                                 if conditionA or conditionB:
                                                     return true
                                                 
-                                            #print("didn't fulfill any checks")
+                                            //print("didn't fulfill any checks")
  
  
  
@@ -1763,7 +1797,7 @@ class Player {
  
         recipeChecksAndStuff()
  
- 
+};
         
     def handleTimers(this):
         for key, timerValue in this.timers.items():
@@ -1796,7 +1830,7 @@ class Player {
  
  
     def doStuff(this, deltaTime):
-        # need to update mouse's camera relative things here, don't want circular imports
+        // need to update mouse's camera relative things here, don't want circular imports
         mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth/2)
         mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight/2)
         mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ)
@@ -1850,11 +1884,11 @@ class Player {
                 knockback = item.knockback
             
         
-        # run a test for interaction with entitys, hitting them, etc
-        # if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
+        // run a test for interaction with entitys, hitting them, etc
+        // if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
  
-        # else:
-        # break blocks
+        // else:
+        // break blocks
         if this.currentBreakingBlock != mouse.hoveredBlock["block"]:
             this.blockBreakProgress = 0
  
@@ -1884,8 +1918,8 @@ class Player {
  
  
  
-                # breaking stuff is based on seconds of time,
-                # in tools, the breaking speed is a percentage of a second per frame
+                // breaking stuff is based on seconds of time,
+                // in tools, the breaking speed is a percentage of a second per frame
  
                 if this.blockBreakProgress >= fps:
                     this.blockBreakProgress = 0
@@ -1908,7 +1942,7 @@ class Player {
                         count = 1
                         xv = random.randint(-3, 3)
                         zv = random.randint(-3, 3)
-                        if true: # replace later with silk touch or something
+                        if true: // replace later with silk touch or something
                             if block["type"] == ("grass" or "snowy grass"):
                                 itemData.name = "dirt"
                             if block["type"] == ("stone" or "snowy stone"):
@@ -1936,7 +1970,7 @@ class Player {
     def changeCraftingGrid(this, gridSize):
         
  
-        # attempt to place items back into inventory
+        // attempt to place items back into inventory
         
         done = false
  
@@ -1981,7 +2015,7 @@ class Player {
                 done = checkEmptySlots(slot, done)
  
             else:
-                # figure out dropping these into inventory or ground
+                // figure out dropping these into inventory or ground
                 slot["contents"] = "empty"
                 slot["count"] = 0
  
@@ -1990,12 +2024,12 @@ class Player {
  
         if not done:
  
-            # center of player
+            // center of player
             x = this.x + this.width/2
             y = this.y - this.height/2
             z = this.z + this.width/2
  
-            # figure out velocity for angle of player to mouse
+            // figure out velocity for angle of player to mouse
  
             xDiff = mouse.cameraRelativeX - x
             yDiff = mouse.cameraRelativeZ - z
