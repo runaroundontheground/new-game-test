@@ -4,9 +4,9 @@ showLoadingProgress("loading Recipes.mjs");
 
 
 function addRecipe(
-        recipeType, recipeName, requiredItems, output, outputCount = 1, recipeShape,
-        requiredGridSize = 2, recipeInstructions
-              ) {
+    recipeType, recipeName, requiredItems, output, outputCount = 1, recipeShape,
+    requiredGridSize = 2, recipeInstructions
+) {
     /*
     recipeType:
         can be "exact", "nearExact", or "shapeless"
@@ -38,19 +38,19 @@ function addRecipe(
 
 
     let recipe = {
-              "requiredItems": requiredItems,
-              "output": output,
-              "outputCount": outputCount
-              }
-    
+        "requiredItems": requiredItems,
+        "output": output,
+        "outputCount": outputCount
+    }
+
     if (recipeType == "exact") {
         recipe.recipeShape = recipeShape;
     };
-    
+
     if (recipeType == "nearExact") {
         recipe.recipeInstructions = recipeInstructions;
     };
-    
+
 
 
     recipes[requiredGridSize][recipeType][recipeName] = recipe;
@@ -82,29 +82,29 @@ export function makeRecipesExist() {
     * then this can be used: "up,up,right": "planks"
     * comma separated directions as the str key thingy will be how that works
     */
-    addRecipe("shapeless", "logToPlanks", {"log": 1}, items["planks"], 4);
-    
-    addRecipe("nearExact", "planksToSticks", {"planks": 2}, items["stick"], 4,
-              requiredGridSize = 2,
-              recipeInstructions = {
-                  "startingItemName": "planks",
-                  "directions": ["up", "down"],
-                  "operators": ["xor"],
-                  "items": ["planks", "planks"]
-              }
-              )
-/*
-    addRecipe("exact", "stone pickaxe", {"stick": 2, "cobblestone": 3}, items["stone pickaxe"], 
-              recipeShape = {
-                  0: "cobblestone",
-                  1: "cobblestone",
-                  2: "cobblestone",
-                  4: "stick",
-                  7: "stick"
-              }, requiredGridSize = 3
+    addRecipe("shapeless", "logToPlanks", { "log": 1 }, items["planks"], 4);
 
-)
-*/
+    addRecipe("nearExact", "planksToSticks", { "planks": 2 }, items["stick"], 4,
+        requiredGridSize = 2,
+        recipeInstructions = {
+            "startingItemName": "planks",
+            "directions": ["up", "down"],
+            "operators": ["xor"],
+            "items": ["planks", "planks"]
+        }
+    )
+    /*
+        addRecipe("exact", "stone pickaxe", {"stick": 2, "cobblestone": 3}, items["stone pickaxe"], 
+                  recipeShape = {
+                      0: "cobblestone",
+                      1: "cobblestone",
+                      2: "cobblestone",
+                      4: "stick",
+                      7: "stick"
+                  }, requiredGridSize = 3
+    
+    )
+    */
 };
 
 showLoadingProgress("Recipes.mjs loaded");

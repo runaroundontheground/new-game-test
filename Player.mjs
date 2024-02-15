@@ -15,161 +15,165 @@ import { PlaceableItem } from "./Items.mjs";
 
 
  
-class Player() {
+class Player {
     constructor() {
-        # player's actual coordinate is
-        # top left and above corner
-        self.x = 0
-        self.y = 0
-        self.z = 0
-         # velocity
-        self.xv = 0
-        self.yv = 0
-        self.zv = 0
+        // player's actual coordinate is
+        // top left and above corner
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        // velocity
+        this.xv = 0;
+        this.yv = 0;
+        this.zv = 0;
  
-        self.acceleration = 0.6
-        self.maxHorizontalSpeed = 5
-        self.slipperyness = 5
-        self.normalJumpForce = 10
+        this.acceleration = 0.6;
+        this.maxHorizontalSpeed = 5;
+        this.slipperyness = 5;
+        this.normalJumpForce = 10;
  
-        self.booleans = {
-            "blockStepUsed": False
-        }
+        this.booleans = {
+            "blockStepUsed": false
+        };
  
  
-        self.width = blockSize - 5
-        self.height = blockSize - 5
-        self.image = pygame.surface.Surface((self.width, self.width))
-        # this is to make rendering work currently and should be removed later!
-        self.image.fill((255, 0, 0))
+        this.width = blockSize - 5;
+        this.height = blockSize - 5;
+        this.image = {
+            "rectData": Rect(0, 0, this.width, this.height),
+            "color": "red"
+        };
+
+        // this is to make rendering work currently and should be removed later!
+
         
-        self.imageData = (self.image, (0, 0))
  
-        self.position = (self.x, self.y, self.z)
-        self.chunkCoord = (0, 0)
-        self.blockCoord = (0, 0, 0)
+        this.position = [this.x, this.y, this.z];
+        this.chunkCoord = [0, 0]
+        this.blockCoord = [0, 0, 0]
  
-        self.rect = pygame.rect.Rect(0, 0, self.width, self.width)
+        this.rect = Rect(0, 0, this.width, this.width);
  
-        # how i'm organizing the collision
-        # default is the same height as player
-        # above + down, or right, etc is one block higher
-        # below + a side is one block below player
-        # it's true if there is a block, otherwise it's false
-        # this doesn't include blocks that have no collision, like water as well
+        // how i'm organizing the collision
+        // default is the same height as player
+        //above + down, or right, etc is one block higher
+        // below + a side is one block below player
+        // it's true if there is a block, otherwise it's false
+        // this doesn't include blocks that have no collision, like water as well
  
-        self.collision = {
-            "below": False,
-            "above": False,
+        this.collision = {
+            "below": false,
+            "above": false,
  
-            "right": False,
-            "left": False,
-            "up": False,
-            "down": False,
+            "right": false,
+            "left": false,
+            "up": false,
+            "down": false,
  
-            "aboveRight": False,
-            "aboveLeft": False,
-            "aboveUp": False,
-            "aboveDown": False,
+            "aboveRight": false,
+            "aboveLeft": false,
+            "aboveUp": false,
+            "aboveDown": false,
             
             "insideOfBlock": "air"
-        }
+        };
  
-        # hooray, inventory time!
-        widthOfInventoryInSlots = 9
-        heightOfInventoryInSlots = 3
+        // hooray, inventory time!
+        let widthOfInventoryInSlots = 9;
+        let heightOfInventoryInSlots = 3;
  
  
-        def createALotOfInventoryThings():
+        function createALotOfInventoryThings() {
     
-            # width and height
-            inventoryWidthInPixels = canvasWidth / 3
-            slotSizeInPixels = round(inventoryWidthInPixels / widthOfInventoryInSlots)
+            let inventoryWidthInPixels = canvasWidth / 3;
+            let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
  
-            gapBetweenSlots = round(slotSizeInPixels / 5)
+            let gapBetweenSlots = Math.round(slotSizeInPixels / 5);
  
  
-            backgroundColor = (150, 150, 150)
-            slotColor = (125, 125, 125)
-            selectedSlotColor = (175, 175, 175, 0)
-            alphaForUI = 255
+            let backgroundColor = [150, 150, 150]
+            let slotColor = [125, 125, 125]
+            let selectedSlotColor = [175, 175, 175, 0]
+            let alphaForUI = 255;
  
-            emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
+            let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
  
-            itemIconShift = emptySpaceBetweenItemAndSlotBorder
+            let itemIconShift = emptySpaceBetweenItemAndSlotBorder
  
             inventoryWidthInPixels += gapBetweenSlots * (widthOfInventoryInSlots + 1)
  
-            inventoryHeightInPixels = (slotSizeInPixels * heightOfInventoryInSlots)
+            let inventoryHeightInPixels = (slotSizeInPixels * heightOfInventoryInSlots)
             inventoryHeightInPixels += gapBetweenSlots * (heightOfInventoryInSlots + 1)
  
-            # add some more height to the inventory for crafting grid and armor? if added
-            craftingAndArmorHeightInSlots = 4.25
+            // add some more height to the inventory for crafting grid and armor? if added
+            let craftingAndArmorHeightInSlots = 4.25
             
-            craftingAndArmorWidthInPixels = inventoryWidthInPixels
-            craftingAndArmorHeightInPixels = (slotSizeInPixels * craftingAndArmorHeightInSlots)
+            let craftingAndArmorWidthInPixels = inventoryWidthInPixels
+            let craftingAndArmorHeightInPixels = (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorHeightInPixels += (gapBetweenSlots * craftingAndArmorHeightInSlots + 1)
  
-            craftingTableSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
+            let craftingTableSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
  
  
-            craftingAndArmorSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
+            let craftingAndArmorSizeInPixels = (round(craftingAndArmorWidthInPixels), round(craftingAndArmorHeightInPixels))
             
-            craftingAndArmorBackground = pygame.surface.Surface(craftingAndArmorSizeInPixels)
+            let craftingAndArmorBackground = pygame.surface.Surface(craftingAndArmorSizeInPixels)
             craftingAndArmorBackground.fill(backgroundColor)
  
-            craftingTableBackground = pygame.Surface(craftingTableSizeInPixels)
+            let craftingTableBackground = pygame.Surface(craftingTableSizeInPixels)
             craftingTableBackground.fill(backgroundColor)
  
-            inventorySizeInPixels = (round(inventoryWidthInPixels), round(inventoryHeightInPixels))
+            let inventorySizeInPixels = (round(inventoryWidthInPixels), round(inventoryHeightInPixels))
  
-            inventoryBackground = pygame.surface.Surface(inventorySizeInPixels)
+            let inventoryBackground = pygame.surface.Surface(inventorySizeInPixels)
             inventoryBackground.fill(backgroundColor)
             
-            slotSurface = pygame.surface.Surface((slotSizeInPixels, slotSizeInPixels))
+            let slotSurface = pygame.surface.Surface((slotSizeInPixels, slotSizeInPixels))
             slotSurface.fill(slotColor)
  
-            size = (slotSizeInPixels + gapBetweenSlots * 2, slotSizeInPixels + gapBetweenSlots * 2)
-            selectedSlotSurface = pygame.surface.Surface(size)
+            let size = (slotSizeInPixels + gapBetweenSlots * 2, slotSizeInPixels + gapBetweenSlots * 2)
+            let selectedSlotSurface = pygame.surface.Surface(size)
             selectedSlotSurface.fill((selectedSlotColor))
  
-            fillRect = pygame.rect.Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels, slotSizeInPixels)
+            // the thing here needs to be replaced with ctx.strokeRect or something
+            let fillRect = Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels, slotSizeInPixels);
             selectedSlotSurface.fill((255, 255, 255), fillRect)
             selectedSlotSurface.set_colorkey((255, 255, 255))
  
-            hotbarSizeInPixels = (round(inventorySizeInPixels[0]), round(slotSizeInPixels + (gapBetweenSlots * 2)))
-            hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
+            let hotbarSizeInPixels = (round(inventorySizeInPixels[0]), round(slotSizeInPixels + (gapBetweenSlots * 2)))
+            let hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
             hotbarSurface.fill(backgroundColor)
  
-            if alphaForUI < 255:
+            if (alphaForUI < 255) {
                 hotbarSurface.set_alpha(alphaForUI)
                 inventoryBackground.set_alpha(alphaForUI)
                 craftingAndArmorBackground.set_alpha(alphaForUI)
                 slotSurface.set_alpha(alphaForUI)
+            };
  
-            craftingAndArmorXForBlit = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2 
-            craftingAndArmorYForBlit = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))# - (slotSizeInPixels * craftingAndArmorHeightInSlots)
+            let craftingAndArmorXForBlit = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2 
+            let craftingAndArmorYForBlit = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))# - (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorYForBlit /= 2
  
-            craftingTableXForBlit = craftingAndArmorXForBlit
-            craftingTableYForBlit = craftingAndArmorYForBlit - slotSizeInPixels * 0
+            let craftingTableXForBlit = craftingAndArmorXForBlit
+            let craftingTableYForBlit = craftingAndArmorYForBlit - slotSizeInPixels * 0
  
-            fontShift = font.size("1")
+            let fontShift = font.size("1")
  
-            self.craftingResultSlot = {
+            this.craftingResultSlot = {
                 "contents": "empty",
                 "count": 0,
                 2: {
                     "renderPosition": (0, 0),
                     "selectedSlotRenderPosition": (0, 0),
                     "itemCountRenderPosition": (0, 0),
-                    "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                    "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
                 3: {
                     "renderPosition": (0, 0),
                     "selectedSlotRenderPosition": (0, 0),
                     "itemCountRenderPosition": (0, 0),
-                    "rect": pygame.Rect(0, 0, 0, 0), # used for mouse collision
+                    "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 }
             }
  
@@ -199,9 +203,9 @@ class Player() {
                 "slotId": 0
             }
  
-            self.isCrafting = False
+            this.isCrafting = false
  
-            self.crafting = {
+            this.crafting = {
                 2: {
                 "slots": {
                     0: craftingSlot, 1: craftingSlot,
@@ -219,8 +223,8 @@ class Player() {
                 "gridSize": 2
  
                              }
-            self.totalCraftingContents = {}
-            self.armor = {
+            this.totalCraftingContents = {}
+            this.armor = {
                 "head": armorSlot,
                 "chest": armorSlot,
                 "legs": armorSlot,
@@ -252,7 +256,7 @@ class Player() {
             resultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
             resultSlot["slotId"] = "resultSlot"
  
-            self.crafting[2]["slots"]["resultSlot"] = resultSlot.copy()
+            this.crafting[2]["slots"]["resultSlot"] = resultSlot.copy()
  
  
  
@@ -279,7 +283,7 @@ class Player() {
             resultSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
             resultSlot["slotId"] = "resultSlot"
  
-            self.crafting[3]["slots"]["resultSlot"] = resultSlot.copy()
+            this.crafting[3]["slots"]["resultSlot"] = resultSlot.copy()
  
  
             craftingTableBackground.blit(slotSurface, (slotX, slotY))
@@ -314,7 +318,7 @@ class Player() {
                     newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
                     newCraftingSlot["slotId"] = slotId
  
-                    self.crafting[2]["slots"][slotId] = newCraftingSlot
+                    this.crafting[2]["slots"][slotId] = newCraftingSlot
  
                     slotId += 1
  
@@ -344,7 +348,7 @@ class Player() {
                     newCraftingSlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
                     newCraftingSlot["slotId"] = slotId
  
-                    self.crafting[3]["slots"][slotId] = newCraftingSlot.copy()
+                    this.crafting[3]["slots"][slotId] = newCraftingSlot.copy()
  
                     slotId += 1
  
@@ -405,8 +409,8 @@ class Player() {
                 "slotId": 0
             }
  
-            self.inventory = []
-            self.hotbar = []
+            this.inventory = []
+            this.hotbar = []
  
             slotId = 0
  
@@ -439,7 +443,7 @@ class Player() {
                     slotId += 1
                     
  
-                    self.inventory.append(updatedInventorySlot)
+                    this.inventory.append(updatedInventorySlot)
  
  
             
@@ -476,7 +480,7 @@ class Player() {
  
                 hotbarSurface.blit(slotSurface, (slotX, slotY))
  
-                self.hotbar.append(updatedInventorySlot)
+                this.hotbar.append(updatedInventorySlot)
             
             inventoryRect = pygame.Rect(inventoryXForBlit, inventoryYForBlit,
                                         inventoryWidthInPixels, inventoryHeightInPixels)
@@ -493,7 +497,7 @@ class Player() {
             )
             
  
-            self.inventoryRenderingData = {
+            this.inventoryRenderingData = {
                 "inventoryRenderPosition": (inventoryXForBlit, inventoryYForBlit),
                 "craftingAndArmorRenderPosition": (craftingAndArmorXForBlit, craftingAndArmorYForBlit),
                 "hotbarRenderPosition": (hotbarXForBlit, hotbarYForBlit),
@@ -507,7 +511,7 @@ class Player() {
                 "selectedSlotSurface": selectedSlotSurface
             }
  
-            self.otherInventoryData = {
+            this.otherInventoryData = {
             # rects are here
             "inventoryRect": inventoryRect,
             "hotbarRect": hotbarRect,
@@ -515,30 +519,32 @@ class Player() {
             "craftingTableRect": craftingTableRect,
             # thigns that aren't rects are here
             "currentHotbarSlot": 0, # id/index of the slot in the hotbar
-            "open": False,
+            "open": false,
             "slotId": 0,
-            "showCraftingAndArmor": True,
-            "showCraftingTable": False
+            "showCraftingAndArmor": true,
+            "showCraftingTable": false
             }
+            
+        };
  
         createALotOfInventoryThings()
  
  
-        self.timers = {
+        this.timers = {
  
         }
  
         # blocks up AND down of reach
-        self.verticalBlockReach = 3
-        self.horizontalBlockReach = 3
-        self.canReachSelectedBlock = False
+        this.verticalBlockReach = 3
+        this.horizontalBlockReach = 3
+        this.canReachSelectedBlock = false
  
-        self.blockBreakProgress = 0
-        self.currentBreakingBlock = None
-    };
+        this.blockBreakProgress = 0
+        this.currentBreakingBlock = None
+    
  
  
-    def generalMovement(self, deltaTime):
+    def generalMovement(this, deltaTime):
  
         left = keys[0][pygame.K_a]
         right = keys[0][pygame.K_d]
@@ -546,161 +552,161 @@ class Player() {
         down = keys[0][pygame.K_s]
         space = keys[0][pygame.K_SPACE]
         
-        self.chunkCoord = getChunkCoord(self.x, self.z)
-        self.blockCoord = getBlockCoord(self.x, self.y, self.z)
+        this.chunkCoord = getChunkCoord(this.x, this.z)
+        this.blockCoord = getBlockCoord(this.x, this.y, this.z)
  
-        self.rect.x = self.x
-        self.rect.y = self.z
+        this.rect.x = this.x
+        this.rect.y = this.z
  
     
         
-        for dictKey in self.collision.keys():
-            self.collision[dictKey] = False
+        for dictKey in this.collision.keys():
+            this.collision[dictKey] = false
  
         # faster? access to variables that need to be used a lot in collision
-        rightSide = self.x + self.width
-        bottomSide = self.z + self.width
-        underSide = self.y - self.height
+        rightSide = this.x + this.width
+        bottomSide = this.z + this.width
+        underSide = this.y - this.height
         
         def doCollisionBelow():
-            topLeft = findBlock(self.x, underSide - 3, self.z, ignoreWater = True)
-            topRight = findBlock(rightSide, underSide - 3, self.z, ignoreWater = True)
-            bottomLeft = findBlock(self.x, underSide - 3, bottomSide, ignoreWater = True)
-            bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = True)
+            topLeft = findBlock(this.x, underSide - 3, this.z, ignoreWater = true)
+            topRight = findBlock(rightSide, underSide - 3, this.z, ignoreWater = true)
+            bottomLeft = findBlock(this.x, underSide - 3, bottomSide, ignoreWater = true)
+            bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = true)
             if topLeft or topRight or bottomLeft or bottomRight:
-                self.collision["below"] = True
+                this.collision["below"] = true
         doCollisionBelow()
  
         def doCollisionAbove():
-            topLeft = findBlock(self.x, self.y, self.z, ignoreWater = True)
-            topRight = findBlock(rightSide, self.y, self.z, ignoreWater = True)
-            bottomLeft = findBlock(self.x, self.y, bottomSide, ignoreWater = True)
-            bottomRight = findBlock(rightSide, self.y, bottomSide, ignoreWater = True)
+            topLeft = findBlock(this.x, this.y, this.z, ignoreWater = true)
+            topRight = findBlock(rightSide, this.y, this.z, ignoreWater = true)
+            bottomLeft = findBlock(this.x, this.y, bottomSide, ignoreWater = true)
+            bottomRight = findBlock(rightSide, this.y, bottomSide, ignoreWater = true)
             if topLeft or topRight or bottomLeft or bottomRight:
-                self.collision["above"] = True
+                this.collision["above"] = true
         
         doCollisionAbove()
  
         def doCollisionToRight():
             temporaryNumber = rightSide + 1
-            aboveTopRight = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
-            aboveBottomRight = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
-            belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
-            belowTopRight = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
+            aboveTopRight = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
+            aboveBottomRight = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
+            belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
+            belowTopRight = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
             if aboveTopRight or aboveBottomRight or belowBottomRight or belowTopRight:
-                self.collision["right"] = True
+                this.collision["right"] = true
  
         doCollisionToRight()
         
         def doCollisionToLeft():
-            temporaryNumber = self.x - 1
-            aboveTopLeft = findBlock(temporaryNumber, self.y, self.z, ignoreWater = True)
-            aboveBottomLeft = findBlock(temporaryNumber, self.y, bottomSide, ignoreWater = True)
-            belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = True)
-            belowTopLeft = findBlock(temporaryNumber, underSide, self.z, ignoreWater = True)
+            temporaryNumber = this.x - 1
+            aboveTopLeft = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
+            aboveBottomLeft = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
+            belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
+            belowTopLeft = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
             if aboveBottomLeft or aboveTopLeft or belowBottomLeft or belowTopLeft:
-                self.collision["left"] = True
+                this.collision["left"] = true
  
         doCollisionToLeft()
  
         def doCollisionToUp():
-            aboveTopLeft = findBlock(self.x, self.y, self.z - 1, ignoreWater = True)
-            aboveTopRight = findBlock(rightSide, self.y, self.z - 1, ignoreWater = True)
-            belowTopRight = findBlock(rightSide, underSide, self.z - 1, ignoreWater = True)
-            belowTopLeft = findBlock(self.x, underSide, self.z - 1, ignoreWater = True)
+            aboveTopLeft = findBlock(this.x, this.y, this.z - 1, ignoreWater = true)
+            aboveTopRight = findBlock(rightSide, this.y, this.z - 1, ignoreWater = true)
+            belowTopRight = findBlock(rightSide, underSide, this.z - 1, ignoreWater = true)
+            belowTopLeft = findBlock(this.x, underSide, this.z - 1, ignoreWater = true)
             if aboveTopLeft or aboveTopRight or belowTopLeft or belowTopRight:
-                self.collision["up"] = True
+                this.collision["up"] = true
  
         doCollisionToUp()
  
         def doCollisionToDown():
-            aboveBottomLeft = findBlock(self.x, self.y, bottomSide + 1, ignoreWater = True)
-            aboveBottomRight = findBlock(rightSide, self.y, bottomSide + 1, ignoreWater = True)
-            belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = True)
-            belowBottomLeft = findBlock(self.x, underSide, bottomSide + 1, ignoreWater = True)
+            aboveBottomLeft = findBlock(this.x, this.y, bottomSide + 1, ignoreWater = true)
+            aboveBottomRight = findBlock(rightSide, this.y, bottomSide + 1, ignoreWater = true)
+            belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = true)
+            belowBottomLeft = findBlock(this.x, underSide, bottomSide + 1, ignoreWater = true)
             if aboveBottomLeft or aboveBottomRight or belowBottomRight or belowBottomLeft:
-                self.collision["down"] = True
+                this.collision["down"] = true
  
         doCollisionToDown()
  
         def checkForBeingInsideOfABlock():
-            center = findBlock(self.x + self.width/2, self.y - self.height/2, self.z + self.width/2, extraInfo = True)
-            self.collision["insideOfBlock"] = center["type"]
+            center = findBlock(this.x + this.width/2, this.y - this.height/2, this.z + this.width/2, extraInfo = true)
+            this.collision["insideOfBlock"] = center["type"]
  
         checkForBeingInsideOfABlock()
  
-        temporaryNumber = (self.y - self.height) + blockSize + 3
+        temporaryNumber = (this.y - this.height) + blockSize + 3
         # SEPARATE THESE LATER INTO FUNCTIONS
-        aboveToTopRight = findBlock(rightSide + self.xv + 3, temporaryNumber, self.z, ignoreWater = True)
-        aboveToBottomRight = findBlock(rightSide + self.xv + 3, temporaryNumber, bottomSide, ignoreWater = True)
+        aboveToTopRight = findBlock(rightSide + this.xv + 3, temporaryNumber, this.z, ignoreWater = true)
+        aboveToBottomRight = findBlock(rightSide + this.xv + 3, temporaryNumber, bottomSide, ignoreWater = true)
         if aboveToTopRight or aboveToBottomRight:
-            self.collision["aboveRight"] = True
+            this.collision["aboveRight"] = true
  
-        aboveToTopLeft = findBlock(self.x + self.xv - 3, temporaryNumber, self.z, ignoreWater = True)
-        aboveToBottomLeft = findBlock(self.x + self.xv - 3, temporaryNumber, bottomSide, ignoreWater = True)
+        aboveToTopLeft = findBlock(this.x + this.xv - 3, temporaryNumber, this.z, ignoreWater = true)
+        aboveToBottomLeft = findBlock(this.x + this.xv - 3, temporaryNumber, bottomSide, ignoreWater = true)
         if aboveToTopLeft or aboveToBottomLeft:
-            self.collision["aboveLeft"] = True
+            this.collision["aboveLeft"] = true
  
-        aboveToLeftUp = findBlock(self.x, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
-        aboveToRightUp = findBlock(rightSide, temporaryNumber, self.z + self.zv - 3, ignoreWater = True)
+        aboveToLeftUp = findBlock(this.x, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
+        aboveToRightUp = findBlock(rightSide, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
         if aboveToLeftUp or aboveToRightUp:
-            self.collision["aboveUp"] = True
+            this.collision["aboveUp"] = true
         
-        aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
-        aboveToLeftDown = findBlock(self.x, temporaryNumber, bottomSide + self.zv + 3, ignoreWater = True)
+        aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
+        aboveToLeftDown = findBlock(this.x, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
         if aboveToLeftDown or aboveToRightDown:
-            self.collision["aboveDown"] = True
+            this.collision["aboveDown"] = true
  
  
  
  
  
-        currentMaxHorizontalSpeed = self.maxHorizontalSpeed
-        if self.collision["insideOfBlock"] == "water":
-            currentMaxHorizontalSpeed = self.maxHorizontalSpeed / 2
+        currentMaxHorizontalSpeed = this.maxHorizontalSpeed
+        if this.collision["insideOfBlock"] == "water":
+            currentMaxHorizontalSpeed = this.maxHorizontalSpeed / 2
  
          # x and z axis movement
-        if right and not self.collision["right"]:
-            if self.xv < currentMaxHorizontalSpeed:
-                self.xv += self.acceleration
+        if right and not this.collision["right"]:
+            if this.xv < currentMaxHorizontalSpeed:
+                this.xv += this.acceleration
  
-        if left and not self.collision["left"]:
-            if self.xv > -currentMaxHorizontalSpeed:
-                self.xv -= self.acceleration
+        if left and not this.collision["left"]:
+            if this.xv > -currentMaxHorizontalSpeed:
+                this.xv -= this.acceleration
  
-        if up and not self.collision["up"]:
-            if self.zv > -currentMaxHorizontalSpeed:
-                self.zv -= self.acceleration
+        if up and not this.collision["up"]:
+            if this.zv > -currentMaxHorizontalSpeed:
+                this.zv -= this.acceleration
  
-        if down and not self.collision["down"]:
-            if self.zv < currentMaxHorizontalSpeed:
-                self.zv += self.acceleration
+        if down and not this.collision["down"]:
+            if this.zv < currentMaxHorizontalSpeed:
+                this.zv += this.acceleration
  
          # y axis movement
         if space:
-            if self.collision["insideOfBlock"] == "water":
+            if this.collision["insideOfBlock"] == "water":
                 # do water stuff
-                jumpForce = self.normalJumpForce / 3
+                jumpForce = this.normalJumpForce / 3
  
-                self.yv = jumpForce
+                this.yv = jumpForce
             else:
-                if self.collision["below"]:
+                if this.collision["below"]:
                     # do jump stuff
-                    jumpForce = self.normalJumpForce
+                    jumpForce = this.normalJumpForce
  
-                    self.yv = jumpForce
+                    this.yv = jumpForce
             
  
  
          # do gravity
-        if not self.collision["below"]:
+        if not this.collision["below"]:
             yvChange = gravity
-            if self.collision["insideOfBlock"] == "water":
+            if this.collision["insideOfBlock"] == "water":
                 yvChange /= 5
-            self.yv -= yvChange
-        elif self.yv < 0:
-            self.yv = 0
-            self.y = self.blockCoord[1] * blockSize + self.height
+            this.yv -= yvChange
+        elif this.yv < 0:
+            this.yv = 0
+            this.y = this.blockCoord[1] * blockSize + this.height
             # re-do collisions, hopefully fixes colliding with walls while hitting
             # the ground hard, looks like it didn't fix it?
             #doCollisionToDown()
@@ -708,138 +714,138 @@ class Player() {
             #doCollisionToUp()
             #doCollisionToRight()
          # don't let player fall out of the world
-        if self.y < -300:
-            self.y = chunkSize[1] * blockSize
-            self.yv = 0
+        if this.y < -300:
+            this.y = chunkSize[1] * blockSize
+            this.yv = 0
  
          # don't let player go through ceilings
-        if self.collision["above"]:
-            if self.yv > 0:
-                self.y -= self.yv
-                self.yv = 0
+        if this.collision["above"]:
+            if this.yv > 0:
+                this.y -= this.yv
+                this.yv = 0
  
          # wall collision
          # and block step up (go up blocks without jumping
  
  
-        self.booleans["blockStepUsed"] = False
+        this.booleans["blockStepUsed"] = false
  
-        if self.collision["up"]:
-            a = self.collision["below"]
-            b = not self.collision["aboveUp"]
-            c = not self.booleans["blockStepUsed"]
+        if this.collision["up"]:
+            a = this.collision["below"]
+            b = not this.collision["aboveUp"]
+            c = not this.booleans["blockStepUsed"]
             d = up
             if a and b and c and d:
-                self.y += blockSize
+                this.y += blockSize
                 # update collision, since player's been moved a lot
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToRight()
-                self.booleans["blockStepUsed"] = True
+                this.booleans["blockStepUsed"] = true
             else:
-                self.z += abs(self.zv)
-                self.zv = 0
-                self.z += 1
-        if self.collision["right"]:
-            a = self.collision["below"]
-            b = not self.collision["aboveRight"]
-            c = not self.booleans["blockStepUsed"]
+                this.z += abs(this.zv)
+                this.zv = 0
+                this.z += 1
+        if this.collision["right"]:
+            a = this.collision["below"]
+            b = not this.collision["aboveRight"]
+            c = not this.booleans["blockStepUsed"]
             d = right
             if a and b and c and d:
-                self.y += blockSize
+                this.y += blockSize
                 # update collision, since player's been moved a lot
                 doCollisionToDown()
                 doCollisionToLeft()
                 doCollisionToUp()
-                self.booleans["blockStepUsed"] = True
+                this.booleans["blockStepUsed"] = true
             else: 
-                self.x -= abs(self.xv)
-                self.xv = 0
-                self.x -= 1
+                this.x -= abs(this.xv)
+                this.xv = 0
+                this.x -= 1
  
-        if self.collision["left"]:
-            a = self.collision["below"]
-            b = not self.collision["aboveLeft"]
-            c = not self.booleans["blockStepUsed"]
+        if this.collision["left"]:
+            a = this.collision["below"]
+            b = not this.collision["aboveLeft"]
+            c = not this.booleans["blockStepUsed"]
             d = left
             if a and b and c and d:
-                self.y += blockSize
+                this.y += blockSize
                 # update collision, since player's been moved a lot
                 doCollisionToDown()
                 doCollisionToRight()
                 doCollisionToUp()
-                self.booleans["blockStepUsed"] = True
+                this.booleans["blockStepUsed"] = true
             else:
-                self.x += abs(self.xv)
-                self.xv = 0
-                self.x += 1
+                this.x += abs(this.xv)
+                this.xv = 0
+                this.x += 1
             
-        if self.collision["down"]:
-            a = self.collision["below"]
-            b = not self.collision["aboveDown"]
-            c = not self.booleans["blockStepUsed"]
+        if this.collision["down"]:
+            a = this.collision["below"]
+            b = not this.collision["aboveDown"]
+            c = not this.booleans["blockStepUsed"]
             d = down
             if a and b and c and d:
-                self.y += blockSize
+                this.y += blockSize
                 # update collision, since player's been moved a lot
                 doCollisionToLeft()
                 doCollisionToRight()
                 doCollisionToUp()
-                self.booleans["blockStepUsed"] = True
+                this.booleans["blockStepUsed"] = true
             else:
-                self.x -= abs(self.zv)
-                self.zv = 0
-                self.z -= 1
+                this.x -= abs(this.zv)
+                this.zv = 0
+                this.z -= 1
        
  
  
          
         # force player speed cap
-        if self.xv > currentMaxHorizontalSpeed:
-            self.xv = currentMaxHorizontalSpeed
-        if self.xv < -currentMaxHorizontalSpeed:
-            self.xv = -currentMaxHorizontalSpeed
+        if this.xv > currentMaxHorizontalSpeed:
+            this.xv = currentMaxHorizontalSpeed
+        if this.xv < -currentMaxHorizontalSpeed:
+            this.xv = -currentMaxHorizontalSpeed
  
-        if self.zv > currentMaxHorizontalSpeed:
-            self.zv = currentMaxHorizontalSpeed
-        if self.zv < -currentMaxHorizontalSpeed:
-            self.zv = -currentMaxHorizontalSpeed
+        if this.zv > currentMaxHorizontalSpeed:
+            this.zv = currentMaxHorizontalSpeed
+        if this.zv < -currentMaxHorizontalSpeed:
+            this.zv = -currentMaxHorizontalSpeed
         
          # friction is handled below
         if (not left and not right) or (left and right):
-            self.xv -= self.xv / self.slipperyness
-            if self.xv > -0.1 and self.xv < 0.1:
-                self.xv = 0
+            this.xv -= this.xv / this.slipperyness
+            if this.xv > -0.1 and this.xv < 0.1:
+                this.xv = 0
         if (not up and not down) or (up and down):
-            self.zv -= self.zv / self.slipperyness
-            if self.zv > -0.1 and self.zv < 0.1:
-                self.zv = 0
+            this.zv -= this.zv / this.slipperyness
+            if this.zv > -0.1 and this.zv < 0.1:
+                this.zv = 0
         
  
  
          # don't let player get stuck inside of blocks
-        if self.collision["insideOfBlock"] != "air":
-            if self.collision["insideOfBlock"] != "water":
-                self.y += 5
+        if this.collision["insideOfBlock"] != "air":
+            if this.collision["insideOfBlock"] != "water":
+                this.y += 5
         
  
          # do all the position updates that other things use
-        self.xv = round(self.xv * 100) / 100
-        self.yv = round(self.yv * 100) / 100
-        self.zv = round(self.zv * 100) / 100
+        this.xv = round(this.xv * 100) / 100
+        this.yv = round(this.yv * 100) / 100
+        this.zv = round(this.zv * 100) / 100
  
-        self.x += (self.xv * deltaTime)
-        self.y += (self.yv * deltaTime)
-        self.z += (self.zv * deltaTime)
+        this.x += (this.xv * deltaTime)
+        this.y += (this.yv * deltaTime)
+        this.z += (this.zv * deltaTime)
  
         
         
  
-        self.position = (self.x, self.y, self.z)
+        this.position = (this.x, this.y, this.z)
  
  
  
-    def giveItem(self, item, count = 1):
+    def giveItem(this, item, count = 1):
         
         def checkForStackables(container, done, count, item):
             if not done and item.stackable:
@@ -853,7 +859,7 @@ class Player() {
                                 if addedCount <= maxStackSize:
  
                                     slot["count"] = addedCount
-                                    return True
+                                    return true
                                 elif addedCount > maxStackSize:
                                     slot["count"] = maxStackSize
                                     count = addedCount - maxStackSize
@@ -868,18 +874,18 @@ class Player() {
                         slot["count"] = count
                         
                         
-                        return True
+                        return true
             return done
  
             
  
-        done = False
+        done = false
  
-        done = checkForStackables(self.hotbar, done, count, item)
-        done = checkForStackables(self.inventory, done, count, item)
+        done = checkForStackables(this.hotbar, done, count, item)
+        done = checkForStackables(this.inventory, done, count, item)
  
-        done = checkForEmptySlots(self.hotbar, done, count, item)
-        done = checkForEmptySlots(self.inventory, done, count, item)
+        done = checkForEmptySlots(this.hotbar, done, count, item)
+        done = checkForEmptySlots(this.inventory, done, count, item)
  
         if not done:
             print("giving the item failed")
@@ -888,20 +894,20 @@ class Player() {
  
  
  
-    def doInventoryThings(self):
+    def doInventoryThings(this):
  
         
         def toggleInventoryVisibility():
             if keysPressed[pygame.K_e]:
-                if self.otherInventoryData["open"]:
-                    self.otherInventoryData["open"] = False
+                if this.otherInventoryData["open"]:
+                    this.otherInventoryData["open"] = false
                 else:
-                    self.otherInventoryData["open"] = True
+                    this.otherInventoryData["open"] = true
  
-            for slot in self.inventory:
+            for slot in this.inventory:
                 if slot["contents"] != "empty":
                     slot["contents"].slotId = slot["slotId"]
-            for slot in self.hotbar:
+            for slot in this.hotbar:
                 if slot["contents"] != "empty":
                     slot["contents"].slotId = slot["slotId"]
         toggleInventoryVisibility()
@@ -909,14 +915,14 @@ class Player() {
  
         def adjustMouseSelectedBlockHeight():
             # change the selected height of the mouse
-            mouse.selectedY = self.y
+            mouse.selectedY = this.y
  
             if keysPressed[pygame.K_PERIOD]:
-                if mouse.selectedYChange < self.verticalBlockReach:
+                if mouse.selectedYChange < this.verticalBlockReach:
                     mouse.selectedYChange += 1
                 
             if keysPressed[pygame.K_COMMA]:
-                if mouse.selectedYChange > -self.verticalBlockReach:
+                if mouse.selectedYChange > -this.verticalBlockReach:
                     mouse.selectedYChange -= 1
  
             mouse.selectedY += mouse.selectedYChange * blockSize
@@ -930,26 +936,26 @@ class Player() {
  
  
         def changeSelectedHotbarSlot():
-            if not self.otherInventoryData["open"]:
+            if not this.otherInventoryData["open"]:
                 for i in range(1, 10):
                     keyboardInput = getattr(pygame, "K_" + str(i))
                     if keysPressed[keyboardInput]:
-                        self.otherInventoryData["currentHotbarSlot"] = i - 1
+                        this.otherInventoryData["currentHotbarSlot"] = i - 1
         changeSelectedHotbarSlot()
  
  
         def dropItems():
             # drop items from the hotbar
             if keysPressed[pygame.K_q]:
-                if not self.otherInventoryData["open"]:
-                    currentHotbarSlot = self.otherInventoryData["currentHotbarSlot"]
-                    item = self.hotbar[currentHotbarSlot]["contents"]
+                if not this.otherInventoryData["open"]:
+                    currentHotbarSlot = this.otherInventoryData["currentHotbarSlot"]
+                    item = this.hotbar[currentHotbarSlot]["contents"]
  
                     if item != "empty":
  
-                        x = self.x + self.width/2 - itemEntitySize/2
-                        y = self.y - self.height/2
-                        z = self.z + self.width/2 - itemEntitySize/2
+                        x = this.x + this.width/2 - itemEntitySize/2
+                        y = this.y - this.height/2
+                        z = this.z + this.width/2 - itemEntitySize/2
  
                         # figure out velocity for angle of player to mouse
  
@@ -964,50 +970,50 @@ class Player() {
  
                         count = 1
  
-                        item.drop(x, y, z, xv, yv, zv, self, count)
+                        item.drop(x, y, z, xv, yv, zv, this, count)
         dropItems()
  
  
         def hotbarHeldItemStuff():
-            if not self.otherInventoryData["open"]:
-                index = self.otherInventoryData["currentHotbarSlot"]
-                slotData = self.hotbar[index]
+            if not this.otherInventoryData["open"]:
+                index = this.otherInventoryData["currentHotbarSlot"]
+                slotData = this.hotbar[index]
                 item = slotData["contents"]
  
                 if mouse.buttons["pressed"]["left"] or mouse.buttons["left"]:
-                    self.doStuffOnLeftClick(item)
+                    this.doStuffOnLeftClick(item)
  
                 if item != "empty":
  
                     if mouse.buttons["pressed"]["right"]:
-                        item.RMBPressedAction(self)
+                        item.RMBPressedAction(this)
                     elif mouse.buttons["right"]:
-                        item.RMBAction(self)
+                        item.RMBAction(this)
                 else:
-                    self.doStuffOnRightClick
+                    this.doStuffOnRightClick
         hotbarHeldItemStuff()
  
  
         def mouseInteractionWithInventory():
-            mouse.inPlayerInventory = False
-            mouse.inPlayerHotbar = False
-            mouse.inPlayerCraftingAndArmor = False
-            mouse.inPlayerCraftingTable = False
-            mouse.inASlot = False
+            mouse.inPlayerInventory = false
+            mouse.inPlayerHotbar = false
+            mouse.inPlayerCraftingAndArmor = false
+            mouse.inPlayerCraftingTable = false
+            mouse.inASlot = false
  
             def inventoryContentInteraction(container):
                 if container == "hotbar":
-                    invSection = self.hotbar
-                    otherInvSection = self.inventory
+                    invSection = this.hotbar
+                    otherInvSection = this.inventory
                 elif container == "inventory":
-                    invSection = self.inventory
-                    otherInvSection = self.hotbar
+                    invSection = this.inventory
+                    otherInvSection = this.hotbar
                 elif container == "crafting":
-                    invSection = self.crafting[self.crafting["gridSize"]]["slots"]
-                    otherInvSection = self.inventory
+                    invSection = this.crafting[this.crafting["gridSize"]]["slots"]
+                    otherInvSection = this.inventory
                 elif container == "armor":
-                    invSection = self.armor
-                    otherInvSection = self.inventory
+                    invSection = this.armor
+                    otherInvSection = this.inventory
                 def checkStackablesInOtherInvSection(amountToMove, item, done):
                             """
                             amountToMove: either "max" or an int less than 64 \n
@@ -1029,16 +1035,16 @@ class Player() {
                                                     if movingCount <= maxStackSize:
                                                         
  
-                                                        if slot == self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                        if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
                                                             movingCount = slot["count"]
-                                                            movingCount *= self.crafting["possibleCrafts"]
+                                                            movingCount *= this.crafting["possibleCrafts"]
  
                                                             if movingCount + otherSlot["count"] <= maxStackSize:
  
-                                                                for key, craftingSlot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+                                                                for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                                                                     if key != "resultSlot":
                                                                         # subtract the amount of items crafted
-                                                                        craftingSlot["count"] -= self.crafting["possibleCrafts"]
+                                                                        craftingSlot["count"] -= this.crafting["possibleCrafts"]
                                                                         
  
                                                                         if craftingSlot["count"] <= 0:
@@ -1056,19 +1062,19 @@ class Player() {
  
                                                         
                                                         
-                                                        done = True
-                                                        return True
+                                                        done = true
+                                                        return true
  
                                                     # make the other stack full, reduce item count
                                                     # in first slot so the later update catches it
                                                     elif movingCount > maxStackSize:
-                                                        if slot != self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                        if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
                                                             slot["count"] = movingCount - maxStackSize
                                                             otherSlot["count"] = maxStackSize
  
  
                                                 else: # not moving max amount
-                                                    if slot != self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                    if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
                                                         otherSlotNewCount = otherSlot["count"] + amountToMove
                                                         slotNewCount = slot["count"] - amountToMove
  
@@ -1080,7 +1086,7 @@ class Player() {
                                                             if slotNewCount == 0:
                                                                 slot["contents"] = "empty"
  
-                                                            return True
+                                                            return true
                             return done
  
                 def checkEmptySlotsInOtherInvSection(amountToMove, item, done):
@@ -1097,17 +1103,17 @@ class Player() {
                                     otherSlot["contents"] = slot["contents"]
                                     
  
-                                    if slot == self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                    if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
  
-                                        craftedCount = slot["count"] * self.crafting["possibleCrafts"]
+                                        craftedCount = slot["count"] * this.crafting["possibleCrafts"]
                                         if craftedCount <= maxStackSize:
  
                                             otherSlot["count"] = craftedCount
  
-                                            for key, craftingSlot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+                                            for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                                                 if key != "resultSlot":
                                                     # subtract one item from the slot, since it's consumed
-                                                    craftingSlot["count"] -= self.crafting["possibleCrafts"]
+                                                    craftingSlot["count"] -= this.crafting["possibleCrafts"]
  
                                                     if craftingSlot["count"] <= 0:
  
@@ -1120,10 +1126,10 @@ class Player() {
                                     slot["count"] = 0
                                         
                                     
-                                    return True
+                                    return true
  
                                 else: # not moving max amount
-                                    if slot != self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                    if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
  
                                         slotNewCount = slot["count"] - amountToMove
  
@@ -1137,7 +1143,7 @@ class Player() {
                                                 slot["contents"] = "empty"
                                         
                                             
-                                            return True
+                                            return true
                     return done
  
  
@@ -1150,7 +1156,7 @@ class Player() {
                             # communicate rendering information via the mouse
                             
                             mouse.hoveredSlotId = slot["slotId"]
-                            mouse.inASlot = True
+                            mouse.inASlot = true
  
  
                             def slotInteractionWithMouseItem(clickType):
@@ -1229,9 +1235,9 @@ class Player() {
                                                         slot["contents"] = "empty"
  
                                                         # do special things if its the crafting result
-                                                        if slot == self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                            #self.crafting["possibleCrafts"] -= 1
-                                                            for key, craftingSlot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+                                                        if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                            #this.crafting["possibleCrafts"] -= 1
+                                                            for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                                                                 if key != "resultSlot":
                                                                     # subtract one item from the slot, since it's consumed
                                                                     if craftingSlot["count"] > 1:
@@ -1244,7 +1250,7 @@ class Player() {
  
                                                     elif clickType == "right click":
                                                         # just disable right clicking on a result slot
-                                                        if slot != self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                                        if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
                                                             # you can't do this with unstackable items
                                                             if slot["contents"].stackable:
                                                                 if slot["count"] > 1:
@@ -1266,7 +1272,7 @@ class Player() {
  
  
                             
-                            done = False
+                            done = false
                             # fast transfer options
                             if mouse.buttons["pressed"]["left"]:
                                 
@@ -1303,11 +1309,11 @@ class Player() {
  
  
  
-            if self.otherInventoryData["open"]:
-                mouse.inPlayerCraftingAndArmor = self.otherInventoryData["craftingAndArmorRect"].collidepoint(mouse.x, mouse.y)
-                mouse.inPlayerInventory = self.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
-                mouse.inPlayerHotbar = self.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
-                mouse.inPlayerCraftingTable = self.otherInventoryData["craftingTableRect"].collidepoint(mouse.x, mouse.y)
+            if this.otherInventoryData["open"]:
+                mouse.inPlayerCraftingAndArmor = this.otherInventoryData["craftingAndArmorRect"].collidepoint(mouse.x, mouse.y)
+                mouse.inPlayerInventory = this.otherInventoryData["inventoryRect"].collidepoint(mouse.x, mouse.y)
+                mouse.inPlayerHotbar = this.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
+                mouse.inPlayerCraftingTable = this.otherInventoryData["craftingTableRect"].collidepoint(mouse.x, mouse.y)
  
                 if mouse.inPlayerInventory:
                     inventoryContentInteraction("inventory")
@@ -1319,7 +1325,7 @@ class Player() {
         
  
             # attempt to place mouse's item back in the player's inventory
-            if not self.otherInventoryData["open"]:
+            if not this.otherInventoryData["open"]:
  
                 if mouse.heldItem["contents"] != "empty":
                     item = mouse.heldItem["contents"]
@@ -1347,7 +1353,7 @@ class Player() {
                                                 mouse.heldItem["count"] = 0
                                                 mouse.heldItem["contents"] = "empty"
  
-                                                return True
+                                                return true
                                             
                                             if addedCount > maxStackSize:
                                                 newMouseCount = addedCount - maxStackSize
@@ -1355,7 +1361,7 @@ class Player() {
                                                 slot["count"] = maxStackSize
                                                 mouse.heldItem["count"] = newMouseCount
  
-                                                return True
+                                                return true
                         return done
  
                     def checkForEmptySlots(container, done):
@@ -1372,20 +1378,20 @@ class Player() {
                                     mouse.heldItem["contents"] = "empty"
                                     mouse.heldItem["count"] = 0
                                     
-                                    return True
+                                    return true
                         return done
                         
                                     
                                     
  
  
-                    done = False
+                    done = false
  
-                    done = checkForStackables(self.hotbar, done)
-                    done = checkForStackables(self.inventory, done)
+                    done = checkForStackables(this.hotbar, done)
+                    done = checkForStackables(this.inventory, done)
  
-                    done = checkForEmptySlots(self.hotbar, done)
-                    done = checkForEmptySlots(self.inventory, done)
+                    done = checkForEmptySlots(this.hotbar, done)
+                    done = checkForEmptySlots(this.inventory, done)
  
                     
  
@@ -1394,9 +1400,9 @@ class Player() {
                     if not done:
  
                         # center of player
-                        x = self.x + self.width/2
-                        y = self.y - self.height/2
-                        z = self.z + self.width/2
+                        x = this.x + this.width/2
+                        y = this.y - this.height/2
+                        z = this.z + this.width/2
  
                         # figure out velocity for angle of player to mouse
  
@@ -1414,25 +1420,25 @@ class Player() {
  
         def recipeChecksAndStuff():
             # dict with total amount of each item in crafting slots
-            self.totalCraftingContents = {}
-            self.isCrafting = False
-            self.crafting["possibleCrafts"] = 0
+            this.totalCraftingContents = {}
+            this.isCrafting = false
+            this.crafting["possibleCrafts"] = 0
  
  
             
-            for key, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+            for key, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                 if key != "resultSlot":
                     if slot["contents"] != "empty":
-                        if not self.totalCraftingContents.get(slot["contents"].name, False):
+                        if not this.totalCraftingContents.get(slot["contents"].name, false):
                             
-                            self.totalCraftingContents[slot["contents"].name] = 0
+                            this.totalCraftingContents[slot["contents"].name] = 0
                         
-                        self.totalCraftingContents[slot["contents"].name] += 1
+                        this.totalCraftingContents[slot["contents"].name] += 1
             
             lowestItemCount = maxStackSize
             
  
-            for key, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+            for key, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                 if key != "resultSlot":
                     if slot["contents"] != "empty":
                         if slot["count"] < lowestItemCount:
@@ -1441,25 +1447,25 @@ class Player() {
             
             
             
-            self.crafting["possibleCrafts"] = lowestItemCount
+            this.crafting["possibleCrafts"] = lowestItemCount
  
  
  
-            if self.crafting["possibleCrafts"] > 0:
-                self.isCrafting = True
+            if this.crafting["possibleCrafts"] > 0:
+                this.isCrafting = true
  
-            foundARecipe = False
+            foundARecipe = false
             recipeThatWasFound = None
  
             def exactRecipeDetection(recipe):
                 
                 
-                if self.totalCraftingContents == recipe["requiredItems"]:
+                if this.totalCraftingContents == recipe["requiredItems"]:
                     pass
  
             
  
-                return False, None
+                return false, None
             
             def nearExactRecipeLogic(recipe):
                 
@@ -1477,14 +1483,14 @@ class Player() {
                     """
  
                     def checkADirection(direction, startingSlotId):
-                        gridSize = self.crafting["gridSize"]
+                        gridSize = this.crafting["gridSize"]
  
                         if direction == "up":
  
                             testSlotId = startingSlotId - gridSize
                             if testSlotId >= 0 and testSlotId < (gridSize**2):
  
-                                item = self.crafting[gridSize]["slots"][testSlotId]["contents"]
+                                item = this.crafting[gridSize]["slots"][testSlotId]["contents"]
                                 
                                 if item != "empty":
                                     return item.name
@@ -1498,7 +1504,7 @@ class Player() {
                             
                             if testSlotId >= 0 and testSlotId < (gridSize**2):
                                 
-                                item = self.crafting[gridSize]["slots"][testSlotId]["contents"]
+                                item = this.crafting[gridSize]["slots"][testSlotId]["contents"]
                                 
                                 if item != "empty":
                                     return item.name
@@ -1527,7 +1533,7 @@ class Player() {
                                     if testSlotId == temporaryGridSize - 1:
                                         return "no item"
  
-                                item = self.crafting[gridSize]["slots"][testSlotId]["contents"]
+                                item = this.crafting[gridSize]["slots"][testSlotId]["contents"]
                                 if item != "empty":
                                     return item.name
                                 return "empty"
@@ -1543,7 +1549,7 @@ class Player() {
                             
  
                 
-                    for slotId, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+                    for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
                         if slotId != "resultSlot":
                             item = slot["contents"]
                             if item != "empty":
@@ -1559,7 +1565,7 @@ class Player() {
                                         # only checks one direction (not gonna be common)
                                         slotFound = checkADirection(directions[0], slotId)
                                         if slotFound == items[0]:
-                                            return True
+                                            return true
  
                                     else: # this recipe uses operators, will be more complicated
                                         lenOfDirections = len(directions)
@@ -1576,14 +1582,14 @@ class Player() {
                                             
                                             slotDictThing = {
                                                 "direction": currentDirection,
-                                                "containsCorrectItem": False
+                                                "containsCorrectItem": false
                                             }
  
                                             itemName = checkADirection(currentDirection, slotId)
  
                                             if itemName == items[i]:
                                                 
-                                                slotDictThing["containsCorrectItem"] = True
+                                                slotDictThing["containsCorrectItem"] = true
  
  
                                             slotsChecked.append(slotDictThing)
@@ -1634,83 +1640,83 @@ class Player() {
  
                                             if operator == "xor":
                                                 if (conditionA or conditionB) and (conditionA != conditionB):
-                                                    return True
+                                                    return true
  
                                             if operator == "and":
                                                 if conditionA and conditionB:
-                                                    return True
+                                                    return true
  
                                             if operator == "neither":
                                                 if not conditionA and not conditionB:
-                                                    return True
+                                                    return true
  
                                             if operator == "or":
                                                 if conditionA or conditionB:
-                                                    return True
+                                                    return true
                                                 
                                             #print("didn't fulfill any checks")
  
  
  
  
-                    return False
+                    return false
  
                                     
  
  
  
                     
-                if self.totalCraftingContents == recipe["requiredItems"]:
+                if this.totalCraftingContents == recipe["requiredItems"]:
             
                     instructions = recipe["recipeInstructions"]
  
                     foundARecipe = checkForSpecificItemInSlot(instructions)
  
                     if foundARecipe:
-                        return True, recipe
+                        return true, recipe
  
  
-                return False, None
+                return false, None
  
             def shapelessRecipeLogic(recipe):
                
-                if self.totalCraftingContents == recipe["requiredItems"]:
-                    return True, recipe
+                if this.totalCraftingContents == recipe["requiredItems"]:
+                    return true, recipe
                 
  
  
  
-                return False, None
+                return false, None
  
             
             
             
-            if self.isCrafting:
+            if this.isCrafting:
  
-                for recipe in recipes[self.crafting["gridSize"]]["exact"].values():
+                for recipe in recipes[this.crafting["gridSize"]]["exact"].values():
                     foundARecipe, recipeThatWasFound = exactRecipeDetection(recipe)
                     if foundARecipe:
                         break
  
                 if not foundARecipe:
-                    for recipe in recipes[self.crafting["gridSize"]]["nearExact"].values():
+                    for recipe in recipes[this.crafting["gridSize"]]["nearExact"].values():
                         foundARecipe, recipeThatWasFound = nearExactRecipeLogic(recipe)
                         if foundARecipe:
                             break
                 
                 if not foundARecipe:
-                    for recipe in recipes[self.crafting["gridSize"]]["shapeless"].values():
+                    for recipe in recipes[this.crafting["gridSize"]]["shapeless"].values():
                         foundARecipe, recipeThatWasFound = shapelessRecipeLogic(recipe)
                         if foundARecipe:
                             break
  
                     
             if foundARecipe:
-                self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]["contents"] = recipeThatWasFound["output"]
-                self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]["count"] = recipeThatWasFound["outputCount"]
+                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["contents"] = recipeThatWasFound["output"]
+                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["count"] = recipeThatWasFound["outputCount"]
             else:
-                self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]["contents"] = "empty"
-                self.crafting[self.crafting["gridSize"]]["slots"]["resultSlot"]["count"] = 0
+                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["contents"] = "empty"
+                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["count"] = 0
  
  
  
@@ -1721,73 +1727,73 @@ class Player() {
  
  
         
-    def handleTimers(self):
-        for key, timerValue in self.timers.items():
+    def handleTimers(this):
+        for key, timerValue in this.timers.items():
             if timerValue > 0:
                 timerValue -= 1
             if timerValue < 0:
                 timerValue += 1
             if timerValue != 0:
                 print(str(key) + " " + str(timerValue))
-            self.timers[key] = timerValue
+            this.timers[key] = timerValue
  
  
  
-    def updateCamera(self):
-        camera.x -= round((camera.x - self.x + camera.centerTheCamera[0]) / camera.smoothness)
-        camera.y = self.y
-        camera.z -= round((camera.z - self.z + camera.centerTheCamera[1]) / camera.smoothness)
+    def updateCamera(this):
+        camera.x -= round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
+        camera.y = this.y
+        camera.z -= round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
         
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
  
  
  
-    def updateImageThings(self):
-        imageX = self.x - camera.x
-        imageY = self.z - camera.z
+    def updateImageThings(this):
+        imageX = this.x - camera.x
+        imageY = this.z - camera.z
         
         coordinate = (imageX, imageY)
-        self.imageData = (self.image, coordinate)
+        this.imageData = (this.image, coordinate)
  
  
  
-    def doStuff(self, deltaTime):
+    def doStuff(this, deltaTime):
         # need to update mouse's camera relative things here, don't want circular imports
-        mouse.cameraRelativeX = round((self.x + mouse.x) - canvasWidth/2)
-        mouse.cameraRelativeZ = round((self.z + mouse.y) - canvasHeight/2)
+        mouse.cameraRelativeX = round((this.x + mouse.x) - canvasWidth/2)
+        mouse.cameraRelativeZ = round((this.z + mouse.y) - canvasHeight/2)
         mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ)
         
-        self.generalMovement(deltaTime)
-        self.doInventoryThings()
+        this.generalMovement(deltaTime)
+        this.doInventoryThings()
         
-        self.handleTimers()
+        this.handleTimers()
         
-        self.updateCamera()
-        self.updateImageThings()
+        this.updateCamera()
+        this.updateImageThings()
  
  
  
-    def positionInSpawnArea(self):
+    def positionInSpawnArea(this):
         for y in range(chunkSize[1] - 1):
             if findBlock(0, y * blockSize, 0):
                 if not findBlock(0, (y + 1) * blockSize, 0):
-                    self.y = (y * blockSize) + self.height
+                    this.y = (y * blockSize) + this.height
                     break
             else:
-                self.y = chunkSize[1] * blockSize
+                this.y = chunkSize[1] * blockSize
  
  
  
-    def doStuffOnRightClick(self, heldItem = "empty"):
+    def doStuffOnRightClick(this, heldItem = "empty"):
         hoveredBlockType = mouse.hoveredBlock["block"]["type"]
         
         if hoveredBlockType == "crafting table":
-            self.otherInventoryData["showCraftingAndArmor"] = False
-            self.otherInventoryData["showCraftingTable"] = True
-            self.crafting["gridSize"] = 3
+            this.otherInventoryData["showCraftingAndArmor"] = false
+            this.otherInventoryData["showCraftingTable"] = true
+            this.crafting["gridSize"] = 3
  
  
-    def doStuffOnLeftClick(self, currentlyHeldItem = "empty"):
+    def doStuffOnLeftClick(this, currentlyHeldItem = "empty"):
         item = currentlyHeldItem
  
         breakingPower = 1
@@ -1811,29 +1817,29 @@ class Player() {
  
         # else:
         # break blocks
-        if self.currentBreakingBlock != mouse.hoveredBlock["block"]:
-            self.blockBreakProgress = 0
+        if this.currentBreakingBlock != mouse.hoveredBlock["block"]:
+            this.blockBreakProgress = 0
  
-        if self.canReachSelectedBlock:
+        if this.canReachSelectedBlock:
  
-            self.currentBreakingBlock = mouse.hoveredBlock["block"]
-            block = self.currentBreakingBlock
+            this.currentBreakingBlock = mouse.hoveredBlock["block"]
+            block = this.currentBreakingBlock
             
             if block["hardness"] != "infinity":
-                correctTool = False
-                powerfulEnoughTool = False
+                correctTool = false
+                powerfulEnoughTool = false
  
                 if breakingPower >= block["hardness"]:
-                    powerfulEnoughTool = True
+                    powerfulEnoughTool = true
                 if breakingType == block["effectiveTool"]:
-                    correctTool = True
+                    correctTool = true
                 
                 
                 if powerfulEnoughTool and correctTool:
-                    self.blockBreakProgress += breakingSpeed / fps
+                    this.blockBreakProgress += breakingSpeed / fps
                 else:
  
-                    self.blockBreakProgress += slowestBreakSpeed / fps
+                    this.blockBreakProgress += slowestBreakSpeed / fps
  
  
                 
@@ -1843,8 +1849,8 @@ class Player() {
                 # breaking stuff is based on seconds of time,
                 # in tools, the breaking speed is a percentage of a second per frame
  
-                if self.blockBreakProgress >= fps:
-                    self.blockBreakProgress = 0
+                if this.blockBreakProgress >= fps:
+                    this.blockBreakProgress = 0
  
                     if correctTool or block["dropsWithNoTool"]:
                     
@@ -1864,7 +1870,7 @@ class Player() {
                         count = 1
                         xv = random.randint(-3, 3)
                         zv = random.randint(-3, 3)
-                        if True: # replace later with silk touch or something
+                        if true: # replace later with silk touch or something
                             if block["type"] == ("grass" or "snowy grass"):
                                 itemData.name = "dirt"
                             if block["type"] == ("stone" or "snowy stone"):
@@ -1876,7 +1882,7 @@ class Player() {
  
                     air = {
                         "type": "air",
-                        "render": False,
+                        "render": false,
                         "alphaValue": 255,
                         "hardness": "infinity",
                         "effectiveTool": "none"
@@ -1889,17 +1895,17 @@ class Player() {
                 
                 
  
-    def changeCraftingGrid(self, gridSize):
+    def changeCraftingGrid(this, gridSize):
         
  
         # attempt to place items back into inventory
         
-        done = False
+        done = false
  
         def checkStackables(slot, done):
             if slot["contents"] != "empty":
                 if slot["contents"].stackable:
-                    for otherSlot in self.inventory.values():
+                    for otherSlot in this.inventory.values():
                         if otherSlot["contents"] != "empty":
                             if otherSlot["contents"].stackable:
                                 newOtherSlotCount = slot["count"] + otherSlot["count"]
@@ -1907,7 +1913,7 @@ class Player() {
                                     otherSlot["count"] = newOtherSlotCount
                                     slot["count"] = 0
                                     slot["contents"] = 0
-                                    return True
+                                    return true
                                 
                                 else:
                                     slot["count"] -= newOtherSlotCount - maxStackSize
@@ -1916,13 +1922,13 @@ class Player() {
         
         def checkEmptySlots(slot, done):
             if slot["contents"] != "empty":
-                for otherSlot in self.inventory.values():
+                for otherSlot in this.inventory.values():
                     if otherSlot["contents"] == "empty":
                         otherSlot["contents"] = slot["contents"]
                         otherSlot["count"] = slot["count"]
                         slot["contents"] = "empty"
                         slot["count"] = 0
-                        return True
+                        return true
  
  
  
@@ -1931,7 +1937,7 @@ class Player() {
  
  
  
-        for slotId, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+        for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
             if slotId != "resultSlot":
                 done = checkStackables(slot, done)
                 done = checkEmptySlots(slot, done)
@@ -1947,9 +1953,9 @@ class Player() {
         if not done:
  
             # center of player
-            x = self.x + self.width/2
-            y = self.y - self.height/2
-            z = self.z + self.width/2
+            x = this.x + this.width/2
+            y = this.y - this.height/2
+            z = this.z + this.width/2
  
             # figure out velocity for angle of player to mouse
  
@@ -1962,19 +1968,20 @@ class Player() {
             yv = 2
             zv = math.sin(angle) * 3
  
-            for slotId, slot in self.crafting[self.crafting["gridSize"]]["slots"].items():
+            for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
  
                 item.drop(x, y, z, xv, yv, zv)
  
  
         if gridSize == 2:
-            self.otherInventoryData["showCraftingAndArmor"] = True
-            self.otherInventoryData["showCraftingTable"] = False
-            self.crafting["gridSize"] = gridSize
+            this.otherInventoryData["showCraftingAndArmor"] = true
+            this.otherInventoryData["showCraftingTable"] = false
+            this.crafting["gridSize"] = gridSize
         elif gridSize == 3:
-            self.otherInventoryData["showCraftingAndArmor"] = False
-            self.otherInventoryData["showCraftingTable"] = True
-            self.crafting["gridSize"] = gridSize
+            this.otherInventoryData["showCraftingAndArmor"] = false
+            this.otherInventoryData["showCraftingTable"] = true
+            this.crafting["gridSize"] = gridSize
+                };
 };
             
  

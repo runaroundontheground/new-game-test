@@ -53,10 +53,10 @@ export function Rect(x, y, width, height) {
         let meetsX = false;
         let meetsY = false;
 
-        if ((otherRect.x <= myRect.x + myRect.width) || (otherRect.x + otherRect.width >= myRect.x)) {
+        if ((otherRect.x <= myRect.x + myRect.width) && (otherRect.x + otherRect.width >= myRect.x)){
             meetsX = true;
         };
-        if ((otherRect.y <= myRect.y + myRect.height) || (otherRect.y + otherRect.height >= myRect.y)) {
+        if ((otherRect.y <= myRect.y + myRect.height) && (otherRect.y + otherRect.height >= myRect.y)) {
             meetsY = true;
         }
 
@@ -65,6 +65,20 @@ export function Rect(x, y, width, height) {
         };
         return false;
     };
+    rect.collide.point = function (x, y) {
+        let myRect = rect;
+
+        let meetsX = false;
+        let meetsY = false;
+
+
+        if ((x >= myRect.x) && (x <= myRect.x + myRect.width)) {
+            meetsX = true;
+        };
+        if ((y >= myRect.y) && (y <= myRect.y + myRect.height)) {
+            meetsY = true;
+        }
+    }
 
     return rect
 }
