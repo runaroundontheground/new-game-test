@@ -1,16 +1,13 @@
-from GlobalVariables import { showLoadingProgress } from "./GlobalVariables.mjs"
-import recipes, items
+import { showLoadingProgress, recipes, items } from "./GlobalVariables.mjs"
 
 showLoadingProgress("loading Recipes.mjs");
 
-# make recipes here
 
-
-def addRecipe(
-        recipeType, recipeName, requiredItems, output, outputCount = 1, recipeShape = None,
-        requiredGridSize = 2, recipeInstructions = None
-              ):
-    """
+function addRecipe(
+        recipeType, recipeName, requiredItems, output, outputCount = 1, recipeShape,
+        requiredGridSize = 2, recipeInstructions
+              ) {
+    /*
     recipeType:
         can be "exact", "nearExact", or "shapeless"
 
@@ -37,50 +34,55 @@ def addRecipe(
     recipeInstructions:
         special list of stuff, allows for using operators and comparing slot contents
         see recipe stuff in player to figure it out, not gonna write it here
-    """
-    
+    */
 
-    recipe = {
+
+    let recipe = {
               "requiredItems": requiredItems,
               "output": output,
               "outputCount": outputCount
               }
     
-    if recipeType == "exact":
-        recipe["recipeShape"] = recipeShape
+    if (recipeType == "exact") {
+        recipe.recipeShape = recipeShape;
+    };
     
-    if recipeType == "nearExact":
-        recipe["recipeInstructions"] = recipeInstructions
+    if (recipeType == "nearExact") {
+        recipe.recipeInstructions = recipeInstructions;
+    };
     
 
 
-    recipes[requiredGridSize][recipeType][recipeName] = recipe
+    recipes[requiredGridSize][recipeType][recipeName] = recipe;
 
-    if requiredGridSize != 3:
-        recipes[3][recipeType][recipeName] = recipe
+    if (requiredGridSize != 3) {
+        recipes[3][recipeType][recipeName] = recipe;
+    };
+
+};
 
 
 
 
 
-def makeRecipesExist():
-    # new better way to do recipes for nearExact to implement later
-    # have a lot of thigns in one list + dicts
-    # each item is a dict, dict contains: the first direction, its item, and the operator between the second direction
-    # directionItemPairs will look like this: {"up": "itemName"}
-    # an example for how to write this?
-    # recipeInstructions = {
-    #   {"slotA": {
-    #       "up": "planks",
-    #       "operator": "xor",
-    #       "down": "planks"
-    #}  }
-    #}
-    # if at any point there needs to be multiple directions to find something (it's not just adjacent)
-    # then this can be used: "up,up,right": "planks"
-    # comma separated directions as the str key thingy will be how that works
-
-    addRecipe("shapeless", "logToPlanks", {"log": 1}, items["planks"], 4)
+export function makeRecipesExist() {
+    /*
+    *  new better way to do recipes for nearExact to implement later
+    * have a lot of thigns in one list + dicts
+    * each item is a dict, dict contains: the first direction, its item, and the operator between the second direction
+    * directionItemPairs will look like this: {"up": "itemName"}
+    * an example for how to write this?
+    * recipeInstructions = {
+    *       "up": "planks",
+    *       "operator": "xor",
+    *       "down": "planks"
+    *}  }
+    *}
+    * if at any point there needs to be multiple directions to find something (it's not just adjacent)
+    * then this can be used: "up,up,right": "planks"
+    * comma separated directions as the str key thingy will be how that works
+    */
+    addRecipe("shapeless", "logToPlanks", {"log": 1}, items["planks"], 4);
     
     addRecipe("nearExact", "planksToSticks", {"planks": 2}, items["stick"], 4,
               requiredGridSize = 2,
@@ -103,5 +105,6 @@ def makeRecipesExist():
 
 )
 */
+};
 
 showLoadingProgress("Recipes.mjs loaded");
