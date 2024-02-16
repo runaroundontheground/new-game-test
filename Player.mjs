@@ -944,7 +944,29 @@ class Player {
         return done
     };
  
- 
+    this.moveItem = function (movingItemSlot, movingItem, amount, receivingContainer) {
+        // these parameters will be changed by the function, hopefully it works?
+        
+        let receivingSlotId = undefined;
+
+        if (movingItem.stackable) {
+            for (let i = 0; i < receivingContainer.length; i++) {
+                let slot = receivingContainer[i];
+                let item = slot.contents;
+                
+                if (item != "empty" && item.stackable === true) {
+                    receivingSlotId = i;
+                    break;
+                }
+            }
+        }
+
+
+
+
+
+
+    }
  
     this.doInventoryThings = function () {
 
@@ -1061,15 +1083,8 @@ class Player {
                 let invSection = this[container];
                 let otherInvSection = this[otherContainer];
 
-                    case "crafting":
-                        invSection = this.crafting[this.crafting.gridSize].slots;
-                        otherInvSection = this.inventory;
-                        break;
-                    case "armor":
-                        invSection = this.armor;
-                        otherInvSection = this.inventory;
-                        break;
-                    break;
+                if (container == "crafting") {
+                    invSection = this.crafting[this.crafting.gridSize].slots;
                 }
                 
                 function checkStackablesInOtherInvSection(amountToMove, item, done) {
@@ -1158,62 +1173,6 @@ class Player {
                             return done
                 };
  
-                def checkEmptySlotsInOtherInvSection(amountToMove, item, done):
-                    """
-                    amountToMove: either "max" or an int less than 64 \n
-                    done: used to see if the interaction is done
-                    """
-                    if item != "empty" and not done:
-                        for otherSlot in otherInvSection:
-                            otherItem = otherSlot["contents"]
- 
-                            if otherItem == "empty":
-                                if amountToMove == "max":
-                                    otherSlot["contents"] = slot["contents"]
-                                    
- 
-                                    if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
- 
-                                        craftedCount = slot["count"] * this.crafting["possibleCrafts"]
-                                        if craftedCount <= maxStackSize:
- 
-                                            otherSlot["count"] = craftedCount
- 
-                                            for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
-                                                if key != "resultSlot":
-                                                    // subtract one item from the slot, since it's consumed
-                                                    craftingSlot["count"] -= this.crafting["possibleCrafts"]
- 
-                                                    if craftingSlot["count"] <= 0:
- 
-                                                        craftingSlot["count"] = 0
-                                                        craftingSlot["contents"] = "empty"
-                                    else:
-                                        otherSlot["count"] = slot["count"]
- 
-                                    slot["contents"] = "empty"
-                                    slot["count"] = 0
-                                        
-                                    
-                                    return true
- 
-                                else: // not moving max amount
-                                    if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
- 
-                                        slotNewCount = slot["count"] - amountToMove
- 
-                                        // subtract from first slot, add to the second if possible
-                                        if slotNewCount >= 0:
-                                            slot["count"] = slotNewCount
-                                            otherSlot["count"] = amountToMove
-                                            otherSlot["contents"] = slot["contents"]
- 
-                                            if slotNewCount == 0:
-                                                slot["contents"] = "empty"
-                                        
-                                            
-                                            return true
-                    return done
  
  
  
@@ -1384,13 +1343,12 @@ class Player {
                 mouse.inPlayerHotbar = this.otherInventoryData["hotbarRect"].collidepoint(mouse.x, mouse.y)
                 mouse.inPlayerCraftingTable = this.otherInventoryData["craftingTableRect"].collidepoint(mouse.x, mouse.y)
  
-                if mouse.inPlayerInventory:
-                    inventoryContentInteraction("inventory", "hotbar")
-                if mouse.inPlayerHotbar:
-                    inventoryContentInteraction("hotbar", "inventory")
-                if mouse.inPlayerCraftingAndArmor:
-                    inventoryContentInteraction("crafting")
+                if (mouse.inPlayerInventory) {inventoryContentInteraction("inventory", "hotbar")};
+                if (mouse.inPlayerHotbar) {inventoryContentInteraction("hotbar", "inventory")};
+                if (mouse.inPlayerCraftingAndArmor) {
+                    inventoryContentInteraction("crafting", "inventory");
                     inventoryContentInteraction("armor", "inventory");
+                };
         
  
             // attempt to place mouse's item back in the player's inventory
