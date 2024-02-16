@@ -7,7 +7,7 @@ function consoleLog(message) {
 };
 
 
-/*
+
 
 class testingClass {
     constructor() {
@@ -16,6 +16,8 @@ class testingClass {
         this.testingClassFunction = function () {
             return "test value";
         }
+
+        this.hotbar = [this.a, this.b];
     }
 }
 let testingClassObject = new testingClass()
@@ -25,4 +27,4 @@ let testObject = {
 }
 
 
-*/
+

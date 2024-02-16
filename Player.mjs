@@ -1009,11 +1009,13 @@ class Player {
                         let xDiff = mouse.cameraRelativeX - x;
                         let yDiff = mouse.cameraRelativeZ - z;
  
-                        let angle = math.atan2(yDiff, xDiff);
+                        let angle = Math.atan2(yDiff, xDiff);
+
+                        let dropVelocity = 3
  
-                        let xv = math.cos(angle) * 3;
+                        let xv = Math.cos(angle) * dropVelocity;
                         let yv = 2;
-                        let zv = math.sin(angle) * 3;
+                        let zv = Math.sin(angle) * dropVelocity;
  
                         let count = 1;
  
@@ -1055,19 +1057,10 @@ class Player {
             mouse.inPlayerCraftingTable = false;
             mouse.inASlot = false;
  
-            function inventoryContentInteraction(container) {
-                let invSection = undefined;
-                let otherInvSection = undefined;
+            function inventoryContentInteraction(container, otherContainer) {
+                let invSection = this[container];
+                let otherInvSection = this[otherContainer];
 
-                switch (container) {
-                    case "hotbar":
-                        invSection = this.hotbar;
-                        otherInvSection = this.inventory;
-                        break;
-                    case "inventory":
-                        invSection = this.inventory;
-                        otherInvSection = this.hotbar;
-                        break;
                     case "crafting":
                         invSection = this.crafting[this.crafting.gridSize].slots;
                         otherInvSection = this.inventory;
@@ -1089,73 +1082,78 @@ class Player {
                                 return done;
                             }
                             
-                            otherInvSection.forEach( function (otherSlot) {
+                            for (let i = 0; i < otherInvSection.length; i++) {
+                                let otherSlot = otherInvSection[i];
                                 let otherItem = otherSlot.contents
 
-                                if 
-                                if otherItem != "empty" and otherSlot["count"] < maxStackSize:
-                                    if otherItem.stackable and item.name == otherItem.name:
-                                        if otherSlot["count"] == maxStackSize:
-                                            break
-                                        if amountToMove == "max":
-                                            movingCount = slot["count"] + otherSlot["count"]
-                                                // combine the count
-                                            if movingCount <= maxStackSize:
-                                                
+                                if (otherItem == "empty" || otherSlot.count >= maxStackSize || !otherItem.stackable ||
+                                    otherItem.name != item.name) {
+                                    return done;
+                                }
 
-                                                if slot == this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                    movingCount = slot["count"]
-                                                    movingCount *= this.crafting["possibleCrafts"]
+                                if (amountToMove == "max") {
+                                    let movingCount = slot["count"] + otherSlot["count"]
 
-                                                    if movingCount + otherSlot["count"] <= maxStackSize:
+                                    if (movingCount <= maxStackSize) {
+                                        
 
-                                                        for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
-                                                            if key != "resultSlot":
-                                                                // subtract the amount of items crafted
-                                                                craftingSlot["count"] -= this.crafting["possibleCrafts"]
-                                                                
+                                        if slot == this.crafting[this.crafting.gridSize].slots.resultSlot:
+                                            movingCount = slot["count"]
+                                            movingCount *= this.crafting["possibleCrafts"]
 
-                                                                if craftingSlot["count"] <= 0:
+                                            if movingCount + otherSlot["count"] <= maxStackSize:
 
-                                                                    craftingSlot["count"] = 0
-                                                                    craftingSlot["contents"] = "empty"
-                                                    
-                                                        otherSlot["count"] += movingCount
+                                                for key, craftingSlot in this.crafting[this.crafting["gridSize"]]["slots"].items():
+                                                    if key != "resultSlot":
+                                                        // subtract the amount of items crafted
+                                                        craftingSlot["count"] -= this.crafting["possibleCrafts"]
+                                                        
 
-                                                else:
-                                                    otherSlot["count"] = movingCount
-                                                                
-                                                    slot["count"] = 0
-                                                    slot["contents"] = "empty"
+                                                        if craftingSlot["count"] <= 0:
 
-                                                
-                                                
-                                                done = true
-                                                return true
+                                                            craftingSlot["count"] = 0
+                                                            craftingSlot["contents"] = "empty"
+                                            
+                                                otherSlot["count"] += movingCount
 
-                                            // make the other stack full, reduce item count
-                                            // in first slot so the later update catches it
-                                            elif movingCount > maxStackSize:
-                                                if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                    slot["count"] = movingCount - maxStackSize
-                                                    otherSlot["count"] = maxStackSize
+                                        else:
+                                            otherSlot["count"] = movingCount
+                                                        
+                                            slot["count"] = 0
+                                            slot["contents"] = "empty"
+
+                                        
+                                        
+                                        done = true
+                                        return true
 
 
-                                        else: // not moving max amount
-                                            if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
-                                                otherSlotNewCount = otherSlot["count"] + amountToMove
-                                                slotNewCount = slot["count"] - amountToMove
+                                    // make the other stack full, reduce item count
+                                    // in first slot so the later update catches it
+                                    } else {if  (movingCount > maxStackSize) {
+                                        if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                            slot["count"] = movingCount - maxStackSize
+                                            otherSlot["count"] = maxStackSize
+                                    }
+                                    }
 
-                                                // subtract from first slot, add to the second if possible
-                                                if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
-                                                    slot["count"] = slotNewCount
-                                                    otherSlot["count"] = otherSlotNewCount
 
-                                                    if slotNewCount == 0:
-                                                        slot["contents"] = "empty"
+                                } else { // not moving max amount
+                                    if slot != this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]:
+                                        otherSlotNewCount = otherSlot["count"] + amountToMove
+                                        slotNewCount = slot["count"] - amountToMove
 
-                                                    return true
-                            })
+                                        // subtract from first slot, add to the second if possible
+                                        if otherSlotNewCount <= maxStackSize and slotNewCount >= 0:
+                                            slot["count"] = slotNewCount
+                                            otherSlot["count"] = otherSlotNewCount
+
+                                            if slotNewCount == 0:
+                                                slot["contents"] = "empty"
+
+                                            return true
+                                };
+                    }
                                 
                             return done
                 };
@@ -1328,7 +1326,7 @@ class Player {
                                                                     if not ctrlPressed:
                                                                     
  
-                                                                        newMouseCount = math.ceil(slot["count"]/2)
+                                                                        newMouseCount = Math.ceil(slot["count"]/2)
                                                                         newSlotCount = slot["count"] - newMouseCount
  
                                                                         mouse.heldItem["contents"] = slot["contents"]
@@ -1387,12 +1385,12 @@ class Player {
                 mouse.inPlayerCraftingTable = this.otherInventoryData["craftingTableRect"].collidepoint(mouse.x, mouse.y)
  
                 if mouse.inPlayerInventory:
-                    inventoryContentInteraction("inventory")
+                    inventoryContentInteraction("inventory", "hotbar")
                 if mouse.inPlayerHotbar:
-                    inventoryContentInteraction("hotbar")
+                    inventoryContentInteraction("hotbar", "inventory")
                 if mouse.inPlayerCraftingAndArmor:
                     inventoryContentInteraction("crafting")
-                    inventoryContentInteraction("armor")
+                    inventoryContentInteraction("armor", "inventory");
         
  
             // attempt to place mouse's item back in the player's inventory
@@ -1480,11 +1478,11 @@ class Player {
                         xDiff = mouse.cameraRelativeX - x
                         yDiff = mouse.cameraRelativeZ - z
  
-                        angle = math.atan2(yDiff, xDiff)                        
+                        angle = Math.atan2(yDiff, xDiff)                        
  
-                        xv = math.cos(angle) * 3
+                        xv = Math.cos(angle) * 3
                         yv = 2
-                        zv = math.sin(angle) * 3
+                        zv = Math.sin(angle) * 3
  
                         item.drop(x, y, z, xv, yv, zv)
         };
@@ -2034,11 +2032,11 @@ class Player {
             xDiff = mouse.cameraRelativeX - x
             yDiff = mouse.cameraRelativeZ - z
  
-            angle = math.atan2(yDiff, xDiff)                        
+            angle = Math.atan2(yDiff, xDiff)                        
  
-            xv = math.cos(angle) * 3
+            xv = Math.cos(angle) * 3
             yv = 2
-            zv = math.sin(angle) * 3
+            zv = Math.sin(angle) * 3
  
             for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
  
