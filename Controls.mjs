@@ -66,6 +66,8 @@ canvas.addEventListener("mousedown", function (event) {
         break;
     }
 
+    
+
 });
 
 canvas.addEventListener("mouseup", function (event) {
@@ -84,6 +86,8 @@ canvas.addEventListener("keydown", function (event) {
 
     if (!keys[event.key]) {keysPressed[event.key] = true;};
     keys[event.key] = true;
+
+    event.preventDefault();
 
 })
 
