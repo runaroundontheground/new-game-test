@@ -1090,7 +1090,7 @@ class Player {
                 };
             };
         };
-        dropItems()
+        dropItems();
  
  
         function hotbarHeldItemStuff() {
@@ -1113,12 +1113,18 @@ class Player {
                 };
             };
         };
-        hotbarHeldItemStuff()
+        hotbarHeldItemStuff();
  
         // need to rework crafting to be a list, or it won't work with the moveItem function
         // probably separate the crafting slot from the rest of the other slots
-        function swapMouseItemWithInventory(container) {
-            
+        function swapMouseItemWithContainerItem(container) {
+            for (let i = 0; i < container.length; i++) {
+                if (!keys.shift) {
+                    if (container[i].rect.collide.point(mouse.x, mouse.y)) {
+                        
+                    }
+                }
+            }
         }
         function mouseInteractionWithInventory() {
             mouse.inPlayerInventory = false;

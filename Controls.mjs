@@ -86,6 +86,8 @@ canvas.addEventListener("keydown", function (event) {
 
     if (!keys[event.key]) {keysPressed[event.key] = true;};
     keys[event.key] = true;
+    keys.ctrl = event.ctrlKey;
+    keys.shift = event.shiftKey;
 
     event.preventDefault();
 
