@@ -1279,61 +1279,59 @@ class Player {
                 };
             };
         };
-    };
+    
  
-        def recipeChecksAndStuff():
+        function recipeChecksAndStuff() {
             // dict with total amount of each item in crafting slots
-            this.totalCraftingContents = {}
-            this.isCrafting = false
-            this.crafting["possibleCrafts"] = 0
- 
- 
-            
-            for key, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
-                if key != "resultSlot":
-                    if slot["contents"] != "empty":
-                        if not this.totalCraftingContents.get(slot["contents"].name, false):
+            this.totalCraftingContents = {};
+            this.isCrafting = false;
+            this.crafting.possibleCrafts = 0;
+
+            // this for loop doesn't include the result slot
+            for (const slot of this.crafting[this.crafting.gridSize].slots) {
+                if (slot.contents !== "empty") {
+                    if (this.totalCraftingContents[slot.contents].name === undefined) {
+                        this.totalCraftingContents[slot.contents.name] = 0;
+                    }
+                    this.totalCraftingContents[slot["contents"].name] += 1;
+                }
+            }
                             
-                            this.totalCraftingContents[slot["contents"].name] = 0
                         
-                        this.totalCraftingContents[slot["contents"].name] += 1
-            
-            lowestItemCount = maxStackSize
+            let lowestItemCount = maxStackSize;
             
  
-            for key, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
-                if key != "resultSlot":
-                    if slot["contents"] != "empty":
-                        if slot["count"] < lowestItemCount:
-                            lowestItemCount = slot["count"]
+            for (const slot of this.crafting[this.crafting.gridSize].slots) {
+                if (slot.contents !== "empty" && slot.count < lowestItemCount) {
+                    lowestItemCount = slot.count;
+                }
+            }
  
-            
-            
-            
-            this.crafting["possibleCrafts"] = lowestItemCount
+
+            this.crafting["possibleCrafts"] = lowestItemCount;
  
  
  
-            if this.crafting["possibleCrafts"] > 0:
-                this.isCrafting = true
+            if (this.crafting["possibleCrafts"] > 0) {this.isCrafting = true}
  
-            foundARecipe = false
-            recipeThatWasFound = None
+            let foundARecipe = false
+            let recipeThatWasFound = undefined;
  
-            def exactRecipeDetection(recipe):
+            function exactRecipeDetection(recipe) {
+                // doesn't exist yet
                 
-                
-                if this.totalCraftingContents == recipe["requiredItems"]:
-                    pass
+                if (this.totalCraftingContents == recipe.requiredItems) {
+
+                }
+                    
  
+                return false, undefined
+            };
             
- 
-                return false, None
-            
-            def nearExactRecipeLogic(recipe):
+            function nearExactRecipeLogic(recipe) {
                 
-                def checkForSpecificItemInSlot(instructions):
-                    """
+                function checkForSpecificItemInSlot(instructions) {
+                    /*
                     startingItemName, directions, operators, and items are contained in instructions
  
                     example:
@@ -1343,70 +1341,59 @@ class Player {
                     checks for "planks" in the slot to the left and the slot to the right
                     
                     compares the values of does this slot have this specific item
-                    """
+                    */
  
-                    def checkADirection(direction, startingSlotId):
-                        gridSize = this.crafting["gridSize"]
+                    function checkADirection(direction, startingSlotId) {
+                        let gridSize = this.crafting["gridSize"]
  
-                        if direction == "up":
- 
-                            testSlotId = startingSlotId - gridSize
-                            if testSlotId >= 0 and testSlotId < (gridSize**2):
- 
-                                item = this.crafting[gridSize]["slots"][testSlotId]["contents"]
-                                
-                                if item != "empty":
-                                    return item.name
-                                return "empty"
-                            else:
-                                
-                                return "no item"
+                        switch (direction) {
+                            case "up":
+                                let testSlotId = startingSlotId - gridSize;
+                                if (testSlotId >= 0 && testSlotId < (grideSize**2)) {
+                                    let item = this.crafting[gridSize].slots[testSlotId].contents;
+                                    if (item != "empty") {return item.name;} 
+                                }
+                                return "no item";
+                        }
+
+                        
+                        } else { if (direction == "down") {
+                            let testSlotId = startingSlotId + gridSize
                             
-                        elif direction == "down":
-                            testSlotId = startingSlotId + gridSize
-                            
-                            if testSlotId >= 0 and testSlotId < (gridSize**2):
+                            if (testSlotId >= 0 && testSlotId < (gridSize**2)) {
                                 
-                                item = this.crafting[gridSize]["slots"][testSlotId]["contents"]
+                                let item = this.crafting[gridSize].slots[testSlotId].contents
                                 
-                                if item != "empty":
-                                    return item.name
+                                if (item != "empty") {return item.name}
                                 return "empty"
                                 
-                            else:
-                                return "no item"
+                            } else {return "no item"}
+
+                        } else {
+                            if (direction == "right") {
+                                let testSlotId = startingSlotId + 1;
+                                let temporaryGridSize = gridSize - 1;
+                                if (testSlotId >= 0 && testSlotId < (gridSize**2)) {
+                                    if (testSlotId == gridSize) {return "no item"};
+                                    while (testSlotId > temporaryGridSize) {
+                                        temporaryGridSize += gridSize;
+                                        if (temporaryGridSize >= gridSize) {return "no item"};
+                                        if (testSlotId == temporaryGridSize) {return "no item"};
+                                    }
+
+                                    let item = this.crafting[gridSize]["slots"][testSlotId]["contents"];
+                                    if (item != "empty") {return item.name};
+                                    return "empty";
+                                }
+                        }
+                    }
                                 
-                        elif direction == "right":
-                            testSlotId = startingSlotId + 1
-                            temporaryGridSize = gridSize - 1
- 
-                            if testSlotId >= 0 and testSlotId < (gridSize**2):
- 
-                                if testSlotId == gridSize:
-                                    return "no item"
- 
-                                
-                                while testSlotId > temporaryGridSize:
- 
-                            
-                                    temporaryGridSize += gridSize
- 
-                                    if temporaryGridSize >= gridSize:
-                                        return "no item"
-                                    if testSlotId == temporaryGridSize - 1:
-                                        return "no item"
- 
-                                item = this.crafting[gridSize]["slots"][testSlotId]["contents"]
-                                if item != "empty":
-                                    return item.name
-                                return "empty"
-                            
-                        elif direction == "left":
-                            print("no code written for left yet lol")
+
                                 
                         
  
                         return "no item"
+                    };
  
  
                             
@@ -1523,6 +1510,7 @@ class Player {
  
  
                     return false
+                };
  
                                     
  
@@ -1535,11 +1523,11 @@ class Player {
  
                     foundARecipe = checkForSpecificItemInSlot(instructions)
  
-                    if foundARecipe:
-                        return true, recipe
+                    if (foundARecipe) {return [true, recipe]};
  
  
-                return false, None
+                return [false, undefined];
+            };
  
             def shapelessRecipeLogic(recipe):
                
@@ -1585,8 +1573,9 @@ class Player {
  
             
                         
- 
+        };
         recipeChecksAndStuff()
+
  
 };
         
