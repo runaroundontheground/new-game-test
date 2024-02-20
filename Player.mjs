@@ -944,28 +944,72 @@ class Player {
         return done
     };
  
+
+
+
     this.moveItem = function (movingItemSlot, movingItem, amount, receivingContainer) {
         // these parameters will be changed by the function, hopefully it works?
         
         let receivingSlotId = undefined;
 
-        if (movingItem.stackable) {
-            for (let i = 0; i < receivingContainer.length; i++) {
-                let slot = receivingContainer[i];
-                let item = slot.contents;
-                
-                if (item != "empty" && item.stackable === true) {
+        // search for which slot to move stuff to
+        for (let i = 0; i < receivingContainer.length; i++) {
+            let slot = receivingContainer[i];
+            let item = slot.contents;
+
+            if (movingItem.stackable) {
+                if (item != "empty" && item.stackable === true && item.name === movingItem.name
+                    && slot.count < maxStackSize) {
+                    receivingSlotId = i;
+                    break;
+                }
+            } else {
+                if (item == "empty") {
                     receivingSlotId = i;
                     break;
                 }
             }
         }
 
+        if (receivingSlotId === undefined && movingItem.stackable) {
+            for (let i = 0; i < receivingContainer.length; i++) {
+                let slot = receivingContainer[i];
+                let item = slot.contents;
 
+                if (item === "empty") {
+                    receivingSlotId = i;
+                    break;
+                }
+            }
+        }
 
+        // make sure moving amount makes sense
+        if (amount > movingItemSlot.count) {
+            amount = movingItemSlot.count;
+        }
 
+    
+        if (receivingSlotId !== undefined) {
+            // important! make sure the parameter gets updated from receivingSlot
+            let receivingSlot = receivingContainer[receivingSlotId];
+            let movingCount = receivingSlot.count + amount;
 
+            if (movingCount <= maxStackSize) {
+                receivingSlot.count = movingCount;
+                receivingSlot.contents = movingItem;
 
+                movingItem = "empty";
+                movingItemSlot.count = 0;
+            } else {
+                let leftOverCount = movingCount - maxStackSize;
+                receivingSlot.count = maxStackSize;
+                receivingSlot.contents = movingItem; // set the item to the moving one, just in case
+
+                movingItemSlot = leftOverCount;
+            }
+
+            receivingContainer[receivingSlotId] = receivingSlot;
+        }
     }
  
     this.doInventoryThings = function () {
@@ -1071,7 +1115,11 @@ class Player {
         };
         hotbarHeldItemStuff()
  
- 
+        // need to rework crafting to be a list, or it won't work with the moveItem function
+        // probably separate the crafting slot from the rest of the other slots
+        function swapMouseItemWithInventory(container) {
+            
+        }
         function mouseInteractionWithInventory() {
             mouse.inPlayerInventory = false;
             mouse.inPlayerHotbar = false;
@@ -1185,6 +1233,7 @@ class Player {
                             
                             mouse.hoveredSlotId = slot["slotId"]
                             mouse.inASlot = true
+
  
  
                             def slotInteractionWithMouseItem(clickType):
