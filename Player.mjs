@@ -1345,166 +1345,122 @@ class Player {
  
                     function checkADirection(direction, startingSlotId) {
                         let gridSize = this.crafting["gridSize"]
- 
+                        let testSlotId = 0
                         switch (direction) {
                             case "up":
-                                let testSlotId = startingSlotId - gridSize;
+                                testSlotId = startingSlotId - gridSize;
                                 if (testSlotId >= 0 && testSlotId < (grideSize**2)) {
                                     let item = this.crafting[gridSize].slots[testSlotId].contents;
-                                    if (item != "empty") {return item.name;} 
+                                    if (item != "empty") {return item.name;}
                                 }
                                 return "no item";
-                        }
-
-                        
-                        } else { if (direction == "down") {
-                            let testSlotId = startingSlotId + gridSize
                             
-                            if (testSlotId >= 0 && testSlotId < (gridSize**2)) {
-                                
-                                let item = this.crafting[gridSize].slots[testSlotId].contents
-                                
-                                if (item != "empty") {return item.name}
-                                return "empty"
-                                
-                            } else {return "no item"}
-
-                        } else {
-                            if (direction == "right") {
-                                let testSlotId = startingSlotId + 1;
+                            case "down":
+                                testSlotId = startingSlotId + gridSize;
+                                if (testSlotId >= 0 && testSlotId < (gridSize**2)) {
+                                    let item = this.crafting[gridSize].slots[testSlotId].contents;
+                                    if (item != "empty") {return item.name};
+                                }
+                                return "no item";
+                            
+                            case "right":
+                                testSlotId = startingSlotId + 1;
                                 let temporaryGridSize = gridSize - 1;
                                 if (testSlotId >= 0 && testSlotId < (gridSize**2)) {
                                     if (testSlotId == gridSize) {return "no item"};
                                     while (testSlotId > temporaryGridSize) {
                                         temporaryGridSize += gridSize;
-                                        if (temporaryGridSize >= gridSize) {return "no item"};
-                                        if (testSlotId == temporaryGridSize) {return "no item"};
+                                        if (temporaryGridSize >= gridSize
+                                            || testSlotId == temporaryGridSize) {return "no item"};
                                     }
-
-                                    let item = this.crafting[gridSize]["slots"][testSlotId]["contents"];
+                                    let item = this.crafting[gridSize].slots[testSlotId].contents;
                                     if (item != "empty") {return item.name};
                                     return "empty";
                                 }
                         }
-                    }
-                                
-
-                                
-                        
- 
                         return "no item"
                     };
  
- 
+                    for (let i = 0; i < this.crafting[this.crafting.gridSize].slots; i++) {
+                        let slot = this.crafting[this.crafting.gridSize].slots[i];
+                        let item = slot.contents;
+
+                        if (item != "empty" && item.name == instructions.startingItemName) {
+                            let usesOperators = instructions.operators.length > 0;
                             
- 
-                
-                    for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
-                        if slotId != "resultSlot":
-                            item = slot["contents"]
-                            if item != "empty":
-                                if item.name == instructions["startingItemName"]:
+                            let directions = instructions.directions;
+                            let operators = instructions.operators;
+                            let items = instructions.items;
+
+                            if (!usesOperators) {
+                                let slotFound = checkADirection(directions[0], i);
+                                if (slotFound == items[0]) {return true}
+                            } else {
+                                let slotsChecked = [];
+
+                                for (let i = 0; i < directions.length; i++) {
+                                    let currentDirection = directions[i];
+                                    let currentItem = items[i];
+
+                                    let slotDictThing = {
+                                        "direction": currentDirection,
+                                        "containsCorrectItem": false
+                                    }
+                                    let itemName = checkADirection(currentDirection, i);
+
+                                    if (itemName == items[i]) {
+                                        slotDictThing["containsCorrectItem"] = true;
+                                    }
+                                    slotsChecked.push(slotDictThing);
+                                }
+                                let conditions = [];
+
+                                for (const slot of slotsChecked) {
+                                    conditions.push(slot.containsCorrectItem);
+                                }
+                                let hasAnEvenNumberOfConditions = conditions.length % 2 === 0;
+                                let length = conditions.length;
+                                if (!hasAnEvenNumberOfConditions) {length -= 1};
+                                let betterConditionsList = [];
+                                for (let i = 0; i < length; i += 2) {
+                                    let conditionA = conditions[i - 1];
+                                    let conditionB = conditions[i];
+
+                                    betterConditionsList.push([conditionA, conditionB]);
+                                }
+                                for (let i = 0; i < operators.length; i++) {
+                                     // i should probably modify how i am doing operators to specify which
+                                    // directions should use what operators (example: right "and" left)
+                                    // another example: up "neither" down
+                                    // and also should probably add in the ability to specify multiple
+                                    // directions for something, ex top right is up and right
+                                    // or i could just have "top right" be a valid direction
+                                    // yeah ima just do that
+                                    // or i could have the directions be like {up: 2}, {right: 1},
+                                    // that would be up 2 slots, right 1 slot
+                                    // operators still need to be grouped with directions at some point though
+                                    let operator = operators[i];
+                                    let conditionA = betterConditionsList[i][0];
+                                    let conditionB = betterConditionsList[i][1];
                                     
-                                    usesOperators = len(instructions["operators"]) > 0
- 
-                                    directions = instructions["directions"]
-                                    operators = instructions["operators"]
-                                    items = instructions["items"]
- 
-                                    if not usesOperators:
-                                        // only checks one direction (not gonna be common)
-                                        slotFound = checkADirection(directions[0], slotId)
-                                        if slotFound == items[0]:
-                                            return true
- 
-                                    else: // this recipe uses operators, will be more complicated
-                                        lenOfDirections = len(directions)
-                                        lenOfItems = len(items)
-                                        lenOfOperators = len(operators)
- 
-                                        slotsChecked = []
- 
-                                        
- 
-                                        for i in range(lenOfDirections):
-                                            currentDirection = directions[i]
-                                            currentItem = items[i]
-                                            
-                                            slotDictThing = {
-                                                "direction": currentDirection,
-                                                "containsCorrectItem": false
-                                            }
- 
-                                            itemName = checkADirection(currentDirection, slotId)
- 
-                                            if itemName == items[i]:
-                                                
-                                                slotDictThing["containsCorrectItem"] = true
- 
- 
-                                            slotsChecked.append(slotDictThing)
- 
-                                        conditions = []
- 
-                                        for i in slotsChecked:
-                                            conditions.append(i["containsCorrectItem"])                                        
- 
-                                        hasAnEvenNumberOfConditions = len(conditions)%2 == 0
-                                        
- 
-                                        length = len(conditions)
-                                        if not hasAnEvenNumberOfConditions:
-                                            length -= 1
-                                        i = 1
- 
-                                        betterConditionsList = []
- 
-                                        while i < length:
- 
-                                            conditionA = conditions[i - 1]
-                                            conditionB = conditions[i]
- 
-                                            conditionList = [conditionA, conditionB]
-                                            
-                                            betterConditionsList.append(conditionList)
- 
-                                            i += 2 // increment by two, grouping together conditions
- 
- 
- 
-                                        for i in range(lenOfOperators):
-                                            // i should probably modify how i am doing operators to specify which
-                                            // directions should use what operators (example: right "and" left)
-                                            // another example: up "neither" down
-                                            // and also should probably add in the ability to specify multiple
-                                            // directions for something, ex top right is up and right
-                                            // or i could just have "top right" be a valid direction
-                                            // yeah ima just do that
-                                            // or i could have the directions be like {up: 2}, {right: 1},
-                                            // that would be up 2 slots, right 1 slot
-                                            // operators still need to be grouped with directions at some point though
- 
-                                            operator = operators[i]
-                                            conditionA, conditionB = betterConditionsList[i]
-                                            
- 
-                                            if operator == "xor":
-                                                if (conditionA or conditionB) and (conditionA != conditionB):
-                                                    return true
- 
-                                            if operator == "and":
-                                                if conditionA and conditionB:
-                                                    return true
- 
-                                            if operator == "neither":
-                                                if not conditionA and not conditionB:
-                                                    return true
- 
-                                            if operator == "or":
-                                                if conditionA or conditionB:
-                                                    return true
-                                                
-                                            //print("didn't fulfill any checks")
+                                    if (operator == "xor") {
+                                        if ((conditionA || conditionB) && (conditionA !== conditionB)) {return true;};
+                                    }
+                                    if (operator == "and") {
+                                        if (conditionA && conditionB) {return true;};
+                                    }
+                                    if (operator == "neither") {
+                                        if (!conditionA && !conditionB) {return true};
+                                    }
+                                    if (operator == "or") {
+                                        if (conditionA || conditionB) {return true;}
+                                    }
+
+                                    consoleLog("invalid recipe operator or something like that")
+                                }
+                            }
+                        }
+                    }
  
  
  
