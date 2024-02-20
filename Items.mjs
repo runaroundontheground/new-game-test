@@ -22,21 +22,28 @@ class Item {
         this.stackable = false;
 
 
-        this.drop = function (x, y, z, xv, yv, zv, player = undefined, count = 1) {
+        this.drop = function (x, y, z, xv, yv, zv, count = 1, dropSource = undefined, actualDropSource) {
 
             let droppedItem = new ItemEntity(x, y, z, xv, yv, zv, count, this);
-
             entities.push(droppedItem);
 
-            if (player !== undefined) {
-                if (player.hotbar[this.slotId]["count"] == 1) {
-                    player.hotbar[this.slotId]["contents"] = "empty";
+
+            if (dropSource === "mouse") {
+                mouse.heldSlot.count = 0;
+                mouse.heldSlot.contents = "empty";
+            }
+
+            if (dropSource === "player") {
+                if (actualDropSource.hotbar[this.slotId]["count"] == 1) {
+                    actualDropSource.hotbar[this.slotId]["contents"] = "empty";
                 } else {
-                    if (player.hotbar[this.slotId].count >= 2) {
-                        player.hotbar[this.slotId]["count"] -= 1
+                    if (actualDropSource.hotbar[this.slotId].count >= 2) {
+                        actualDropSource.hotbar[this.slotId]["count"] -= 1
                     };
                 };
             };
+
+            
         };
 
     };

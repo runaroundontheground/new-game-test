@@ -612,8 +612,8 @@ def render(deltaTime):
 
 
     
-    if mouse.heldItem["contents"] != "empty":
-        image = itemIcons[mouse.heldItem["contents"].name]
+    if mouse.heldSlot["contents"] != "empty":
+        image = itemIcons[mouse.heldSlot["contents"].name]
         position = (mouse.x + 5, mouse.y + 5)
         imageData = (image, position)
 
@@ -622,10 +622,10 @@ def render(deltaTime):
         shift = player.inventoryRenderingData["slotSize"] - 10
 
 
-        if mouse.heldItem["count"] > 1:
+        if mouse.heldSlot["count"] > 1:
             
             position = (mouse.x + shift, mouse.y + shift)
-            imageData = convertTextToImageData(mouse.heldItem["count"], position)
+            imageData = convertTextToImageData(mouse.heldSlot["count"], position)
             renderingData.append(imageData)
 
     
