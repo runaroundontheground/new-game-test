@@ -1,6 +1,6 @@
 import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys, 
 chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
-itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, images, showLoadingProgress } from "./GlobalVariables.mjs";
+itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Rendering.mjs");
 
 import { images } from "./ImageLoader.mjs";
@@ -8,7 +8,6 @@ import { images } from "./ImageLoader.mjs";
 import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
 generateChunkStructures, findBlock } from "./Worldgen.mjs";
 import { player } from "./Player.mjs";
-
 
 
 
@@ -44,7 +43,7 @@ renderData, how stuff should be rendered
 
 
 let blockRenderData = {
-    "air": {"drawType": "none"}
+    "air": {"color": undefined, "borderColor": undefined, "globalAlpha": 255, "length": blockSize}
 };
 
 
@@ -57,11 +56,33 @@ let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha"
 
 let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2;
 
-function addABlock (blockName, color, borderColor, alpha = 255) {
+function addABlock (blockType, color, borderColor, alpha = 255) {
+    let data = {
+        "color": color,
+        "borderColor": borderColor || color,
+        "globalAlpha": alpha,
+        "length": blockSize
+    }
+
+    function nameToRgba(name) {
+        let newCanvas = document.createElement("canvas");
+        let context = newCanvas.getContext("2d");
+        context.fillStyle = name;
+        context.fillRect(0,0,1,1);
+        return context.getImageData(0,0,1,1).data;
+    }
+
+    if (borderColor === undefined) {
+        let newBorderColor = nameToRgba(color);
+        consoleLog(newBorderColor)
+    }
+
+
+    blockRenderData[blockType] = data;
 
 };
 
-addABlock("grass", (0, 200, 0), (150, 75, 0))
+addABlock("grass", "darkgreen", "brown")
 addABlock("dirt", (150, 75, 0))
 addABlock("stone", (125, 125, 125))
 addABlock("cobblestone", (150, 150, 150))
@@ -220,49 +241,52 @@ export function generateSpawnArea() {
 export function render(deltaTime) {
 
 
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    screen.fill((0, 0, 0))
     // get the chunks to be used for rendering
-    chunkList = generateNearbyAreas(2, true)
+    let chunkList = generateNearbyAreas(2, true)
 
 
     // separate the blocks into layers, so they get rendered in the right order
     // also, keep track of the scale for each y layer
-    blocks = []
-    scaleFactors = []
-    for i in range(chunkSize[1]):
-        blocks.append( [] )
-        scaleFactors.append( [] )
+    let blocks = [];
+    let scaleFactors = [];
+    for (let i = 0; i < chunkSize[1]; i++) {
+        blocks.push( [] );
+        scaleFactors.push( [] );
+    };
 
     
     
-
-    for chunkCoord in chunkList:
-        for y in range(chunkSize[1]):
+    for (const chunkCoord of chunkList) {
+        for (let y = 0; y < chunkSize[1]; y++) {
             
         
             // scale images outside of x/z loop, better performance
             
-            scaleFactor = 1
+            let scaleFactor = 1
             
             // scale smoother when using exact position rather than player's block coord
-            playerYInBlocks = player.y / blockSize
+            let playerYInBlocks = player.y / blockSize
 
 
-            if y > playerYInBlocks:
-                differenceInBlocks = y - playerYInBlocks
-                differenceInBlocks /= blockSize
-                scaleFactor += differenceInBlocks
+            if (y > playerYInBlocks) {
+                let differenceInBlocks = y - playerYInBlocks;
+                differenceInBlocks /= blockSize;
+                scaleFactor += differenceInBlocks;
+            };
                 
 
-            if y < playerYInBlocks:
-                differenceInBlocks = playerYInBlocks - y
-                differenceInBlocks /= blockSize
-                scaleFactor -= differenceInBlocks
+            if (y < playerYInBlocks) {
+                let differenceInBlocks = playerYInBlocks - y;
+                differenceInBlocks /= blockSize;
+                scaleFactor -= differenceInBlocks;
+            };
                 
 
-            if scaleFactor < 0.1:
-                scaleFactor = 0.1
+            if (scaleFactor < 0.1) {scaleFactor = 0.1;};
+            if (scaleFactor > 5) {scaleFactor = 5;};
 
             
 
@@ -271,15 +295,15 @@ export function render(deltaTime) {
             
             scaleFactors[y] = scaleFactor
 
-            scaledImages = blockImages.copy()
+            let scaledImages = blockImages;
             
 
-            for x in range(chunkSize[0]):
-                for z in range(chunkSize[0]):
+            for (let x = 0; x < chunkSize[0]; x++) {
+                for (let z = 0; z < chunkSize[0]; z++) {
 
-                    block = chunks[chunkCoord]["data"][(x, y, z)]
+                    let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
                     
-                    if block["render"] and block["type"] != "air":
+                    if block.render && block.type != "air":
                         xPos = x * blockSize
                         zPos = z * blockSize
                         
@@ -351,6 +375,10 @@ export function render(deltaTime) {
                         imageData = (image, position)
 
                         blocks[y].append(imageData)
+                };
+            };
+        };
+    };
 
     renderingData = []
 
