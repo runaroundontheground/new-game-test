@@ -168,6 +168,15 @@ class Random {
 export let random = new Random();
 
 
+class Trig {
+    constructor () {
+        
+    }
+}
+
+export let trig = new Trig();
+
+
 
 
 showLoadingProgress("global variables initialized");
