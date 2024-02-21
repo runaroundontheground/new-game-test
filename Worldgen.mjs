@@ -152,7 +152,7 @@ export function generateChunkTerrain(chunkCoords) {
   }
   initialTerrainGeneration()
 
-  chunks[chunkCoords] = {
+  chunks[chunkCoords.toString()] = {
     "data": chunkData,
     "blocksUpdated": false,
     "structuresGenerated": false
@@ -354,7 +354,7 @@ function runBlockUpdatesAfterGeneration(chunkCoord) {
 
 
 
-function smallScaleBlockUpdates(chunkCoord, blockCoord) {
+export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
   let x = blockCoord[0];
   let y = blockCoord[1];

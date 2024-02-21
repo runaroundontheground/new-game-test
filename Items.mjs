@@ -4,11 +4,11 @@ import {
     entities, items, chunks, listOfBlockNames,
     listOfIntermediateItems, blockSize, gravity,
     dictOfBlockBreakingStuff,
-    showLoadingProgress,
+    showLoadingProgress, mouse
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Items.mjs")
 
-import { mouse } from "./Controls.mjs";
+//import { mouse } from "./Controls.mjs";
 import { ItemEntity } from "./Entities.mjs";
 
 
@@ -50,7 +50,7 @@ class Item {
 };
 
 
-class PlaceableItem extends Item {
+export class PlaceableItem extends Item {
     constructor(stackable) {
         super();
 
@@ -110,7 +110,7 @@ class PlaceableItem extends Item {
     };
 };
 
-class ToolItem extends Item {
+export class ToolItem extends Item {
     constructor(name, toolData = {
         "attack": 1, "knockback": 1,
         "breakingPower": 1, "breakingSpeed": 1,

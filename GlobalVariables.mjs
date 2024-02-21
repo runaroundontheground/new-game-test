@@ -53,7 +53,7 @@ export function Rect(x, y, width, height) {
         let meetsX = false;
         let meetsY = false;
 
-        if ((otherRect.x <= myRect.x + myRect.width) && (otherRect.x + otherRect.width >= myRect.x)){
+        if ((otherRect.x <= myRect.x + myRect.width) && (otherRect.x + otherRect.width >= myRect.x)) {
             meetsX = true;
         };
         if ((otherRect.y <= myRect.y + myRect.height) && (otherRect.y + otherRect.height >= myRect.y)) {
@@ -169,12 +169,52 @@ export let random = new Random();
 
 
 class Trig {
-    constructor () {
-        
+    constructor() {
+
     }
 }
 
 export let trig = new Trig();
+
+class Mouse {
+    constructor() {
+        this.x = 0;
+        this.y = 0;
+        this.pos = [0, 0];
+        this.cameraRelativeX = 0;
+        this.cameraRelativeZ = 0;
+        this.cameraRelativePos = [0, 0];
+        // block height for mining / placing
+        this.selectedY = 0;
+        this.selectedYChange = 0;
+        // detection for blocks and stuff
+        this.hoveredBlock = {};
+        this.hoveredSlotId = 0;
+
+
+        this.inPlayerInventory = false;
+        this.inPlayerHotbar = false;
+        this.inASlot = false;
+        // needs to have these two in order to tranfer item data properly
+        this.heldItem = {
+            "contents": "empty",
+            "count": 0
+        };
+
+        this.buttons = {
+            "left": false,
+            "middle": false,
+            "right": false,
+            "pressed": {
+                "left": false,
+                "middle": false,
+                "right": false
+            }
+        };
+    };
+}
+
+export let mouse = new Mouse();
 
 
 

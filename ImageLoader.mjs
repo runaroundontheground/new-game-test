@@ -11,36 +11,38 @@ function showLoadingProgress(message) {
     loadingDiv.scrollTop = loadingDiv.scrollHeight;
 }
 
-let imageDiv = document.getElementById("imageHolder");
+export var allImagesLoaded = false;
+export let images = {};
 
+let imageUrlsAndNames = {
+    "stick": "./Images/stick.png",
+    "stone axe": "./Images/tools/stone axe.png",
+    "stone pickaxe": "./Images/tools/stone pickaxe.png",
+    "wood axe": "./Images/tools/wood axe.png",
+    "wood pickaxe": "./Images/tools/wood pickaxe.png"
+};
 
-let imagesHaveBeenAdded = false;
-var allImagesLoaded = false;
-export { allImagesLoaded };
+let currentNumberOfLoadedImages = 0;
+let totalNumberOfImages = Object.keys(imageUrlsAndNames).length;
 
-let imageUrls = [
-    "./Images/stick.png",
-    "./Images/tools/stone axe.png",
-    "./Images/tools/stone pickaxe.png",
-    "./Images/tools/wood axe.png",
-    "./Images/tools/wood pickaxe.png"
-];
+for (const key of Object.keys(imageUrlsAndNames)) {
+    let image = new Image();
+    image.src = imageUrlsAndNames[key];
+    image.onload = function () {
+        totalNumberOfImages += 1;
+    }
 
+    images[key] = image;
+     
+};
 
-imageUrls.forEach(function (url) {
-    let image = document.createElement("img");
-    image.style.display = "none";
-    image.src = url;
-    imageDiv.appendChild(image);
-});
+// wait one second between each check
+const checkForLoadedImages = setInterval( function () {
 
-imagesHaveBeenAdded = true;
-
-
-window.addEventListener("load", function () {
-    if (imagesHaveBeenAdded === true) {
+    if (currentNumberOfLoadedImages === totalNumberOfImages) {
         allImagesLoaded = true;
         showLoadingProgress("images have been loaded");
     };
-});
 
+    if (allImagesLoaded) {clearInterval(checkForLoadedImages);};
+}, 1000);

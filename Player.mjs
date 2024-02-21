@@ -86,9 +86,9 @@ class Player {
         function createALotOfInventoryThings() {
 
             let inventoryWidthInPixels = canvasWidth / 3;
-            let slotSizeInPixels = Math.Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
+            let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
 
-            let gapBetweenSlots = Math.Math.round(slotSizeInPixels / 5);
+            let gapBetweenSlots = Math.round(slotSizeInPixels / 5);
 
 
             let backgroundColor = [150, 150, 150]

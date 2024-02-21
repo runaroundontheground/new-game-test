@@ -1,111 +1,65 @@
-import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
-chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed,
+import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys, 
+chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
 itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, images, showLoadingProgress } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Rendering.mjs");
 
+import { images } from "./ImageLoader.mjs";
+
 import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
 generateChunkStructures, findBlock } from "./Worldgen.mjs";
-import { mouse } from "./Controls.mjs";
 import { player } from "./Player.mjs";
 
 
 
 
-let blockRenderingData = {
-    "air": {"color": "black", "widthAndHeight": blockSize, "alpha": 255}
-};
-let itemEntityIcons = {}
 
-
-let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha": 255}
-
-
-let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2
-
-
-
-function loadImage(path, name) {
-    let image = new Image()
-    
-    images[name] = image;
-
-    itemEntityImage = image.copy()
-    size = (itemEntitySize, itemEntitySize)
-    itemEntityImage = pygame.transform.scale(itemEntityImage, size)
-    itemEntityIcons[name] = itemEntityImage
-
-    return image;
-}
-images = {
-    "stick": loadImage("stick.png", "stick"),
-    "stone pickaxe": loadImage("tools/stone pickaxe.png", "stone pickaxe"),
-    "stone axe": loadImage("tools/stone axe.png", "stone axe"),
-    "wood pickaxe": loadImage("tools/wood pickaxe.png", "wood pickaxe"),
-    "wood axe": loadImage("tools/wood axe.png", "wood axe")
-}
-
-
-def addABlock(blockName, blockColor, blockBorderColor = "unassigned",
-              hasAlpha = False, alphaValue = 255):
-    imageSize = (blockSize, blockSize)
-    baseSurface = pygame.surface.Surface(imageSize)
-    fillingRect = pygame.rect.Rect(2, 2, blockSize - 4, blockSize - 4)
-
-    block = baseSurface.copy()
-    
-    if blockBorderColor == "unassigned":
-        red = blockColor[0] - 10
-        if red < 0:
-            red = 0
-        green = blockColor[1] - 10
-        if green < 0:
-            green = 0
-        blue = blockColor[2] - 10
-        if blue < 0:
-            blue = 0
-        borderColor = (red, green, blue)
-    else:
-        borderColor = blockBorderColor
-
-    block.fill(borderColor)
-    
-    block.fill(blockColor, fillingRect)
-
-    if hasAlpha:
-        block.set_alpha(alphaValue)
+/*
+huge rework needed here, probably just delete most of the code, besides the math i suppose
 
 
 
 
-    
-    blockImages[blockName] = {
-        "data": block,
-        "scaled": False,
-        # alphaData: if there are blocks with multiple different alpha values, then 
-        # it'll append another thing to the list for that specific alpha value
-        # the key is the same as the alpha value, so for instance, that's 0 alpha
-        "alphaData": {
-            #0: block just the image data, but with alpha in it
-            }
+renderData, how stuff should be rendered
+{   first thing accessed should be drawType, if it's none, do not do anything else
+    "drawType": "none",
+    next should be position, [x, y]
+    "position": [x, y],
+    then size (width/height)
+    "size": [width, height],
+    and a dict that contains specified stylings for stuff, which has to be name exact with the context
+    properties
+    "drawStyles" {
+        all should have this
+        "globalAlpha": self explanatory
+        if the drawType was fill rect
+        "fillStyle": color, gradient, etc,
+        if the drawType was stroke rect
+        "strokeStyle": same values as fillStyle,
+        "lineWidth": self explanatory
     }
+}
 
-    # adding item icons for blocks specifically
 
-    slotSize = player.inventoryRenderingData["slotSize"]
-    blockIcon = block.copy()
-    targetSize = slotSize - player.inventoryRenderingData["itemIconShift"] * 2
+*/
 
-    scale = abs(targetSize / blockSize)
 
-    blockIcon = pygame.transform.scale_by(blockIcon, scale)
-    
-    itemIcons[blockName] = blockIcon
+let blockRenderData = {
+    "air": {"drawType": "none"}
+};
 
-    itemEntityIcon = block.copy()
-    scale = itemEntitySize / blockSize
 
-    itemEntityIcon = pygame.transform.scale_by(itemEntityIcon, scale)
-    itemEntityIcons[blockName] = itemEntityIcon
+let itemEntityRenderData = {}
+
+
+let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha": 255, "drawType": "strokeRect",
+                        "lineWidth": "3px"}
+
+
+let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2;
+
+function addABlock (blockName, color, borderColor, alpha = 255) {
+
+};
 
 addABlock("grass", (0, 200, 0), (150, 75, 0))
 addABlock("dirt", (150, 75, 0))
@@ -122,107 +76,158 @@ addABlock("log", (110, 79, 38), (110, 79, 38))
 addABlock("planks", (140, 109, 68))
 addABlock("leaves", (29, 64, 17))
 
-imageData = convertTextToImageData("block images generated", (100, 75))
-screen.blits([imageData])
-pygame.display.flip()
 
 
+function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
+    let chunkList = [];
+    let cameraChunk = camera.currentChunk;
+    let screenExtension = 1;
 
-        
+    let terrainGenRange = {
+        "x": {
+        "min": cameraChunk[0] - screenExtension - rangeOfGeneration,
+        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + rangeOfGeneration
+        },
+        "z": {
+            "min": cameraChunk[1] - screenExtension - rangeOfGeneration,
+            "max": cameraChunk[1] + canvasHeightInChunks + screenExtension + 1 + rangeOfGeneration
+        }
+    };
 
-def generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = False):
-    chunkList = []
-    cameraChunk = camera.currentChunk
-    screenExtension = 1
+    let structureGenRange = {
+        "x": {
+        "min": cameraChunk[0] - screenExtension - (rangeOfGeneration - 1),
+        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
+        },
+        "z": {
+            "min": cameraChunk[1] - screenExtension - (rangeOfGeneration - 1),
+            "max": cameraChunk[1] + canvasHeightInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
+        }
+    };
 
-    xRange = cameraChunk[0] - screenExtension
-    maxXRange = cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
-    zRange = cameraChunk[1] - screenExtension
-    maxZRange = cameraChunk[1] + canvasHeightInChunks + screenExtension + 1
-
-    # initial generation in a larger area
-    for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
-        for z in range(zRange - rangeOfGeneration, maxZRange + rangeOfGeneration):
-            if (x, z) not in chunks:
-                generateChunkTerrain((x, z))
-
-    # generate structures
-    for x in range(xRange - (rangeOfGeneration - 1), maxXRange + (rangeOfGeneration - 1)):
-        for z in range(zRange - (rangeOfGeneration - 1), maxZRange + (rangeOfGeneration - 1)):
-        
-            if not chunks[(x, z)]["structuresGenerated"]:
-                generateChunkStructures((x, z))
-
-    # prepare the chunks for being rendered when all generation is (probably) done
-    for x in range(xRange, maxXRange):
-        for z in range(zRange, maxZRange):
-            chunkList.append((x, z))
-            if not chunks[(x, z)]["blocksUpdated"]:
-                runBlockUpdatesAfterGeneration((x, z))
-
-    if returnChunkList:
-        return chunkList
+    let blockUpdateRange = {
+        "x": {
+        "min": cameraChunk[0] - screenExtension,
+        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
+        },
+        "z": {
+            "min": cameraChunk[1] - screenExtension,
+            "max": cameraChunk[1] + canvasHeightInChunks + screenExtension + 1
+        }
+    };
 
 
-def generateSpawnArea():
-    chunkList = []
-    cameraChunk = camera.currentChunk
-    screenExtension = 1
+    for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
+        for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
+            if (chunks[[x, z].toString] === undefined) {generateChunkTerrain([x, z]);};
+        };
+    };
 
-    xRange = cameraChunk[0] - screenExtension
-    maxXRange = cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
-    zRange = cameraChunk[1] - screenExtension
-    maxZRange = cameraChunk[1] + canvasHeightInChunks + screenExtension + 1
 
-    rangeOfGeneration = 3
+    for (let x = structureGenRange.x.min; x < structureGenRange.x.max; x++) {
+        for (let z = structureGenRange.z.min; z < structureGenRange.z.max; z++) {
+            if (!chunks[[x, z].toString()].structuresGenerated) {generateChunkStructures([x, z]);};
+        }
+    }
 
-    # initial generation in a larger area
-    for x in range(xRange - rangeOfGeneration, maxXRange + rangeOfGeneration):
-        for z in range(zRange - rangeOfGeneration, maxZRange + rangeOfGeneration):
-            if (x, z) not in chunks:
-                generateChunkTerrain((x, z))
+    for (let x = blockUpdateRange.x.min; x < blockUpdateRange.x.max; x++) {
+        for (let z = blockUpdateRange.z.min; z < blockUpdateRange.z.max; z++) {
+            chunkList.push([x, z]);
+            if (!chunks[[x, z].toString()].blocksUpdated) {
+                runBlockUpdatesAfterGeneration([x, z]);
+            }
+        }
+    }
 
-    imageData = convertTextToImageData("chunk terrain generated", (100, 100))
-    screen.blits([imageData])
-    pygame.display.flip()
+    if (returnChunkList) {return chunkList;};
+};
 
-    # generate structures
-    for x in range(xRange - (rangeOfGeneration - 1), maxXRange + (rangeOfGeneration - 1)):
-        for z in range(zRange - (rangeOfGeneration - 1), maxZRange + (rangeOfGeneration - 1)):
-            if not chunks[(x, z)]["structuresGenerated"]:
-                generateChunkStructures((x, z))
 
-    imageData = convertTextToImageData("chunk structures generated", (100, 150))
-    screen.blits([imageData])
-    pygame.display.flip()
+export function generateSpawnArea() {
+    let chunkList = [];
+    let cameraChunk = camera.currentChunk;
+    let screenExtension = 1;
 
-    # prepare the chunks for being rendered when all generation is (probably) done
-    for x in range(xRange, maxXRange):
-        for z in range(zRange, maxZRange):
-            chunkList.append((x, z))
-            if not chunks[(x, z)]["blocksUpdated"]:
-                runBlockUpdatesAfterGeneration((x, z))
+    let rangeOfGeneration = 3;
 
-    imageData = convertTextToImageData("chunk blocks have been updated", (100, 200))
-    screen.blits([imageData])
-    pygame.display.flip()
+
+    let terrainGenRange = {
+        "x": {
+        "min": cameraChunk[0] - screenExtension - rangeOfGeneration,
+        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + rangeOfGeneration
+        },
+        "z": {
+            "min": cameraChunk[1] - screenExtension - rangeOfGeneration,
+            "max": cameraChunk[1] + canvasHeightInChunks + screenExtension + 1 + rangeOfGeneration
+        }
+    };
+
+    let structureGenRange = {
+        "x": {
+        "min": cameraChunk[0] - screenExtension - (rangeOfGeneration - 1),
+        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
+        },
+        "z": {
+            "min": cameraChunk[1] - screenExtension - (rangeOfGeneration - 1),
+            "max": cameraChunk[1] + canvasHeightInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
+        }
+    };
+
+    let blockUpdateRange = {
+        "x": {
+        "min": cameraChunk[0] - screenExtension,
+        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
+        },
+        "z": {
+            "min": cameraChunk[1] - screenExtension,
+            "max": cameraChunk[1] + canvasHeightInChunks + screenExtension + 1
+        }
+    };
+
+
+    for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
+        for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
+            if (chunks[[x, z].toString] === undefined) {generateChunkTerrain([x, z]);};
+        };
+    };
+    ctx.fillText("chunk terrain generated", 100, 100);
+
+
+    for (let x = structureGenRange.x.min; x < structureGenRange.x.max; x++) {
+        for (let z = structureGenRange.z.min; z < structureGenRange.z.max; z++) {
+            if (!chunks[[x, z].toString()].structuresGenerated) {generateChunkStructures([x, z]);};
+        }
+    }
+    ctx.fillText("chunk structures generated", 100, 150)
+
+    for (let x = blockUpdateRange.x.min; x < blockUpdateRange.x.max; x++) {
+        for (let z = blockUpdateRange.z.min; z < blockUpdateRange.z.max; z++) {
+            chunkList.push([x, z]);
+            if (!chunks[[x, z].toString()].blocksUpdated) {
+                runBlockUpdatesAfterGeneration([x, z]);
+            }
+        }
+    }
+    
+    ctx.fillText("chunk blocks have been updated", 100, 200)
+};
     
 
 
 
 
 
-def render(deltaTime):
+export function render(deltaTime) {
 
 
 
     screen.fill((0, 0, 0))
-    # get the chunks to be used for rendering
-    chunkList = generateNearbyAreas(2, True)
+    // get the chunks to be used for rendering
+    chunkList = generateNearbyAreas(2, true)
 
 
-    # separate the blocks into layers, so they get rendered in the right order
-    # also, keep track of the scale for each y layer
+    // separate the blocks into layers, so they get rendered in the right order
+    // also, keep track of the scale for each y layer
     blocks = []
     scaleFactors = []
     for i in range(chunkSize[1]):
@@ -236,11 +241,11 @@ def render(deltaTime):
         for y in range(chunkSize[1]):
             
         
-            # scale images outside of x/z loop, better performance
+            // scale images outside of x/z loop, better performance
             
             scaleFactor = 1
             
-            # scale smoother when using exact position rather than player's block coord
+            // scale smoother when using exact position rather than player's block coord
             playerYInBlocks = player.y / blockSize
 
 
@@ -281,35 +286,35 @@ def render(deltaTime):
                         xPos += chunkCoord[0] * totalChunkSize
                         zPos += chunkCoord[1] * totalChunkSize
 
-                        thisBlockHasAlpha = False
+                        thisBlockHasAlpha = false
                         
                         if block["alphaValue"] < 255:
                             if block["type"] != "water":
-                                if player.blockCoord[1] < y: # player is underneath this block
+                                if player.blockCoord[1] < y: // player is underneath this block
                                     fiveBlocks = 5 * blockSize
 
                                     if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
                                         if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
-                                            thisBlockHasAlpha = True
+                                            thisBlockHasAlpha = true
 
                             if block["type"] == "water":
-                                thisBlockHasAlpha = True
+                                thisBlockHasAlpha = true
                                     
 
                         
                         
                         
-                        if not scaledImages[block["type"]]["scaled"]: # image has not been scaled
+                        if not scaledImages[block["type"]]["scaled"]: // image has not been scaled
                             if scaleFactor != 1:
 
                                 newImageData = scaledImages[block["type"]]["data"]
-                                #if scaleFactor > 1:
-                                #    newImageData = pygame.transform.scale_by(newImageData, scaleFactor * 1.1)
-                                if True:#scaleFactor < 1:
+                                //if scaleFactor > 1:
+                                //    newImageData = pygame.transform.scale_by(newImageData, scaleFactor * 1.1)
+                                if true://scaleFactor < 1:
                                     newImageData = pygame.transform.scale_by(newImageData, scaleFactor)
                                 scaledImages[block["type"]]["data"] = newImageData
                                 
-                            scaledImages[block["type"]]["scaled"] = True
+                            scaledImages[block["type"]]["scaled"] = true
 
                         if thisBlockHasAlpha:
                             
@@ -317,9 +322,9 @@ def render(deltaTime):
                             alphaValue = block["alphaValue"]
 
 
-                            imageExists = scaledImages[blockType]["alphaData"].get(alphaValue, False)
+                            imageExists = scaledImages[blockType]["alphaData"].get(alphaValue, false)
                             
-                            if imageExists == False:
+                            if imageExists == false:
                                 
                                 newImage = scaledImages[blockType]["data"].copy()
                                 newImage.set_alpha(alphaValue)
@@ -353,7 +358,7 @@ def render(deltaTime):
         
     
 
-    # add player to rendering
+    // add player to rendering
     if player.blockCoord[1] < chunkSize[1]:
         blocks[player.blockCoord[1]].append(player.imageData)
     else:
@@ -385,7 +390,7 @@ def render(deltaTime):
             
             i -= 1
     
-    # add blocks to rendering
+    // add blocks to rendering
     for y in range(chunkSize[1]):
         renderingData += blocks[y]
 
@@ -395,16 +400,16 @@ def render(deltaTime):
     imageData = (image, position)
     renderingData.append(imageData)
         
-    # run inventory rendering
+    // run inventory rendering
     if player.otherInventoryData["open"]:
-        # render the base part of the inventory
+        // render the base part of the inventory
         image = player.inventoryRenderingData["inventorySurface"]
         position = player.inventoryRenderingData["inventoryRenderPosition"]
         imageData = (image, position)
 
         renderingData.append(imageData)
 
-        # render the 2x2 crafting grid and armor slots (if they're visible)
+        // render the 2x2 crafting grid and armor slots (if they're visible)
         if player.otherInventoryData["showCraftingAndArmor"]:
             image = player.inventoryRenderingData["craftingAndArmorSurface"]
             position = player.inventoryRenderingData["craftingAndArmorRenderPosition"]
@@ -412,7 +417,7 @@ def render(deltaTime):
 
             renderingData.append(imageData)
 
-        # render the 3x3 crafting ui if its visible
+        // render the 3x3 crafting ui if its visible
         if player.otherInventoryData["showCraftingTable"]:
             image = player.inventoryRenderingData["craftingTableSurface"]
             position = player.inventoryRenderingData["craftingTableRenderPosition"]
@@ -420,7 +425,7 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
-        # draw a rect thingy over the hovered slot, highlights it
+        // draw a rect thingy over the hovered slot, highlights it
         if mouse.inPlayerInventory and mouse.inASlot:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             slot = player.inventory[mouse.hoveredSlotId]
@@ -429,7 +434,7 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
-        # highlight selected slots in crafting table
+        // highlight selected slots in crafting table
         if mouse.inASlot and mouse.inPlayerCraftingTable and player.otherInventoryData["showCraftingTable"]:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
@@ -438,7 +443,7 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
-        # also highlight hovered slots, but only in the crafting and armor slots, if they're visible
+        // also highlight hovered slots, but only in the crafting and armor slots, if they're visible
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
@@ -447,7 +452,7 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
-        # render all the items of the base player inventory
+        // render all the items of the base player inventory
         for slot in player.inventory:
             item = slot["contents"]
             if item != "empty":
@@ -471,7 +476,7 @@ def render(deltaTime):
                     imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
                     renderingData.append(imageData)
 
-        # render items in 2x2 crafting and armor, only if they're visible
+        // render items in 2x2 crafting and armor, only if they're visible
         if player.otherInventoryData["showCraftingAndArmor"]:
             for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
                 item = slot["contents"]
@@ -500,10 +505,10 @@ def render(deltaTime):
         
 
             for slot in player.armor.values():
-                #whoops, no armor exists, neither do the slots
+                //whoops, no armor exists, neither do the slots
                 pass
             
-        # render stuff in the 3x3 crafting grid if its visible
+        // render stuff in the 3x3 crafting grid if its visible
         if player.otherInventoryData["showCraftingTable"]:
             for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
                 item = slot["contents"]
@@ -530,7 +535,7 @@ def render(deltaTime):
 
         
 
-    # run hotbar rendering
+    // run hotbar rendering
     for slotId, slot in enumerate(player.hotbar):
         
         item = slot["contents"]
@@ -566,7 +571,7 @@ def render(deltaTime):
             imageData = (image, position)
             renderingData.append(imageData)
 
-    # fix to selectedHotbarSlot thingy being rendered over the item counts
+    // fix to selectedHotbarSlot thingy being rendered over the item counts
             
     for slotId, slot in enumerate(player.hotbar):
         if slot["count"] > 1:
@@ -575,20 +580,20 @@ def render(deltaTime):
 
 
     
-    # run mouse's held item rendering
-    # also highlights and tells what block you're hovering over
+    // run mouse's held item rendering
+    // also highlights and tells what block you're hovering over
     if not player.otherInventoryData["open"]:
         x = math.floor(mouse.cameraRelativeX / blockSize)
         z = math.floor(mouse.cameraRelativeZ / blockSize)
         x *= blockSize
         z *= blockSize
-        player.canReachSelectedBlock = False
+        player.canReachSelectedBlock = false
 
         if x < player.x + (player.horizontalBlockReach * blockSize):
             if x > player.x - (player.horizontalBlockReach * blockSize):
                 if z < player.z + (player.horizontalBlockReach * blockSize):
                     if z > player.z - (player.horizontalBlockReach * blockSize):
-                        player.canReachSelectedBlock = True
+                        player.canReachSelectedBlock = true
                         x -= camera.x
                         z -= camera.z
 
@@ -597,9 +602,9 @@ def render(deltaTime):
                         renderingData.append((blockHighlightSurface, position))
                         
 
-                        # do stuff so it displays the mouse's y selection and 
-                        # the block that the mouse is theoretically currently
-                        # selecting
+                        // do stuff so it displays the mouse's y selection and 
+                        // the block that the mouse is theoretically currently
+                        // selecting
                         position = (mouse.x, mouse.y + blockSize * 1.5)
 
                         string = mouse.hoveredBlock["block"]["type"] + ", " + str(mouse.selectedYChange)
@@ -630,7 +635,7 @@ def render(deltaTime):
 
     
 
-    # debug things
+    // debug things
     debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
     imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
@@ -639,7 +644,7 @@ def render(deltaTime):
     
     screen.blits(renderingData)
 
-    # pretty much just debug after this
+    // pretty much just debug after this
     
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)
     debugRenderingStuff2 += "player yv " + str(player.yv)
@@ -654,33 +659,7 @@ def render(deltaTime):
 
     pygame.display.flip()
 
-def doCommandStuff(commandString, previousCommandString, submitCommand):
-
-
-    if previousCommandString != commandString or keysPressed[pygame.K_BACKSPACE]:
-
-        imageData = convertTextToImageData(commandString, (30, canvasHeight - 100))
-        size = font.size(commandString + "       ")
-        rect = pygame.rect.Rect(30, canvasHeight - 100, size[0], size[1])
-        pygame.draw.rect(screen, (0, 0, 0), rect)
-        screen.blit(imageData[0], imageData[1])
-        pygame.display.flip()
-
-    if keysPressed[pygame.K_RETURN]:
-        submitCommand = True
-
-    return submitCommand
-
-def showInvalidCommand():
-    string = "invalid command"
-    imageData = convertTextToImageData(string, (30, canvasHeight - 100))
-    size = font.size(string)
-    rect = pygame.rect.Rect(30, canvasHeight - 100, size[0], size[1])
-    pygame.draw.rect(screen, (0, 0, 0), rect)
-    screen.blit(imageData[0], imageData[1])
-    pygame.display.flip()
-
-
+};
 
 
 showLoadingProgress("rendering initialized")
