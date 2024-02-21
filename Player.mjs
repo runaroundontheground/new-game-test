@@ -1653,62 +1653,57 @@ class Player {
                 if (breakingType == block.effectiveTool) {correctTool = true;};
                 
                 
-                if powerfulEnoughTool and correctTool:
-                    this.blockBreakProgress += breakingSpeed / fps
-                else:
- 
-                    this.blockBreakProgress += slowestBreakSpeed / fps
- 
- 
-                
- 
+                if (powerfulEnoughTool && correctTool) {
+                    this.blockBreakProgress += breakingSpeed / fps;
+                } else {this.blockBreakProgress += slowestBreakSpeed / fps;};
  
  
                 // breaking stuff is based on seconds of time,
                 // in tools, the breaking speed is a percentage of a second per frame
  
-                if this.blockBreakProgress >= fps:
+                if (this.blockBreakProgress >= fps) {
                     this.blockBreakProgress = 0
  
-                    if correctTool or block["dropsWithNoTool"]:
+                    if (correctTool || block.dropsWithNoTool) {
                     
-                        itemData = PlaceableItem(block["type"])
+                        let itemData = PlaceableItem(block["type"])
  
-                        chunkCoord = mouse.hoveredBlock["chunkCoord"]
-                        blockCoord = mouse.hoveredBlock["blockCoord"]
-                        x = (chunkCoord[0] * chunkSize[0]) * blockSize
-                        y = blockCoord[1] * blockSize
-                        z = (chunkCoord[1] * chunkSize[0]) * blockSize
+                        let chunkCoord = mouse.hoveredBlock.chunkCoord;
+                        let blockCoord = mouse.hoveredBlock.blockCoord;
+                        let x = (chunkCoord[0] * chunkSize[0]) * blockSize
+                        let y = blockCoord[1] * blockSize
+                        let z = (chunkCoord[1] * chunkSize[0]) * blockSize
  
                         x += blockCoord[0] * blockSize
                         z += blockCoord[2] * blockSize
  
                     
                     
-                        count = 1
-                        xv = random.randint(-3, 3)
-                        zv = random.randint(-3, 3)
-                        if true: // replace later with silk touch or something
-                            if block["type"] == ("grass" or "snowy grass"):
-                                itemData.name = "dirt"
-                            if block["type"] == ("stone" or "snowy stone"):
-                                itemData.name = "cobblestone"
+                        let count = 1
+                        let xv = random.randint(-3, 3)
+                        let zv = random.randint(-3, 3)
+                        if (true) { // replace later with silk touch or something
+                            if (block.type == ("grass" || "snowy grass")) {itemData.name = "dirt"};
+                            if (block.type == ("stone" || "snowy stone")) {itemData.name = "cobblestone";};
+                        };
                             
-                            
-                        entity = ItemEntity(itemData, count, x, y, z, xv, 5, zv)
-                        entities.append(entity)
+                        let yv = 5;
+                        let entity = ItemEntity(itemData, count, x, y, z, xv, yv, zv);
+                        entities.append(entity);
+                    };
  
-                    air = {
+                    let air = {
                         "type": "air",
                         "render": false,
                         "alphaValue": 255,
                         "hardness": "infinity",
                         "effectiveTool": "none"
-                    }
+                    };
  
-                    chunks[chunkCoord]["data"][blockCoord] = air.copy()
+                    chunks[chunkCoord.toString()].data[blockCoord.toString()] = air.copy()
  
-                    smallScaleBlockUpdates(chunkCoord, blockCoord)
+                    smallScaleBlockUpdates(chunkCoord, blockCoord);
+                };
             };
         };
     };
@@ -1716,50 +1711,51 @@ class Player {
                 
                 
  
-    def changeCraftingGrid(this, gridSize):
+    this.changeCraftingGrid = function (gridSize) {
         
  
-        // attempt to place items back into inventory
+        // attempt to place items back into inventory, otherwise drop them
         
-        done = false
  
-        def checkStackables(slot, done):
-            if slot["contents"] != "empty":
-                if slot["contents"].stackable:
-                    for otherSlot in this.inventory.values():
-                        if otherSlot["contents"] != "empty":
-                            if otherSlot["contents"].stackable:
-                                newOtherSlotCount = slot["count"] + otherSlot["count"]
-                                if newOtherSlotCount <= maxStackSize:
-                                    otherSlot["count"] = newOtherSlotCount
-                                    slot["count"] = 0
-                                    slot["contents"] = 0
-                                    return true
-                                
-                                else:
-                                    slot["count"] -= newOtherSlotCount - maxStackSize
-                                    otherSlot["count"] = maxStackSize
-            return done
-        
-        def checkEmptySlots(slot, done):
-            if slot["contents"] != "empty":
-                for otherSlot in this.inventory.values():
-                    if otherSlot["contents"] == "empty":
-                        otherSlot["contents"] = slot["contents"]
-                        otherSlot["count"] = slot["count"]
-                        slot["contents"] = "empty"
-                        slot["count"] = 0
-                        return true
- 
- 
- 
- 
-            return done
- 
- 
- 
+        for (let i = 0; i < this.crafting[this.crafting.gridSize].slots; i++) {
+            
+            if (this.crafting[this.crafting.gridSize].slots[i].contents !== "empty") {
+            // try to put into inventory, if that fails, put into hotbar, if that fails, drop it
+            let itemMoved = this.moveItem(this.crafting[this.crafting.gridSize].slots[i],
+                this.crafting[this.crafting.gridSize].slots[i].contents, maxStackSize, this.inventory);
+            
+            if (!itemMoved) {
+                itemMoved = this.moveItem(this.crafting[this.crafting.gridSize].slots[i],
+                                            this.crafting[this.crafting.gridSize].slots[i].contents,
+                                            maxStackSize, this.hotbar);
+            }
+
+
+            if (!itemMoved) {
+                // center of player
+                let x = this.x + this.width/2
+                let y = this.y - this.height/2
+                let z = this.z + this.width/2
+    
+                // figure out velocity for angle of player to mouse
+    
+                let xDiff = mouse.cameraRelativeX - x
+                let yDiff = mouse.cameraRelativeZ - z
+    
+                let angle = Math.atan2(yDiff, xDiff)                        
+    
+                let xv = Math.cos(angle) * 3
+                let yv = 2
+                let zv = Math.sin(angle) * 3
+    
+                this.crafting[this.crafting.gridSize].slots[i].contents.drop(x, y, z, xv, yv, zv)
+
+            };
+        }
+    };
         for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
             if slotId != "resultSlot":
+                let itemMoved = false;
                 done = checkStackables(slot, done)
                 done = checkEmptySlots(slot, done)
  
@@ -1768,30 +1764,6 @@ class Player {
                 slot["contents"] = "empty"
                 slot["count"] = 0
  
- 
-                    
- 
-        if not done:
- 
-            // center of player
-            x = this.x + this.width/2
-            y = this.y - this.height/2
-            z = this.z + this.width/2
- 
-            // figure out velocity for angle of player to mouse
- 
-            xDiff = mouse.cameraRelativeX - x
-            yDiff = mouse.cameraRelativeZ - z
- 
-            angle = Math.atan2(yDiff, xDiff)                        
- 
-            xv = Math.cos(angle) * 3
-            yv = 2
-            zv = Math.sin(angle) * 3
- 
-            for slotId, slot in this.crafting[this.crafting["gridSize"]]["slots"].items():
- 
-                item.drop(x, y, z, xv, yv, zv)
  
  
         if gridSize == 2:
@@ -1802,7 +1774,11 @@ class Player {
             this.otherInventoryData["showCraftingAndArmor"] = false
             this.otherInventoryData["showCraftingTable"] = true
             this.crafting["gridSize"] = gridSize
-                };
+            };
+        };
+
+
+    };
 };
             
  

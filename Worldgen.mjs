@@ -247,8 +247,8 @@ function runBlockUpdatesAfterGeneration(chunkCoord) {
 
         function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
           let localBlockAndChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord);
-          let localBlockCoord = localBlockAndChunkCoord[0];
-          let localChunkCoord = localBlockAndChunkCoord[1];
+          let localBlockCoord = localBlockAndChunkCoord[0].toString();
+          let localChunkCoord = localBlockAndChunkCoord[1].toString();
 
           if (render != "no change") {
             chunks[localChunkCoord].data[localBlockCoord].render = render;
@@ -360,7 +360,7 @@ function smallScaleBlockUpdates(chunkCoord, blockCoord) {
   let y = blockCoord[1];
   let z = blockCoord[2];
 
-  let block = chunks[chunkCoord].data[blockCoord];
+  let block = chunks[chunkCoord.toString()].data[blockCoord.toString()];
 
   function checkForSolidBlock(block) {
     if (block.type != "water" && block.type != "air") { return true; };
@@ -387,8 +387,8 @@ function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
   function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
     let localBlockAndChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord);
-    let localBlockCoord = localBlockAndChunkCoord[0];
-    let localChunkCoord = localBlockAndChunkCoord[1];
+    let localBlockCoord = localBlockAndChunkCoord[0].toString();
+    let localChunkCoord = localBlockAndChunkCoord[1].toString();
 
     if (render != "no change") {
       chunks[localChunkCoord].data[localBlockCoord].render = render;
@@ -502,11 +502,11 @@ export function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = fal
       chunkZ -= 1;
     };
 
-    blockCoord = [x, y, z].toString();
-    chunkCoord = [chunkX, chunkZ].toString();
+    blockCoord = [x, y, z].toString()
+    chunkCoord = [chunkX, chunkZ].toString()
   } else {
-    blockCoord = getBlockCoord(xPos, yPos, zPos);
-    chunkCoord = getChunkCoord(xPos, zPos);
+    blockCoord = getBlockCoord(xPos, yPos, zPos).toString();
+    chunkCoord = getChunkCoord(xPos, zPos).toString();
   };
 
 
@@ -531,7 +531,7 @@ export function getChunkCoord(xPos = 1, zPos = 1) {
   let x = Math.floor(xPos / totalChunkSize);
   let z = Math.floor(zPos / totalChunkSize);
 
-  chunkCoord = [x, z].toString();
+  chunkCoord = [x, z];
 
   return chunkCoord;
 };
@@ -557,7 +557,7 @@ export function getBlockCoord(xPos = 1, yPos = 1, zPos = 1, usesSimpleInputs = f
   while (z < 0) { z += chunkSize[0]; };
   while (z >= chunkSize[0]) { z -= chunkSize[0]; };
 
-  blockCoord = [x, y, z].toString();
+  blockCoord = [x, y, z];
 
   return blockCoord;
 };
@@ -590,8 +590,8 @@ function getBlockAndChunkCoord(xPos, yPos, zPos, inputChunkCoord) {
     chunkZ += 1;
   };
 
-  let blockCoord = [x, y, z].toString();
-  let chunkCoord = [chunkX, chunkZ].toString();
+  let blockCoord = [x, y, z];
+  let chunkCoord = [chunkX, chunkZ];
   let blockAndChunkCoord = [blockCoord, chunkCoord];
 
   return blockAndChunkCoord;
