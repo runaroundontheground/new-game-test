@@ -1281,7 +1281,7 @@ class Player {
         };
     
  
-        function recipeChecksAndStuff() {
+        function recipeChecksAndStuff () {
             // dict with total amount of each item in crafting slots
             this.totalCraftingContents = {};
             this.isCrafting = false;
@@ -1409,7 +1409,7 @@ class Player {
                                     let itemName = checkADirection(currentDirection, i);
 
                                     if (itemName == items[i]) {
-                                        slotDictThing["containsCorrectItem"] = true;
+                                        slotDictThing.containsCorrectItem = true;
                                     }
                                     slotsChecked.push(slotDictThing);
                                 }
@@ -1473,99 +1473,103 @@ class Player {
  
  
                     
-                if this.totalCraftingContents == recipe["requiredItems"]:
-            
-                    instructions = recipe["recipeInstructions"]
- 
-                    foundARecipe = checkForSpecificItemInSlot(instructions)
+                if (this.totalCraftingContents == recipe["requiredItems"]) {
+             
+                    let foundARecipe = checkForSpecificItemInSlot(recipe.instructions)
  
                     if (foundARecipe) {return [true, recipe]};
- 
- 
+                }
                 return [false, undefined];
             };
  
-            def shapelessRecipeLogic(recipe):
+            function shapelessRecipeLogic(recipe) {
                
-                if this.totalCraftingContents == recipe["requiredItems"]:
-                    return true, recipe
+                if (this.totalCraftingContents == recipe.requiredItems) {return [true, recipe];};
+                return [false, undefined];
+            };
+ 
+            
+            
+            
+            if (this.isCrafting) {
+ 
+                for (const recipe of Object.values(recipes[this.crafting.gridSize].exact)) {
+                    let recipeDataStuff = exactRecipeDetection(recipe);
+                    foundARecipe = recipeDataStuff[0];
+                    recipeThatWasFound = recipeDataStuff[1];
+                    if (foundARecipe) {break;};
+                };
+ 
+                if (!foundARecipe) {
+                    for (const recipe of Object.keys( recipes[this.crafting.gridSize].nearExact )) {
+                        let recipeDataStuff = nearExactRecipeLogic(recipe);
+                        foundARecipe = recipeDataStuff[0];
+                        recipeThatWasFound = recipeDataStuff[1];
+                        if (foundARecipe) {break;};
+                    }
+                };
                 
+                if (!foundARecipe) {
+                    for (const recipe of Object.keys ( recipes[this.crafting.gridSize].shapeless )) {
+                        let recipeDataStuff = shapelessRecipeLogic(recipe);
+                        foundARecipe = recipeDataStuff[0];
+                        recipeThatWasFound = recipeDataStuff[1];
+                        if (foundARecipe) {break;};
+                    };
+                };
+            };
  
- 
- 
-                return false, None
- 
-            
-            
-            
-            if this.isCrafting:
- 
-                for recipe in recipes[this.crafting["gridSize"]]["exact"].values():
-                    foundARecipe, recipeThatWasFound = exactRecipeDetection(recipe)
-                    if foundARecipe:
-                        break
- 
-                if not foundARecipe:
-                    for recipe in recipes[this.crafting["gridSize"]]["nearExact"].values():
-                        foundARecipe, recipeThatWasFound = nearExactRecipeLogic(recipe)
-                        if foundARecipe:
-                            break
-                
-                if not foundARecipe:
-                    for recipe in recipes[this.crafting["gridSize"]]["shapeless"].values():
-                        foundARecipe, recipeThatWasFound = shapelessRecipeLogic(recipe)
-                        if foundARecipe:
-                            break
- 
-                    
-            if foundARecipe:
-                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["contents"] = recipeThatWasFound["output"]
-                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["count"] = recipeThatWasFound["outputCount"]
-            else:
-                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["contents"] = "empty"
-                this.crafting[this.crafting["gridSize"]]["slots"]["resultSlot"]["count"] = 0
+            let gridSize = this.crafting.gridSize;
+            if (foundARecipe) {
+                this.crafting[gridSize].resultSlot.contents = recipeThatWasFound.output;
+                this.crafting[gridSize].resultSlot.count = recipeThatWasFound.outputCount;
+            } else {
+                this.crafting[gridSize].resultSlot.contents = "empty";
+                this.crafting[gridSize].resultSlot.count = 0;
+            };
  
  
  
             
                         
         };
-        recipeChecksAndStuff()
+        recipeChecksAndStuff();
 
  
 };
         
-    def handleTimers(this):
-        for key, timerValue in this.timers.items():
-            if timerValue > 0:
-                timerValue -= 1
-            if timerValue < 0:
-                timerValue += 1
-            if timerValue != 0:
-                print(str(key) + " " + str(timerValue))
-            this.timers[key] = timerValue
+    this.handleTimers = function () {
+        for (let i = 0; i < Object.keys(this.timers); i++) {
+            let timerValue = this.timers[i];
+            if (timerValue > 0) {timerValue -= 1;};
+            if (timerValue < 0) {timerValue += 1;};
+            this.timers[i] = timerValue;
+        }
+    };
  
  
  
-    def updateCamera(this):
+    this.updateCamera = function () {
         camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = this.y
         camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
         
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
+    };
  
  
  
-    def updateImageThings(this):
+    this.updateImageThings = function () {
         imageX = this.x - camera.x
         imageY = this.z - camera.z
         
-        coordinate = (imageX, imageY)
-        this.imageData = (this.image, coordinate)
+        coordinate = [imageX, imageY]
+        this.imageData = [this.image, coordinate]
+    };
  
  
  
-    def doStuff(this, deltaTime):
+    this.doStuff = function (deltaTime) {
         // need to update mouse's camera relative things here, don't want circular imports
         mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth/2)
         mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight/2)
@@ -1578,46 +1582,55 @@ class Player {
         
         this.updateCamera()
         this.updateImageThings()
+    };
  
  
  
-    def positionInSpawnArea(this):
-        for y in range(chunkSize[1] - 1):
-            if findBlock(0, y * blockSize, 0):
-                if not findBlock(0, (y + 1) * blockSize, 0):
-                    this.y = (y * blockSize) + this.height
-                    break
-            else:
-                this.y = chunkSize[1] * blockSize
+    this.positionInSpawnArea = function () {
+        for (let y = 0; y < chunkSize[1] - 1; y++) {
+            if (findBlock(0, y * blockSize, 0)) {
+                if (!findBlock(0, (y + 1) * blockSize, 0)) {
+                    this.y = (y * blockSize) + this.height;
+                    break;
+                }
+            } else {
+                this.y = chunkSize[1] * blockSize + this.height;
+            }
+        }
+    };
  
  
  
-    def doStuffOnRightClick(this, heldItem = "empty"):
-        hoveredBlockType = mouse.hoveredBlock["block"]["type"]
+    this.doStuffOnRightClick = function (heldItem = "empty") {
+        let hoveredBlockType = mouse.hoveredBlock.block.type;
         
-        if hoveredBlockType == "crafting table":
-            this.otherInventoryData["showCraftingAndArmor"] = false
-            this.otherInventoryData["showCraftingTable"] = true
-            this.crafting["gridSize"] = 3
+        if (hoveredBlockType == "crafting table") {
+            this.otherInventoryData.showCraftingAndArmor = false;
+            this.otherInventoryData.showCraftingTable = true;
+            this.crafting.gridSize = 3;
+        };
+    };
  
  
-    def doStuffOnLeftClick(this, currentlyHeldItem = "empty"):
-        item = currentlyHeldItem
+    this.doStuffOnLeftClick = function (currentlyHeldItem = "empty") {
+        let item = currentlyHeldItem;
  
-        breakingPower = 1
-        breakingSpeed = 1
-        breakingType = "none"
-        attack = 1
-        knockback = 1
-        slowestBreakSpeed = 20/fps
+        let breakingPower = 1
+        let breakingSpeed = 1
+        let breakingType = "none"
+        let attack = 1
+        let knockback = 1
+        let slowestBreakSpeed = 20/fps
  
-        if item != "empty":
-            if item.itemType == "ToolItem":
-                breakingPower = item.breakingPower
-                breakingSpeed = item.breakingSpeed
-                breakingType = item.breakingType
-                attack = item.attack
-                knockback = item.knockback
+        if (item != "empty") {
+            if (item.itemType == "ToolItem") {
+                breakingPower = item.breakingPower;
+                breakingSpeed = item.breakingSpeed;
+                breakingType = item.breakingType;
+                attack = item.attack;
+                knockback = item.knockback;
+            };
+        };
             
         
         // run a test for interaction with entitys, hitting them, etc
@@ -1625,22 +1638,19 @@ class Player {
  
         // else:
         // break blocks
-        if this.currentBreakingBlock != mouse.hoveredBlock["block"]:
-            this.blockBreakProgress = 0
+        if (this.currentBreakingBlock != mouse.hoveredBlock.block) {this.blockBreakProgress = 0;};
  
-        if this.canReachSelectedBlock:
+        if (this.canReachSelectedBlock) {
  
-            this.currentBreakingBlock = mouse.hoveredBlock["block"]
-            block = this.currentBreakingBlock
+            this.currentBreakingBlock = mouse.hoveredBlock.block;
+            let block = this.currentBreakingBlock;
             
-            if block["hardness"] != "infinity":
-                correctTool = false
-                powerfulEnoughTool = false
+            if (block["hardness"] != "infinity") {
+                let correctTool = false
+                let powerfulEnoughTool = false
  
-                if breakingPower >= block["hardness"]:
-                    powerfulEnoughTool = true
-                if breakingType == block["effectiveTool"]:
-                    correctTool = true
+                if (breakingPower >= block.hardness) {powerfulEnoughTool = true;};
+                if (breakingType == block.effectiveTool) {correctTool = true;};
                 
                 
                 if powerfulEnoughTool and correctTool:
@@ -1699,6 +1709,9 @@ class Player {
                     chunks[chunkCoord]["data"][blockCoord] = air.copy()
  
                     smallScaleBlockUpdates(chunkCoord, blockCoord)
+            };
+        };
+    };
  
                 
                 

@@ -5,7 +5,7 @@ showLoadingProgress("loading Recipes.mjs");
 
 function addRecipe(
     recipeType, recipeName, requiredItems, output, outputCount = 1, recipeShape,
-    requiredGridSize = 2, recipeInstructions
+    requiredGridSize = 2, instructions
 ) {
     /*
     recipeType:
@@ -31,7 +31,7 @@ function addRecipe(
         only planned working values are 2 and 3, 
         if the size is > 2 then recipes for grid size 3 will also have those recipes
 
-    recipeInstructions:
+    instructions:
         special list of stuff, allows for using operators and comparing slot contents
         see recipe stuff in player to figure it out, not gonna write it here
     */
@@ -48,7 +48,7 @@ function addRecipe(
     };
 
     if (recipeType == "nearExact") {
-        recipe.recipeInstructions = recipeInstructions;
+        recipe.instructions = instructions;
     };
 
 
@@ -72,7 +72,7 @@ export function makeRecipesExist() {
     * each item is a dict, dict contains: the first direction, its item, and the operator between the second direction
     * directionItemPairs will look like this: {"up": "itemName"}
     * an example for how to write this?
-    * recipeInstructions = {
+    * instructions = {
     *       "up": "planks",
     *       "operator": "xor",
     *       "down": "planks"
@@ -86,7 +86,7 @@ export function makeRecipesExist() {
 
     addRecipe("nearExact", "planksToSticks", { "planks": 2 }, items["stick"], 4,
         requiredGridSize = 2,
-        recipeInstructions = {
+        instructions = {
             "startingItemName": "planks",
             "directions": ["up", "down"],
             "operators": ["xor"],
