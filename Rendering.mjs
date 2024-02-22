@@ -43,7 +43,8 @@ renderData, how stuff should be rendered
 
 
 let blockRenderData = {
-    "air": {"color": undefined, "borderColor": undefined, "globalAlpha": 255, "length": blockSize}
+    "air": {"drawType": "block", "color": undefined, "borderColor": undefined,
+            "globalAlpha": 255, "length": blockSize}
 };
 
 
@@ -58,6 +59,7 @@ let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRend
 
 function addABlock (blockType, color, borderColor, alpha = 255) {
     let data = {
+        "drawType": "block",
         "color": color,
         "borderColor": borderColor || color,
         "globalAlpha": alpha,
@@ -295,7 +297,7 @@ export function render(deltaTime) {
             
             scaleFactors[y] = scaleFactor
 
-            let scaledImages = blockImages;
+            let scaledRenderData = blockRenderData;
             
 
             for (let x = 0; x < chunkSize[0]; x++) {
@@ -303,42 +305,41 @@ export function render(deltaTime) {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
                     
-                    if block.render && block.type != "air":
-                        xPos = x * blockSize
-                        zPos = z * blockSize
+                    if (block.render && block.type != "air")
+                        xPos = x * blockSize;
+                        zPos = z * blockSize;
                         
-                        xPos += chunkCoord[0] * totalChunkSize
-                        zPos += chunkCoord[1] * totalChunkSize
+                        xPos += chunkCoord[0] * totalChunkSize;
+                        zPos += chunkCoord[1] * totalChunkSize;
 
-                        thisBlockHasAlpha = false
+                        let thisBlockHasAlpha = false;
                         
-                        if block["alphaValue"] < 255:
-                            if block["type"] != "water":
-                                if player.blockCoord[1] < y: // player is underneath this block
-                                    fiveBlocks = 5 * blockSize
+                        if (block.globalAlpha < 255 && block.type != "water" && player.blockCoord[1] < y) {
+                            let fiveBlocks = 5 * blockSize;
 
-                                    if xPos - fiveBlocks < player.x and xPos + fiveBlocks > player.x:
-                                        if zPos - fiveBlocks < player.z and zPos + fiveBlocks > player.z:
-                                            thisBlockHasAlpha = true
+                            if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
+                                if (zPos - fiveBlocks < player.z && zPos + fiveBlocks > player.z) {
+                                    thisBlockHasAlpha = true
+                                };
+                            };
+                        };
 
-                            if block["type"] == "water":
-                                thisBlockHasAlpha = true
+                        if (block.type == "water") {thisBlockHasAlpha = true;};
                                     
 
                         
                         
                         
-                        if not scaledImages[block["type"]]["scaled"]: // image has not been scaled
-                            if scaleFactor != 1:
+                        if (!scaledRenderData[block.type].scaled) {
+                            if (scaleFactor != 1) {
 
-                                newImageData = scaledImages[block["type"]]["data"]
-                                //if scaleFactor > 1:
-                                //    newImageData = pygame.transform.scale_by(newImageData, scaleFactor * 1.1)
-                                if true://scaleFactor < 1:
-                                    newImageData = pygame.transform.scale_by(newImageData, scaleFactor)
+                                let scaledLength = scaledImages[block.type].length * scaleFactor;
+
                                 scaledImages[block["type"]]["data"] = newImageData
                                 
-                            scaledImages[block["type"]]["scaled"] = true
+                            scaledImages[block["type"]]["scaled"] = true;
+                            };
+                        };
 
                         if thisBlockHasAlpha:
                             
