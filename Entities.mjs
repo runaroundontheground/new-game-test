@@ -129,13 +129,15 @@ export class ItemEntity extends Entity {
 
 
         // update image things
-        // this spot is for image scaling, not gonna deal with that rn
-        //this.renderData.y = Math.floor(this.y / blockSize);
-        //if (this.renderData.y >= chunkSize[1]) {this.renderData.y = chunkSize[1] - 1};
-        //if (this.renderData.y < 0) {this.renderData.y = 0};
+        
+        let y = 0;
+        y = Math.floor(this.y / blockSize);
+        if (y >= chunkSize[1]) {y = chunkSize[1] - 1};
+        if (y < 0) {y = 0};
 
         this.renderData.x = this.x - camera.x;
         this.renderData.y = this.z - camera.z;
+        this.renderData.yLayer = y;
 
         
         this.x += this.xv;

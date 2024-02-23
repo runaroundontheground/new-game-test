@@ -22,7 +22,11 @@ export const chunkSize = [10, 30]; // width or length, then height (both in bloc
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
-export let ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");
+ctx.font = "20px Arial";
+
+export { ctx };
+
 
 export let images = {};
 

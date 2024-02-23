@@ -47,18 +47,15 @@ let blockRenderData = {
             "globalAlpha": 255, "length": blockSize}
 };
 
-
-let itemEntityRenderData = {}
-
-
-let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha": 255, "drawType": "strokeRect",
+let blockCursorHightlightData = {"strokeStyle": "black", "width": blockSize, "globalAlpha": 200,
+                        "drawType": "strokeRect", "height": blockSize, "position": [0, 0],
                         "lineWidth": "3px"}
 
 
 let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2;
 
 let newCanvas = document.createElement("canvas");
-newCanvas.id = "temporary canvas";
+newCanvas.id = "image creation canvas";
 let context = newCanvas.getContext("2d");
 
 function addABlock (blockType, color, borderColor, alpha = 255) {
@@ -103,20 +100,20 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
 
 addABlock("grass", "darkgreen", "brown")
 addABlock("dirt", "brown")
-addABlock("stone", rgb(125, 125, 125))
-addABlock("cobblestone", (150, 150, 150))
-addABlock("snowy dirt", (220, 220, 220), "brown")
-addABlock("snowy stone", (220, 220, 220), (125, 125, 125))
-addABlock("sand", (232, 228, 118))
-addABlock("clay", (196, 152, 94))
-addABlock("gravel", (150, 150, 150))
-addABlock("water", (0, 0, 255), (0, 0, 255))
-addABlock("bedrock", (0, 255, 255))
-addABlock("log", (110, 79, 38), (110, 79, 38))
-addABlock("planks", (140, 109, 68))
-addABlock("leaves", (29, 64, 17))
+addABlock("stone", "rgb(125, 125, 125)")
+addABlock("cobblestone", "rgb(150, 150, 150)")
+addABlock("snowy dirt", "rgb(220, 220, 220)", "brown")
+addABlock("snowy stone", "rgb(220, 220, 220)", "rgb(125, 125, 125)")
+addABlock("sand", "rgb(232, 228, 118)")
+addABlock("clay", "rgb(196, 152, 94)")
+addABlock("gravel", "rgb(150, 150, 150)")
+addABlock("water", "rgb(0, 0, 255)", "rgb(0, 0, 255)")
+addABlock("bedrock", "rgb(0, 255, 255)")
+addABlock("log", "rgb(110, 79, 38)", "rgb(110, 79, 38)")
+addABlock("planks", "rgb(140, 109, 68)")
+addABlock("leaves", "rgb(29, 64, 17)")
 
-
+newCanvas.display = "none;";
 
 function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
     let chunkList = [];
@@ -253,7 +250,26 @@ export function generateSpawnArea() {
 };
     
 
+function drawToCanvas (renderData) {
+    let drawType = renderData.drawType;
 
+    switch (drawType) {
+        case "block":
+            // do block things
+            break;
+        case "image":
+            // do image things
+            break;
+        case "imageData":
+            // do imageData things (images gotten from a canvas)
+        case "fillRect":
+            // do fillRect thigns
+            break;
+        case "strokeRect":
+            // do strokeRect things
+            break;
+    } 
+}
 
 
 
@@ -270,10 +286,8 @@ export function render(deltaTime) {
     // separate the blocks into layers, so they get rendered in the right order
     // also, keep track of the scale for each y layer
     let yLayer = [];
-    let scaleFactors = [];
     for (let i = 0; i < chunkSize[1]; i++) {
         yLayer.push( [] );
-        scaleFactors.push( [] );
     };
 
     
@@ -322,53 +336,53 @@ export function render(deltaTime) {
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
                     
                     if (block.render && block.type != "air")
-                        xPos = x * blockSize;
-                        zPos = z * blockSize;
+                        let xPos = x * blockSize;
+                        let yPos = z * blockSize;
                         
                         xPos += chunkCoord[0] * totalChunkSize;
-                        zPos += chunkCoord[1] * totalChunkSize;
-                        block.useAlpha = false;
+                        yPos += chunkCoord[1] * totalChunkSize;
+
+                        scaledRenderData[block.type].useAlpha = false;
                         
                         if (block.globalAlpha < 255 && block.type != "water" && player.blockCoord[1] < y) {
                             let fiveBlocks = 5 * blockSize;
 
                             if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
-                                if (zPos - fiveBlocks < player.z && zPos + fiveBlocks > player.z) {
-                                    block.useAlpha = true;
+                                if (yPos - fiveBlocks < player.z && yPos + fiveBlocks > player.z) {
+                                    scaledRenderData[block.type].useAlpha = true;
                                 };
                             };
                         };
 
-                        if (block.type == "water") {thisBlockHasAlpha = true;};
-                                    
+                        if (block.type == "water") {scaledRenderData[block.type].useAlpha = true;};
 
-                        
-                        
-                        
                         if (!scaledRenderData[block.type].scaled) {
                             if (scaleFactor != 1) {
 
-                                let scaledLength = scaledImages[block.type].length * scaleFactor;
+                                let scaledLength = scaledRenderData[block.type].length * scaleFactor;
 
-                                scaledImages[block.type].length = scaledLength;
+                                scaledRenderData[block.type].length = scaledLength;
                                 
-                            scaledImages[block.type].scaled = true;
                             };
+                            scaledRenderData[block.type].scaled = true;
                         };
 
                         
                         xPos -= player.x
-                        zPos -= player.z
+                        yPos -= player.z
 
                         xPos *= scaleFactor
-                        zPos *= scaleFactor
+                        yPos *= scaleFactor
                         
                         xPos -= camera.x - player.x
-                        zPos -= camera.z - player.z
+                        yPos -= camera.z - player.z
 
-                        position = (xPos, zPos)
+                        let renderData = scaledRenderData[block.type];
 
-                        yLayer[y].push()
+                        renderData.x = xPos;
+                        renderData.y = yPos;
+
+                        yLayer[y].push(renderData)
                 };
             };
         };
@@ -381,7 +395,7 @@ export function render(deltaTime) {
     
 
     // add player to rendering
-    if player.blockCoord[1] < chunkSize[1] {
+    if (player.blockCoord[1] < chunkSize[1]) {
         yLayer[player.blockCoord[1]].push(player.imageData);
     } else {
         renderingData.push(player.imageData);
@@ -392,30 +406,30 @@ export function render(deltaTime) {
         for (let i = -1; i >= -entities.length; i--) {
             let entityRenderData = entities[i].renderData;
             
-            yLayer[y].append(entityRenderData);
+            yLayer[entities[i].renderData.yLayer].push(entityRenderData);
             
             
         };
     };
     
-    // add blocks to rendering
-    for y in range(chunkSize[1]):
-        renderingData += blocks[y]
+    // add all the layers to the main rendering data
+    for (let y = 0; y < chunkSize[1]; y++) {
+        renderingData.push(...yLayer[y]);
+    }
 
 
-    image = player.inventoryRenderingData["hotbarSurface"]
-    position = player.inventoryRenderingData["hotbarRenderPosition"]
-    imageData = (image, position)
-    renderingData.append(imageData)
+
+    renderingData.push(player.inventoryRenderingData.hotbarRenderData);
+    
         
     // run inventory rendering
-    if player.otherInventoryData["open"]:
+    if (player.otherInventoryData["open"]) {
         // render the base part of the inventory
         image = player.inventoryRenderingData["inventorySurface"]
         position = player.inventoryRenderingData["inventoryRenderPosition"]
         imageData = (image, position)
 
-        renderingData.append(imageData)
+        renderingData.push(imageData)
 
         // render the 2x2 crafting grid and armor slots (if they're visible)
         if player.otherInventoryData["showCraftingAndArmor"]:
@@ -423,7 +437,7 @@ export function render(deltaTime) {
             position = player.inventoryRenderingData["craftingAndArmorRenderPosition"]
             imageData = (image, position)
 
-            renderingData.append(imageData)
+            renderingData.push(imageData)
 
         // render the 3x3 crafting ui if its visible
         if player.otherInventoryData["showCraftingTable"]:
@@ -431,34 +445,34 @@ export function render(deltaTime) {
             position = player.inventoryRenderingData["craftingTableRenderPosition"]
             
             imageData = (image, position)
-            renderingData.append(imageData)
+            renderingData.push(imageData)
 
         // draw a rect thingy over the hovered slot, highlights it
         if mouse.inPlayerInventory and mouse.inASlot:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             slot = player.inventory[mouse.hoveredSlotId]
-            position = slot["selectedSlotRenderPosition"]
+            position = slot["outlineRenderPosition"]
             
             imageData = (image, position)
-            renderingData.append(imageData)
+            renderingData.push(imageData)
 
         // highlight selected slots in crafting table
         if mouse.inASlot and mouse.inPlayerCraftingTable and player.otherInventoryData["showCraftingTable"]:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
-            position = slot["selectedSlotRenderPosition"]
+            position = slot["outlineRenderPosition"]
 
             imageData = (image, position)
-            renderingData.append(imageData)
+            renderingData.push(imageData)
 
         // also highlight hovered slots, but only in the crafting and armor slots, if they're visible
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
             image = player.inventoryRenderingData["selectedSlotSurface"]
             slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
-            position = slot["selectedSlotRenderPosition"]
+            position = slot["outlineRenderPosition"]
             
             imageData = (image, position)
-            renderingData.append(imageData)
+            renderingData.push(imageData)
 
         // render all the items of the base player inventory
         for slot in player.inventory:
@@ -468,7 +482,7 @@ export function render(deltaTime) {
                 position = slot["renderPosition"]
 
                 imageData = (image, position)
-                renderingData.append(imageData)
+                renderingData.push(imageData)
 
                 if mouse.inPlayerInventory and mouse.inASlot:
                     if player.inventory[mouse.hoveredSlotId]["contents"] == item:
@@ -477,12 +491,12 @@ export function render(deltaTime) {
                             position = (mouse.x + 10, mouse.y + 5)
 
                             imageData = convertTextToImageData(tooltip, position)
-                            renderingData.append(imageData)
+                            renderingData.push(imageData)
 
 
                 if slot["count"] > 1:
                     imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                    renderingData.append(imageData)
+                    renderingData.push(imageData)
 
         // render items in 2x2 crafting and armor, only if they're visible
         if player.otherInventoryData["showCraftingAndArmor"]:
@@ -493,7 +507,7 @@ export function render(deltaTime) {
                     position = slot["renderPosition"]
 
                     imageData = (image, position)
-                    renderingData.append(imageData)
+                    renderingData.push(imageData)
 
                     if mouse.inPlayerInventory and mouse.inASlot:
                         if player.inventory[mouse.hoveredSlotId]["contents"] == item:
@@ -502,12 +516,12 @@ export function render(deltaTime) {
                                 position = (mouse.x + 10, mouse.y + 5)
 
                                 imageData = convertTextToImageData(tooltip, position)
-                                renderingData.append(imageData)
+                                renderingData.push(imageData)
 
 
                     if slot["count"] > 1:
                         imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                        renderingData.append(imageData)
+                        renderingData.push(imageData)
 
 
         
@@ -525,7 +539,7 @@ export function render(deltaTime) {
                     position = slot["renderPosition"]
 
                     imageData = (image, position)
-                    renderingData.append(imageData)
+                    renderingData.push(imageData)
 
                     if mouse.inPlayerInventory and mouse.inASlot:
                         if player.inventory[mouse.hoveredSlotId]["contents"] == item:
@@ -534,125 +548,156 @@ export function render(deltaTime) {
                                 position = (mouse.x + 10, mouse.y + 5)
 
                                 imageData = convertTextToImageData(tooltip, position)
-                                renderingData.append(imageData)
+                                renderingData.push(imageData)
 
 
                     if slot["count"] > 1:
                         imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                        renderingData.append(imageData)
+                        renderingData.push(imageData)
 
-        
+    };
 
     // run hotbar rendering
-    for slotId, slot in enumerate(player.hotbar):
-        
-        item = slot["contents"]
-        currentHotbarSlot = player.otherInventoryData["currentHotbarSlot"]
+    for (let i = 0; i < player.hotbar.length; i++) {
+        let slot = player.hotbar[i];
+        let item = slot.contents;
+        let currentHotbarSlot = player.otherInventoryData.currentHotbarSlot;
 
+        if (item != "empty") {
+
+            let renderData = {
+                "drawType": "image",
+                "image": images[item.name],
+                "position": slot.renderPosition
+            }
+
+            renderingData.push(renderData);
+        }
     
-        if slotId == currentHotbarSlot:
-            image = player.inventoryRenderingData["selectedSlotSurface"]
-            position = slot["selectedSlotRenderPosition"]
-
-            imageData = (image, position)
-            renderingData.append(imageData)
-
-            if mouse.inPlayerHotbar and mouse.inASlot:
-                image = player.inventoryRenderingData["selectedSlotSurface"]
-                position = player.hotbar[mouse.hoveredSlotId]["selectedSlotRenderPosition"]
-
-                imageData = (image, position)
-                renderingData.append(imageData)
-                if item != "empty" and player.otherInventoryData["open"]:
-                    if player.hotbar[mouse.hoveredSlotId]["contents"] == item:
-                        tooltip = item.tooltip
-                        if tooltip != "":
-                            position = (mouse.x + 10, mouse.y + 5)
-
-                            imageData = convertTextToImageData(tooltip, position)
-                            renderingData.append(imageData)
-
-        if item != "empty":
-            image = itemIcons[item.name]
-            position = slot["renderPosition"]
-
-            imageData = (image, position)
-            renderingData.append(imageData)
-
-    // fix to selectedHotbarSlot thingy being rendered over the item counts
+        if (i == currentHotbarSlot) {
             
-    for slotId, slot in enumerate(player.hotbar):
-        if slot["count"] > 1:
-            imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-            renderingData.append(imageData)
+            let renderData = player.inventoryRenderingData.selectedSlotRenderData;
+            renderData.position = slot.outlineRenderPosition;
+
+            renderingData.push(renderData);
+
+            if (mouse.inPlayerHotbar && mouse.inASlot) {
+
+                if (item != "empty" && player.otherInventoryData.open) {
+
+
+                    let renderData = player.inventoryRenderingData.selectedSlotRenderData;
+                    renderData.position = player.hotbar[mouse.hoveredSlotId].outlineRenderPosition;
+
+                    renderingData.push(renderData);
+                    if (player.hotbar[mouse.hoveredSlotId].contents === item) {
+                        
+                        if (item.tooltip != "") {
+                            let renderData = {
+                                "drawType": "fillText",
+                                "fillStyle": "white",
+                                "text": tooltip,
+                                "position": [mouse.x + 10, mouse.y + 5]
+                            }
+
+                            renderingData.push(renderData);
+                        };
+                    };
+                };
+
+                
+            };
+        };
+
+    };
+
 
 
     
     // run mouse's held item rendering
     // also highlights and tells what block you're hovering over
-    if not player.otherInventoryData["open"]:
-        x = Math.floor(mouse.cameraRelativeX / blockSize)
-        z = Math.floor(mouse.cameraRelativeZ / blockSize)
-        x *= blockSize
-        z *= blockSize
+    if (!player.otherInventoryData.open) {
+        let x = Math.floor(mouse.cameraRelativeX / blockSize);
+        let z = Math.floor(mouse.cameraRelativeZ / blockSize);
+        x *= blockSize;
+        z *= blockSize;
         player.canReachSelectedBlock = false
 
-        if x < player.x + (player.horizontalBlockReach * blockSize):
-            if x > player.x - (player.horizontalBlockReach * blockSize):
-                if z < player.z + (player.horizontalBlockReach * blockSize):
-                    if z > player.z - (player.horizontalBlockReach * blockSize):
-                        player.canReachSelectedBlock = true
-                        x -= camera.x
-                        z -= camera.z
+        if  (  x < player.x + (player.horizontalBlockReach * blockSize)
+            && x > player.x - (player.horizontalBlockReach * blockSize)
+            && z < player.z + (player.horizontalBlockReach * blockSize)
+            && z > player.z - (player.horizontalBlockReach * blockSize)
+            ) {
+                player.canReachSelectedBlock = true
+                x -= camera.x
+                z -= camera.z
 
-                        position = (x, z)
+                blockCursorHightlightData.position = [x, z];
 
-                        renderingData.append((blockHighlightSurface, position))
-                        
 
-                        // do stuff so it displays the mouse's y selection and 
-                        // the block that the mouse is theoretically currently
-                        // selecting
-                        position = (mouse.x, mouse.y + blockSize * 1.5)
+                renderingData.push(blockCursorHightlightData)
+                
 
-                        string = mouse.hoveredBlock["block"]["type"] + ", " + str(mouse.selectedYChange)
-                        string += " blocks up/down"
-                        
-                        imageData = convertTextToImageData(string, position)
-                        renderingData.append(imageData)
+                // do stuff so it displays the mouse's y selection and 
+                // the block that the mouse is theoretically currently
+                // selecting
+
+                let renderData = {
+                    "drawType": "fillText",
+                    "position": [mouse.x, mouse.y + (blockSize * 1.5)],
+                    "text": mouse.hoveredBlock.block.type + ", " + mouse.selectedYChange + " block up/down"
+                }
+
+                renderingData.push(renderData);
+            };
+
+    };
         
                         
 
 
     
-    if mouse.heldSlot["contents"] != "empty":
-        image = itemIcons[mouse.heldSlot["contents"].name]
-        position = (mouse.x + 5, mouse.y + 5)
-        imageData = (image, position)
+    if (mouse.heldSlot.contents != "empty") {
+        let renderData = {
+            "drawType": "image",
+            "image": images[mouse.heldSlot.contents.name],
+            "position": [mouse.x + 5, mouse.y + 5]
+        }
 
-        renderingData.append(imageData)
+        renderingData.push(renderData);
 
         shift = player.inventoryRenderingData["slotSize"] - 10
 
-
-        if mouse.heldSlot["count"] > 1:
-            
-            position = (mouse.x + shift, mouse.y + shift)
-            imageData = convertTextToImageData(mouse.heldSlot["count"], position)
-            renderingData.append(imageData)
+        // draw the item count, if there's more than one item
+        if (mouse.heldSlot.count > 1) {
+            let renderData = {
+                "drawType": "fillText",
+                "fillStyle": "white",
+                "text": mouse.heldSlot.count,
+                "position": [mouse.x + shift, mouse.y + shift]
+            }
+            renderingData.push(renderData);
+        };
+    };
 
     
+
+    for (let i = 0; i < renderingData.length; i++) {
+        drawToCanvas(renderingData[i]);
+    };
 
     // debug things
-    debugRenderingStuff = "camera chunk: " + str(camera.currentChunk) + ", player chunk: " + str(player.chunkCoord)
+
+    // debug things
     debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
     imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
-    renderingData.append(imageData)
-
-    
-    screen.blits(renderingData)
-
-    // pretty much just debug after this
+    renderingData.push(imageData)
+    let debug1 = {
+        "drawType": "fillText",
+        "fillStyle": "red",
+        "text": "camera chunk: " + camera.currentChunk + ", player chunk: " + player.chunkCoord
+    }
+    drawToCanvas(debug1);
     
     debugRenderingStuff2 = "player block position " + str(player.blockCoord)
     debugRenderingStuff2 += "player yv " + str(player.yv)
@@ -665,7 +710,6 @@ export function render(deltaTime) {
     screen.blit(thing2, (100, 200))
     screen.blit(thing3, (100, 100))
 
-    pygame.display.flip()
 
 };
 

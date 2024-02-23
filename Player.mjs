@@ -83,7 +83,10 @@ class Player {
         let heightOfInventoryInSlots = 3;
 
 
-        function createALotOfInventoryThings() {
+        this.createALotOfInventoryThings = function() {
+
+            let newCanvas = document.createElement("canvas");
+            let context = newCanvas.getContext("2d");
 
             let inventoryWidthInPixels = canvasWidth / 3;
             let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
@@ -91,9 +94,9 @@ class Player {
             let gapBetweenSlots = Math.round(slotSizeInPixels / 5);
 
 
-            let backgroundColor = [150, 150, 150]
-            let slotColor = [125, 125, 125]
-            let selectedSlotColor = [175, 175, 175, 0]
+            let backgroundColor = "rgb(150, 150, 150)";
+            let slotColor = "rgb(125, 125, 125)";
+            let selectedSlotColor = "rgb(175, 175, 175)";
             let alphaForUI = 255;
 
             let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
@@ -116,9 +119,14 @@ class Player {
 
 
             let craftingAndArmorSizeInPixels = (Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels))
+            // create the crafting and armor image, only the background first though
+            newCanvas.width = craftingAndArmorSizeInPixels[0];
+            newCanvas.height = craftingAndArmorSizeInPixels[1];
 
-            let craftingAndArmorBackground = pygame.surface.Surface(craftingAndArmorSizeInPixels)
-            craftingAndArmorBackground.fill(backgroundColor)
+            context.fillRect(backgroundColor);
+            let craftingAndArmor = context.getImageData();
+
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
             let craftingTableBackground = pygame.Surface(craftingTableSizeInPixels)
             craftingTableBackground.fill(backgroundColor)
@@ -165,13 +173,13 @@ class Player {
                 "count": 0,
                 2: {
                     "renderPosition": [0, 0],
-                    "selectedSlotRenderPosition": [0, 0],
+                    "outlineRenderPosition": [0, 0],
                     "itemCountRenderPosition": [0, 0],
                     "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
                 3: {
                     "renderPosition": [0, 0],
-                    "selectedSlotRenderPosition": [0, 0],
+                    "outlineRenderPosition": [0, 0],
                     "itemCountRenderPosition": [0, 0],
                     "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 }
@@ -182,13 +190,13 @@ class Player {
                 "count": 0,
                 2: {
                     "renderPosition": [0, 0],
-                    "selectedSlotRenderPosition": [0, 0],
+                    "outlineRenderPosition": [0, 0],
                     "itemCountRenderPosition": [0, 0],
                     "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
                 3: {
                     "renderPosition": [0, 0],
-                    "selectedSlotRenderPosition": [0, 0],
+                    "outlineRenderPosition": [0, 0],
                     "itemCountRenderPosition": [0, 0],
                     "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 },
@@ -198,7 +206,7 @@ class Player {
             let armorSlot = {
                 "contents": "empty",
                 "renderPosition": [0, 0],
-                "selectedSlotRenderPosition": [0, 0],
+                "outlineRenderPosition": [0, 0],
                 "rect": Rect(0, 0, 0, 0),
                 "slotId": 0
             }
@@ -255,7 +263,7 @@ class Player {
 
             resultSlot["renderPosition"] = [renderX, renderY]
             resultSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            resultSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+            resultSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
             resultSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
             resultSlot["slotId"] = "resultSlot"
 
@@ -282,7 +290,7 @@ class Player {
 
             resultSlot["renderPosition"] = [renderX, renderY]
             resultSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            resultSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+            resultSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
             resultSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
             resultSlot["slotId"] = "resultSlot"
 
@@ -317,7 +325,7 @@ class Player {
                     craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
                     newCraftingSlot["renderPosition"] = [renderX, renderY]
                     newCraftingSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                    newCraftingSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                    newCraftingSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
                     newCraftingSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
                     newCraftingSlot["slotId"] = slotId
 
@@ -349,7 +357,7 @@ class Player {
                     craftingTableBackground.blit(slotSurface, (slotX, slotY))
                     newCraftingSlot["renderPosition"] = [renderX, renderY]
                     newCraftingSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                    newCraftingSlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                    newCraftingSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
                     newCraftingSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
                     newCraftingSlot["slotId"] = slotId
 
@@ -410,7 +418,7 @@ class Player {
                 "contents": "empty", // this is where itemData goes
                 "count": 0, // how many of x item is in this slot
                 "renderPosition": (0, 0),
-                "selectedSlotRenderPosition": (0, 0),
+                "outlineRenderPosition": (0, 0),
                 "itemCountRenderPosition": (0, 0),
                 "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 "slotId": 0
@@ -442,7 +450,7 @@ class Player {
 
                     updatedInventorySlot["renderPosition"] = [renderX, renderY]
                     updatedInventorySlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
-                    updatedInventorySlot["selectedSlotRenderPosition"] = [rectX - gapBetweenSlots,
+                    updatedInventorySlot["outlineRenderPosition"] = [rectX - gapBetweenSlots,
                     rectY - gapBetweenSlots]
                     updatedInventorySlot["rect"] = Rect(rectX, rectY,
                         slotSizeInPixels, slotSizeInPixels)
@@ -480,7 +488,7 @@ class Player {
 
                 updatedInventorySlot["renderPosition"] = (renderX, renderY)
                 updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
-                updatedInventorySlot["selectedSlotRenderPosition"] = (rectX - gapBetweenSlots,
+                updatedInventorySlot["outlineRenderPosition"] = (rectX - gapBetweenSlots,
                     rectY - gapBetweenSlots)
                 updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
                     slotSizeInPixels, slotSizeInPixels)
@@ -508,7 +516,12 @@ class Player {
 
 
             this.inventoryRenderingData = {
-                "inventoryRenderPosition": (inventoryXForBlit, inventoryYForBlit),
+                "inventoryRenderData":  {
+                    "drawType": "imageData"
+                    
+                    
+                    
+                    (inventoryXForBlit, inventoryYForBlit),
                 "craftingAndArmorRenderPosition": (craftingAndArmorXForBlit, craftingAndArmorYForBlit),
                 "hotbarRenderPosition": (hotbarXForBlit, hotbarYForBlit),
                 "inventorySurface": inventorySurface,
@@ -537,7 +550,7 @@ class Player {
 
         };
 
-        createALotOfInventoryThings()
+        this.createALotOfInventoryThings()
 
 
         this.timers = {
