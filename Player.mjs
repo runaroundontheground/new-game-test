@@ -1,6 +1,6 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
-    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress, Rect
+    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress, Rect, canvas, ctx
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Player.mjs");
 
@@ -11,6 +11,7 @@ import {
 
 import { ItemEntity } from "./Entities.mjs";
 import { PlaceableItem } from "./Items.mjs";
+import { images } from "./ImageLoader.mjs";
 
 
 
@@ -96,7 +97,7 @@ class Player {
 
             let backgroundColor = "rgb(150, 150, 150)";
             let slotColor = "rgb(125, 125, 125)";
-            let selectedSlotColor = "rgb(175, 175, 175)";
+            let slotOutlineColor = "rgb(175, 175, 175)";
             let alphaForUI = 255;
 
             let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
@@ -115,60 +116,74 @@ class Player {
             let craftingAndArmorHeightInPixels = (slotSizeInPixels * craftingAndArmorHeightInSlots)
             craftingAndArmorHeightInPixels += (gapBetweenSlots * craftingAndArmorHeightInSlots + 1)
 
-            let craftingTableSizeInPixels = (Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels))
+            let craftingTableSizeInPixels = [Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels)]
 
 
-            let craftingAndArmorSizeInPixels = (Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels))
+            let craftingAndArmorSizeInPixels = [Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels)]
             // create the crafting and armor image, only the background first though
             newCanvas.width = craftingAndArmorSizeInPixels[0];
             newCanvas.height = craftingAndArmorSizeInPixels[1];
 
-            context.fillRect(backgroundColor);
-            let craftingAndArmor = context.getImageData();
-
+            // make the crafting/armor image
+            context.fillStyle = backgroundColor
+            context.globalAlpha = alphaForUI;
+            context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            let craftingAndArmorImage = newCanvas.toDataURL();
             context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
-            let craftingTableBackground = pygame.Surface(craftingTableSizeInPixels)
-            craftingTableBackground.fill(backgroundColor)
+            // make the crafting table image
+            newCanvas.width = craftingTableSizeInPixels[0];
+            newCanvas.height = craftingTableSizeInPixels[1];
 
+            context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            let craftingTableImage = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+
+            // make the inventory image
             let inventorySizeInPixels = (Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels))
+            newCanvas.width = inventorySizeInPixels[0];
+            newCanvas.height = inventorySizeInPixels[1];
 
-            let inventoryBackground = pygame.surface.Surface(inventorySizeInPixels)
-            inventoryBackground.fill(backgroundColor)
+            context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            let inventoryBackground = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
-            let slotSurface = pygame.surface.Surface((slotSizeInPixels, slotSizeInPixels))
-            slotSurface.fill(slotColor)
+            // make the slot image
+            newCanvas.width = slotSizeInPixels;
+            newCanvas.height = slotSizeInPixels;
+            context.fillStyle = slotColor
+            context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            let slotImage = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
-            let size = (slotSizeInPixels + gapBetweenSlots * 2, slotSizeInPixels + gapBetweenSlots * 2)
-            let selectedSlotSurface = pygame.surface.Surface(size)
-            selectedSlotSurface.fill((selectedSlotColor))
+            // make the slot outline image
+            newCanvas.width = slotSizeInPixels + gapBetweenSlots * 2;
+            newCanvas.height = slotSizeInPixels + gapBetweenSlots * 2;
+            context.strokeStyle = slotOutlineColor;
+            context.strokeRect(0, 0, newCanvas.width, newCanvas.height);
+            let slotOutlineImage = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
-            // the thing here needs to be replaced with ctx.strokeRect or something
-            let fillRect = Rect(gapBetweenSlots, gapBetweenSlots, slotSizeInPixels, slotSizeInPixels);
-            selectedSlotSurface.fill((255, 255, 255), fillRect)
-            selectedSlotSurface.set_colorkey((255, 255, 255))
-
+            // make hotbar image
             let hotbarSizeInPixels = (Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2)))
-            let hotbarSurface = pygame.surface.Surface(hotbarSizeInPixels)
-            hotbarSurface.fill(backgroundColor)
+            newCanvas.width = hotbarSizeInPixels[0];
+            newCanvas.height = hotbarSizeInPixels[1];
+            context.fillStyle = backgroundColor;
+            context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            let hotbarImage = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
-            if (alphaForUI < 255) {
-                hotbarSurface.set_alpha(alphaForUI)
-                inventoryBackground.set_alpha(alphaForUI)
-                craftingAndArmorBackground.set_alpha(alphaForUI)
-                slotSurface.set_alpha(alphaForUI)
-            };
 
-            let craftingAndArmorXForBlit = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2
-            let craftingAndArmorYForBlit = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))// - (slotSizeInPixels * craftingAndArmorHeightInSlots)
-            craftingAndArmorYForBlit /= 2
+            let craftingAndArmorRenderX = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2
+            let craftingAndArmorRenderY = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))// - (slotSizeInPixels * craftingAndArmorHeightInSlots)
+            craftingAndArmorRenderY /= 2
 
-            let craftingTableXForBlit = craftingAndArmorXForBlit
-            let craftingTableYForBlit = craftingAndArmorYForBlit - slotSizeInPixels * 0
+            let craftingTableRenderX = craftingAndArmorRenderX
+            let craftingTableRenderY = craftingAndArmorRenderY - (slotSizeInPixels * 0)
 
             let fontShift = font.size("1")
 
-            this.craftingResultSlot = {
+            let resultSlot = {
                 "contents": "empty",
                 "count": 0,
                 2: {
@@ -245,27 +260,31 @@ class Player {
             // actually add content spots to the armor/crafting
 
 
-            let resultSlot = craftingSlot
 
             // create output slot for player's crafting 2x2 grid
             let slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
             let slotY = (slotSizeInPixels * 1.5)
 
-            let renderX = slotX + craftingAndArmorXForBlit + itemIconShift
-            let renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+            let renderX = slotX + craftingAndArmorRenderX + itemIconShift
+            let renderY = slotY + craftingAndArmorRenderY + itemIconShift
 
             let rectX = renderX - itemIconShift
             let rectY = renderY - itemIconShift
 
+            newCanvas.width = craftingAndArmorWidthInPixels;
+            newCanvas.height = craftingAndArmorHeightInPixels;
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+            context.drawImage(craftingAndArmorImage, 0, 0);
+            context.drawImage(slotImage, slotX, slotY);
+            craftingAndArmorImage = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
 
-            craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
 
-            resultSlot["renderPosition"] = [renderX, renderY]
-            resultSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            resultSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-            resultSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
-            resultSlot["slotId"] = "resultSlot"
+            resultSlot.renderPosition = [renderX, renderY]
+            resultSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+            resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
 
             this.crafting[2].resultSlot = resultSlot;
 
@@ -278,26 +297,28 @@ class Player {
             slotX = ((widthOfInventoryInSlots - 2) * slotSizeInPixels) + slotSizeInPixels * 1.7
             slotY = (slotSizeInPixels * 2.1)
 
-            renderX = slotX + craftingTableXForBlit + itemIconShift
-            renderY = slotY + craftingTableYForBlit + itemIconShift
+            renderX = slotX + craftingTableRenderX + itemIconShift
+            renderY = slotY + craftingTableRenderY + itemIconShift
 
             rectX = renderX - itemIconShift
             rectY = renderY - itemIconShift
 
+            newCanvas.width = craftingTableSizeInPixels[0];
+            newCanvas.height = craftingTableSizeInPixels[1];
+            context.drawImage(craftingTableImage, 0, 0);
+            context.drawImage(slotImage, slotX, slotY);
+            craftingTableImage = newCanvas.toDataURL();
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
 
-            craftingTableBackground.blit(slotSurface, (slotX, slotY))
+            resultSlot.renderPosition = [renderX, renderY]
+            resultSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+            resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+            resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
 
-            resultSlot["renderPosition"] = [renderX, renderY]
-            resultSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-            resultSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-            resultSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
-            resultSlot["slotId"] = "resultSlot"
-
-            this.crafting[3]["slots"]["resultSlot"] = resultSlot
+            this.crafting[3].resultSlot = resultSlot
 
 
-            craftingTableBackground.blit(slotSurface, (slotX, slotY))
 
 
 
@@ -313,23 +334,28 @@ class Player {
                     slotX = ((widthOfInventoryInSlots - 4) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
-                    renderX = slotX + craftingAndArmorXForBlit + itemIconShift
-                    renderY = slotY + craftingAndArmorYForBlit + itemIconShift
+                    renderX = slotX + craftingAndArmorRenderX + itemIconShift
+                    renderY = slotY + craftingAndArmorRenderY + itemIconShift
 
                     rectX = renderX - itemIconShift
                     rectY = renderY - itemIconShift
 
                     let newCraftingSlot = craftingSlot
 
+                    newCanvas.width = craftingAndArmorWidthInPixels;
+                    newCanvas.height = craftingAndArmorHeightInPixels;
+                    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+                    context.drawImage(craftingAndArmorImage, 0, 0);
+                    context.drawImage(slotImage, slotX, slotY);
+                    craftingAndArmorImage = newCanvas.toDataURL();
 
-                    craftingAndArmorBackground.blit(slotSurface, (slotX, slotY))
-                    newCraftingSlot["renderPosition"] = [renderX, renderY]
-                    newCraftingSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                    newCraftingSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-                    newCraftingSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
-                    newCraftingSlot["slotId"] = slotId
+                    newCraftingSlot.renderPosition = [renderX, renderY]
+                    newCraftingSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                    newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    newCraftingSlot.slotId = slotId
 
-                    this.crafting[2]["slots"][slotId] = newCraftingSlot
+                    this.crafting[2].slots[slotId] = newCraftingSlot
 
                     slotId += 1
                 };
@@ -343,8 +369,8 @@ class Player {
                     slotX = ((widthOfInventoryInSlots - 6) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
-                    renderX = slotX + craftingTableXForBlit + itemIconShift
-                    renderY = slotY + craftingTableYForBlit + itemIconShift
+                    renderX = slotX + craftingTableRenderX + itemIconShift
+                    renderY = slotY + craftingTableRenderY + itemIconShift
 
                     rectX = renderX - itemIconShift
                     rectY = renderY - itemIconShift
@@ -353,15 +379,21 @@ class Player {
 
                     let newCraftingSlot = craftingSlot
 
+                    newCanvas.width = craftingTableSizeInPixels[0];
+                    newCanvas.height = craftingTableSizeInPixels[1];
+                    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+                    context.drawImage(craftingTableImage, 0, 0);
+                    context.drawImage(slotImage, slotX, slotY);
+                    craftingTableImage = newCanvas.toDataURL();
 
-                    craftingTableBackground.blit(slotSurface, (slotX, slotY))
-                    newCraftingSlot["renderPosition"] = [renderX, renderY]
-                    newCraftingSlot["rect"] = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                    newCraftingSlot["outlineRenderPosition"] = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-                    newCraftingSlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
-                    newCraftingSlot["slotId"] = slotId
 
-                    this.crafting[3]["slots"][slotId] = newCraftingSlot
+                    newCraftingSlot.renderPosition = [renderX, renderY]
+                    newCraftingSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                    newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    newCraftingSlot.slotId = slotId
+
+                    this.crafting[3].slots[slotId] = newCraftingSlot;
 
                     slotId += 1
                 };
@@ -369,22 +401,22 @@ class Player {
 
 
             // put an arrow that goes towards the result slot for crafting in the 2x2 grid
-            let a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels
-            let b = (slotSizeInPixels * 0.75) + slotSizeInPixels * 1.1
-
-            let c = (a, b)
-            let d = (a + (slotSizeInPixels / 3), b + (slotSizeInPixels / 3) / 2)
-            let e = (a, b + slotSizeInPixels / 3)
-
-            let f = (c, d, e)
-
-            pygame.draw.polygon(craftingAndArmorBackground, selectedSlotColor, f)
+            let arrowX = (widthOfInventoryInSlots - 0.6) * slotSizeInPixels;
+            let arrowY = (slotSizeInPixels * 0.75) + slotSizeInPixels * 1.1;
+            let arrowWidth = arrowX + (slotSizeInPixels / 3);
+            
+            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+            newCanvas.width = arrowWidth;
+            newCanvas.height = 10;
+            context.drawImage(craftingAndArmorImage, 0, 0)
+            // this is not done yet, just need to do the other inventory section as well, and do some
+            // updating stuff
+            pygame.draw.polygon(craftingAndArmorImage, slotOutlineColor, f)
 
             let rect = Rect(a - slotSizeInPixels / 1.4, b + slotSizeInPixels / 8.5,
                 slotSizeInPixels / 1.3, slotSizeInPixels / 9)
-            pygame.draw.rect(craftingAndArmorBackground, selectedSlotColor, rect)
+            pygame.draw.rect(craftingAndArmorImage, slotOutlineColor, rect)
 
-            let craftingAndArmorSurface = craftingAndArmorBackground
 
 
             // put an arrow that goes towards the result slot for crafting in the 3x3 grid
@@ -397,22 +429,21 @@ class Player {
 
             f = (c, d, e)
 
-            pygame.draw.polygon(craftingTableBackground, selectedSlotColor, f)
+            pygame.draw.polygon(craftingTableBackground, slotOutlineColor, f)
 
             rect = pygame.Rect(a - slotSizeInPixels / 1.4, b + slotSizeInPixels / 8.5,
                 slotSizeInPixels / 1.3, slotSizeInPixels / 9)
-            pygame.draw.rect(craftingTableBackground, selectedSlotColor, rect)
-
-            let craftingTableSurface = craftingTableBackground
+            pygame.draw.rect(craftingTableBackground, slotOutlineColor, rect)
 
 
 
 
-            let inventoryXForBlit = (canvasWidth - inventoryWidthInPixels) / 2
-            let inventoryYForBlit = craftingAndArmorYForBlit + craftingAndArmorHeightInPixels
 
-            let hotbarXForBlit = inventoryXForBlit
-            let hotbarYForBlit = (canvasHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
+            let inventoryRenderX = (canvasWidth - inventoryWidthInPixels) / 2
+            let inventoryRenderY = craftingAndArmorRenderY + craftingAndArmorHeightInPixels
+
+            let hotbarRenderX = inventoryRenderX
+            let hotbarRenderY = (canvasHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
 
             let inventorySlot = {
                 "contents": "empty", // this is where itemData goes
@@ -435,10 +466,10 @@ class Player {
                     slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
-                    inventoryBackground.blit(slotSurface, (slotX, slotY))
+                    inventoryBackground.blit(slotImage, (slotX, slotY))
 
-                    renderX = inventoryXForBlit + slotX + itemIconShift
-                    renderY = inventoryYForBlit + slotY + itemIconShift
+                    renderX = inventoryRenderX + slotX + itemIconShift
+                    renderY = inventoryRenderY + slotY + itemIconShift
 
                     rectX = renderX - itemIconShift
                     rectY = renderY - itemIconShift
@@ -467,7 +498,7 @@ class Player {
 
 
 
-            let inventorySurface = inventoryBackground
+            let inventoryImage = inventoryBackground
 
             // create hotbar data
             slotId = 0
@@ -476,8 +507,8 @@ class Player {
                 slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                 slotY = gapBetweenSlots
 
-                renderX = hotbarXForBlit + slotX + itemIconShift
-                renderY = hotbarYForBlit + slotY + itemIconShift
+                renderX = hotbarRenderX + slotX + itemIconShift
+                renderY = hotbarRenderY + slotY + itemIconShift
 
                 rectX = renderX - itemIconShift
                 rectY = renderY - itemIconShift
@@ -495,43 +526,54 @@ class Player {
                 updatedInventorySlot["slotId"] = slotId
                 slotId += 1
 
-                hotbarSurface.blit(slotSurface, (slotX, slotY))
+                hotbarImage.blit(slotImage, (slotX, slotY))
 
                 this.hotbar.push(updatedInventorySlot)
             };
 
-            let inventoryRect = Rect(inventoryXForBlit, inventoryYForBlit,
+            let inventoryRect = Rect(inventoryRenderX, inventoryRenderY,
                 inventoryWidthInPixels, inventoryHeightInPixels)
 
-            let hotbarRect = Rect(hotbarXForBlit, hotbarYForBlit,
+            let hotbarRect = Rect(hotbarRenderX, hotbarRenderY,
                 inventoryWidthInPixels, hotbarSizeInPixels[1])
 
-            let craftingAndArmorRect = Rect(craftingAndArmorXForBlit, craftingAndArmorYForBlit,
+            let craftingAndArmorRect = Rect(craftingAndArmorRenderX, craftingAndArmorRenderY,
                 craftingAndArmorWidthInPixels, craftingAndArmorHeightInPixels)
 
             let craftingTableRect = Rect(
-                craftingTableXForBlit, craftingTableYForBlit,
+                craftingTableRenderX, craftingTableRenderY,
                 craftingTableSizeInPixels[0], craftingTableSizeInPixels[1]
             )
 
 
             this.inventoryRenderingData = {
                 "inventoryRenderData":  {
-                    "drawType": "imageData"
-                    
-                    
-                    
-                    (inventoryXForBlit, inventoryYForBlit),
-                "craftingAndArmorRenderPosition": (craftingAndArmorXForBlit, craftingAndArmorYForBlit),
-                "hotbarRenderPosition": (hotbarXForBlit, hotbarYForBlit),
-                "inventorySurface": inventorySurface,
-                "craftingAndArmorSurface": craftingAndArmorSurface,
-                "craftingTableSurface": craftingTableSurface,
-                "craftingTableRenderPosition": (craftingTableXForBlit, craftingTableYForBlit),
-                "hotbarSurface": hotbarSurface,
+                    "drawType": "image",
+                    "image": inventoryImage,
+                    "position": [inventoryRenderX, inventoryRenderY]
+                },
+                "craftingAndArmorRenderData": {
+                    "drawType": "image",
+                    "image": craftingAndArmorImage,
+                    "position": [craftingAndArmorRenderX, craftingAndArmorRenderY]
+                },
+                "craftingTableRenderData": {
+                    "drawType": "image",
+                    "image": craftingTableImage,
+                    "position": [craftingTableRenderX, craftingTableRenderY]
+                },
+                "hotbarRenderData": {
+                    "drawType": "image",
+                    "image": hotbarImage,
+                    "position": [hotbarRenderX, hotbarRenderY]
+                },
+                "selectedSlotRenderData": {
+                    "drawType": "image",
+                    "image": slotOutlineImage,
+                    "position": [0, 0]
+                },
                 "itemIconShift": itemIconShift,
                 "slotSize": slotSizeInPixels,
-                "selectedSlotSurface": selectedSlotSurface
             }
 
             this.otherInventoryData = {

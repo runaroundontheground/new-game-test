@@ -19,7 +19,8 @@ let imageUrlsAndNames = {
     "stone axe": "./Images/tools/stone axe.png",
     "stone pickaxe": "./Images/tools/stone pickaxe.png",
     "wood axe": "./Images/tools/wood axe.png",
-    "wood pickaxe": "./Images/tools/wood pickaxe.png"
+    "wood pickaxe": "./Images/tools/wood pickaxe.png",
+    "inventory arrow": "./Images/arrow.png"
 };
 
 let currentNumberOfLoadedImages = 0;

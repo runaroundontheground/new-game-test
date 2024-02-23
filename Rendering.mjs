@@ -89,7 +89,7 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
     context.globalAlpha = data.globalAlpha;
     context.fillRect(0, 0, newCanvas.width, newCanvas.height);
     context.strokeRect(0, 0, newCanvas.width, newCanvas.height);
-    let image = newCanvas.getImageData();
+    let image = newCanvas.toDataURL();
     images[blockType] = image;
     context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
@@ -260,8 +260,6 @@ function drawToCanvas (renderData) {
         case "image":
             // do image things
             break;
-        case "imageData":
-            // do imageData things (images gotten from a canvas)
         case "fillRect":
             // do fillRect thigns
             break;
@@ -396,9 +394,9 @@ export function render(deltaTime) {
 
     // add player to rendering
     if (player.blockCoord[1] < chunkSize[1]) {
-        yLayer[player.blockCoord[1]].push(player.imageData);
+        yLayer[player.blockCoord[1]].push(player.renderData);
     } else {
-        renderingData.push(player.imageData);
+        renderingData.push(player.renderData);
     }
 
     i = -1
@@ -425,31 +423,24 @@ export function render(deltaTime) {
     // run inventory rendering
     if (player.otherInventoryData["open"]) {
         // render the base part of the inventory
-        image = player.inventoryRenderingData["inventorySurface"]
-        position = player.inventoryRenderingData["inventoryRenderPosition"]
-        imageData = (image, position)
+        let renderData = player.inventoryRenderingData.inventoryRenderingData;
+        renderingData.push(renderData);
 
-        renderingData.push(imageData)
-
-        // render the 2x2 crafting grid and armor slots (if they're visible)
-        if player.otherInventoryData["showCraftingAndArmor"]:
-            image = player.inventoryRenderingData["craftingAndArmorSurface"]
-            position = player.inventoryRenderingData["craftingAndArmorRenderPosition"]
-            imageData = (image, position)
-
-            renderingData.push(imageData)
+        // render the 2x2 crafting grid and armor slots
+        if (player.otherInventoryData.showCraftingAndArmor) {
+            let renderData = player.inventoryRenderingData.craftingAndArmorRenderData;
+            renderingData.push(renderData);
+        };
 
         // render the 3x3 crafting ui if its visible
-        if player.otherInventoryData["showCraftingTable"]:
-            image = player.inventoryRenderingData["craftingTableSurface"]
-            position = player.inventoryRenderingData["craftingTableRenderPosition"]
-            
-            imageData = (image, position)
-            renderingData.push(imageData)
+        if (player.otherInventoryData.showCraftingTable) {
+            let renderData = player.inventoryRenderingData.craftingTableRenderData;
+            renderingData.push(renderData);
+        };
 
         // draw a rect thingy over the hovered slot, highlights it
         if mouse.inPlayerInventory and mouse.inASlot:
-            image = player.inventoryRenderingData["selectedSlotSurface"]
+            image = player.inventoryRenderingData["slotOutlineImage"]
             slot = player.inventory[mouse.hoveredSlotId]
             position = slot["outlineRenderPosition"]
             
@@ -458,7 +449,7 @@ export function render(deltaTime) {
 
         // highlight selected slots in crafting table
         if mouse.inASlot and mouse.inPlayerCraftingTable and player.otherInventoryData["showCraftingTable"]:
-            image = player.inventoryRenderingData["selectedSlotSurface"]
+            image = player.inventoryRenderingData["slotOutlineImage"]
             slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
             position = slot["outlineRenderPosition"]
 
@@ -467,7 +458,7 @@ export function render(deltaTime) {
 
         // also highlight hovered slots, but only in the crafting and armor slots, if they're visible
         if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
-            image = player.inventoryRenderingData["selectedSlotSurface"]
+            image = player.inventoryRenderingData["slotOutlineImage"]
             slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
             position = slot["outlineRenderPosition"]
             
