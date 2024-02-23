@@ -1,4 +1,4 @@
-import { blockSize, gravity, maxStackSize, itemEntitySize, Rect, consoleLog, showLoadingProgress } from "./GlobalVariables.mjs";
+import { blockSize, gravity, maxStackSize, itemEntitySize, Rect, consoleLog, showLoadingProgress, camera } from "./GlobalVariables.mjs";
 import { findBlock } from "./Worldgen.mjs";
 
 showLoadingProgress("loading Entities.mjs");
@@ -33,6 +33,13 @@ export class ItemEntity extends Entity {
         this.width = itemEntitySize;
         this.height = itemEntitySize;
         this.rect = Rect(0, 0, this.width, this.height);
+
+        this.renderData = {
+            "drawType": "image",
+            "position": [0, 0],
+            "width": this.width,
+            "height": this.height
+        }
 
         this.terminalVelocity = -10;
 
@@ -120,6 +127,17 @@ export class ItemEntity extends Entity {
         let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, ignoreWater = true)
         if (insideABlock) { this.y += blockSize / 2; };
 
+
+        // update image things
+        // this spot is for image scaling, not gonna deal with that rn
+        //this.renderData.y = Math.floor(this.y / blockSize);
+        //if (this.renderData.y >= chunkSize[1]) {this.renderData.y = chunkSize[1] - 1};
+        //if (this.renderData.y < 0) {this.renderData.y = 0};
+
+        this.renderData.x = this.x - camera.x;
+        this.renderData.y = this.z - camera.z;
+
+        
         this.x += this.xv;
         this.y += this.yv;
         this.z += this.zv;

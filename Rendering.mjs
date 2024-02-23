@@ -13,7 +13,7 @@ import { player } from "./Player.mjs";
 
 
 /*
-huge rework needed here, probably just delete most of the code, besides the math i suppose
+huge rework needed here, probably just delete most of the code, besides the Math i suppose
 
 
 
@@ -57,7 +57,12 @@ let blockHighlightData = {"color": "black", "widthAndHeight": blockSize, "alpha"
 
 let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2;
 
+let newCanvas = document.createElement("canvas");
+newCanvas.id = "temporary canvas";
+let context = newCanvas.getContext("2d");
+
 function addABlock (blockType, color, borderColor, alpha = 255) {
+
     let data = {
         "drawType": "block",
         "color": color,
@@ -65,19 +70,31 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
         "globalAlpha": alpha,
         "length": blockSize
     }
+    
 
     function nameToRgba(name) {
-        let newCanvas = document.createElement("canvas");
-        let context = newCanvas.getContext("2d");
         context.fillStyle = name;
         context.fillRect(0,0,1,1);
         return context.getImageData(0,0,1,1).data;
     }
 
+    
+
     if (borderColor === undefined) {
         let newBorderColor = nameToRgba(color);
         consoleLog(newBorderColor)
     }
+
+    newCanvas.width = data.length;
+    newCanvas.height = data.length;
+    context.fillStyle = data.color;
+    context.strokeStyle = data.borderColor;
+    context.globalAlpha = data.globalAlpha;
+    context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+    context.strokeRect(0, 0, newCanvas.width, newCanvas.height);
+    let image = newCanvas.getImageData();
+    images[blockType] = image;
+    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
 
     blockRenderData[blockType] = data;
@@ -85,10 +102,10 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
 };
 
 addABlock("grass", "darkgreen", "brown")
-addABlock("dirt", (150, 75, 0))
-addABlock("stone", (125, 125, 125))
+addABlock("dirt", "brown")
+addABlock("stone", rgb(125, 125, 125))
 addABlock("cobblestone", (150, 150, 150))
-addABlock("snowy dirt", (220, 220, 220), (150, 75, 0))
+addABlock("snowy dirt", (220, 220, 220), "brown")
 addABlock("snowy stone", (220, 220, 220), (125, 125, 125))
 addABlock("sand", (232, 228, 118))
 addABlock("clay", (196, 152, 94))
@@ -252,10 +269,10 @@ export function render(deltaTime) {
 
     // separate the blocks into layers, so they get rendered in the right order
     // also, keep track of the scale for each y layer
-    let blocks = [];
+    let yLayer = [];
     let scaleFactors = [];
     for (let i = 0; i < chunkSize[1]; i++) {
-        blocks.push( [] );
+        yLayer.push( [] );
         scaleFactors.push( [] );
     };
 
@@ -295,7 +312,6 @@ export function render(deltaTime) {
 
 
             
-            scaleFactors[y] = scaleFactor
 
             let scaledRenderData = blockRenderData;
             
@@ -311,15 +327,14 @@ export function render(deltaTime) {
                         
                         xPos += chunkCoord[0] * totalChunkSize;
                         zPos += chunkCoord[1] * totalChunkSize;
-
-                        let thisBlockHasAlpha = false;
+                        block.useAlpha = false;
                         
                         if (block.globalAlpha < 255 && block.type != "water" && player.blockCoord[1] < y) {
                             let fiveBlocks = 5 * blockSize;
 
                             if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
                                 if (zPos - fiveBlocks < player.z && zPos + fiveBlocks > player.z) {
-                                    thisBlockHasAlpha = true
+                                    block.useAlpha = true;
                                 };
                             };
                         };
@@ -335,32 +350,11 @@ export function render(deltaTime) {
 
                                 let scaledLength = scaledImages[block.type].length * scaleFactor;
 
-                                scaledImages[block["type"]]["data"] = newImageData
+                                scaledImages[block.type].length = scaledLength;
                                 
-                            scaledImages[block["type"]]["scaled"] = true;
+                            scaledImages[block.type].scaled = true;
                             };
                         };
-
-                        if thisBlockHasAlpha:
-                            
-                            blockType = block["type"]
-                            alphaValue = block["alphaValue"]
-
-
-                            imageExists = scaledImages[blockType]["alphaData"].get(alphaValue, false)
-                            
-                            if imageExists == false:
-                                
-                                newImage = scaledImages[blockType]["data"].copy()
-                                newImage.set_alpha(alphaValue)
-
-                                scaledImages[blockType]["alphaData"][alphaValue] = newImage
-
-                                
-                            image = scaledImages[blockType]["alphaData"][alphaValue]
-
-                        else:
-                            image = scaledImages[block["type"]]["data"]
 
                         
                         xPos -= player.x
@@ -373,9 +367,8 @@ export function render(deltaTime) {
                         zPos -= camera.z - player.z
 
                         position = (xPos, zPos)
-                        imageData = (image, position)
 
-                        blocks[y].append(imageData)
+                        yLayer[y].push()
                 };
             };
         };
@@ -388,36 +381,22 @@ export function render(deltaTime) {
     
 
     // add player to rendering
-    if player.blockCoord[1] < chunkSize[1]:
-        blocks[player.blockCoord[1]].append(player.imageData)
-    else:
-        renderingData.append(player.imageData)
+    if player.blockCoord[1] < chunkSize[1] {
+        yLayer[player.blockCoord[1]].push(player.imageData);
+    } else {
+        renderingData.push(player.imageData);
+    }
 
     i = -1
-    if len(entities) != 0:
-        while i >= -len(entities):
-            entity = entities[i]
+    if (entities.length > 0) {
+        for (let i = -1; i >= -entities.length; i--) {
+            let entityRenderData = entities[i].renderData;
             
-            image = itemEntityIcons[entity.itemData.name]
-            
-            y = math.floor(entity.y / blockSize)
-
-            if y >= chunkSize[1]:
-                y = chunkSize[1] - 1
-            if y < 0:
-                y = 0
-
-            
-            x = entity.x - camera.x
-            z = entity.z - camera.z
-
-            position = (x, z)
-            imageData = (image, position)
-            
-            blocks[y].append(imageData)
+            yLayer[y].append(entityRenderData);
             
             
-            i -= 1
+        };
+    };
     
     // add blocks to rendering
     for y in range(chunkSize[1]):
@@ -612,8 +591,8 @@ export function render(deltaTime) {
     // run mouse's held item rendering
     // also highlights and tells what block you're hovering over
     if not player.otherInventoryData["open"]:
-        x = math.floor(mouse.cameraRelativeX / blockSize)
-        z = math.floor(mouse.cameraRelativeZ / blockSize)
+        x = Math.floor(mouse.cameraRelativeX / blockSize)
+        z = Math.floor(mouse.cameraRelativeZ / blockSize)
         x *= blockSize
         z *= blockSize
         player.canReachSelectedBlock = false

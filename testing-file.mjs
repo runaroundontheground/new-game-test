@@ -25,6 +25,3 @@ let testObject = {
     "a": 1,
     "b": 2
 }
-
-
-
