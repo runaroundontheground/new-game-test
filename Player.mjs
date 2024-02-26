@@ -181,7 +181,9 @@ class Player {
             let craftingTableRenderX = craftingAndArmorRenderX
             let craftingTableRenderY = craftingAndArmorRenderY - (slotSizeInPixels * 0)
 
-            let fontShift = font.size("1")
+            let fontShift = context.size
+            break return
+            font.size("1")
 
             let resultSlot = {
                 "contents": "empty",
@@ -406,34 +408,25 @@ class Player {
             let arrowWidth = arrowX + (slotSizeInPixels / 3);
             
             context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-            newCanvas.width = arrowWidth;
-            newCanvas.height = 10;
+            newCanvas.width = craftingAndArmorWidthInPixels;
+            newCanvas.height = craftingAndArmorHeightInPixels;
+            let scale = images["inventory arrow"].naturalWidth / arrowWidth;
+            arrowHeight = images["inventory arrow"].naturalHeight / scale;
             context.drawImage(craftingAndArmorImage, 0, 0)
-            // this is not done yet, just need to do the other inventory section as well, and do some
-            // updating stuff
-            pygame.draw.polygon(craftingAndArmorImage, slotOutlineColor, f)
+            context.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
 
-            let rect = Rect(a - slotSizeInPixels / 1.4, b + slotSizeInPixels / 8.5,
-                slotSizeInPixels / 1.3, slotSizeInPixels / 9)
-            pygame.draw.rect(craftingAndArmorImage, slotOutlineColor, rect)
-
-
+            craftingAndArmorImage = newCanvas.toDataURL();
 
             // put an arrow that goes towards the result slot for crafting in the 3x3 grid
-            a = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels - slotSizeInPixels * 0.8
-            b = (slotSizeInPixels * 0.75) + slotSizeInPixels * 1.1 + slotSizeInPixels / 1.8
+            arrowX = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels - slotSizeInPixels * 0.8;
+            arrowY = (slotSizeInPixels * 0.75) + slotSizeInPixels * 1.1 + slotSizeInPixels / 1.8
 
-            c = (a, b)
-            d = (a + (slotSizeInPixels / 3), b + (slotSizeInPixels / 3) / 2)
-            e = (a, b + slotSizeInPixels / 3)
-
-            f = (c, d, e)
-
-            pygame.draw.polygon(craftingTableBackground, slotOutlineColor, f)
-
-            rect = pygame.Rect(a - slotSizeInPixels / 1.4, b + slotSizeInPixels / 8.5,
-                slotSizeInPixels / 1.3, slotSizeInPixels / 9)
-            pygame.draw.rect(craftingTableBackground, slotOutlineColor, rect)
+            newCanvas.clearRect(0, 0, newCanvas.width, newCanvas.height);
+            newCanvas.width = craftingTableSizeInPixels[0];
+            newCanvas.height = craftingTableSizeInPixels[1];
+            context.drawImage(craftingTableImage, 0, 0);
+            context.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
+            craftingTableImage = newCanvas.toDataURL();
 
 
 
@@ -448,17 +441,17 @@ class Player {
             let inventorySlot = {
                 "contents": "empty", // this is where itemData goes
                 "count": 0, // how many of x item is in this slot
-                "renderPosition": (0, 0),
-                "outlineRenderPosition": (0, 0),
-                "itemCountRenderPosition": (0, 0),
+                "renderPosition": [0, 0],
+                "outlineRenderPosition": [0, 0],
+                "itemCountRenderPosition": [0, 0],
                 "rect": Rect(0, 0, 0, 0), // used for mouse collision
                 "slotId": 0
             }
 
-            this.inventory = []
-            this.hotbar = []
+            this.inventory = [];
+            this.hotbar = [];
 
-            slotId = 0
+            slotId = 0;
 
             for (let y = 0; y < heightOfInventoryInSlots; y++) {
                 for (let x = 0; x < widthOfInventoryInSlots; x++) {
@@ -479,13 +472,12 @@ class Player {
 
 
 
-                    updatedInventorySlot["renderPosition"] = [renderX, renderY]
-                    updatedInventorySlot["itemCountRenderPosition"] = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
-                    updatedInventorySlot["outlineRenderPosition"] = [rectX - gapBetweenSlots,
+                    updatedInventorySlot.renderPosition = [renderX, renderY]
+                    updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots,
                     rectY - gapBetweenSlots]
-                    updatedInventorySlot["rect"] = Rect(rectX, rectY,
-                        slotSizeInPixels, slotSizeInPixels)
-                    updatedInventorySlot["slotId"] = slotId
+                    updatedInventorySlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                    updatedInventorySlot.slotId = slotId
                     slotId += 1
 
 
@@ -512,9 +504,6 @@ class Player {
 
                 rectX = renderX - itemIconShift
                 rectY = renderY - itemIconShift
-
-                fontShift = font.size("1")
-
                 updatedInventorySlot = inventorySlot
 
                 updatedInventorySlot["renderPosition"] = (renderX, renderY)
