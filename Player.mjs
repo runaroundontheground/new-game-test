@@ -145,7 +145,7 @@ class Player {
             newCanvas.height = inventorySizeInPixels[1];
 
             context.fillRect(0, 0, newCanvas.width, newCanvas.height);
-            let inventoryBackground = newCanvas.toDataURL();
+            let inventoryImage = newCanvas.toDataURL();
             context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
             // make the slot image
@@ -181,9 +181,8 @@ class Player {
             let craftingTableRenderX = craftingAndArmorRenderX
             let craftingTableRenderY = craftingAndArmorRenderY - (slotSizeInPixels * 0)
 
-            let fontShift = context.size
-            break return
-            font.size("1")
+            let fontShift = context.measureText("1").width;
+            
 
             let resultSlot = {
                 "contents": "empty",
@@ -286,7 +285,7 @@ class Player {
             resultSlot.renderPosition = [renderX, renderY]
             resultSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
             resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-            resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+            resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
 
             this.crafting[2].resultSlot = resultSlot;
 
@@ -316,7 +315,7 @@ class Player {
             resultSlot.renderPosition = [renderX, renderY]
             resultSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
             resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-            resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+            resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
 
             this.crafting[3].resultSlot = resultSlot
 
@@ -354,7 +353,7 @@ class Player {
                     newCraftingSlot.renderPosition = [renderX, renderY]
                     newCraftingSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
                     newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-                    newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
                     newCraftingSlot.slotId = slotId
 
                     this.crafting[2].slots[slotId] = newCraftingSlot
@@ -392,7 +391,7 @@ class Player {
                     newCraftingSlot.renderPosition = [renderX, renderY]
                     newCraftingSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
                     newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-                    newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
                     newCraftingSlot.slotId = slotId
 
                     this.crafting[3].slots[slotId] = newCraftingSlot;
@@ -459,7 +458,12 @@ class Player {
                     slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
                     slotY = (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
-                    inventoryBackground.blit(slotImage, (slotX, slotY))
+                    newCanvas.clearRect(0, 0, newCanvas.width, newCanvas.height);
+                    newCanvas.width = inventoryWidthInPixels;
+                    newCanvas.height = inventoryHeightInPixels;
+                    newCanvas.drawImage(inventoryImage, 0, 0);
+                    newCanvas.drawImage(slotImage, slotX, slotY);
+                    inventoryImage = newCanvas.toDataURL();
 
                     renderX = inventoryRenderX + slotX + itemIconShift
                     renderY = inventoryRenderY + slotY + itemIconShift
@@ -469,11 +473,8 @@ class Player {
 
                     updatedInventorySlot = inventorySlot
 
-
-
-
                     updatedInventorySlot.renderPosition = [renderX, renderY]
-                    updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1]
+                    updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
                     updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots,
                     rectY - gapBetweenSlots]
                     updatedInventorySlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
@@ -490,7 +491,6 @@ class Player {
 
 
 
-            let inventoryImage = inventoryBackground
 
             // create hotbar data
             slotId = 0
@@ -506,16 +506,20 @@ class Player {
                 rectY = renderY - itemIconShift
                 updatedInventorySlot = inventorySlot
 
-                updatedInventorySlot["renderPosition"] = (renderX, renderY)
-                updatedInventorySlot["itemCountRenderPosition"] = (rectX + slotSizeInPixels - fontShift[0] - 1, rectY + slotSizeInPixels - fontShift[1] - 1)
-                updatedInventorySlot["outlineRenderPosition"] = (rectX - gapBetweenSlots,
-                    rectY - gapBetweenSlots)
-                updatedInventorySlot["rect"] = pygame.Rect(rectX, rectY,
-                    slotSizeInPixels, slotSizeInPixels)
-                updatedInventorySlot["slotId"] = slotId
+                updatedInventorySlot.renderPosition = [renderX, renderY]
+                updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
+                updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
+                updatedInventorySlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels);
+                updatedInventorySlot.slotId = slotId;
                 slotId += 1
 
-                hotbarImage.blit(slotImage, (slotX, slotY))
+                newCanvas.clearRect(0, 0, newCanvas.width, newCanvas.height);
+                newCanvas.width = hotbarSizeInPixels[0];
+                newCanvas.height = hotbarSizeInPixels[1];
+                newCanvas.drawImage(hotbarImage, 0, 0);
+                newCanvas.drawImage(slotImage, slotX, slotY);
+                hotbarImage = newCanvas.toDataURL();
+
 
                 this.hotbar.push(updatedInventorySlot)
             };
@@ -581,7 +585,6 @@ class Player {
 
         };
 
-        this.createALotOfInventoryThings()
 
 
         this.timers = {

@@ -14,6 +14,7 @@ let lastFrameTime = 0
 let running = true
 function initializeGame() {
     generateSpawnArea();
+    this.createALotOfInventoryThings()
     player.positionInSpawnArea();
     makeItemsExist();
     makeRecipesExist();
