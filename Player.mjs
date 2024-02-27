@@ -537,32 +537,38 @@ class Player {
                 craftingTableRenderX, craftingTableRenderY,
                 craftingTableSizeInPixels[0], craftingTableSizeInPixels[1]
             )
+            
+            images["inventory"] = inventoryImage;
+            images["crafting and armor"] = craftingAndArmorImage;
+            images["crafting table"] = craftingTableImage;
+            images["hotbar"] = hotbarImage;
+            images["slot outline"] = slotOutlineImage;
 
 
             this.inventoryRenderingData = {
                 "inventoryRenderData":  {
                     "drawType": "image",
-                    "image": inventoryImage,
+                    "imageUrl": "inventory",
                     "position": [inventoryRenderX, inventoryRenderY]
                 },
                 "craftingAndArmorRenderData": {
                     "drawType": "image",
-                    "image": craftingAndArmorImage,
+                    "imageUrl": "crafting and armor",
                     "position": [craftingAndArmorRenderX, craftingAndArmorRenderY]
                 },
                 "craftingTableRenderData": {
                     "drawType": "image",
-                    "image": craftingTableImage,
+                    "imageUrl": "crafting table",
                     "position": [craftingTableRenderX, craftingTableRenderY]
                 },
                 "hotbarRenderData": {
                     "drawType": "image",
-                    "image": hotbarImage,
+                    "imageUrl": "hotbar",
                     "position": [hotbarRenderX, hotbarRenderY]
                 },
                 "selectedSlotRenderData": {
                     "drawType": "image",
-                    "image": slotOutlineImage,
+                    "imageUrl": "slot outline",
                     "position": [0, 0]
                 },
                 "itemIconShift": itemIconShift,

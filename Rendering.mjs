@@ -44,7 +44,7 @@ renderData, how stuff should be rendered
 
 let blockRenderData = {
     "air": {"drawType": "block", "color": undefined, "borderColor": undefined,
-            "globalAlpha": 255, "length": blockSize}
+            "globalAlpha": 255, "length": blockSize, "position": [0, 0]}
 };
 
 let blockCursorHightlightData = {"strokeStyle": "black", "width": blockSize, "globalAlpha": 200,
@@ -65,7 +65,8 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
         "color": color,
         "borderColor": borderColor || color,
         "globalAlpha": alpha,
-        "length": blockSize
+        "length": blockSize,
+        "position": [0, 0]
     }
     
 
@@ -92,6 +93,14 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
     let image = newCanvas.toDataURL();
     images[blockType] = image;
     context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+
+    newCanvas.width = itemIconSize; newCanvas.height = itemIconSize;
+    context.globalAlpha = 100; // change later, 255 should? be opaque
+    context.drawImage(images[blockType], 0, 0, newCanvas.width, newCanvas.height);
+    let itemIcon = newCanvas.toDataURL();
+    images["item icons/" + blockType] = itemIcon;
+    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+
 
 
     blockRenderData[blockType] = data;
@@ -252,19 +261,47 @@ export function generateSpawnArea() {
 
 function drawToCanvas (renderData) {
     let drawType = renderData.drawType;
+    let x = renderData.position[0] || 0;
+    let y = renderData.position[1] || 0;
+
+    // this fixes redclaring stuff
+    let width = renderData.width || 20;
+    let height = renderData.height || 20;
+    let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
+    let globalAlpha = renderData.globalAlpha || 255;
+    ctx.globalAlpha = globalAlpha;
 
     switch (drawType) {
         case "block":
-            // do block things
+            let borderColor = renderData.borderColor;
+
+            ctx.fillStyle = color;
+            ctx.strokeStyle = borderColor;
+
+            ctx.fillRect(x, y, width, height);
+            ctx.strokeRect(x, y, width, height);
+
             break;
+            
         case "image":
-            // do image things
+            let imageUrl = renderData.imageUrl + ".png"; // that's a little bit important, adding .png
+            width = renderData.width || images[imageUrl].naturalWidth;
+            height = renderData.height || images[imageUrl].naturalHeight;
+            // later, add in sub-x and y, for doing stuff with spritesheets
+            ctx.drawImage(images[imageUrl], x, y, width, height);
+
             break;
+
         case "fillRect":
-            // do fillRect thigns
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, width, height);
+
             break;
         case "strokeRect":
-            // do strokeRect things
+
+            ctx.strokeStyle = color;
+            //ctx.stroke find line/border width later
+            ctx.strokeRect(x, y, width, height);
             break;
     } 
 }
@@ -340,19 +377,23 @@ export function render(deltaTime) {
                         xPos += chunkCoord[0] * totalChunkSize;
                         yPos += chunkCoord[1] * totalChunkSize;
 
-                        scaledRenderData[block.type].useAlpha = false;
-                        
-                        if (block.globalAlpha < 255 && block.type != "water" && player.blockCoord[1] < y) {
-                            let fiveBlocks = 5 * blockSize;
+                        if (block.type != "water") {
+                            if (block.globalAlpha < 255 && player.blockCoord[1] < y) {
+                                const fiveBlocks = 5 * blockSize;
 
-                            if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
-                                if (yPos - fiveBlocks < player.z && yPos + fiveBlocks > player.z) {
-                                    scaledRenderData[block.type].useAlpha = true;
+                                if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
+                                    if (yPos - fiveBlocks < player.z && yPos + fiveBlocks > player.z) {
+                                        scaledRenderData[block.type].globalAlpha = block.globalAlpha;
+                                    };
                                 };
                             };
                         };
 
-                        if (block.type == "water") {scaledRenderData[block.type].useAlpha = true;};
+                        if (block.type == "water") {
+                            scaledRenderData[block.type].globalAlpha = block.globalAlpha;
+                        };
+
+
 
                         if (!scaledRenderData[block.type].scaled) {
                             if (scaleFactor != 1) {
@@ -377,8 +418,7 @@ export function render(deltaTime) {
 
                         let renderData = scaledRenderData[block.type];
 
-                        renderData.x = xPos;
-                        renderData.y = yPos;
+                        renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
                 };
@@ -421,7 +461,7 @@ export function render(deltaTime) {
     
         
     // run inventory rendering
-    if (player.otherInventoryData["open"]) {
+    if (player.otherInventoryData.open) {
         // render the base part of the inventory
         let renderData = player.inventoryRenderingData.inventoryRenderingData;
         renderingData.push(renderData);
@@ -439,114 +479,206 @@ export function render(deltaTime) {
         };
 
         // draw a rect thingy over the hovered slot, highlights it
-        if mouse.inPlayerInventory and mouse.inASlot:
-            image = player.inventoryRenderingData["slotOutlineImage"]
-            slot = player.inventory[mouse.hoveredSlotId]
-            position = slot["outlineRenderPosition"]
+        if (mouse.inPlayerInventory && mouse.inASlot) {
+            let renderData = {
+                "drawType": "image",
+                "imageUrl": "slot outline",
+                "position": player.inventory[mouse.hoveredSlotId].outlineRenderPosition
+            };
             
-            imageData = (image, position)
-            renderingData.push(imageData)
+            renderingData.push(renderData)
+        };
 
         // highlight selected slots in crafting table
-        if mouse.inASlot and mouse.inPlayerCraftingTable and player.otherInventoryData["showCraftingTable"]:
-            image = player.inventoryRenderingData["slotOutlineImage"]
-            slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
-            position = slot["outlineRenderPosition"]
+        if (mouse.inASlot && mouse.inPlayerCraftingTable && player.otherInventoryData.showCraftingTable) {
+            let position = [0, 0];
 
-            imageData = (image, position)
-            renderingData.push(imageData)
+            if (mouse.hoveredSlotId != "resultSlot") {
+                position = player.crafting[player.crafting.gridSize].slots[mouse.hoveredSlotId].outlineRenderPosition;
+            } else {
+                position = player.crafting[player.crafting.gridSize].resultSlot.outlineRenderPosition;
+            };
+
+            let renderData = {
+                "drawType": "image",
+                "imageUrl": "slot outline",
+                "position": position
+            }
+            
+            renderingData.push(renderData)
+        };
 
         // also highlight hovered slots, but only in the crafting and armor slots, if they're visible
-        if mouse.inPlayerCraftingAndArmor and mouse.inASlot and player.otherInventoryData["showCraftingAndArmor"]:
-            image = player.inventoryRenderingData["slotOutlineImage"]
-            slot = player.crafting[player.crafting["gridSize"]]["slots"][mouse.hoveredSlotId]
-            position = slot["outlineRenderPosition"]
+        if (mouse.inPlayerCraftingAndArmor && mouse.inASlot && player.otherInventoryData.showCraftingAndArmor) {
+            let position = [0, 0];
+            if (mouse.hoveredSlotId != "resultSlot") {
+                position = player.crafting[player.crafting.gridSize].slots[mouse.hoveredSlotId].outlineRenderPosition;
+            } else {
+                position = player.crafting[player.crafting.gridSize].resultSlot.outlineRenderPosition;
+            }
             
-            imageData = (image, position)
-            renderingData.push(imageData)
+            let renderData = {
+                "drawType": "image",
+                "imageUrl": "slot outline",
+                "position": position
+            }
+
+            renderingData.push(renderData);
+        };
 
         // render all the items of the base player inventory
-        for slot in player.inventory:
-            item = slot["contents"]
-            if item != "empty":
-                image = itemIcons[item.name]
-                position = slot["renderPosition"]
+        for (let i = 0; i < player.inventory.length; i++) {
 
-                imageData = (image, position)
-                renderingData.push(imageData)
+            let slot = player.inventory[i];
+            let item = slot.contents;
 
-                if mouse.inPlayerInventory and mouse.inASlot:
-                    if player.inventory[mouse.hoveredSlotId]["contents"] == item:
-                        tooltip = item.tooltip
-                        if tooltip != "":
-                            position = (mouse.x + 10, mouse.y + 5)
+            if (item != "empty") {
+                let renderData = {
+                    "drawType": "image",
+                    "imageUrl": "item icons/" + item.name,
+                    "position": slot.renderPosition
+                }
 
-                            imageData = convertTextToImageData(tooltip, position)
-                            renderingData.push(imageData)
+                renderingData.push(renderData);
+
+                if (mouse.inPlayerInventory && mouse.inASlot) {
+                    if (player.inventory[mouse.hoveredSlotId].contents == item) {
+                        let tooltip = item.tooltip || "no tooltip";
+
+                        let renderData = {
+                            "drawType": "fillText",
+                            "text": tooltip,
+                            "position": [mouse.x + 10, mouse.y + 5]
+                        }
+
+                        renderingData.push(renderData)
+                    };
+                };
 
 
-                if slot["count"] > 1:
-                    imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                    renderingData.push(imageData)
+                if (slot.count > 1) {
+                    let renderData = {
+                        "drawType": "fillText",
+                        "text": slot.count,
+                        "position": slot.itemCountRenderPosition
+                    }
+                    renderingData.push(renderData);
+                };
+            };
+        };
 
         // render items in 2x2 crafting and armor, only if they're visible
-        if player.otherInventoryData["showCraftingAndArmor"]:
-            for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
-                item = slot["contents"]
-                if item != "empty":
-                    image = itemIcons[item.name]
-                    position = slot["renderPosition"]
+        if (player.otherInventoryData.showCraftingAndArmor) {
 
-                    imageData = (image, position)
-                    renderingData.push(imageData)
+            function doTheThingy(slot, comparedSlotThing) {
+                let item = slot.contents;
+                
+                if (item != "empty") {
 
-                    if mouse.inPlayerInventory and mouse.inASlot:
-                        if player.inventory[mouse.hoveredSlotId]["contents"] == item:
-                            tooltip = item.tooltip
-                            if tooltip != "":
-                                position = (mouse.x + 10, mouse.y + 5)
-
-                                imageData = convertTextToImageData(tooltip, position)
-                                renderingData.push(imageData)
+                    let renderData = {
+                        "drawType": "image",
+                        "imageUrl": "item icons/" + item.name,
+                        "position": slot.renderPosition
+                    }
+                    renderingData.push(renderData);
 
 
-                    if slot["count"] > 1:
-                        imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                        renderingData.push(imageData)
+                    if (mouse.inPlayerInventory && mouse.inASlot) {
+                        if (comparedSlotThing[mouse.hoveredSlotId].contents === item) {
+                            let tooltip = item.tooltip || "no tooltip";
+                            let renderData = {
+                                "drawType": "fillText",
+                                "text": tooltip,
+                                "position": [mouse.x + 10, mouse.y + 5]
+                            }
+                            renderingData.push(renderData);
+                        };
+                    };
+
+
+                    if (slot.count > 1) {
+                        let renderData = {
+                            "drawType": "fillText",
+                            "text": slot.count,
+                            "position": slot.itemCountRenderPosition
+                        }
+                        renderingData.push(renderData);
+                    };
+                };
+            };
+
+            if (player.crafting[player.crafting.gridSize].resultSlot.contents != "empty") {
+                doTheThingy(
+                    player.crafting[player.crafting.gridSize].resultSlot, 
+                    player.crafting[player.crafting.gridSize]
+                )
+            }
+
+            for (let i = 0; i < player.crafting[player.crafting.gridSize].slots.length; i++) {
+                let slot = player.crafting[player.crafting.gridSize].slots[i];
+                doTheThingy(slot, this.inventory);
+            };
 
 
         
 
-            for slot in player.armor.values():
+            /*for slot in player.armor.values():
                 //whoops, no armor exists, neither do the slots
                 pass
+                */
+        };
             
         // render stuff in the 3x3 crafting grid if its visible
-        if player.otherInventoryData["showCraftingTable"]:
-            for slot in player.crafting[player.crafting["gridSize"]]["slots"].values():
-                item = slot["contents"]
-                if item != "empty":
-                    image = itemIcons[item.name]
-                    position = slot["renderPosition"]
+        if (player.otherInventoryData.showCraftingTable) {
+            function doTheThingy(slot, comparedSlotThing) {
+                let item = slot.contents;
 
-                    imageData = (image, position)
-                    renderingData.push(imageData)
+                if (item != "empty") {
 
-                    if mouse.inPlayerInventory and mouse.inASlot:
-                        if player.inventory[mouse.hoveredSlotId]["contents"] == item:
-                            tooltip = item.tooltip
-                            if tooltip != "":
-                                position = (mouse.x + 10, mouse.y + 5)
-
-                                imageData = convertTextToImageData(tooltip, position)
-                                renderingData.push(imageData)
+                    let renderData = {
+                        "drawType": "image",
+                        "imageUrl": "item icons/" + item.name,
+                        "position": slot.renderPosition
+                    }
+                    
+                    renderingData.push(renderData)
 
 
-                    if slot["count"] > 1:
-                        imageData = convertTextToImageData(slot["count"], slot["itemCountRenderPosition"])
-                        renderingData.push(imageData)
+                    if (mouse.inPlayerInventory && mouse.inASlot) {
+                        if (comparedSlotThing[mouse.hoveredSlotId].contents === item) {
+                            let tooltip = item.tooltip || "no tooltip";
 
-    };
+                            let renderData = {
+                                "drawType": "fillText",
+                                "text": tooltip,
+                                "position": [mouse.x + 10, mouse.y + 5]
+                            }
+                            renderingData.push(renderData);
+                        };
+                    };
+
+
+                    if (slot.count > 1) {
+                        let renderData = {
+                            "drawType": "fillText",
+                            "text": slot.count,
+                            "position": slot.itemCountRenderPosition
+                        }
+                        renderingData.push(renderData)
+                    };
+                };
+            }
+            for (let i = 0; i < player.crafting[player.crafting.gridSize].slots.length; i++) {
+                let slot = player.crafting[player.crafting.gridSize].slots[i];
+                doTheThingy(slot, player.crafting[player.crafting.gridSize].slots);
+            };
+            
+            doTheThingy(
+                player.crafting[player.crafting.gridSize].resultSlot,
+                player.crafting[player.crafting.gridSize]
+            )
+
+        };
 
     // run hotbar rendering
     for (let i = 0; i < player.hotbar.length; i++) {
@@ -558,7 +690,7 @@ export function render(deltaTime) {
 
             let renderData = {
                 "drawType": "image",
-                "image": images[item.name],
+                "imageUrl": item.name,
                 "position": slot.renderPosition
             }
 
@@ -651,7 +783,7 @@ export function render(deltaTime) {
     if (mouse.heldSlot.contents != "empty") {
         let renderData = {
             "drawType": "image",
-            "image": images[mouse.heldSlot.contents.name],
+            "imageUrl": mouse.heldSlot.contents.name,
             "position": [mouse.x + 5, mouse.y + 5]
         }
 
