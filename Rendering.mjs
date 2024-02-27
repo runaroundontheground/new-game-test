@@ -1,12 +1,16 @@
-import { canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys, 
-chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
-itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress } from "./GlobalVariables.mjs";
+import {
+    canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
+    chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
+    itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress
+} from "./GlobalVariables.mjs";
 showLoadingProgress("loading Rendering.mjs");
 
 import { images } from "./ImageLoader.mjs";
 
-import { generateChunkTerrain, runBlockUpdatesAfterGeneration,
-generateChunkStructures, findBlock } from "./Worldgen.mjs";
+import {
+    generateChunkTerrain, runBlockUpdatesAfterGeneration,
+    generateChunkStructures, findBlock
+} from "./Worldgen.mjs";
 import { player } from "./Player.mjs";
 
 
@@ -43,13 +47,17 @@ renderData, how stuff should be rendered
 
 
 let blockRenderData = {
-    "air": {"drawType": "block", "color": undefined, "borderColor": undefined,
-            "globalAlpha": 255, "length": blockSize, "position": [0, 0]}
+    "air": {
+        "drawType": "block", "color": undefined, "borderColor": undefined,
+        "globalAlpha": 255, "length": blockSize, "position": [0, 0]
+    }
 };
 
-let blockCursorHightlightData = {"strokeStyle": "black", "width": blockSize, "globalAlpha": 200,
-                        "drawType": "strokeRect", "height": blockSize, "position": [0, 0],
-                        "lineWidth": "3px"}
+let blockCursorHightlightData = {
+    "strokeStyle": "black", "width": blockSize, "globalAlpha": 200,
+    "drawType": "strokeRect", "height": blockSize, "position": [0, 0],
+    "lineWidth": "3px"
+}
 
 
 let itemIconSize = player.inventoryRenderingData.slotSize - player.inventoryRenderingData.itemIconShift * 2;
@@ -58,7 +66,7 @@ let newCanvas = document.createElement("canvas");
 newCanvas.id = "image creation canvas";
 let context = newCanvas.getContext("2d");
 
-function addABlock (blockType, color, borderColor, alpha = 255) {
+function addABlock(blockType, color, borderColor, alpha = 255) {
 
     let data = {
         "drawType": "block",
@@ -68,15 +76,15 @@ function addABlock (blockType, color, borderColor, alpha = 255) {
         "length": blockSize,
         "position": [0, 0]
     }
-    
+
 
     function nameToRgba(name) {
         context.fillStyle = name;
-        context.fillRect(0,0,1,1);
-        return context.getImageData(0,0,1,1).data;
+        context.fillRect(0, 0, 1, 1);
+        return context.getImageData(0, 0, 1, 1).data;
     }
 
-    
+
 
     if (borderColor === undefined) {
         let newBorderColor = nameToRgba(color);
@@ -124,15 +132,15 @@ addABlock("leaves", "rgb(29, 64, 17)")
 
 newCanvas.display = "none;";
 
-function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
+function generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = false) {
     let chunkList = [];
     let cameraChunk = camera.currentChunk;
     let screenExtension = 1;
 
     let terrainGenRange = {
         "x": {
-        "min": cameraChunk[0] - screenExtension - rangeOfGeneration,
-        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + rangeOfGeneration
+            "min": cameraChunk[0] - screenExtension - rangeOfGeneration,
+            "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + rangeOfGeneration
         },
         "z": {
             "min": cameraChunk[1] - screenExtension - rangeOfGeneration,
@@ -142,8 +150,8 @@ function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
 
     let structureGenRange = {
         "x": {
-        "min": cameraChunk[0] - screenExtension - (rangeOfGeneration - 1),
-        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
+            "min": cameraChunk[0] - screenExtension - (rangeOfGeneration - 1),
+            "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
         },
         "z": {
             "min": cameraChunk[1] - screenExtension - (rangeOfGeneration - 1),
@@ -153,8 +161,8 @@ function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
 
     let blockUpdateRange = {
         "x": {
-        "min": cameraChunk[0] - screenExtension,
-        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
+            "min": cameraChunk[0] - screenExtension,
+            "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
         },
         "z": {
             "min": cameraChunk[1] - screenExtension,
@@ -165,14 +173,14 @@ function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
 
     for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
         for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
-            if (chunks[[x, z].toString] === undefined) {generateChunkTerrain([x, z]);};
+            if (chunks[[x, z].toString] === undefined) { generateChunkTerrain([x, z]); };
         };
     };
 
 
     for (let x = structureGenRange.x.min; x < structureGenRange.x.max; x++) {
         for (let z = structureGenRange.z.min; z < structureGenRange.z.max; z++) {
-            if (!chunks[[x, z].toString()].structuresGenerated) {generateChunkStructures([x, z]);};
+            if (!chunks[[x, z].toString()].structuresGenerated) { generateChunkStructures([x, z]); };
         }
     }
 
@@ -185,7 +193,7 @@ function generateNearbyAreas (rangeOfGeneration = 2, returnChunkList = false) {
         }
     }
 
-    if (returnChunkList) {return chunkList;};
+    if (returnChunkList) { return chunkList; };
 };
 
 
@@ -199,8 +207,8 @@ export function generateSpawnArea() {
 
     let terrainGenRange = {
         "x": {
-        "min": cameraChunk[0] - screenExtension - rangeOfGeneration,
-        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + rangeOfGeneration
+            "min": cameraChunk[0] - screenExtension - rangeOfGeneration,
+            "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + rangeOfGeneration
         },
         "z": {
             "min": cameraChunk[1] - screenExtension - rangeOfGeneration,
@@ -210,8 +218,8 @@ export function generateSpawnArea() {
 
     let structureGenRange = {
         "x": {
-        "min": cameraChunk[0] - screenExtension - (rangeOfGeneration - 1),
-        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
+            "min": cameraChunk[0] - screenExtension - (rangeOfGeneration - 1),
+            "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1 + (rangeOfGeneration - 1)
         },
         "z": {
             "min": cameraChunk[1] - screenExtension - (rangeOfGeneration - 1),
@@ -221,8 +229,8 @@ export function generateSpawnArea() {
 
     let blockUpdateRange = {
         "x": {
-        "min": cameraChunk[0] - screenExtension,
-        "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
+            "min": cameraChunk[0] - screenExtension,
+            "max": cameraChunk[0] + canvasWidthInChunks + screenExtension + 1
         },
         "z": {
             "min": cameraChunk[1] - screenExtension,
@@ -233,7 +241,7 @@ export function generateSpawnArea() {
 
     for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
         for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
-            if (chunks[[x, z].toString] === undefined) {generateChunkTerrain([x, z]);};
+            if (chunks[[x, z].toString] === undefined) { generateChunkTerrain([x, z]); };
         };
     };
     ctx.fillText("chunk terrain generated", 100, 100);
@@ -241,7 +249,7 @@ export function generateSpawnArea() {
 
     for (let x = structureGenRange.x.min; x < structureGenRange.x.max; x++) {
         for (let z = structureGenRange.z.min; z < structureGenRange.z.max; z++) {
-            if (!chunks[[x, z].toString()].structuresGenerated) {generateChunkStructures([x, z]);};
+            if (!chunks[[x, z].toString()].structuresGenerated) { generateChunkStructures([x, z]); };
         }
     }
     ctx.fillText("chunk structures generated", 100, 150)
@@ -254,12 +262,12 @@ export function generateSpawnArea() {
             }
         }
     }
-    
+
     ctx.fillText("chunk blocks have been updated", 100, 200)
 };
-    
 
-function drawToCanvas (renderData) {
+
+function drawToCanvas(renderData) {
     let drawType = renderData.drawType;
     let x = renderData.position[0] || 0;
     let y = renderData.position[1] || 0;
@@ -282,7 +290,7 @@ function drawToCanvas (renderData) {
             ctx.strokeRect(x, y, width, height);
 
             break;
-            
+
         case "image":
             let imageUrl = renderData.imageUrl + ".png"; // that's a little bit important, adding .png
             width = renderData.width || images[imageUrl].naturalWidth;
@@ -303,7 +311,7 @@ function drawToCanvas (renderData) {
             //ctx.stroke find line/border width later
             ctx.strokeRect(x, y, width, height);
             break;
-    } 
+    }
 }
 
 
@@ -311,7 +319,7 @@ function drawToCanvas (renderData) {
 export function render(deltaTime) {
 
 
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
@@ -322,19 +330,19 @@ export function render(deltaTime) {
     // also, keep track of the scale for each y layer
     let yLayer = [];
     for (let i = 0; i < chunkSize[1]; i++) {
-        yLayer.push( [] );
+        yLayer.push([]);
     };
 
-    
-    
+
+
     for (const chunkCoord of chunkList) {
         for (let y = 0; y < chunkSize[1]; y++) {
-            
-        
+
+
             // scale images outside of x/z loop, better performance
-            
+
             let scaleFactor = 1
-            
+
             // scale smoother when using exact position rather than player's block coord
             let playerYInBlocks = player.y / blockSize
 
@@ -344,36 +352,36 @@ export function render(deltaTime) {
                 differenceInBlocks /= blockSize;
                 scaleFactor += differenceInBlocks;
             };
-                
+
 
             if (y < playerYInBlocks) {
                 let differenceInBlocks = playerYInBlocks - y;
                 differenceInBlocks /= blockSize;
                 scaleFactor -= differenceInBlocks;
             };
-                
 
-            if (scaleFactor < 0.1) {scaleFactor = 0.1;};
-            if (scaleFactor > 5) {scaleFactor = 5;};
 
-            
+            if (scaleFactor < 0.1) { scaleFactor = 0.1; };
+            if (scaleFactor > 5) { scaleFactor = 5; };
 
 
 
-            
+
+
+
 
             let scaledRenderData = blockRenderData;
-            
+
 
             for (let x = 0; x < chunkSize[0]; x++) {
                 for (let z = 0; z < chunkSize[0]; z++) {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
-                    
-                    if (block.render && block.type != "air")
+
+                    if (block.render && block.type != "air") {
                         let xPos = x * blockSize;
                         let yPos = z * blockSize;
-                        
+
                         xPos += chunkCoord[0] * totalChunkSize;
                         yPos += chunkCoord[1] * totalChunkSize;
 
@@ -401,18 +409,18 @@ export function render(deltaTime) {
                                 let scaledLength = scaledRenderData[block.type].length * scaleFactor;
 
                                 scaledRenderData[block.type].length = scaledLength;
-                                
+
                             };
                             scaledRenderData[block.type].scaled = true;
                         };
 
-                        
+
                         xPos -= player.x
                         yPos -= player.z
 
                         xPos *= scaleFactor
                         yPos *= scaleFactor
-                        
+
                         xPos -= camera.x - player.x
                         yPos -= camera.z - player.z
 
@@ -421,6 +429,7 @@ export function render(deltaTime) {
                         renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
+                    };
                 };
             };
         };
@@ -429,8 +438,8 @@ export function render(deltaTime) {
     renderingData = []
 
 
-        
-    
+
+
 
     // add player to rendering
     if (player.blockCoord[1] < chunkSize[1]) {
@@ -443,13 +452,13 @@ export function render(deltaTime) {
     if (entities.length > 0) {
         for (let i = -1; i >= -entities.length; i--) {
             let entityRenderData = entities[i].renderData;
-            
+
             yLayer[entities[i].renderData.yLayer].push(entityRenderData);
-            
-            
+
+
         };
     };
-    
+
     // add all the layers to the main rendering data
     for (let y = 0; y < chunkSize[1]; y++) {
         renderingData.push(...yLayer[y]);
@@ -458,8 +467,8 @@ export function render(deltaTime) {
 
 
     renderingData.push(player.inventoryRenderingData.hotbarRenderData);
-    
-        
+
+
     // run inventory rendering
     if (player.otherInventoryData.open) {
         // render the base part of the inventory
@@ -485,7 +494,7 @@ export function render(deltaTime) {
                 "imageUrl": "slot outline",
                 "position": player.inventory[mouse.hoveredSlotId].outlineRenderPosition
             };
-            
+
             renderingData.push(renderData)
         };
 
@@ -504,7 +513,7 @@ export function render(deltaTime) {
                 "imageUrl": "slot outline",
                 "position": position
             }
-            
+
             renderingData.push(renderData)
         };
 
@@ -516,7 +525,7 @@ export function render(deltaTime) {
             } else {
                 position = player.crafting[player.crafting.gridSize].resultSlot.outlineRenderPosition;
             }
-            
+
             let renderData = {
                 "drawType": "image",
                 "imageUrl": "slot outline",
@@ -572,7 +581,7 @@ export function render(deltaTime) {
 
             function doTheThingy(slot, comparedSlotThing) {
                 let item = slot.contents;
-                
+
                 if (item != "empty") {
 
                     let renderData = {
@@ -609,7 +618,7 @@ export function render(deltaTime) {
 
             if (player.crafting[player.crafting.gridSize].resultSlot.contents != "empty") {
                 doTheThingy(
-                    player.crafting[player.crafting.gridSize].resultSlot, 
+                    player.crafting[player.crafting.gridSize].resultSlot,
                     player.crafting[player.crafting.gridSize]
                 )
             }
@@ -620,14 +629,14 @@ export function render(deltaTime) {
             };
 
 
-        
+
 
             /*for slot in player.armor.values():
                 //whoops, no armor exists, neither do the slots
                 pass
                 */
         };
-            
+
         // render stuff in the 3x3 crafting grid if its visible
         if (player.otherInventoryData.showCraftingTable) {
             function doTheThingy(slot, comparedSlotThing) {
@@ -640,7 +649,7 @@ export function render(deltaTime) {
                         "imageUrl": "item icons/" + item.name,
                         "position": slot.renderPosition
                     }
-                    
+
                     renderingData.push(renderData)
 
 
@@ -672,7 +681,7 @@ export function render(deltaTime) {
                 let slot = player.crafting[player.crafting.gridSize].slots[i];
                 doTheThingy(slot, player.crafting[player.crafting.gridSize].slots);
             };
-            
+
             doTheThingy(
                 player.crafting[player.crafting.gridSize].resultSlot,
                 player.crafting[player.crafting.gridSize]
@@ -680,76 +689,76 @@ export function render(deltaTime) {
 
         };
 
-    // run hotbar rendering
-    for (let i = 0; i < player.hotbar.length; i++) {
-        let slot = player.hotbar[i];
-        let item = slot.contents;
-        let currentHotbarSlot = player.otherInventoryData.currentHotbarSlot;
+        // run hotbar rendering
+        for (let i = 0; i < player.hotbar.length; i++) {
+            let slot = player.hotbar[i];
+            let item = slot.contents;
+            let currentHotbarSlot = player.otherInventoryData.currentHotbarSlot;
 
-        if (item != "empty") {
+            if (item != "empty") {
 
-            let renderData = {
-                "drawType": "image",
-                "imageUrl": item.name,
-                "position": slot.renderPosition
+                let renderData = {
+                    "drawType": "image",
+                    "imageUrl": item.name,
+                    "position": slot.renderPosition
+                }
+
+                renderingData.push(renderData);
             }
 
-            renderingData.push(renderData);
-        }
-    
-        if (i == currentHotbarSlot) {
-            
-            let renderData = player.inventoryRenderingData.selectedSlotRenderData;
-            renderData.position = slot.outlineRenderPosition;
+            if (i == currentHotbarSlot) {
 
-            renderingData.push(renderData);
+                let renderData = player.inventoryRenderingData.selectedSlotRenderData;
+                renderData.position = slot.outlineRenderPosition;
 
-            if (mouse.inPlayerHotbar && mouse.inASlot) {
+                renderingData.push(renderData);
 
-                if (item != "empty" && player.otherInventoryData.open) {
+                if (mouse.inPlayerHotbar && mouse.inASlot) {
+
+                    if (item != "empty" && player.otherInventoryData.open) {
 
 
-                    let renderData = player.inventoryRenderingData.selectedSlotRenderData;
-                    renderData.position = player.hotbar[mouse.hoveredSlotId].outlineRenderPosition;
+                        let renderData = player.inventoryRenderingData.selectedSlotRenderData;
+                        renderData.position = player.hotbar[mouse.hoveredSlotId].outlineRenderPosition;
 
-                    renderingData.push(renderData);
-                    if (player.hotbar[mouse.hoveredSlotId].contents === item) {
-                        
-                        if (item.tooltip != "") {
-                            let renderData = {
-                                "drawType": "fillText",
-                                "fillStyle": "white",
-                                "text": tooltip,
-                                "position": [mouse.x + 10, mouse.y + 5]
-                            }
+                        renderingData.push(renderData);
+                        if (player.hotbar[mouse.hoveredSlotId].contents === item) {
 
-                            renderingData.push(renderData);
+                            if (item.tooltip != "") {
+                                let renderData = {
+                                    "drawType": "fillText",
+                                    "fillStyle": "white",
+                                    "text": tooltip,
+                                    "position": [mouse.x + 10, mouse.y + 5]
+                                }
+
+                                renderingData.push(renderData);
+                            };
                         };
                     };
-                };
 
-                
+
+                };
             };
+
         };
 
-    };
 
 
 
-    
-    // run mouse's held item rendering
-    // also highlights and tells what block you're hovering over
-    if (!player.otherInventoryData.open) {
-        let x = Math.floor(mouse.cameraRelativeX / blockSize);
-        let z = Math.floor(mouse.cameraRelativeZ / blockSize);
-        x *= blockSize;
-        z *= blockSize;
-        player.canReachSelectedBlock = false
+        // run mouse's held item rendering
+        // also highlights and tells what block you're hovering over
+        if (!player.otherInventoryData.open) {
+            let x = Math.floor(mouse.cameraRelativeX / blockSize);
+            let z = Math.floor(mouse.cameraRelativeZ / blockSize);
+            x *= blockSize;
+            z *= blockSize;
+            player.canReachSelectedBlock = false
 
-        if  (  x < player.x + (player.horizontalBlockReach * blockSize)
-            && x > player.x - (player.horizontalBlockReach * blockSize)
-            && z < player.z + (player.horizontalBlockReach * blockSize)
-            && z > player.z - (player.horizontalBlockReach * blockSize)
+            if (x < player.x + (player.horizontalBlockReach * blockSize)
+                && x > player.x - (player.horizontalBlockReach * blockSize)
+                && z < player.z + (player.horizontalBlockReach * blockSize)
+                && z > player.z - (player.horizontalBlockReach * blockSize)
             ) {
                 player.canReachSelectedBlock = true
                 x -= camera.x
@@ -759,7 +768,7 @@ export function render(deltaTime) {
 
 
                 renderingData.push(blockCursorHightlightData)
-                
+
 
                 // do stuff so it displays the mouse's y selection and 
                 // the block that the mouse is theoretically currently
@@ -774,69 +783,72 @@ export function render(deltaTime) {
                 renderingData.push(renderData);
             };
 
-    };
-        
-                        
-
-
-    
-    if (mouse.heldSlot.contents != "empty") {
-        let renderData = {
-            "drawType": "image",
-            "imageUrl": mouse.heldSlot.contents.name,
-            "position": [mouse.x + 5, mouse.y + 5]
-        }
-
-        renderingData.push(renderData);
-
-        shift = player.inventoryRenderingData["slotSize"] - 10
-
-        // draw the item count, if there's more than one item
-        if (mouse.heldSlot.count > 1) {
-            let renderData = {
-                "drawType": "fillText",
-                "fillStyle": "white",
-                "text": mouse.heldSlot.count,
-                "position": [mouse.x + shift, mouse.y + shift]
-            }
-            renderingData.push(renderData);
         };
+
+
+
+
+
+        if (mouse.heldSlot.contents != "empty") {
+            let renderData = {
+                "drawType": "image",
+                "imageUrl": mouse.heldSlot.contents.name,
+                "position": [mouse.x + 5, mouse.y + 5]
+            }
+
+            renderingData.push(renderData);
+
+            shift = player.inventoryRenderingData["slotSize"] - 10
+
+            // draw the item count, if there's more than one item
+            if (mouse.heldSlot.count > 1) {
+                let renderData = {
+                    "drawType": "fillText",
+                    "fillStyle": "white",
+                    "text": mouse.heldSlot.count,
+                    "position": [mouse.x + shift, mouse.y + shift]
+                }
+                renderingData.push(renderData);
+            };
+        };
+
+
+
+        for (let i = 0; i < renderingData.length; i++) {
+            drawToCanvas(renderingData[i]);
+        };
+
+
+        // debug things
+        let debug1 = {
+            "drawType": "fillText",
+            "fillStyle": "red",
+            "text": "camera chunk: " + camera.currentChunk + ", player chunk: " + player.chunkCoord,
+            "position": [300, 100]
+        }
+        drawToCanvas(debug1);
+
+        let debug2 = {
+            "drawType": "fillText",
+            "fillStyle": "red",
+            "text": "player block coord " + player.blockCoord + ", player yv " + player.yv,
+            "position": [300, 125]
+        }
+        drawToCanvas(debug2);
+
+        let debug3 = {
+            "drawType": "fillText",
+            "fillStyle": "red",
+            "text": "mouse pos " + mouse.pos + ", mouse relative pos " + mouse.cameraRelativePos,
+            "position": [300, 150]
+        }
+        drawToCanvas(debug3);
+
+
     };
-
-    
-
-    for (let i = 0; i < renderingData.length; i++) {
-        drawToCanvas(renderingData[i]);
-    };
-
-    // debug things
-
-    // debug things
-    debugRenderingStuff += " player pos: " + str(round(player.position[0]))+ ", " + str(round(player.position[1])) + ", " + str(round(player.position[2]))
-    imageData = convertTextToImageData(debugRenderingStuff, (100, 300))
-    renderingData.push(imageData)
-    let debug1 = {
-        "drawType": "fillText",
-        "fillStyle": "red",
-        "text": "camera chunk: " + camera.currentChunk + ", player chunk: " + player.chunkCoord
-    }
-    drawToCanvas(debug1);
-    
-    debugRenderingStuff2 = "player block position " + str(player.blockCoord)
-    debugRenderingStuff2 += "player yv " + str(player.yv)
-    debugRenderingStuff3 = "mouse pos: " + str(mouse.pos) + ", mouseRelativePos: " + str(mouse.cameraRelativePos)
-
-    
-    thing2 = font.render(debugRenderingStuff2, 0, (255, 0, 0))
-    thing3 = font.render(debugRenderingStuff3, 0, (255, 0, 0))
-    
-    screen.blit(thing2, (100, 200))
-    screen.blit(thing3, (100, 100))
-
-
 };
 
 
-showLoadingProgress("rendering initialized")
+showLoadingProgress("Rendering.mjs initialized");
 
 

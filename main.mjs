@@ -1,7 +1,8 @@
 
 import {
     deltaTime, items, entities, projectiles, fps, keysPressed,
-    timeScale, consoleLog, allImagesLoaded, showLoadingProgress
+    timeScale, consoleLog, allImagesLoaded, showLoadingProgress,
+    canvas, ctx
 } from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
@@ -10,19 +11,22 @@ import { render, generateSpawnArea, doCommandStuff } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
 
 showLoadingProgress("loading main.mjs")
-let lastFrameTime = 0
-let running = true
+
+let lastFrameTime = 0;
+let running = false;
+
 function initializeGame() {
     generateSpawnArea();
-    this.createALotOfInventoryThings()
+    player.createALotOfInventoryThings()
     player.positionInSpawnArea();
     makeItemsExist();
     makeRecipesExist();
-
+    running = true;
 
 };
 
 function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     lastFrameTime = performance.now();
     // do things, then call self using setTimeout at the bottom/end
 
@@ -43,7 +47,7 @@ function gameLoop() {
     render();
     updateMouseAndKeys();
 
-    currentTime = performance.now();
+    let currentTime = performance.now();
     deltaTime = currentTime - lastFrameTime;
 
     let delayBetweenFramesInMilliseconds = (1000 / fps) * timeScale;
