@@ -129,7 +129,7 @@ export class ItemEntity extends Entity {
 
 
         // update image things
-        
+        this could be where error is for y already decalred, no comment means visible error to lookat later
         let y = 0;
         y = Math.floor(this.y / blockSize);
         if (y >= chunkSize[1]) {y = chunkSize[1] - 1};
