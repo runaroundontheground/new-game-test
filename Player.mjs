@@ -1,6 +1,6 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
-    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress, Rect, canvas, ctx
+    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress, Rect, canvas, ctx, allImagesLoaded
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Player.mjs");
 
@@ -12,7 +12,6 @@ import {
 import { ItemEntity } from "./Entities.mjs";
 import { PlaceableItem } from "./Items.mjs";
 import { images } from "./ImageLoader.mjs";
-
 
 
 
@@ -486,8 +485,7 @@ class Player {
                 };
             };
 
-
-
+            this.createALotOfInventoryThings();
 
 
 
@@ -1837,3 +1835,4 @@ export let player = new Player();
 
 
 showLoadingProgress("Player.mjs initialized");
+

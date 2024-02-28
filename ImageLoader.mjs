@@ -11,6 +11,8 @@ function showLoadingProgress(message) {
     loadingDiv.scrollTop = loadingDiv.scrollHeight;
 }
 
+showLoadingProgress("started loading images");
+
 export var allImagesLoaded = false;
 export let images = {};
 
@@ -30,7 +32,9 @@ for (const key of Object.keys(imageUrlsAndNames)) {
     let image = new Image();
     image.src = imageUrlsAndNames[key];
     image.onload = function () {
-        totalNumberOfImages += 1;
+        currentNumberOfLoadedImages += 1;
+
+        consoleLog(currentNumberOfLoadedImages);
     }
 
     images[key] = image;

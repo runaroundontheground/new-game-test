@@ -129,15 +129,14 @@ export class ItemEntity extends Entity {
 
 
         // update image things
-        this could be where error is for y already decalred, no comment means visible error to lookat later
-        let y = 0;
-        y = Math.floor(this.y / blockSize);
-        if (y >= chunkSize[1]) {y = chunkSize[1] - 1};
-        if (y < 0) {y = 0};
+        
+        let yRenderLayer = Math.floor(this.y / blockSize);
+        if (yRenderLayer >= chunkSize[1]) {yRenderLayer = chunkSize[1] - 1};
+        if (yRenderLayer < 0) {yRenderLayer = 0};
 
         this.renderData.x = this.x - camera.x;
         this.renderData.y = this.z - camera.z;
-        this.renderData.yLayer = y;
+        this.renderData.yLayer = yRenderLayer;
 
         
         this.x += this.xv;

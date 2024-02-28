@@ -15,7 +15,6 @@ import { player } from "./Player.mjs";
 
 
 
-
 /*
 huge rework needed here, probably just delete most of the code, besides the Math i suppose
 
