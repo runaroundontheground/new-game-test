@@ -16,7 +16,6 @@ import { PlaceableItem } from "./Items.mjs";
 import { images } from "./ImageLoader.mjs";
 
 
-
 class Player {
     constructor() {
         // player's actual coordinate is
