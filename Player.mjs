@@ -1,6 +1,8 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
-    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random, showLoadingProgress, Rect, canvas, ctx, allImagesLoaded
+    canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random,
+    showLoadingProgress, Rect, canvas, ctx, allImagesLoaded
+
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Player.mjs");
 
