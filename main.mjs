@@ -1,6 +1,6 @@
 
 import {
-    deltaTime, items, entities, projectiles, fps, keysPressed,
+    items, entities, projectiles, fps, keysPressed,
     timeScale, consoleLog, showLoadingProgress,
     canvas, ctx
 } from "./GlobalVariables.mjs";
@@ -15,6 +15,7 @@ showLoadingProgress("loading main.mjs")
 
 let lastFrameTime = 0;
 let running = true;
+let deltaTime = 1;
 
 function initializeGame() {
     consoleLog("test")
@@ -27,9 +28,9 @@ function initializeGame() {
 };
 
 function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     lastFrameTime = performance.now();
-    // do things, then call self using setTimeout at the bottom/end
+    
 
     for (let i = entities.length - 1; i >= 0; i--) {
 

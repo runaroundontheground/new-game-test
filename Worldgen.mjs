@@ -539,7 +539,7 @@ export function getChunkCoord(xPos = 1, zPos = 1) {
   let x = Math.floor(xPos / totalChunkSize);
   let z = Math.floor(zPos / totalChunkSize);
 
-  chunkCoord = [x, z];
+  let chunkCoord = [x, z];
 
   return chunkCoord;
 };
@@ -565,7 +565,7 @@ export function getBlockCoord(xPos = 1, yPos = 1, zPos = 1, usesSimpleInputs = f
   while (z < 0) { z += chunkSize[0]; };
   while (z >= chunkSize[0]) { z -= chunkSize[0]; };
 
-  blockCoord = [x, y, z];
+  let blockCoord = [x, y, z];
 
   return blockCoord;
 };

@@ -279,8 +279,19 @@ function drawToCanvas(renderData) {
     let width = renderData.width || 20;
     let height = renderData.height || 20;
     let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
-    let globalAlpha = renderData.globalAlpha || 255;
+    let globalAlpha = renderData.globalAlpha || 100;
     ctx.globalAlpha = globalAlpha;
+
+    if (drawType == "block") {
+        let borderColor = renderData.borderColor;
+
+            ctx.fillStyle = color;
+            ctx.strokeStyle = borderColor;
+
+            ctx.fillRect(x, y, width, height);
+            ctx.strokeRect(x, y, width, height);
+            consoleLog("rendering a block")
+    }
 
     switch (drawType) {
         case "block":
@@ -291,6 +302,7 @@ function drawToCanvas(renderData) {
 
             ctx.fillRect(x, y, width, height);
             ctx.strokeRect(x, y, width, height);
+            consoleLog("rendering a block")
 
             break;
 
@@ -438,7 +450,7 @@ export function render(deltaTime) {
         };
     };
 
-    renderingData = []
+    let renderingData = [];
 
 
 
@@ -451,7 +463,6 @@ export function render(deltaTime) {
         renderingData.push(player.renderData);
     }
 
-    i = -1
     if (entities.length > 0) {
         for (let i = -1; i >= -entities.length; i--) {
             let entityRenderData = entities[i].renderData;

@@ -79,7 +79,7 @@ class Player {
         };
 
         // hooray, inventory time!
-        
+
 
 
         let widthOfInventoryInSlots = 9;
@@ -117,9 +117,9 @@ class Player {
 
         let craftingAndArmorSizeInPixels = [Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels)]
 
-        
+
         let inventorySizeInPixels = (Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels))
-        
+
         let hotbarSizeInPixels = (Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2)))
 
         let craftingAndArmorRenderX = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2
@@ -130,7 +130,7 @@ class Player {
         let craftingTableRenderY = craftingAndArmorRenderY - (slotSizeInPixels * 0)
 
         let fontShift = ctx.measureText("1").width;
-        
+
 
         let resultSlot = {
             "contents": "empty",
@@ -408,7 +408,7 @@ class Player {
 
 
         this.inventoryRenderingData = {
-            "inventoryRenderData":  {
+            "inventoryRenderData": {
                 "drawType": "image",
                 "imageUrl": "UI/" + "inventory",
                 "position": [inventoryRenderX, inventoryRenderY]
@@ -800,895 +800,896 @@ class Player {
                 this.position = [this.x, this.y, this.z];
 
             };
+        };
 
-            this.giveItem = function (item, count = 1) {
+        this.giveItem = function (item, count = 1) {
 
-                function checkForStackables(container, done, count, item) {
-                    if (!done && item.stackable) {
-                        for (let i = 0; i < container.length; i++) {
+            function checkForStackables(container, done, count, item) {
+                if (!done && item.stackable) {
+                    for (let i = 0; i < container.length; i++) {
 
-                            let slot = container[i];
-                            if (slot.contents == "empty" || slot.contents.name != item.name ||
-                                slot.contents.cound == maxStackSize) {
-                                return done;
+                        let slot = container[i];
+                        if (slot.contents == "empty" || slot.contents.name != item.name ||
+                            slot.contents.cound == maxStackSize) {
+                            return done;
+                        }
+
+
+                        let addedCount = count + slot["count"]
+                        if (addedCount <= maxStackSize) {
+
+                            slot["count"] = addedCount
+                            return true
+                        } else {
+                            if (addedCount > maxStackSize) {
+                                slot["count"] = maxStackSize
+                                count = addedCount - maxStackSize
+                                break
                             }
-
-
-                            let addedCount = count + slot["count"]
-                            if (addedCount <= maxStackSize) {
-
-                                slot["count"] = addedCount
-                                return true
-                            } else {
-                                if (addedCount > maxStackSize) {
-                                    slot["count"] = maxStackSize
-                                    count = addedCount - maxStackSize
-                                    break
-                                }
-                            };
-                            container[i] = slot;
-
                         };
+                        container[i] = slot;
 
-                    }
-                    return done
-                };
-
-                function checkForEmptySlots(container, done, count, item) {
-                    if (!done) {
-                        container.forEach(function (slot) {
-                            if (slot.contents == "empty") {
-                                slot.contents = item;
-                                slot.count = count;
-
-                                return true;
-                            }
-                        });
                     };
-                    return done
+
+                }
+                return done
+            };
+
+            function checkForEmptySlots(container, done, count, item) {
+                if (!done) {
+                    container.forEach(function (slot) {
+                        if (slot.contents == "empty") {
+                            slot.contents = item;
+                            slot.count = count;
+
+                            return true;
+                        }
+                    });
                 };
-
-
-
-                done = false
-
-                done = checkForStackables(this.hotbar, done, count, item)
-                done = checkForStackables(this.inventory, done, count, item)
-
-                done = checkForEmptySlots(this.hotbar, done, count, item)
-                done = checkForEmptySlots(this.inventory, done, count, item)
-
-                if (!done) { consoleLog("failed to give item"); };
-
                 return done
             };
 
 
 
+            done = false
 
-            this.moveItem = function (movingItemSlot, movingItem, amount, receivingContainer) {
-                // these parameters will be changed by the function, hopefully it works?
-                // this function will return whether the operation was successful or not
-                let receivingSlotId = undefined;
+            done = checkForStackables(this.hotbar, done, count, item)
+            done = checkForStackables(this.inventory, done, count, item)
 
-                // search for which slot to move stuff to
+            done = checkForEmptySlots(this.hotbar, done, count, item)
+            done = checkForEmptySlots(this.inventory, done, count, item)
+
+            if (!done) { consoleLog("failed to give item"); };
+
+            return done
+        };
+
+
+
+
+        this.moveItem = function (movingItemSlot, movingItem, amount, receivingContainer) {
+            // these parameters will be changed by the function, hopefully it works?
+            // this function will return whether the operation was successful or not
+            let receivingSlotId = undefined;
+
+            // search for which slot to move stuff to
+            for (let i = 0; i < receivingContainer.length; i++) {
+                let slot = receivingContainer[i];
+                let item = slot.contents;
+
+                if (movingItem.stackable) {
+                    if (item != "empty" && item.stackable === true && item.name === movingItem.name
+                        && slot.count < maxStackSize) {
+                        receivingSlotId = i;
+                        break;
+                    }
+                } else {
+                    if (item == "empty") {
+                        receivingSlotId = i;
+                        break;
+                    }
+                }
+            }
+
+            if (receivingSlotId === undefined && movingItem.stackable) {
                 for (let i = 0; i < receivingContainer.length; i++) {
                     let slot = receivingContainer[i];
                     let item = slot.contents;
 
-                    if (movingItem.stackable) {
-                        if (item != "empty" && item.stackable === true && item.name === movingItem.name
-                            && slot.count < maxStackSize) {
-                            receivingSlotId = i;
-                            break;
-                        }
-                    } else {
-                        if (item == "empty") {
-                            receivingSlotId = i;
-                            break;
-                        }
+                    if (item === "empty") {
+                        receivingSlotId = i;
+                        break;
                     }
                 }
-
-                if (receivingSlotId === undefined && movingItem.stackable) {
-                    for (let i = 0; i < receivingContainer.length; i++) {
-                        let slot = receivingContainer[i];
-                        let item = slot.contents;
-
-                        if (item === "empty") {
-                            receivingSlotId = i;
-                            break;
-                        }
-                    }
-                }
-
-                // make sure moving amount makes sense
-                if (amount > movingItemSlot.count) {
-                    amount = movingItemSlot.count;
-                }
-
-
-                if (receivingSlotId !== undefined) {
-                    // important! make sure the parameter gets updated from receivingSlot
-                    let receivingSlot = receivingContainer[receivingSlotId];
-                    let movingCount = receivingSlot.count + amount;
-
-                    if (movingCount <= maxStackSize) {
-                        receivingSlot.count = movingCount;
-                        receivingSlot.contents = movingItem;
-
-                        movingItem = "empty";
-                        movingItemSlot.count = 0;
-                    } else {
-                        let leftOverCount = movingCount - maxStackSize;
-                        receivingSlot.count = maxStackSize;
-                        receivingSlot.contents = movingItem; // set the item to the moving one, just in case
-
-                        movingItemSlot = leftOverCount;
-                    }
-
-                    receivingContainer[receivingSlotId] = receivingSlot;
-                    return true;
-                }
-                return false;
             }
 
-            this.doInventoryThings = function () {
+            // make sure moving amount makes sense
+            if (amount > movingItemSlot.count) {
+                amount = movingItemSlot.count;
+            }
 
 
-                if (keysPressed.e) { this.otherInventoryData.open = !this.otherInventoryData.open; };
+            if (receivingSlotId !== undefined) {
+                // important! make sure the parameter gets updated from receivingSlot
+                let receivingSlot = receivingContainer[receivingSlotId];
+                let movingCount = receivingSlot.count + amount;
+
+                if (movingCount <= maxStackSize) {
+                    receivingSlot.count = movingCount;
+                    receivingSlot.contents = movingItem;
+
+                    movingItem = "empty";
+                    movingItemSlot.count = 0;
+                } else {
+                    let leftOverCount = movingCount - maxStackSize;
+                    receivingSlot.count = maxStackSize;
+                    receivingSlot.contents = movingItem; // set the item to the moving one, just in case
+
+                    movingItemSlot = leftOverCount;
+                }
+
+                receivingContainer[receivingSlotId] = receivingSlot;
+                return true;
+            }
+            return false;
+        }
+
+        this.doInventoryThings = function () {
 
 
-                this.inventory.forEach(function (slot) {
-                    if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
-                })
-                this.hotbar.forEach(function (slot) {
-                    if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
-                })
+            if (keysPressed.e) { this.otherInventoryData.open = !this.otherInventoryData.open; };
 
 
-                function adjustMouseSelectedBlockHeight() {
-                    // change the selected height of the mouse
-                    mouse.selectedY = this.y
-
-                    if (keysPressed["."]) {
-                        if (mouse.selectedYChange < this.verticalBlockReach) {
-                            mouse.selectedYChange += 1;
-                        };
-                    };
-
-                    if (keysPressed[","]) {
-                        if (mouse.selectedYChange > -this.verticalBlockReach) {
-                            mouse.selectedYChange -= 1;
-                        };
-                    };
-
-                    mouse.selectedY += mouse.selectedYChange * blockSize;
+            this.inventory.forEach(function (slot) {
+                if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
+            })
+            this.hotbar.forEach(function (slot) {
+                if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
+            })
 
 
-                    if (mouse.selectedY <= 0) { mouse.selectedY = blockSize; };
-                    if (mouse.selectedY >= chunkSize[1] * blockSize) { mouse.selectedY = chunkSize[1] * (blockSize - 1); };
-                };
-                adjustMouseSelectedBlockHeight()
+            function adjustMouseSelectedBlockHeight() {
+                // change the selected height of the mouse
+                mouse.selectedY = this.y
 
-
-                // change hotbar slot based on pressing stuff
-                let numberList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-                numberList.forEach(function (number) {
-                    if (key[number]) { this.otherInventoryData.currentHotbarSlot = Number(number); };
-                })
-
-
-                function dropItems() {
-                    // drop items from the hotbar
-                    if (keysPressed.q) {
-                        if (!this.otherInventoryData.open) {
-                            let currentHotbarSlot = this.otherInventoryData.currentHotbarSlot;
-                            let item = this.hotbar[currentHotbarSlot].contents;
-
-                            if (item != "empty") {
-
-                                let x = this.x + this.width / 2 - itemEntitySize / 2;
-                                let y = this.y - this.height / 2;
-                                let z = this.z + this.width / 2 - itemEntitySize / 2;
-
-                                // figure out velocity for angle of player to mouse
-
-                                let xDiff = mouse.cameraRelativeX - x;
-                                let yDiff = mouse.cameraRelativeZ - z;
-
-                                let angle = Math.atan2(yDiff, xDiff);
-
-                                let dropVelocity = 3
-
-                                let xv = Math.cos(angle) * dropVelocity;
-                                let yv = 2;
-                                let zv = Math.sin(angle) * dropVelocity;
-
-                                let count = 1;
-
-                                item.drop(x, y, z, xv, yv, zv, this, count);
-                            };
-                        };
+                if (keysPressed["."]) {
+                    if (mouse.selectedYChange < this.verticalBlockReach) {
+                        mouse.selectedYChange += 1;
                     };
                 };
-                dropItems();
+
+                if (keysPressed[","]) {
+                    if (mouse.selectedYChange > -this.verticalBlockReach) {
+                        mouse.selectedYChange -= 1;
+                    };
+                };
+
+                mouse.selectedY += mouse.selectedYChange * blockSize;
 
 
-                function hotbarHeldItemStuff() {
+                if (mouse.selectedY <= 0) { mouse.selectedY = blockSize; };
+                if (mouse.selectedY >= chunkSize[1] * blockSize) { mouse.selectedY = chunkSize[1] * (blockSize - 1); };
+            };
+            adjustMouseSelectedBlockHeight()
+
+
+            // change hotbar slot based on pressing stuff
+            let numberList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+            numberList.forEach(function (number) {
+                if (key[number]) { this.otherInventoryData.currentHotbarSlot = Number(number); };
+            })
+
+
+            function dropItems() {
+                // drop items from the hotbar
+                if (keysPressed.q) {
                     if (!this.otherInventoryData.open) {
-                        let index = this.otherInventoryData.currentHotbarSlot;
-                        let slotData = this.hotbar[index];
-                        let item = slotData.contents;
-
-                        if (mouse.buttons.pressed.left || mouse.buttons["left"]) {
-                            this.doStuffOnLeftClick(item)
-                        };
+                        let currentHotbarSlot = this.otherInventoryData.currentHotbarSlot;
+                        let item = this.hotbar[currentHotbarSlot].contents;
 
                         if (item != "empty") {
 
-                            if (mouse.buttons["pressed"]["right"]) {
-                                item.RMBPressedAction(this);
-                            } else { if (mouse.buttons.right) { item.RMBAction(this); } };
-                        } else {
-                            this.doStuffOnRightClick(item)
-                        };
-                    };
-                };
-                hotbarHeldItemStuff();
-
-                function updateMouseInventoryCollision() {
-                    mouse.inPlayerInventory = false;
-                    mouse.inPlayerHotbar = false;
-                    mouse.inPlayerCraftingAndArmor = false;
-                    mouse.inPlayerCraftingTable = false;
-                    mouse.inASlot = false;
-
-                    mouse.inPlayerCraftingAndArmor = this.otherInventoryData.craftingAndArmorRect.collide.point(mouse.x, mouse.y)
-                    mouse.inPlayerInventory = this.otherInventoryData.inventoryRect.collide.point(mouse.x, mouse.y)
-                    mouse.inPlayerHotbar = this.otherInventoryData.hotbarRect.collide.point(mouse.x, mouse.y)
-                    mouse.inPlayerCraftingTable = this.otherInventoryData.craftingTableRect.collide.point(mouse.x, mouse.y)
-                }
-                updateMouseInventoryCollision();
-
-                // need to rework crafting to be a list, or it won't work with the moveItem function
-                // probably separate the crafting slot from the rest of the other slots, do special logic
-
-                function mouseInteractionWithContainer(container, otherContainer = undefined, isResultSlot = false) {
-                    for (let i = 0; i < container.length; i++) {
-                        let slot = container[i];
-                        if (slot.rect.collide.point(mouse.x, mouse.y)) {
-                            mouse.inASlot = true;
-                            // only do quick transfer things if the other container is specified
-                            if (otherContainer !== undefined) {
-                                // do a quick transfer of max items
-                                if (keys.shift && !keys.ctrl) {
-                                    if (!isResultSlot) {
-                                        this.moveItem(container[i], container[i].contents, 64, otherContainer);
-                                        break;
-                                    } else {
-                                        // figure out what to write in order to crafting maximum number of items
-                                    }
-                                }
-                                // move a single item
-                                if (keys.ctrl && !keys.shift && !isResultSlot) {
-                                    this.moveItem(container[i], container[i].contents, 1, otherContainer);
-                                    break;
-                                }
-                            };
-
-                            if (!keys.ctrl && !keys.shift) {
-                                // do left click interaction
-                                if (mouse.buttons.pressed.left && !mouse.buttons.right) {
-                                    let tempItem = mouse.heldSlot.contents;
-                                    let tempCount = mouse.heldSlot.count;
-
-                                    mouse.heldSlot.contents = container[i].contents;
-                                    mouse.heldSlot.count = container[i].count;
-
-                                    container[i].contents = tempItem;
-                                    container[i].count = tempCount;
-
-                                    break;
-                                };
-
-                                // do right click interaction
-                                if (mouse.buttons.pressed.right && !mouse.buttons.left) {
-                                    // grab half of the item count, try not to dupe things
-                                    if (mouse.heldSlot.contents === "empty") {
-                                        let newMouseSlotCount = Math.ceil(slot.count / 2);
-                                        let newSlotCount = slot.count - newMouseSlotCount;
-
-                                        mouse.heldSlot.count = newMouseSlotCount;
-                                        mouse.heldSlot.contents = slot.contents;
-                                        container[i].count = newSlotCount;
-                                        if (newSlotCount <= 0) {
-                                            container[i].contents = "empty";
-                                        }
-                                    }
-                                    // place a single item into that slot, if it's the same
-                                    if (mouse.heldSlot.contents !== "empty") {
-                                        if (mouse.heldSlot.contents.name == slot.contents.name &&
-                                            slot.contents.stackable && mouse.heldSlot.contents.stackable) {
-                                            let newSlotCount = slot.count + 1;
-                                            let newMouseSlotCount = mouse.heldSlot.count - 1;
-
-                                            if (newSlotCount <= maxStackSize && newMouseSlotCount >= 0) {
-                                                container[i].count = newSlotCount;
-                                                mouse.heldSlot.count = newMouseSlotCount;
-                                                if (newMouseSlotCount <= 0) {
-                                                    mouse.heldSlot.contents = 0;
-                                                }
-                                            }
-                                        }
-                                    }
-                                };
-                            }
-                        }
-                    }
-                };
-
-
-
-
-
-                if (this.otherInventoryData.open) {
-
-                    if (mouse.inPlayerInventory) {
-                        // this part with the storage thing has no basis, storage containers don't exist yet
-                        let otherContainer = undefined;
-                        if (this.storageUIOpen) {
-                            otherContainer = this.currentStorageBlock;
-                        }
-                        mouseInteractionWithContainer(this.inventory, otherContainer);
-                    }
-                    if (mouse.inPlayerHotbar) {
-                        let otherContainer = undefined;
-                        if (this.storageUIOpen) {
-                            otherContainer = this.currentStorageBlock;
-                        }
-                        mouseInteractionWithContainer(this.hotbar, otherContainer);
-                    }
-                    if (mouse.inPlayerCraftingAndArmor) {
-                        let gridSize = this.crafting.gridSize;
-                        mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
-                        mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
-                        mouseInteractionWithContainer(this.armor, this.inventory);
-                    }
-                    // checks for this haven't been implemented yet
-                    if (mouse.inStorageUI) {
-
-                    }
-                }
-
-
-
-                // attempt to place mouse's item back in the player's inventory if inventory is closed
-                if (!this.otherInventoryData.open) {
-
-                    if (mouse.heldSlot.contents !== "empty") {
-
-                        let itemWasMoved = this.moveItem(mouse.heldSlot, mouse.heldSlot.contents, 64, this.inventory);
-                        if (!itemWasMoved) {
-                            itemWasMoved = this.moveItem(mouse.heldSlot, mouse.heldSlot.contents, 64, this.hotbar);
-                        }
-
-
-                        if (!itemWasMoved) {
-
-                            // center of player
-                            let x = this.x + this.width / 2
-                            let y = this.y - this.height / 2
-                            let z = this.z + this.width / 2
+                            let x = this.x + this.width / 2 - itemEntitySize / 2;
+                            let y = this.y - this.height / 2;
+                            let z = this.z + this.width / 2 - itemEntitySize / 2;
 
                             // figure out velocity for angle of player to mouse
 
-                            let xDiff = mouse.cameraRelativeX - x
-                            let yDiff = mouse.cameraRelativeZ - z
+                            let xDiff = mouse.cameraRelativeX - x;
+                            let yDiff = mouse.cameraRelativeZ - z;
 
-                            let angle = Math.atan2(yDiff, xDiff)
+                            let angle = Math.atan2(yDiff, xDiff);
 
-                            let xv = Math.cos(angle) * 3
-                            let yv = 2
-                            let zv = Math.sin(angle) * 3
+                            let dropVelocity = 3
 
-                            mouse.heldSlot.contents.drop(x, y, z, xv, yv, zv, mouse.heldSlot.count);
+                            let xv = Math.cos(angle) * dropVelocity;
+                            let yv = 2;
+                            let zv = Math.sin(angle) * dropVelocity;
+
+                            let count = 1;
+
+                            item.drop(x, y, z, xv, yv, zv, this, count);
                         };
                     };
                 };
+            };
+            dropItems();
 
 
-                function recipeChecksAndStuff() {
-                    // dict with total amount of each item in crafting slots
-                    this.totalCraftingContents = {};
-                    this.isCrafting = false;
-                    this.crafting.possibleCrafts = 0;
+            function hotbarHeldItemStuff() {
+                if (!this.otherInventoryData.open) {
+                    let index = this.otherInventoryData.currentHotbarSlot;
+                    let slotData = this.hotbar[index];
+                    let item = slotData.contents;
 
-                    // this for loop doesn't include the result slot
-                    for (const slot of this.crafting[this.crafting.gridSize].slots) {
-                        if (slot.contents !== "empty") {
-                            if (this.totalCraftingContents[slot.contents].name === undefined) {
-                                this.totalCraftingContents[slot.contents.name] = 0;
-                            }
-                            this.totalCraftingContents[slot["contents"].name] += 1;
-                        }
-                    }
-
-
-                    let lowestItemCount = maxStackSize;
-
-
-                    for (const slot of this.crafting[this.crafting.gridSize].slots) {
-                        if (slot.contents !== "empty" && slot.count < lowestItemCount) {
-                            lowestItemCount = slot.count;
-                        }
-                    }
-
-
-                    this.crafting["possibleCrafts"] = lowestItemCount;
-
-
-
-                    if (this.crafting["possibleCrafts"] > 0) { this.isCrafting = true }
-
-                    let foundARecipe = false
-                    let recipeThatWasFound = undefined;
-
-                    function exactRecipeDetection(recipe) {
-                        // doesn't exist yet
-
-                        if (this.totalCraftingContents == recipe.requiredItems) {
-
-                        }
-
-
-                        return false, undefined
+                    if (mouse.buttons.pressed.left || mouse.buttons["left"]) {
+                        this.doStuffOnLeftClick(item)
                     };
 
-                    function nearExactRecipeLogic(recipe) {
+                    if (item != "empty") {
 
-                        function checkForSpecificItemInSlot(instructions) {
-                            /*
-                            startingItemName, directions, operators, and items are contained in instructions
-         
-                            example:
-                            direction = ["left", "right"], operator = ["xor"], items = ["planks", "planks"]
-                            
-                            
-                            checks for "planks" in the slot to the left and the slot to the right
-                            
-                            compares the values of does this slot have this specific item
-                            */
+                        if (mouse.buttons["pressed"]["right"]) {
+                            item.RMBPressedAction(this);
+                        } else { if (mouse.buttons.right) { item.RMBAction(this); } };
+                    } else {
+                        this.doStuffOnRightClick(item)
+                    };
+                };
+            };
+            hotbarHeldItemStuff();
 
-                            function checkADirection(direction, startingSlotId) {
-                                let gridSize = this.crafting["gridSize"]
-                                let testSlotId = 0
-                                switch (direction) {
-                                    case "up":
-                                        testSlotId = startingSlotId - gridSize;
-                                        if (testSlotId >= 0 && testSlotId < (grideSize ** 2)) {
-                                            let item = this.crafting[gridSize].slots[testSlotId].contents;
-                                            if (item != "empty") { return item.name; }
-                                        }
-                                        return "no item";
+            function updateMouseInventoryCollision() {
+                mouse.inPlayerInventory = false;
+                mouse.inPlayerHotbar = false;
+                mouse.inPlayerCraftingAndArmor = false;
+                mouse.inPlayerCraftingTable = false;
+                mouse.inASlot = false;
 
-                                    case "down":
-                                        testSlotId = startingSlotId + gridSize;
-                                        if (testSlotId >= 0 && testSlotId < (gridSize ** 2)) {
-                                            let item = this.crafting[gridSize].slots[testSlotId].contents;
-                                            if (item != "empty") { return item.name };
-                                        }
-                                        return "no item";
+                mouse.inPlayerCraftingAndArmor = this.otherInventoryData.craftingAndArmorRect.collide.point(mouse.x, mouse.y)
+                mouse.inPlayerInventory = this.otherInventoryData.inventoryRect.collide.point(mouse.x, mouse.y)
+                mouse.inPlayerHotbar = this.otherInventoryData.hotbarRect.collide.point(mouse.x, mouse.y)
+                mouse.inPlayerCraftingTable = this.otherInventoryData.craftingTableRect.collide.point(mouse.x, mouse.y)
+            }
+            updateMouseInventoryCollision();
 
-                                    case "right":
-                                        testSlotId = startingSlotId + 1;
-                                        let temporaryGridSize = gridSize - 1;
-                                        if (testSlotId >= 0 && testSlotId < (gridSize ** 2)) {
-                                            if (testSlotId == gridSize) { return "no item" };
-                                            while (testSlotId > temporaryGridSize) {
-                                                temporaryGridSize += gridSize;
-                                                if (temporaryGridSize >= gridSize
-                                                    || testSlotId == temporaryGridSize) { return "no item" };
-                                            }
-                                            let item = this.crafting[gridSize].slots[testSlotId].contents;
-                                            if (item != "empty") { return item.name };
-                                            return "empty";
-                                        }
+            // need to rework crafting to be a list, or it won't work with the moveItem function
+            // probably separate the crafting slot from the rest of the other slots, do special logic
+
+            function mouseInteractionWithContainer(container, otherContainer = undefined, isResultSlot = false) {
+                for (let i = 0; i < container.length; i++) {
+                    let slot = container[i];
+                    if (slot.rect.collide.point(mouse.x, mouse.y)) {
+                        mouse.inASlot = true;
+                        // only do quick transfer things if the other container is specified
+                        if (otherContainer !== undefined) {
+                            // do a quick transfer of max items
+                            if (keys.shift && !keys.ctrl) {
+                                if (!isResultSlot) {
+                                    this.moveItem(container[i], container[i].contents, 64, otherContainer);
+                                    break;
+                                } else {
+                                    // figure out what to write in order to crafting maximum number of items
                                 }
-                                return "no item"
+                            }
+                            // move a single item
+                            if (keys.ctrl && !keys.shift && !isResultSlot) {
+                                this.moveItem(container[i], container[i].contents, 1, otherContainer);
+                                break;
+                            }
+                        };
+
+                        if (!keys.ctrl && !keys.shift) {
+                            // do left click interaction
+                            if (mouse.buttons.pressed.left && !mouse.buttons.right) {
+                                let tempItem = mouse.heldSlot.contents;
+                                let tempCount = mouse.heldSlot.count;
+
+                                mouse.heldSlot.contents = container[i].contents;
+                                mouse.heldSlot.count = container[i].count;
+
+                                container[i].contents = tempItem;
+                                container[i].count = tempCount;
+
+                                break;
                             };
 
-                            for (let i = 0; i < this.crafting[this.crafting.gridSize].slots; i++) {
-                                let slot = this.crafting[this.crafting.gridSize].slots[i];
-                                let item = slot.contents;
+                            // do right click interaction
+                            if (mouse.buttons.pressed.right && !mouse.buttons.left) {
+                                // grab half of the item count, try not to dupe things
+                                if (mouse.heldSlot.contents === "empty") {
+                                    let newMouseSlotCount = Math.ceil(slot.count / 2);
+                                    let newSlotCount = slot.count - newMouseSlotCount;
 
-                                if (item != "empty" && item.name == instructions.startingItemName) {
-                                    let usesOperators = instructions.operators.length > 0;
+                                    mouse.heldSlot.count = newMouseSlotCount;
+                                    mouse.heldSlot.contents = slot.contents;
+                                    container[i].count = newSlotCount;
+                                    if (newSlotCount <= 0) {
+                                        container[i].contents = "empty";
+                                    }
+                                }
+                                // place a single item into that slot, if it's the same
+                                if (mouse.heldSlot.contents !== "empty") {
+                                    if (mouse.heldSlot.contents.name == slot.contents.name &&
+                                        slot.contents.stackable && mouse.heldSlot.contents.stackable) {
+                                        let newSlotCount = slot.count + 1;
+                                        let newMouseSlotCount = mouse.heldSlot.count - 1;
 
-                                    let directions = instructions.directions;
-                                    let operators = instructions.operators;
-                                    let items = instructions.items;
-
-                                    if (!usesOperators) {
-                                        let slotFound = checkADirection(directions[0], i);
-                                        if (slotFound == items[0]) { return true }
-                                    } else {
-                                        let slotsChecked = [];
-
-                                        for (let i = 0; i < directions.length; i++) {
-                                            let currentDirection = directions[i];
-                                            let currentItem = items[i];
-
-                                            let slotDictThing = {
-                                                "direction": currentDirection,
-                                                "containsCorrectItem": false
+                                        if (newSlotCount <= maxStackSize && newMouseSlotCount >= 0) {
+                                            container[i].count = newSlotCount;
+                                            mouse.heldSlot.count = newMouseSlotCount;
+                                            if (newMouseSlotCount <= 0) {
+                                                mouse.heldSlot.contents = 0;
                                             }
-                                            let itemName = checkADirection(currentDirection, i);
-
-                                            if (itemName == items[i]) {
-                                                slotDictThing.containsCorrectItem = true;
-                                            }
-                                            slotsChecked.push(slotDictThing);
-                                        }
-                                        let conditions = [];
-
-                                        for (const slot of slotsChecked) {
-                                            conditions.push(slot.containsCorrectItem);
-                                        }
-                                        let hasAnEvenNumberOfConditions = conditions.length % 2 === 0;
-                                        let length = conditions.length;
-                                        if (!hasAnEvenNumberOfConditions) { length -= 1 };
-                                        let betterConditionsList = [];
-                                        for (let i = 0; i < length; i += 2) {
-                                            let conditionA = conditions[i - 1];
-                                            let conditionB = conditions[i];
-
-                                            betterConditionsList.push([conditionA, conditionB]);
-                                        }
-                                        for (let i = 0; i < operators.length; i++) {
-                                            // i should probably modify how i am doing operators to specify which
-                                            // directions should use what operators (example: right "and" left)
-                                            // another example: up "neither" down
-                                            // and also should probably add in the ability to specify multiple
-                                            // directions for something, ex top right is up and right
-                                            // or i could just have "top right" be a valid direction
-                                            // yeah ima just do that
-                                            // or i could have the directions be like {up: 2}, {right: 1},
-                                            // that would be up 2 slots, right 1 slot
-                                            // operators still need to be grouped with directions at some point though
-                                            let operator = operators[i];
-                                            let conditionA = betterConditionsList[i][0];
-                                            let conditionB = betterConditionsList[i][1];
-
-                                            if (operator == "xor") {
-                                                if ((conditionA || conditionB) && (conditionA !== conditionB)) { return true; };
-                                            }
-                                            if (operator == "and") {
-                                                if (conditionA && conditionB) { return true; };
-                                            }
-                                            if (operator == "neither") {
-                                                if (!conditionA && !conditionB) { return true };
-                                            }
-                                            if (operator == "or") {
-                                                if (conditionA || conditionB) { return true; }
-                                            }
-
-                                            consoleLog("invalid recipe operator or something like that")
                                         }
                                     }
                                 }
+                            };
+                        }
+                    }
+                }
+            };
+
+
+
+
+
+            if (this.otherInventoryData.open) {
+
+                if (mouse.inPlayerInventory) {
+                    // this part with the storage thing has no basis, storage containers don't exist yet
+                    let otherContainer = undefined;
+                    if (this.storageUIOpen) {
+                        otherContainer = this.currentStorageBlock;
+                    }
+                    mouseInteractionWithContainer(this.inventory, otherContainer);
+                }
+                if (mouse.inPlayerHotbar) {
+                    let otherContainer = undefined;
+                    if (this.storageUIOpen) {
+                        otherContainer = this.currentStorageBlock;
+                    }
+                    mouseInteractionWithContainer(this.hotbar, otherContainer);
+                }
+                if (mouse.inPlayerCraftingAndArmor) {
+                    let gridSize = this.crafting.gridSize;
+                    mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
+                    mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
+                    mouseInteractionWithContainer(this.armor, this.inventory);
+                }
+                // checks for this haven't been implemented yet
+                if (mouse.inStorageUI) {
+
+                }
+            }
+
+
+
+            // attempt to place mouse's item back in the player's inventory if inventory is closed
+            if (!this.otherInventoryData.open) {
+
+                if (mouse.heldSlot.contents !== "empty") {
+
+                    let itemWasMoved = this.moveItem(mouse.heldSlot, mouse.heldSlot.contents, 64, this.inventory);
+                    if (!itemWasMoved) {
+                        itemWasMoved = this.moveItem(mouse.heldSlot, mouse.heldSlot.contents, 64, this.hotbar);
+                    }
+
+
+                    if (!itemWasMoved) {
+
+                        // center of player
+                        let x = this.x + this.width / 2
+                        let y = this.y - this.height / 2
+                        let z = this.z + this.width / 2
+
+                        // figure out velocity for angle of player to mouse
+
+                        let xDiff = mouse.cameraRelativeX - x
+                        let yDiff = mouse.cameraRelativeZ - z
+
+                        let angle = Math.atan2(yDiff, xDiff)
+
+                        let xv = Math.cos(angle) * 3
+                        let yv = 2
+                        let zv = Math.sin(angle) * 3
+
+                        mouse.heldSlot.contents.drop(x, y, z, xv, yv, zv, mouse.heldSlot.count);
+                    };
+                };
+            };
+
+
+            function recipeChecksAndStuff() {
+                // dict with total amount of each item in crafting slots
+                this.totalCraftingContents = {};
+                this.isCrafting = false;
+                this.crafting.possibleCrafts = 0;
+
+                // this for loop doesn't include the result slot
+                for (const slot of this.crafting[this.crafting.gridSize].slots) {
+                    if (slot.contents !== "empty") {
+                        if (this.totalCraftingContents[slot.contents].name === undefined) {
+                            this.totalCraftingContents[slot.contents.name] = 0;
+                        }
+                        this.totalCraftingContents[slot["contents"].name] += 1;
+                    }
+                }
+
+
+                let lowestItemCount = maxStackSize;
+
+
+                for (const slot of this.crafting[this.crafting.gridSize].slots) {
+                    if (slot.contents !== "empty" && slot.count < lowestItemCount) {
+                        lowestItemCount = slot.count;
+                    }
+                }
+
+
+                this.crafting["possibleCrafts"] = lowestItemCount;
+
+
+
+                if (this.crafting["possibleCrafts"] > 0) { this.isCrafting = true }
+
+                let foundARecipe = false
+                let recipeThatWasFound = undefined;
+
+                function exactRecipeDetection(recipe) {
+                    // doesn't exist yet
+
+                    if (this.totalCraftingContents == recipe.requiredItems) {
+
+                    }
+
+
+                    return false, undefined
+                };
+
+                function nearExactRecipeLogic(recipe) {
+
+                    function checkForSpecificItemInSlot(instructions) {
+                        /*
+                        startingItemName, directions, operators, and items are contained in instructions
+     
+                        example:
+                        direction = ["left", "right"], operator = ["xor"], items = ["planks", "planks"]
+                        
+                        
+                        checks for "planks" in the slot to the left and the slot to the right
+                        
+                        compares the values of does this slot have this specific item
+                        */
+
+                        function checkADirection(direction, startingSlotId) {
+                            let gridSize = this.crafting["gridSize"]
+                            let testSlotId = 0
+                            switch (direction) {
+                                case "up":
+                                    testSlotId = startingSlotId - gridSize;
+                                    if (testSlotId >= 0 && testSlotId < (grideSize ** 2)) {
+                                        let item = this.crafting[gridSize].slots[testSlotId].contents;
+                                        if (item != "empty") { return item.name; }
+                                    }
+                                    return "no item";
+
+                                case "down":
+                                    testSlotId = startingSlotId + gridSize;
+                                    if (testSlotId >= 0 && testSlotId < (gridSize ** 2)) {
+                                        let item = this.crafting[gridSize].slots[testSlotId].contents;
+                                        if (item != "empty") { return item.name };
+                                    }
+                                    return "no item";
+
+                                case "right":
+                                    testSlotId = startingSlotId + 1;
+                                    let temporaryGridSize = gridSize - 1;
+                                    if (testSlotId >= 0 && testSlotId < (gridSize ** 2)) {
+                                        if (testSlotId == gridSize) { return "no item" };
+                                        while (testSlotId > temporaryGridSize) {
+                                            temporaryGridSize += gridSize;
+                                            if (temporaryGridSize >= gridSize
+                                                || testSlotId == temporaryGridSize) { return "no item" };
+                                        }
+                                        let item = this.crafting[gridSize].slots[testSlotId].contents;
+                                        if (item != "empty") { return item.name };
+                                        return "empty";
+                                    }
                             }
-
-
-
-
-                            return false
+                            return "no item"
                         };
 
+                        for (let i = 0; i < this.crafting[this.crafting.gridSize].slots; i++) {
+                            let slot = this.crafting[this.crafting.gridSize].slots[i];
+                            let item = slot.contents;
 
+                            if (item != "empty" && item.name == instructions.startingItemName) {
+                                let usesOperators = instructions.operators.length > 0;
 
+                                let directions = instructions.directions;
+                                let operators = instructions.operators;
+                                let items = instructions.items;
 
+                                if (!usesOperators) {
+                                    let slotFound = checkADirection(directions[0], i);
+                                    if (slotFound == items[0]) { return true }
+                                } else {
+                                    let slotsChecked = [];
 
+                                    for (let i = 0; i < directions.length; i++) {
+                                        let currentDirection = directions[i];
+                                        let currentItem = items[i];
 
-                        if (this.totalCraftingContents == recipe["requiredItems"]) {
+                                        let slotDictThing = {
+                                            "direction": currentDirection,
+                                            "containsCorrectItem": false
+                                        }
+                                        let itemName = checkADirection(currentDirection, i);
 
-                            let foundARecipe = checkForSpecificItemInSlot(recipe.instructions)
+                                        if (itemName == items[i]) {
+                                            slotDictThing.containsCorrectItem = true;
+                                        }
+                                        slotsChecked.push(slotDictThing);
+                                    }
+                                    let conditions = [];
 
-                            if (foundARecipe) { return [true, recipe] };
+                                    for (const slot of slotsChecked) {
+                                        conditions.push(slot.containsCorrectItem);
+                                    }
+                                    let hasAnEvenNumberOfConditions = conditions.length % 2 === 0;
+                                    let length = conditions.length;
+                                    if (!hasAnEvenNumberOfConditions) { length -= 1 };
+                                    let betterConditionsList = [];
+                                    for (let i = 0; i < length; i += 2) {
+                                        let conditionA = conditions[i - 1];
+                                        let conditionB = conditions[i];
+
+                                        betterConditionsList.push([conditionA, conditionB]);
+                                    }
+                                    for (let i = 0; i < operators.length; i++) {
+                                        // i should probably modify how i am doing operators to specify which
+                                        // directions should use what operators (example: right "and" left)
+                                        // another example: up "neither" down
+                                        // and also should probably add in the ability to specify multiple
+                                        // directions for something, ex top right is up and right
+                                        // or i could just have "top right" be a valid direction
+                                        // yeah ima just do that
+                                        // or i could have the directions be like {up: 2}, {right: 1},
+                                        // that would be up 2 slots, right 1 slot
+                                        // operators still need to be grouped with directions at some point though
+                                        let operator = operators[i];
+                                        let conditionA = betterConditionsList[i][0];
+                                        let conditionB = betterConditionsList[i][1];
+
+                                        if (operator == "xor") {
+                                            if ((conditionA || conditionB) && (conditionA !== conditionB)) { return true; };
+                                        }
+                                        if (operator == "and") {
+                                            if (conditionA && conditionB) { return true; };
+                                        }
+                                        if (operator == "neither") {
+                                            if (!conditionA && !conditionB) { return true };
+                                        }
+                                        if (operator == "or") {
+                                            if (conditionA || conditionB) { return true; }
+                                        }
+
+                                        consoleLog("invalid recipe operator or something like that")
+                                    }
+                                }
+                            }
                         }
-                        return [false, undefined];
+
+
+
+
+                        return false
                     };
 
-                    function shapelessRecipeLogic(recipe) {
 
-                        if (this.totalCraftingContents == recipe.requiredItems) { return [true, recipe]; };
-                        return [false, undefined];
+
+
+
+
+                    if (this.totalCraftingContents == recipe["requiredItems"]) {
+
+                        let foundARecipe = checkForSpecificItemInSlot(recipe.instructions)
+
+                        if (foundARecipe) { return [true, recipe] };
+                    }
+                    return [false, undefined];
+                };
+
+                function shapelessRecipeLogic(recipe) {
+
+                    if (this.totalCraftingContents == recipe.requiredItems) { return [true, recipe]; };
+                    return [false, undefined];
+                };
+
+
+
+
+                if (this.isCrafting) {
+
+                    for (const recipe of Object.values(recipes[this.crafting.gridSize].exact)) {
+                        let recipeDataStuff = exactRecipeDetection(recipe);
+                        foundARecipe = recipeDataStuff[0];
+                        recipeThatWasFound = recipeDataStuff[1];
+                        if (foundARecipe) { break; };
                     };
 
+                    if (!foundARecipe) {
+                        for (const recipe of Object.keys(recipes[this.crafting.gridSize].nearExact)) {
+                            let recipeDataStuff = nearExactRecipeLogic(recipe);
+                            foundARecipe = recipeDataStuff[0];
+                            recipeThatWasFound = recipeDataStuff[1];
+                            if (foundARecipe) { break; };
+                        }
+                    };
 
-
-
-                    if (this.isCrafting) {
-
-                        for (const recipe of Object.values(recipes[this.crafting.gridSize].exact)) {
-                            let recipeDataStuff = exactRecipeDetection(recipe);
+                    if (!foundARecipe) {
+                        for (const recipe of Object.keys(recipes[this.crafting.gridSize].shapeless)) {
+                            let recipeDataStuff = shapelessRecipeLogic(recipe);
                             foundARecipe = recipeDataStuff[0];
                             recipeThatWasFound = recipeDataStuff[1];
                             if (foundARecipe) { break; };
                         };
-
-                        if (!foundARecipe) {
-                            for (const recipe of Object.keys(recipes[this.crafting.gridSize].nearExact)) {
-                                let recipeDataStuff = nearExactRecipeLogic(recipe);
-                                foundARecipe = recipeDataStuff[0];
-                                recipeThatWasFound = recipeDataStuff[1];
-                                if (foundARecipe) { break; };
-                            }
-                        };
-
-                        if (!foundARecipe) {
-                            for (const recipe of Object.keys(recipes[this.crafting.gridSize].shapeless)) {
-                                let recipeDataStuff = shapelessRecipeLogic(recipe);
-                                foundARecipe = recipeDataStuff[0];
-                                recipeThatWasFound = recipeDataStuff[1];
-                                if (foundARecipe) { break; };
-                            };
-                        };
-                    };
-
-                    let gridSize = this.crafting.gridSize;
-                    if (foundARecipe) {
-                        this.crafting[gridSize].resultSlot.contents = recipeThatWasFound.output;
-                        this.crafting[gridSize].resultSlot.count = recipeThatWasFound.outputCount;
-                    } else {
-                        this.crafting[gridSize].resultSlot.contents = "empty";
-                        this.crafting[gridSize].resultSlot.count = 0;
-                    };
-
-
-
-
-
-                };
-                recipeChecksAndStuff();
-
-
-            };
-
-            this.handleTimers = function () {
-                for (let i = 0; i < Object.keys(this.timers); i++) {
-                    let timerValue = this.timers[i];
-                    if (timerValue > 0) { timerValue -= 1; };
-                    if (timerValue < 0) { timerValue += 1; };
-                    this.timers[i] = timerValue;
-                }
-            };
-
-
-
-            this.updateCamera = function () {
-                camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
-                camera.y = this.y
-                camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
-
-                camera.currentChunk = getChunkCoord(camera.x, camera.z)
-            };
-
-
-
-            this.updateImageThings = function () {
-                let imageX = this.x - camera.x;
-                let imageY = this.z - camera.z;
-
-                this.renderData.position = [imageX, imageY];
-                //this.renderDataData = this needs to be updated when animations, etc exist
-            };
-
-
-
-            this.doStuff = function (deltaTime) {
-                // need to update mouse's camera relative things here, don't want circular imports
-                mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth / 2)
-                mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight / 2)
-                mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ)
-
-                this.generalMovement(deltaTime)
-                this.doInventoryThings()
-
-                this.handleTimers()
-
-                this.updateCamera()
-                this.updateImageThings()
-            };
-
-
-
-            this.positionInSpawnArea = function () {
-                for (let y = 0; y < chunkSize[1] - 1; y++) {
-                    if (findBlock(0, y * blockSize, 0)) {
-                        if (!findBlock(0, (y + 1) * blockSize, 0)) {
-                            this.y = (y * blockSize) + this.height;
-                            break;
-                        }
-                    } else {
-                        this.y = chunkSize[1] * blockSize + this.height;
-                    }
-                }
-            };
-
-
-
-            this.doStuffOnRightClick = function (heldItem = "empty") {
-                let hoveredBlockType = mouse.hoveredBlock.block.type;
-
-                if (hoveredBlockType == "crafting table") {
-                    this.otherInventoryData.showCraftingAndArmor = false;
-                    this.otherInventoryData.showCraftingTable = true;
-                    this.crafting.gridSize = 3;
-                };
-            };
-
-
-            this.doStuffOnLeftClick = function (currentlyHeldItem = "empty") {
-                let item = currentlyHeldItem;
-
-                let breakingPower = 1
-                let breakingSpeed = 1
-                let breakingType = "none"
-                let attack = 1
-                let knockback = 1
-                let slowestBreakSpeed = 20 / fps
-
-                if (item != "empty") {
-                    if (item.itemType == "ToolItem") {
-                        breakingPower = item.breakingPower;
-                        breakingSpeed = item.breakingSpeed;
-                        breakingType = item.breakingType;
-                        attack = item.attack;
-                        knockback = item.knockback;
                     };
                 };
 
-
-                // run a test for interaction with entitys, hitting them, etc
-                // if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
-
-                // else:
-                // break blocks
-                if (this.currentBreakingBlock != mouse.hoveredBlock.block) { this.blockBreakProgress = 0; };
-
-                if (this.canReachSelectedBlock) {
-
-                    this.currentBreakingBlock = mouse.hoveredBlock.block;
-                    let block = this.currentBreakingBlock;
-
-                    if (block["hardness"] != "infinity") {
-                        let correctTool = false
-                        let powerfulEnoughTool = false
-
-                        if (breakingPower >= block.hardness) { powerfulEnoughTool = true; };
-                        if (breakingType == block.effectiveTool) { correctTool = true; };
-
-
-                        if (powerfulEnoughTool && correctTool) {
-                            this.blockBreakProgress += breakingSpeed / fps;
-                        } else { this.blockBreakProgress += slowestBreakSpeed / fps; };
-
-
-                        // breaking stuff is based on seconds of time,
-                        // in tools, the breaking speed is a percentage of a second per frame
-
-                        if (this.blockBreakProgress >= fps) {
-                            this.blockBreakProgress = 0
-
-                            if (correctTool || block.dropsWithNoTool) {
-
-                                let itemData = PlaceableItem(block["type"])
-
-                                let chunkCoord = mouse.hoveredBlock.chunkCoord;
-                                let blockCoord = mouse.hoveredBlock.blockCoord;
-                                let x = (chunkCoord[0] * chunkSize[0]) * blockSize
-                                let y = blockCoord[1] * blockSize
-                                let z = (chunkCoord[1] * chunkSize[0]) * blockSize
-
-                                x += blockCoord[0] * blockSize
-                                z += blockCoord[2] * blockSize
-
-
-
-                                let count = 1
-                                let xv = random.randint(-3, 3)
-                                let zv = random.randint(-3, 3)
-                                if (true) { // replace later with silk touch or something
-                                    if (block.type == ("grass" || "snowy grass")) { itemData.name = "dirt" };
-                                    if (block.type == ("stone" || "snowy stone")) { itemData.name = "cobblestone"; };
-                                };
-
-                                let yv = 5;
-                                let entity = ItemEntity(itemData, count, x, y, z, xv, yv, zv);
-                                entities.append(entity);
-                            };
-
-                            let air = {
-                                "type": "air",
-                                "render": false,
-                                "alphaValue": 255,
-                                "hardness": "infinity",
-                                "effectiveTool": "none"
-                            };
-
-                            chunks[chunkCoord.toString()].data[blockCoord.toString()] = air.copy()
-
-                            smallScaleBlockUpdates(chunkCoord, blockCoord);
-                        };
-                    };
-                };
-            };
-
-
-
-
-            this.changeCraftingGrid = function (gridSize) {
-
-
-                // attempt to place items back into inventory, otherwise drop them
-
-
-                for (let i = 0; i < this.crafting[this.crafting.gridSize].slots; i++) {
-
-                    if (this.crafting[this.crafting.gridSize].slots[i].contents !== "empty") {
-                        // try to put into inventory, if that fails, put into hotbar, if that fails, drop it
-                        let itemMoved = this.moveItem(this.crafting[this.crafting.gridSize].slots[i],
-                            this.crafting[this.crafting.gridSize].slots[i].contents, maxStackSize, this.inventory);
-
-                        if (!itemMoved) {
-                            itemMoved = this.moveItem(this.crafting[this.crafting.gridSize].slots[i],
-                                this.crafting[this.crafting.gridSize].slots[i].contents,
-                                maxStackSize, this.hotbar);
-                        }
-
-
-                        if (!itemMoved) {
-                            // center of player
-                            let x = this.x + this.width / 2
-                            let y = this.y - this.height / 2
-                            let z = this.z + this.width / 2
-
-                            // figure out velocity for angle of player to mouse
-
-                            let xDiff = mouse.cameraRelativeX - x
-                            let yDiff = mouse.cameraRelativeZ - z
-
-                            let angle = Math.atan2(yDiff, xDiff)
-
-                            let xv = Math.cos(angle) * 3
-                            let yv = 2
-                            let zv = Math.sin(angle) * 3
-
-                            this.crafting[this.crafting.gridSize].slots[i].contents.drop(x, y, z, xv, yv, zv)
-
-                        };
-                    }
-                };
-
-                this.crafting.gridSize = gridSize
-
-                if (gridSize == 2) {
-                    this.otherInventoryData.showCraftingAndArmor = true
-                    this.otherInventoryData.showCraftingTable = false
+                let gridSize = this.crafting.gridSize;
+                if (foundARecipe) {
+                    this.crafting[gridSize].resultSlot.contents = recipeThatWasFound.output;
+                    this.crafting[gridSize].resultSlot.count = recipeThatWasFound.outputCount;
                 } else {
-                    if (gridSize == 3) {
-                        this.otherInventoryData.showCraftingAndArmor = false
-                        this.otherInventoryData.showCraftingTable = true
-                    };
+                    this.crafting[gridSize].resultSlot.contents = "empty";
+                    this.crafting[gridSize].resultSlot.count = 0;
                 };
 
 
 
+
+
             };
+            recipeChecksAndStuff();
+
+
+        };
+
+        this.handleTimers = function () {
+            for (let i = 0; i < Object.keys(this.timers); i++) {
+                let timerValue = this.timers[i];
+                if (timerValue > 0) { timerValue -= 1; };
+                if (timerValue < 0) { timerValue += 1; };
+                this.timers[i] = timerValue;
+            }
+        };
+
+
+
+        this.updateCamera = function () {
+            camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
+            camera.y = this.y
+            camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
+
+            camera.currentChunk = getChunkCoord(camera.x, camera.z)
+        };
+
+
+
+        this.updateImageThings = function () {
+            let imageX = this.x - camera.x;
+            let imageY = this.z - camera.z;
+
+            this.renderData.position = [imageX, imageY];
+            //this.renderDataData = this needs to be updated when animations, etc exist
+        };
+
+
+
+        this.doStuff = function (deltaTime) {
+
+            mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth / 2);
+            mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight / 2);
+            mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ);
+
+            this.generalMovement(deltaTime)
+            this.doInventoryThings()
+
+            this.handleTimers()
+
+            this.updateCamera()
+            this.updateImageThings()
+        };
+
+
+
+        this.positionInSpawnArea = function () {
+            for (let y = 0; y < chunkSize[1] - 1; y++) {
+                if (findBlock(0, y * blockSize, 0)) {
+                    if (!findBlock(0, (y + 1) * blockSize, 0)) {
+                        this.y = (y * blockSize) + this.height;
+                        break;
+                    }
+                } else {
+                    this.y = chunkSize[1] * blockSize + this.height;
+                }
+            }
+        };
+
+
+
+        this.doStuffOnRightClick = function (heldItem = "empty") {
+            let hoveredBlockType = mouse.hoveredBlock.block.type;
+
+            if (hoveredBlockType == "crafting table") {
+                this.otherInventoryData.showCraftingAndArmor = false;
+                this.otherInventoryData.showCraftingTable = true;
+                this.crafting.gridSize = 3;
+            };
+        };
+
+
+        this.doStuffOnLeftClick = function (currentlyHeldItem = "empty") {
+            let item = currentlyHeldItem;
+
+            let breakingPower = 1
+            let breakingSpeed = 1
+            let breakingType = "none"
+            let attack = 1
+            let knockback = 1
+            let slowestBreakSpeed = 20 / fps
+
+            if (item != "empty") {
+                if (item.itemType == "ToolItem") {
+                    breakingPower = item.breakingPower;
+                    breakingSpeed = item.breakingSpeed;
+                    breakingType = item.breakingType;
+                    attack = item.attack;
+                    knockback = item.knockback;
+                };
+            };
+
+
+            // run a test for interaction with entitys, hitting them, etc
+            // if colliderect(mouse.x, mouse.y) with an entity's hitbox or something
+
+            // else:
+            // break blocks
+            if (this.currentBreakingBlock != mouse.hoveredBlock.block) { this.blockBreakProgress = 0; };
+
+            if (this.canReachSelectedBlock) {
+
+                this.currentBreakingBlock = mouse.hoveredBlock.block;
+                let block = this.currentBreakingBlock;
+
+                if (block["hardness"] != "infinity") {
+                    let correctTool = false
+                    let powerfulEnoughTool = false
+
+                    if (breakingPower >= block.hardness) { powerfulEnoughTool = true; };
+                    if (breakingType == block.effectiveTool) { correctTool = true; };
+
+
+                    if (powerfulEnoughTool && correctTool) {
+                        this.blockBreakProgress += breakingSpeed / fps;
+                    } else { this.blockBreakProgress += slowestBreakSpeed / fps; };
+
+
+                    // breaking stuff is based on seconds of time,
+                    // in tools, the breaking speed is a percentage of a second per frame
+
+                    if (this.blockBreakProgress >= fps) {
+                        this.blockBreakProgress = 0
+
+                        if (correctTool || block.dropsWithNoTool) {
+
+                            let itemData = PlaceableItem(block["type"])
+
+                            let chunkCoord = mouse.hoveredBlock.chunkCoord;
+                            let blockCoord = mouse.hoveredBlock.blockCoord;
+                            let x = (chunkCoord[0] * chunkSize[0]) * blockSize
+                            let y = blockCoord[1] * blockSize
+                            let z = (chunkCoord[1] * chunkSize[0]) * blockSize
+
+                            x += blockCoord[0] * blockSize
+                            z += blockCoord[2] * blockSize
+
+
+
+                            let count = 1
+                            let xv = random.randint(-3, 3)
+                            let zv = random.randint(-3, 3)
+                            if (true) { // replace later with silk touch or something
+                                if (block.type == ("grass" || "snowy grass")) { itemData.name = "dirt" };
+                                if (block.type == ("stone" || "snowy stone")) { itemData.name = "cobblestone"; };
+                            };
+
+                            let yv = 5;
+                            let entity = ItemEntity(itemData, count, x, y, z, xv, yv, zv);
+                            entities.append(entity);
+                        };
+
+                        let air = {
+                            "type": "air",
+                            "render": false,
+                            "alphaValue": 255,
+                            "hardness": "infinity",
+                            "effectiveTool": "none"
+                        };
+
+                        chunks[chunkCoord.toString()].data[blockCoord.toString()] = air.copy()
+
+                        smallScaleBlockUpdates(chunkCoord, blockCoord);
+                    };
+                };
+            };
+        };
+
+
+
+
+        this.changeCraftingGrid = function (gridSize) {
+
+
+            // attempt to place items back into inventory, otherwise drop them
+
+
+            for (let i = 0; i < this.crafting[this.crafting.gridSize].slots; i++) {
+
+                if (this.crafting[this.crafting.gridSize].slots[i].contents !== "empty") {
+                    // try to put into inventory, if that fails, put into hotbar, if that fails, drop it
+                    let itemMoved = this.moveItem(this.crafting[this.crafting.gridSize].slots[i],
+                        this.crafting[this.crafting.gridSize].slots[i].contents, maxStackSize, this.inventory);
+
+                    if (!itemMoved) {
+                        itemMoved = this.moveItem(this.crafting[this.crafting.gridSize].slots[i],
+                            this.crafting[this.crafting.gridSize].slots[i].contents,
+                            maxStackSize, this.hotbar);
+                    }
+
+
+                    if (!itemMoved) {
+                        // center of player
+                        let x = this.x + this.width / 2
+                        let y = this.y - this.height / 2
+                        let z = this.z + this.width / 2
+
+                        // figure out velocity for angle of player to mouse
+
+                        let xDiff = mouse.cameraRelativeX - x
+                        let yDiff = mouse.cameraRelativeZ - z
+
+                        let angle = Math.atan2(yDiff, xDiff)
+
+                        let xv = Math.cos(angle) * 3
+                        let yv = 2
+                        let zv = Math.sin(angle) * 3
+
+                        this.crafting[this.crafting.gridSize].slots[i].contents.drop(x, y, z, xv, yv, zv)
+
+                    };
+                }
+            };
+
+            this.crafting.gridSize = gridSize
+
+            if (gridSize == 2) {
+                this.otherInventoryData.showCraftingAndArmor = true
+                this.otherInventoryData.showCraftingTable = false
+            } else {
+                if (gridSize == 3) {
+                    this.otherInventoryData.showCraftingAndArmor = false
+                    this.otherInventoryData.showCraftingTable = true
+                };
+            };
+
+
+
         };
     };
 };
+
 
 
 export let player = new Player();

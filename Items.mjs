@@ -144,12 +144,12 @@ export class ToolItem extends Item {
 };
 
 class IntermediateItem extends Item {
-    constructor(name, stackable) {
-        super(slotId)
+    constructor(name, stackable, slotId) {
+        super();
         this.name = name;
         this.stackable = stackable || true;
         this.tooltip = this.name
-        this.slotId = 0
+        this.slotId = slotId || 0;
     };
 }
 
@@ -158,13 +158,13 @@ function addItem(name = "air", itemType = "none", toolData = {}, stackable = fal
 
     let item = undefined;
     if (itemType == "placeable") {
-        item = PlaceableItem(name, stackable = true);
+        item = new PlaceableItem(name, stackable = true);
     };
     if (itemType == "tool") {
-        item = ToolItem(name, toolData);
+        item = new ToolItem(name, toolData);
     };
     if (itemType == "intermediate") {
-        item = IntermediateItem(name, stackable);
+        item = new IntermediateItem(name, stackable);
     };
 
     if (item !== undefined) { items[name] = item; };
@@ -172,10 +172,10 @@ function addItem(name = "air", itemType = "none", toolData = {}, stackable = fal
 
 export function makeItemsExist() {
     listOfBlockNames.forEach(function (itemName) {
-        addItem(itemName, "placeable", stackable = true);
+        addItem(itemName, "placeable", undefined, true);
     });
     listOfIntermediateItems.forEach(function (itemName) {
-        addItem(itemName, "intermediate", stackable = true);
+        addItem(itemName, "intermediate", undefined, true);
     });
     addItem("stone pickaxe", "tool",
         {

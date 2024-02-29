@@ -84,9 +84,9 @@ export function makeRecipesExist() {
     */
     addRecipe("shapeless", "logToPlanks", { "log": 1 }, items["planks"], 4);
 
-    addRecipe("nearExact", "planksToSticks", { "planks": 2 }, items["stick"], 4,
-        requiredGridSize = 2,
-        instructions = {
+    addRecipe("nearExact", "planksToSticks", { "planks": 2 }, items["stick"], 4, undefined,
+        2,
+        {
             "startingItemName": "planks",
             "directions": ["up", "down"],
             "operators": ["xor"],
