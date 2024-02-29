@@ -1,7 +1,7 @@
 
 import {
     deltaTime, items, entities, projectiles, fps, keysPressed,
-    timeScale, consoleLog, allImagesLoaded, showLoadingProgress,
+    timeScale, consoleLog, showLoadingProgress,
     canvas, ctx
 } from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
@@ -9,6 +9,7 @@ import { makeRecipesExist } from "./Recipes.mjs";
 import { updateMouseAndKeys } from "./Controls.mjs";
 import { render, generateSpawnArea } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
+import { allImagesLoaded } from "./ImageLoader.mjs";
 
 showLoadingProgress("loading main.mjs")
 
@@ -58,7 +59,7 @@ function gameLoop() {
 
 
 
-const waitUntilImagesLoaded = setInterval(function () {
+let waitUntilImagesLoaded = setInterval(function () {
     if (allImagesLoaded) {
         initializeGame();
         showLoadingProgress("main was able to load successfully");

@@ -326,6 +326,6 @@ function makeNoise (root, factory) {/*
 
 };
 
-export var noise = makeNoise();
+export let noise = makeNoise();
 
-import { consoleLog } from "./GlobalVariables.mjs";
+

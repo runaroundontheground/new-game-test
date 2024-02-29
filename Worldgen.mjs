@@ -73,7 +73,7 @@ export function generateChunkTerrain(chunkCoords) {
         for (let z = 0; z < chunkSize[0]; z++) {
           let blockData = {
             "type": "air",
-            "render": False,
+            "render": false,
             "alphaValue": 255,
             "hardness": 0,
             "effectiveTool": "none",
@@ -121,7 +121,6 @@ export function generateChunkTerrain(chunkCoords) {
                   break;
                 case randomNum === 2:
                   blockData.type = "gravel";
-                  break;
                   break;
               }
 
@@ -203,30 +202,36 @@ export function generateChunkStructures(inputChunkCoord) {
       let newBlockCoord = [x, y, z].toString();
       let chunkCoord = [chunkX, chunkZ].toString();
 
-      if (chunks[chunkCoord]["data"] === undefined) {
+      if (chunks[chunkCoord] === undefined) {
         generateChunkTerrain(chunkCoord);
       };
 
       chunks[chunkCoord]["data"][newBlockCoord] = block;
     };
   };
+
+
   for (let x = 0; x < chunkSize[0]; x++) {
     for (let y = 0; y < chunkSize[1]; y++) {
-      for (let z = 0; z < chunkSize[0]; y++) {
+      for (let z = 0; z < chunkSize[0]; z++) {
+       
+        let blockCoord = [x, y, z];
+        
+        let block = chunks[inputChunkCoord.toString()]["data"][blockCoord.toString()];
 
-        let blockCoord = [x, y, z].toString();
-        let block = chunks[inputChunkCoord]["data"][blockCoord];
 
         if (block.type === "grass") {
           if (random.integer(0, 20) === 0) {
             generateStructure("tree 1", blockCoord);
           };
         };
-        chunks[inputChunkCoord].structuresGenerated = true;
 
       };
     };
   };
+
+  chunks[inputChunkCoord].structuresGenerated = true;
+
 };
 
 
@@ -343,10 +348,13 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             };
           };
         };
+
+      chunks[chunkCoord].data[blockCoord] = block;
+
+
       };
     };
 
-    chunks[chunkCoord].data[blockCoord] = block;
     chunks[chunkCoord].blocksUpdated = true;
   };
 };

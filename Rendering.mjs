@@ -1,11 +1,10 @@
 import {
     canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
     chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
-    itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress
+    itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress, images
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Rendering.mjs");
 
-import { images } from "./ImageLoader.mjs";
 
 import {
     generateChunkTerrain, runBlockUpdatesAfterGeneration,
@@ -174,7 +173,10 @@ function generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = false) {
 
     for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
         for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
-            if (chunks[[x, z].toString] === undefined) { generateChunkTerrain([x, z]); };
+            if (chunks[[x, z].toString] === undefined) {
+                generateChunkTerrain([x, z]);
+                consoleLog("generating a chunk maybe")
+            };
         };
     };
 

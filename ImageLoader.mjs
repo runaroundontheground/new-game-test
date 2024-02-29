@@ -13,8 +13,10 @@ function showLoadingProgress(message) {
 
 showLoadingProgress("started loading images");
 
-export var allImagesLoaded = false;
-export var images = {};
+import { images, canvasWidth, canvasHeight } from "./GlobalVariables.mjs";
+
+let allImagesLoaded = false;
+
 
 let imageUrlsAndNames = {
     "stick": "./Images/stick.png",
@@ -53,9 +55,6 @@ function makePlayerInventoryImages() {
 
     let newCanvas = document.createElement("canvas");
     let context = newCanvas.getContext("2d");
-
-    let canvasWidth = document.getElementById("canvas").width;
-    let canvasHeight = document.getElementById("canvas").height;
 
     let inventoryWidthInPixels = canvasWidth / 3;
     let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
@@ -279,3 +278,6 @@ const checkForLoadedImages = setInterval(function () {
         clearInterval(checkForLoadedImages);
     };
 }, 1000);
+
+
+export { allImagesLoaded };

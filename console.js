@@ -8,12 +8,13 @@ function consoleLogAAA(message) {
     myConsole.scrollTop = myConsole.scrollHeight;
 };
 
-document.onerror = function (message, source, lineno, colno, error) {
-    consoleLogAAA(message);
-};
-
 window.onerror = function (message, source, lineno, colno, error) {
-    consoleLogAAA(message);
+    consoleLogAAA(
+        message + "<br>"
+        + "source: " + source + "<br>"
+        + "line number: " + lineno + "<br>"
+        + "column number: " + colno + "<br>"
+    );
 };
 
 

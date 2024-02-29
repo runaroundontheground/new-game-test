@@ -10,8 +10,7 @@ export function showLoadingProgress(message) {
 }
 showLoadingProgress("loading GlobalVariables.mjs");
 
-var allImagesLoaded = false;
-export { allImagesLoaded };
+
 
 
 export const canvasWidth = 1000;
@@ -22,13 +21,13 @@ export const chunkSize = [10, 30]; // width or length, then height (both in bloc
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
-let ctx = canvas.getContext("2d");
+export let ctx = canvas.getContext("2d");
 ctx.font = "20px Arial";
 
-export { ctx };
 
 
-export let images = {};
+export var images = {};
+
 
 export const totalChunkSize = chunkSize[0] * blockSize;
 
@@ -140,7 +139,7 @@ export let recipes = {
 
 export const listOfIntermediateItems = ["stick"];
 
-export const listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
+export let listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
 
 class Camera {
     constructor() {
