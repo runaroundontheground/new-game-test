@@ -80,11 +80,13 @@ class Player {
         };
 
         // hooray, inventory time!
-        let widthOfInventoryInSlots = 9;
-        let heightOfInventoryInSlots = 3;
+        
 
 
         this.createALotOfInventoryThings = function() {
+
+            let widthOfInventoryInSlots = 9;
+            let heightOfInventoryInSlots = 3;
 
             let newCanvas = document.createElement("canvas");
             let context = newCanvas.getContext("2d");
