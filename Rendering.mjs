@@ -87,7 +87,7 @@ function addABlock(blockType, color, borderColor, alpha = 255) {
 
     if (borderColor === undefined) {
         let newBorderColor = nameToRgba(color);
-        consoleLog(newBorderColor)
+        //consoleLog(newBorderColor)
     }
 
     newCanvas.width = data.length;
@@ -97,14 +97,16 @@ function addABlock(blockType, color, borderColor, alpha = 255) {
     context.globalAlpha = data.globalAlpha;
     context.fillRect(0, 0, newCanvas.width, newCanvas.height);
     context.strokeRect(0, 0, newCanvas.width, newCanvas.height);
-    let image = newCanvas.toDataURL();
+    let image = new Image();
+    image.src = newCanvas.toDataURL();
     images[blockType] = image;
     context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
     newCanvas.width = itemIconSize; newCanvas.height = itemIconSize;
     context.globalAlpha = 100; // change later, 255 should? be opaque
     context.drawImage(images[blockType], 0, 0, newCanvas.width, newCanvas.height);
-    let itemIcon = newCanvas.toDataURL();
+    let itemIcon = new Image();
+    itemIcon.src = newCanvas.toDataURL();
     images["item icons/" + blockType] = itemIcon;
     context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 

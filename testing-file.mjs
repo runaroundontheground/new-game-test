@@ -9,19 +9,3 @@ function consoleLog(message) {
 
 
 
-class testingClass {
-    constructor() {
-        this.a = 5
-        this.b = 3
-        this.testingClassFunction = function () {
-            return "test value";
-        }
-
-        this.hotbar = [this.a, this.b];
-    }
-}
-let testingClassObject = new testingClass()
-let testObject = {
-    "a": 1,
-    "b": 2
-}

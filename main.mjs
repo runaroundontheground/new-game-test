@@ -7,21 +7,21 @@ import {
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
 import { updateMouseAndKeys } from "./Controls.mjs";
-import { render, generateSpawnArea, doCommandStuff } from "./Rendering.mjs";
+import { render, generateSpawnArea } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
 
 showLoadingProgress("loading main.mjs")
 
 let lastFrameTime = 0;
-let running = false;
+let running = true;
 
 function initializeGame() {
+    consoleLog("test")
+
     generateSpawnArea();
-    player.createALotOfInventoryThings()
     player.positionInSpawnArea();
     makeItemsExist();
     makeRecipesExist();
-    running = true;
 
 };
 
@@ -45,10 +45,10 @@ function gameLoop() {
     }
 
     render();
+
     updateMouseAndKeys();
 
-    let currentTime = performance.now();
-    deltaTime = currentTime - lastFrameTime;
+    deltaTime = performance.now() - lastFrameTime;
 
     let delayBetweenFramesInMilliseconds = (1000 / fps) * timeScale;
     if (running) {
@@ -58,13 +58,15 @@ function gameLoop() {
 
 
 
-window.addEventListener("load", function () {
+const waitUntilImagesLoaded = setInterval(function () {
     if (allImagesLoaded) {
         initializeGame();
         showLoadingProgress("main was able to load successfully");
-        //gameLoop();
+        gameLoop();
+        clearInterval(waitUntilImagesLoaded);
     };
-});
+}, 1 * 1000);
+
 
 
 

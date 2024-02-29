@@ -160,7 +160,7 @@ export function generateChunkTerrain(chunkCoords) {
 }
 
 
-function generateChunkStructures(inputChunkCoord) {
+export function generateChunkStructures(inputChunkCoord) {
   function generateStructure(structureName, blockCoord) {
     let thisStructure = structures[structureName];
     let thisStructureKeys = Object.keys(thisStructure);
@@ -230,7 +230,7 @@ function generateChunkStructures(inputChunkCoord) {
 };
 
 
-function runBlockUpdatesAfterGeneration(chunkCoord) {
+export function runBlockUpdatesAfterGeneration(chunkCoord) {
   for (let x = 0; x < chunkSize[0]; x++) {
     for (let y = 0; y < chunkSize[1]; y++) {
       for (let z = 0; z < chunkSize[0]; z++) {
