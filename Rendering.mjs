@@ -1,7 +1,7 @@
 import {
     canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
     chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
-    itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress, images
+    itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress, images, random
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Rendering.mjs");
 
@@ -173,9 +173,9 @@ function generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = false) {
 
     for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
         for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
-            if (chunks[[x, z].toString] === undefined) {
+            if (chunks[[x, z].toString()] === undefined) {
                 generateChunkTerrain([x, z]);
-                consoleLog("generating a chunk maybe")
+                consoleLog("generating terrain probably")
             };
         };
     };
@@ -244,7 +244,7 @@ export function generateSpawnArea() {
 
     for (let x = terrainGenRange.x.min; x < terrainGenRange.x.max; x++) {
         for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
-            if (chunks[[x, z].toString] === undefined) { generateChunkTerrain([x, z]); };
+            if (chunks[[x, z].toString()] === undefined) { generateChunkTerrain([x, z]); };
         };
     };
     ctx.fillText("chunk terrain generated", 100, 100);
@@ -282,16 +282,9 @@ function drawToCanvas(renderData) {
     let globalAlpha = renderData.globalAlpha || 100;
     ctx.globalAlpha = globalAlpha;
 
-    if (drawType == "block") {
-        let borderColor = renderData.borderColor;
+    consoleLog("rendering loop was even reached")
 
-            ctx.fillStyle = color;
-            ctx.strokeStyle = borderColor;
-
-            ctx.fillRect(x, y, width, height);
-            ctx.strokeRect(x, y, width, height);
-            consoleLog("rendering a block")
-    }
+    
 
     switch (drawType) {
         case "block":
@@ -302,7 +295,6 @@ function drawToCanvas(renderData) {
 
             ctx.fillRect(x, y, width, height);
             ctx.strokeRect(x, y, width, height);
-            consoleLog("rendering a block")
 
             break;
 
@@ -331,7 +323,7 @@ function drawToCanvas(renderData) {
 
 
 
-export function render(deltaTime) {
+export function render() {
 
 
 
@@ -450,7 +442,7 @@ export function render(deltaTime) {
         };
     };
 
-    let renderingData = [];
+    var renderingData = [];
 
 
 
@@ -475,9 +467,11 @@ export function render(deltaTime) {
 
     // add all the layers to the main rendering data
     for (let y = 0; y < chunkSize[1]; y++) {
-        renderingData.push(...yLayer[y]);
+        let yLayerData = yLayer[y];
+        yLayerData.forEach( function (data) {
+            renderingData.push(data);
+        })
     }
-
 
 
     renderingData.push(player.inventoryRenderingData.hotbarRenderData);
@@ -702,6 +696,7 @@ export function render(deltaTime) {
             )
 
         };
+    };
 
         // run hotbar rendering
         for (let i = 0; i < player.hotbar.length; i++) {
@@ -791,7 +786,7 @@ export function render(deltaTime) {
                 let renderData = {
                     "drawType": "fillText",
                     "position": [mouse.x, mouse.y + (blockSize * 1.5)],
-                    "text": mouse.hoveredBlock.block.type + ", " + mouse.selectedYChange + " block up/down"
+                    "text": mouse.hoveredBlock.type + ", " + mouse.selectedYChange + " block up/down"
                 }
 
                 renderingData.push(renderData);
@@ -827,7 +822,6 @@ export function render(deltaTime) {
         };
 
 
-
         for (let i = 0; i < renderingData.length; i++) {
             drawToCanvas(renderingData[i]);
         };
@@ -859,8 +853,8 @@ export function render(deltaTime) {
         drawToCanvas(debug3);
 
 
-    };
 };
+
 
 
 showLoadingProgress("Rendering.mjs initialized");

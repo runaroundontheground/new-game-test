@@ -193,13 +193,14 @@ class Mouse {
         // detection for blocks and stuff
         this.hoveredBlock = {};
         this.hoveredSlotId = 0;
+        
 
 
         this.inPlayerInventory = false;
         this.inPlayerHotbar = false;
         this.inASlot = false;
         // needs to have these two in order to tranfer item data properly
-        this.heldItem = {
+        this.heldSlot = {
             "contents": "empty",
             "count": 0
         };

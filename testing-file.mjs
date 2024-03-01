@@ -7,5 +7,3 @@ function consoleLog(message) {
 };
 
 
-
-

@@ -31,7 +31,7 @@ function gameLoop() {
 
     lastFrameTime = performance.now();
     
-
+    /*
     for (let i = entities.length - 1; i >= 0; i--) {
 
         entities[i].doStuff();
@@ -44,7 +44,7 @@ function gameLoop() {
         projectiles[i].doStuff();
         if (projectiles[i].deleteMe) { projectiles.splice(i, 1); };
 
-    }
+    }*/
 
     render();
 
