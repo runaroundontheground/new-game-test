@@ -272,8 +272,9 @@ export function generateSpawnArea() {
 
 function drawToCanvas(renderData) {
     let drawType = renderData.drawType;
-    let x = renderData.position[0] || 0;
-    let y = renderData.position[1] || 0;
+    let position = renderData.position || 0;
+    let x = position[0];
+    let y = position[1];
 
     // this fixes redclaring stuff
     let width = renderData.width || 20;
@@ -299,11 +300,14 @@ function drawToCanvas(renderData) {
             break;
 
         case "image":
-            let imageUrl = renderData.imageUrl + ".png"; // that's a little bit important, adding .png
-            width = renderData.width || images[imageUrl].naturalWidth;
-            height = renderData.height || images[imageUrl].naturalHeight;
+            let imageUrl = renderData.imageUrl;
+            width = renderData.width || images[imageUrl].width;
+            height = renderData.height || images[imageUrl].height;
+
+            if (images[imageUrl].complete) {
             // later, add in sub-x and y, for doing stuff with spritesheets
             ctx.drawImage(images[imageUrl], x, y, width, height);
+            };
 
             break;
 
