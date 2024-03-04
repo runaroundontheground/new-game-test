@@ -18,7 +18,9 @@ let running = true;
 let deltaTime = 1;
 
 function initializeGame() {
-    consoleLog("test")
+
+    clearInterval(tryToStartGame);
+    tryToStartGame = null;
 
     generateSpawnArea();
     player.positionInSpawnArea();
@@ -30,6 +32,8 @@ function initializeGame() {
 function gameLoop() {
 
     lastFrameTime = performance.now();
+
+    player.doStuff();
     
     /*
     for (let i = entities.length - 1; i >= 0; i--) {
@@ -59,15 +63,18 @@ function gameLoop() {
 };
 
 
-
-let waitUntilImagesLoaded = setInterval(function () {
+function checkForImageLoaded () {
     if (allImagesLoaded) {
-        initializeGame();
-        showLoadingProgress("main was able to load successfully");
-        gameLoop();
-        clearInterval(waitUntilImagesLoaded);
+
+    initializeGame();
+    showLoadingProgress("main loaded, probably");
+    gameLoop();
+    clearInterval(tryToStartGame);
+    tryToStartGame = null;
     };
-}, 1 * 1000);
+}
+
+let tryToStartGame = setInterval(checkForImageLoaded, 1000);
 
 
 

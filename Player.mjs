@@ -1,7 +1,7 @@
 import {
     consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
     canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random,
-    showLoadingProgress, Rect, canvas, ctx
+    showLoadingProgress, Rect, canvas, ctx, deltaTime
 
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Player.mjs");
@@ -467,124 +467,127 @@ class Player {
         this.currentBreakingBlock = undefined
 
 
-
-        this.generalMovement = function (deltaTime) {
+        this.generalMovement = this.generalMovement.bind(this);
+    }
+        generalMovement(deltaTime) {
+        //this.generalMovement = function (deltaTime) 
 
             this.chunkCoord = getChunkCoord(this.x, this.z)
             this.blockCoord = getBlockCoord(this.x, this.y, this.z)
-
+            
             this.rect.x = this.x;
             this.rect.y = this.z;
 
 
-            Object.keys(this.collision).forEach(function (key) {
-                this.collision[key] = false;
-            })
+            let collisionList = Object.keys(this.collision);
+            for (let i = 0; i < collisionList.length; i++) {
+                this.collision[collisionList[i]] = false;
+            }
 
-            // faster? access to variables that need to be used a lot in collision
-            let rightSide = this.x + this.width;
-            let bottomSide = this.z + this.width;
-            let underSide = this.y - this.height;
 
-            function doCollisionBelow() {
-                let topLeft = findBlock(this.x, underSide - 3, this.z, ignoreWater = true)
-                let topRight = findBlock(rightSide, underSide - 3, this.z, ignoreWater = true)
-                let bottomLeft = findBlock(this.x, underSide - 3, bottomSide, ignoreWater = true)
-                let bottomRight = findBlock(rightSide, underSide - 3, bottomSide, ignoreWater = true)
+            
+
+            this.doCollisionBelow = function () {
+                consoleLog(this.x + ", " + this.y + ", " + this.z);
+                let topLeft = findBlock(this.x, this.y - this.height - 3, this.z, false, true)
+                let topRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z, false, true)
+                let bottomLeft = findBlock(this.x, this.y - this.height - 3, this.z + this.width, false, true)
+                let bottomRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z + this.width, false, true)
                 if (topLeft || topRight || bottomLeft || bottomRight) {
-                    this.collision["below"] = true;
+                    this.collision.below = true;
                 };
             };
-            doCollisionBelow()
+            this.doCollisionBelow()
 
-            function doCollisionAbove() {
-                let topLeft = findBlock(this.x, this.y, this.z, ignoreWater = true)
-                let topRight = findBlock(rightSide, this.y, this.z, ignoreWater = true)
-                let bottomLeft = findBlock(this.x, this.y, bottomSide, ignoreWater = true)
-                let bottomRight = findBlock(rightSide, this.y, bottomSide, ignoreWater = true)
+            this.doCollisionAbove = function () {
+                let topLeft = findBlock(this.x, this.y, this.z, false, true)
+                let topRight = findBlock(this.x + this.width, this.y, this.z, false, true)
+                let bottomLeft = findBlock(this.x, this.y, this.z + this.width, false, true)
+                let bottomRight = findBlock(this.x + this.width, this.y, this.z + this.width, false, true)
                 if (topLeft || topRight || bottomLeft || bottomRight) {
                     this.collision["above"] = true
                 };
             };
-            doCollisionAbove()
+            this.doCollisionAbove()
 
-            function doCollisionToRight() {
-                let temporaryNumber = rightSide + 1
-                let aboveTopRight = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
-                let aboveBottomRight = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
-                let belowBottomRight = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
-                let belowTopRight = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
+            this.doCollisionToRight = function () {
+                let temporaryNumber = this.x + this.width + 1;
+                let aboveTopRight = findBlock(temporaryNumber, this.y, this.z, false, true)
+                let aboveBottomRight = findBlock(temporaryNumber, this.y, this.z + this.width, false, true)
+                let belowBottomRight = findBlock(temporaryNumber, this.y - this.height, this.z + this.width, false, true)
+                let belowTopRight = findBlock(temporaryNumber, this.y - this.height, this.z, false, true)
                 if (aboveTopRight || aboveBottomRight || belowBottomRight || belowTopRight) {
                     this.collision["right"] = true;
                 };
             };
 
-            doCollisionToRight()
+            this.doCollisionToRight()
 
-            function doCollisionToLeft() {
+            this.doCollisionToLeft = function () {
                 let temporaryNumber = this.x - 1
-                let aboveTopLeft = findBlock(temporaryNumber, this.y, this.z, ignoreWater = true)
-                let aboveBottomLeft = findBlock(temporaryNumber, this.y, bottomSide, ignoreWater = true)
-                let belowBottomLeft = findBlock(temporaryNumber, underSide, bottomSide, ignoreWater = true)
-                let belowTopLeft = findBlock(temporaryNumber, underSide, this.z, ignoreWater = true)
+                let aboveTopLeft = findBlock(temporaryNumber, this.y, this.z, false, true)
+                let aboveBottomLeft = findBlock(temporaryNumber, this.y, this.z + this.width, false, true)
+                let belowBottomLeft = findBlock(temporaryNumber, this.y - this.height, this.z + this.width, false, true)
+                let belowTopLeft = findBlock(temporaryNumber, this.y - this.height, this.z, false, true)
                 if (aboveBottomLeft || aboveTopLeft || belowBottomLeft || belowTopLeft) {
                     this.collision["left"] = true
                 };
             };
-            doCollisionToLeft()
+            this.doCollisionToLeft()
 
-            function doCollisionToUp() {
-                let aboveTopLeft = findBlock(this.x, this.y, this.z - 1, ignoreWater = true)
-                let aboveTopRight = findBlock(rightSide, this.y, this.z - 1, ignoreWater = true)
-                let belowTopRight = findBlock(rightSide, underSide, this.z - 1, ignoreWater = true)
-                let belowTopLeft = findBlock(this.x, underSide, this.z - 1, ignoreWater = true)
+            this.doCollisionToUp = function () {
+                let aboveTopLeft = findBlock(this.x, this.y, this.z - 1, false, true)
+                let aboveTopRight = findBlock(this.x + this.width, this.y, this.z - 1, false, true)
+                let belowTopRight = findBlock(this.x + this.width, this.y - this.height, this.z - 1, false, true)
+                let belowTopLeft = findBlock(this.x, this.y - this.height, this.z - 1, false, true)
                 if (aboveTopLeft || aboveTopRight || belowTopLeft || belowTopRight) {
                     this.collision["up"] = true
                 };
             };
 
-            doCollisionToUp()
+            this.doCollisionToUp()
 
-            function doCollisionToDown() {
-                let aboveBottomLeft = findBlock(this.x, this.y, bottomSide + 1, ignoreWater = true)
-                let aboveBottomRight = findBlock(rightSide, this.y, bottomSide + 1, ignoreWater = true)
-                let belowBottomRight = findBlock(rightSide, underSide, bottomSide + 1, ignoreWater = true)
-                let belowBottomLeft = findBlock(this.x, underSide, bottomSide + 1, ignoreWater = true)
+            this.doCollisionToDown = function () {
+                let aboveBottomLeft = findBlock(this.x, this.y, this.z + this.width + 1, false, true)
+                let aboveBottomRight = findBlock(this.x + this.width, this.y, this.z + this.width + 1, false, true)
+                let belowBottomRight = findBlock(this.x + this.width, this.y - this.height, this.z + this.width + 1, false, true)
+                let belowBottomLeft = findBlock(this.x, this.y - this.height, this.z + this.width + 1, false, true)
                 if (aboveBottomLeft || aboveBottomRight || belowBottomRight || belowBottomLeft) {
                     this.collision["down"] = true
                 };
             };
 
-            doCollisionToDown()
+            this.doCollisionToDown()
 
-            function checkForBeingInsideOfABlock() {
-                let center = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, extraInfo = true)
+            this.checkForBeingInsideOfABlock = function () {
+                let center = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, true);
                 this.collision["insideOfBlock"] = center["type"]
             };
-            checkForBeingInsideOfABlock()
+            this.checkForBeingInsideOfABlock()
 
-            let temporaryNumber = (this.y - this.height) + blockSize + 3
+
+            let temporaryNumber = (this.y - this.height) + blockSize + 3;
             // SEPARATE THESE LATER INTO FUNCTIONS
-            let aboveToTopRight = findBlock(rightSide + this.xv + 3, temporaryNumber, this.z, ignoreWater = true)
-            let aboveToBottomRight = findBlock(rightSide + this.xv + 3, temporaryNumber, bottomSide, ignoreWater = true)
+            let aboveToTopRight = findBlock(this.x + this.width + this.xv + 3, temporaryNumber, this.z, false, true)
+            let aboveToBottomRight = findBlock(this.x + this.width + this.xv + 3, temporaryNumber, this.z + this.width, false, true)
             if (aboveToTopRight || aboveToBottomRight) {
                 this.collision["aboveRight"] = true
             };
 
-            let aboveToTopLeft = findBlock(this.x + this.xv - 3, temporaryNumber, this.z, ignoreWater = true)
-            let aboveToBottomLeft = findBlock(this.x + this.xv - 3, temporaryNumber, bottomSide, ignoreWater = true)
+            let aboveToTopLeft = findBlock(this.x + this.xv - 3, temporaryNumber, this.z, false, true)
+            let aboveToBottomLeft = findBlock(this.x + this.xv - 3, temporaryNumber, this.z + this.width, false, true)
             if (aboveToTopLeft || aboveToBottomLeft) {
                 this.collision["aboveLeft"] = true
             }
 
-            let aboveToLeftUp = findBlock(this.x, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
-            let aboveToRightUp = findBlock(rightSide, temporaryNumber, this.z + this.zv - 3, ignoreWater = true)
+            let aboveToLeftUp = findBlock(this.x, temporaryNumber, this.z + this.zv - 3, false, true)
+            let aboveToRightUp = findBlock(this.x + this.width, temporaryNumber, this.z + this.zv - 3, false, true)
             if (aboveToLeftUp || aboveToRightUp) {
                 this.collision["aboveUp"] = true
             };
 
-            let aboveToRightDown = findBlock(rightSide, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
-            let aboveToLeftDown = findBlock(this.x, temporaryNumber, bottomSide + this.zv + 3, ignoreWater = true)
+            let aboveToRightDown = findBlock(this.x + this.width, temporaryNumber, this.z + this.width + this.zv + 3, false, true)
+            let aboveToLeftDown = findBlock(this.x, temporaryNumber, this.z + this.width + this.zv + 3, false, true)
             if (aboveToLeftDown || aboveToRightDown) {
                 this.collision["aboveDown"] = true
             };
@@ -657,10 +660,10 @@ class Player {
                     this.y = this.blockCoord[1] * blockSize + this.height
                     // re-do collisions, hopefully fixes colliding with walls while hitting
                     // the ground hard, looks like it didn't fix it?
-                    //doCollisionToDown()
-                    //doCollisionToLeft()
-                    //doCollisionToUp()
-                    //doCollisionToRight()
+                    //this.doCollisionToDown()
+                    //this.doCollisionToLeft()
+                    //this.doCollisionToUp()
+                    //this.doCollisionToRight()
                 };
                 // don't let player fall out of the world
                 if (this.y < -300) {
@@ -690,12 +693,12 @@ class Player {
                     if (a && b && c && d) {
                         this.y += blockSize
                         // update collision, since player's been moved a lot
-                        doCollisionToDown()
-                        doCollisionToLeft()
-                        doCollisionToRight()
+                        this.doCollisionToDown()
+                        this.doCollisionToLeft()
+                        this.doCollisionToRight()
                         this.booleans["blockStepUsed"] = true
                     } else {
-                        this.z += abs(this.zv)
+                        this.z += Math.abs(this.zv);
                         this.zv = 0
                         this.z += 1
                     };
@@ -709,12 +712,12 @@ class Player {
                     if (a && b && c && d) {
                         this.y += blockSize
                         // update collision, since player's been moved a lot
-                        doCollisionToDown()
-                        doCollisionToLeft()
-                        doCollisionToUp()
+                        this.doCollisionToDown()
+                        this.doCollisionToLeft()
+                        this.doCollisionToUp()
                         this.booleans["blockStepUsed"] = true
                     } else {
-                        this.x -= abs(this.xv)
+                        this.x -= Math.abs(this.xv);
                         this.xv = 0
                         this.x -= 1
                     };
@@ -728,12 +731,12 @@ class Player {
                     if (a && b && c && d) {
                         this.y += blockSize
                         // update collision, since player's been moved a lot
-                        doCollisionToDown()
-                        doCollisionToRight()
-                        doCollisionToUp()
+                        this.doCollisionToDown()
+                        this.doCollisionToRight()
+                        this.doCollisionToUp()
                         this.booleans["blockStepUsed"] = true
                     } else {
-                        this.x += abs(this.xv)
+                        this.x += Math.abs(this.xv)
                         this.xv = 0
                         this.x += 1
                     };
@@ -747,12 +750,12 @@ class Player {
                     if (a && b && c && d) {
                         this.y += blockSize
                         // update collision, since player's been moved a lot
-                        doCollisionToLeft()
-                        doCollisionToRight()
-                        doCollisionToUp()
+                        this.doCollisionToLeft()
+                        this.doCollisionToRight()
+                        this.doCollisionToUp()
                         this.booleans["blockStepUsed"] = true
                     } else {
-                        this.x -= abs(this.zv)
+                        this.x -= Math.abs(this.zv)
                         this.zv = 0
                         this.z -= 1
                     };
@@ -948,7 +951,7 @@ class Player {
             })
 
 
-            function adjustMouseSelectedBlockHeight() {
+            this.adjustMouseSelectedBlockHeight = function () {
                 // change the selected height of the mouse
                 mouse.selectedY = this.y
 
@@ -970,13 +973,13 @@ class Player {
                 if (mouse.selectedY <= 0) { mouse.selectedY = blockSize; };
                 if (mouse.selectedY >= chunkSize[1] * blockSize) { mouse.selectedY = chunkSize[1] * (blockSize - 1); };
             };
-            adjustMouseSelectedBlockHeight()
+            this.adjustMouseSelectedBlockHeight()
 
 
             // change hotbar slot based on pressing stuff
             let numberList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
             numberList.forEach(function (number) {
-                if (key[number]) { this.otherInventoryData.currentHotbarSlot = Number(number); };
+                if (keys[number]) { this.otherInventoryData.currentHotbarSlot = Number(number); };
             })
 
 
@@ -1016,7 +1019,7 @@ class Player {
             dropItems();
 
 
-            function hotbarHeldItemStuff() {
+            this.hotbarHeldItemStuff = function () {
                 if (!this.otherInventoryData.open) {
                     let index = this.otherInventoryData.currentHotbarSlot;
                     let slotData = this.hotbar[index];
@@ -1036,9 +1039,9 @@ class Player {
                     };
                 };
             };
-            hotbarHeldItemStuff();
+            this.hotbarHeldItemStuff();
 
-            function updateMouseInventoryCollision() {
+            this.updateMouseInventoryCollision = function () {
                 mouse.inPlayerInventory = false;
                 mouse.inPlayerHotbar = false;
                 mouse.inPlayerCraftingAndArmor = false;
@@ -1050,7 +1053,7 @@ class Player {
                 mouse.inPlayerHotbar = this.otherInventoryData.hotbarRect.collide.point(mouse.x, mouse.y)
                 mouse.inPlayerCraftingTable = this.otherInventoryData.craftingTableRect.collide.point(mouse.x, mouse.y)
             }
-            updateMouseInventoryCollision();
+            this.updateMouseInventoryCollision();
 
             // need to rework crafting to be a list, or it won't work with the moveItem function
             // probably separate the crafting slot from the rest of the other slots, do special logic
@@ -1199,7 +1202,7 @@ class Player {
             };
 
 
-            function recipeChecksAndStuff() {
+            this.recipeChecksAndStuff = function () {
                 // dict with total amount of each item in crafting slots
                 this.totalCraftingContents = {};
                 this.isCrafting = false;
@@ -1235,7 +1238,7 @@ class Player {
                 let foundARecipe = false
                 let recipeThatWasFound = undefined;
 
-                function exactRecipeDetection(recipe) {
+                this.exactRecipeDetection = function (recipe) {
                     // doesn't exist yet
 
                     if (this.totalCraftingContents == recipe.requiredItems) {
@@ -1246,7 +1249,7 @@ class Player {
                     return false, undefined
                 };
 
-                function nearExactRecipeLogic(recipe) {
+                this.nearExactRecipeLogic = function (recipe) {
 
                     function checkForSpecificItemInSlot(instructions) {
                         /*
@@ -1400,7 +1403,7 @@ class Player {
                     return [false, undefined];
                 };
 
-                function shapelessRecipeLogic(recipe) {
+                this.shapelessRecipeLogic = function (recipe) {
 
                     if (this.totalCraftingContents == recipe.requiredItems) { return [true, recipe]; };
                     return [false, undefined];
@@ -1412,7 +1415,7 @@ class Player {
                 if (this.isCrafting) {
 
                     for (const recipe of Object.values(recipes[this.crafting.gridSize].exact)) {
-                        let recipeDataStuff = exactRecipeDetection(recipe);
+                        let recipeDataStuff = this.exactRecipeDetection(recipe);
                         foundARecipe = recipeDataStuff[0];
                         recipeThatWasFound = recipeDataStuff[1];
                         if (foundARecipe) { break; };
@@ -1420,7 +1423,7 @@ class Player {
 
                     if (!foundARecipe) {
                         for (const recipe of Object.keys(recipes[this.crafting.gridSize].nearExact)) {
-                            let recipeDataStuff = nearExactRecipeLogic(recipe);
+                            let recipeDataStuff = this.nearExactRecipeLogic(recipe);
                             foundARecipe = recipeDataStuff[0];
                             recipeThatWasFound = recipeDataStuff[1];
                             if (foundARecipe) { break; };
@@ -1429,7 +1432,7 @@ class Player {
 
                     if (!foundARecipe) {
                         for (const recipe of Object.keys(recipes[this.crafting.gridSize].shapeless)) {
-                            let recipeDataStuff = shapelessRecipeLogic(recipe);
+                            let recipeDataStuff = this.shapelessRecipeLogic(recipe);
                             foundARecipe = recipeDataStuff[0];
                             recipeThatWasFound = recipeDataStuff[1];
                             if (foundARecipe) { break; };
@@ -1451,7 +1454,7 @@ class Player {
 
 
             };
-            recipeChecksAndStuff();
+            this.recipeChecksAndStuff();
 
 
         };
@@ -1520,7 +1523,7 @@ class Player {
 
 
         this.doStuffOnRightClick = function (heldItem = "empty") {
-            let hoveredBlockType = mouse.hoveredBlock.block.type;
+            let hoveredBlockType = mouse.hoveredBlock.type;
 
             if (hoveredBlockType == "crafting table") {
                 this.otherInventoryData.showCraftingAndArmor = false;

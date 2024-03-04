@@ -214,9 +214,9 @@ export function generateChunkStructures(inputChunkCoord) {
   for (let x = 0; x < chunkSize[0]; x++) {
     for (let y = 0; y < chunkSize[1]; y++) {
       for (let z = 0; z < chunkSize[0]; z++) {
-       
+
         let blockCoord = [x, y, z];
-        
+
         let block = chunks[inputChunkCoord.toString()]["data"][blockCoord.toString()];
 
 
@@ -349,7 +349,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           };
         };
 
-      chunks[chunkCoord].data[blockCoord] = block;
+        chunks[chunkCoord].data[blockCoord] = block;
 
 
       };
@@ -518,7 +518,8 @@ export function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = fal
   };
 
 
-  if (chunks[chunkCoord].data[blockCoord] === undefined) {
+  if (chunks[chunkCoord] === undefined || chunks[chunkCoord].data === undefined ||
+    chunks[chunkCoord].data[blockCoord] === undefined) {
     generateChunkTerrain(chunkCoord);
   };
 

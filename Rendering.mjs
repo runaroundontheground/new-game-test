@@ -283,9 +283,6 @@ function drawToCanvas(renderData) {
     let globalAlpha = renderData.globalAlpha || 100;
     ctx.globalAlpha = globalAlpha;
 
-    consoleLog("rendering loop was even reached")
-
-    
 
     switch (drawType) {
         case "block":
@@ -305,8 +302,8 @@ function drawToCanvas(renderData) {
             height = renderData.height || images[imageUrl].height;
 
             if (images[imageUrl].complete) {
-            // later, add in sub-x and y, for doing stuff with spritesheets
-            ctx.drawImage(images[imageUrl], x, y, width, height);
+                // later, add in sub-x and y, for doing stuff with spritesheets
+                ctx.drawImage(images[imageUrl], x, y, width, height);
             };
 
             break;
@@ -472,7 +469,7 @@ export function render() {
     // add all the layers to the main rendering data
     for (let y = 0; y < chunkSize[1]; y++) {
         let yLayerData = yLayer[y];
-        yLayerData.forEach( function (data) {
+        yLayerData.forEach(function (data) {
             renderingData.push(data);
         })
     }
@@ -702,159 +699,159 @@ export function render() {
         };
     };
 
-        // run hotbar rendering
-        for (let i = 0; i < player.hotbar.length; i++) {
-            let slot = player.hotbar[i];
-            let item = slot.contents;
-            let currentHotbarSlot = player.otherInventoryData.currentHotbarSlot;
+    // run hotbar rendering
+    for (let i = 0; i < player.hotbar.length; i++) {
+        let slot = player.hotbar[i];
+        let item = slot.contents;
+        let currentHotbarSlot = player.otherInventoryData.currentHotbarSlot;
 
-            if (item != "empty") {
+        if (item != "empty") {
 
-                let renderData = {
-                    "drawType": "image",
-                    "imageUrl": item.name,
-                    "position": slot.renderPosition
-                }
-
-                renderingData.push(renderData);
-            }
-
-            if (i == currentHotbarSlot) {
-
-                let renderData = player.inventoryRenderingData.selectedSlotRenderData;
-                renderData.position = slot.outlineRenderPosition;
-
-                renderingData.push(renderData);
-
-                if (mouse.inPlayerHotbar && mouse.inASlot) {
-
-                    if (item != "empty" && player.otherInventoryData.open) {
-
-
-                        let renderData = player.inventoryRenderingData.selectedSlotRenderData;
-                        renderData.position = player.hotbar[mouse.hoveredSlotId].outlineRenderPosition;
-
-                        renderingData.push(renderData);
-                        if (player.hotbar[mouse.hoveredSlotId].contents === item) {
-
-                            if (item.tooltip != "") {
-                                let renderData = {
-                                    "drawType": "fillText",
-                                    "fillStyle": "white",
-                                    "text": tooltip,
-                                    "position": [mouse.x + 10, mouse.y + 5]
-                                }
-
-                                renderingData.push(renderData);
-                            };
-                        };
-                    };
-
-
-                };
-            };
-
-        };
-
-
-
-
-        // run mouse's held item rendering
-        // also highlights and tells what block you're hovering over
-        if (!player.otherInventoryData.open) {
-            let x = Math.floor(mouse.cameraRelativeX / blockSize);
-            let z = Math.floor(mouse.cameraRelativeZ / blockSize);
-            x *= blockSize;
-            z *= blockSize;
-            player.canReachSelectedBlock = false
-
-            if (x < player.x + (player.horizontalBlockReach * blockSize)
-                && x > player.x - (player.horizontalBlockReach * blockSize)
-                && z < player.z + (player.horizontalBlockReach * blockSize)
-                && z > player.z - (player.horizontalBlockReach * blockSize)
-            ) {
-                player.canReachSelectedBlock = true
-                x -= camera.x
-                z -= camera.z
-
-                blockCursorHightlightData.position = [x, z];
-
-
-                renderingData.push(blockCursorHightlightData)
-
-
-                // do stuff so it displays the mouse's y selection and 
-                // the block that the mouse is theoretically currently
-                // selecting
-
-                let renderData = {
-                    "drawType": "fillText",
-                    "position": [mouse.x, mouse.y + (blockSize * 1.5)],
-                    "text": mouse.hoveredBlock.type + ", " + mouse.selectedYChange + " block up/down"
-                }
-
-                renderingData.push(renderData);
-            };
-
-        };
-
-
-
-
-
-        if (mouse.heldSlot.contents != "empty") {
             let renderData = {
                 "drawType": "image",
-                "imageUrl": mouse.heldSlot.contents.name,
-                "position": [mouse.x + 5, mouse.y + 5]
+                "imageUrl": item.name,
+                "position": slot.renderPosition
             }
 
             renderingData.push(renderData);
+        }
 
-            shift = player.inventoryRenderingData["slotSize"] - 10
+        if (i == currentHotbarSlot) {
 
-            // draw the item count, if there's more than one item
-            if (mouse.heldSlot.count > 1) {
-                let renderData = {
-                    "drawType": "fillText",
-                    "fillStyle": "white",
-                    "text": mouse.heldSlot.count,
-                    "position": [mouse.x + shift, mouse.y + shift]
-                }
-                renderingData.push(renderData);
+            let renderData = player.inventoryRenderingData.selectedSlotRenderData;
+            renderData.position = slot.outlineRenderPosition;
+
+            renderingData.push(renderData);
+
+            if (mouse.inPlayerHotbar && mouse.inASlot) {
+
+                if (item != "empty" && player.otherInventoryData.open) {
+
+
+                    let renderData = player.inventoryRenderingData.selectedSlotRenderData;
+                    renderData.position = player.hotbar[mouse.hoveredSlotId].outlineRenderPosition;
+
+                    renderingData.push(renderData);
+                    if (player.hotbar[mouse.hoveredSlotId].contents === item) {
+
+                        if (item.tooltip != "") {
+                            let renderData = {
+                                "drawType": "fillText",
+                                "fillStyle": "white",
+                                "text": tooltip,
+                                "position": [mouse.x + 10, mouse.y + 5]
+                            }
+
+                            renderingData.push(renderData);
+                        };
+                    };
+                };
+
+
             };
         };
 
+    };
 
-        for (let i = 0; i < renderingData.length; i++) {
-            drawToCanvas(renderingData[i]);
+
+
+
+    // run mouse's held item rendering
+    // also highlights and tells what block you're hovering over
+    if (!player.otherInventoryData.open) {
+        let x = Math.floor(mouse.cameraRelativeX / blockSize);
+        let z = Math.floor(mouse.cameraRelativeZ / blockSize);
+        x *= blockSize;
+        z *= blockSize;
+        player.canReachSelectedBlock = false
+
+        if (x < player.x + (player.horizontalBlockReach * blockSize)
+            && x > player.x - (player.horizontalBlockReach * blockSize)
+            && z < player.z + (player.horizontalBlockReach * blockSize)
+            && z > player.z - (player.horizontalBlockReach * blockSize)
+        ) {
+            player.canReachSelectedBlock = true
+            x -= camera.x
+            z -= camera.z
+
+            blockCursorHightlightData.position = [x, z];
+
+
+            renderingData.push(blockCursorHightlightData)
+
+
+            // do stuff so it displays the mouse's y selection and 
+            // the block that the mouse is theoretically currently
+            // selecting
+
+            let renderData = {
+                "drawType": "fillText",
+                "position": [mouse.x, mouse.y + (blockSize * 1.5)],
+                "text": mouse.hoveredBlock.type + ", " + mouse.selectedYChange + " block up/down"
+            }
+
+            renderingData.push(renderData);
         };
 
+    };
 
-        // debug things
-        let debug1 = {
-            "drawType": "fillText",
-            "fillStyle": "red",
-            "text": "camera chunk: " + camera.currentChunk + ", player chunk: " + player.chunkCoord,
-            "position": [300, 100]
-        }
-        drawToCanvas(debug1);
 
-        let debug2 = {
-            "drawType": "fillText",
-            "fillStyle": "red",
-            "text": "player block coord " + player.blockCoord + ", player yv " + player.yv,
-            "position": [300, 125]
-        }
-        drawToCanvas(debug2);
 
-        let debug3 = {
-            "drawType": "fillText",
-            "fillStyle": "red",
-            "text": "mouse pos " + mouse.pos + ", mouse relative pos " + mouse.cameraRelativePos,
-            "position": [300, 150]
+
+
+    if (mouse.heldSlot.contents != "empty") {
+        let renderData = {
+            "drawType": "image",
+            "imageUrl": mouse.heldSlot.contents.name,
+            "position": [mouse.x + 5, mouse.y + 5]
         }
-        drawToCanvas(debug3);
+
+        renderingData.push(renderData);
+
+        shift = player.inventoryRenderingData["slotSize"] - 10
+
+        // draw the item count, if there's more than one item
+        if (mouse.heldSlot.count > 1) {
+            let renderData = {
+                "drawType": "fillText",
+                "fillStyle": "white",
+                "text": mouse.heldSlot.count,
+                "position": [mouse.x + shift, mouse.y + shift]
+            }
+            renderingData.push(renderData);
+        };
+    };
+
+
+    for (let i = 0; i < renderingData.length; i++) {
+        drawToCanvas(renderingData[i]);
+    };
+
+
+    // debug things
+    let debug1 = {
+        "drawType": "fillText",
+        "fillStyle": "red",
+        "text": "camera chunk: " + camera.currentChunk + ", player chunk: " + player.chunkCoord,
+        "position": [300, 100]
+    }
+    drawToCanvas(debug1);
+
+    let debug2 = {
+        "drawType": "fillText",
+        "fillStyle": "red",
+        "text": "player block coord " + player.blockCoord + ", player yv " + player.yv,
+        "position": [300, 125]
+    }
+    drawToCanvas(debug2);
+
+    let debug3 = {
+        "drawType": "fillText",
+        "fillStyle": "red",
+        "text": "mouse pos " + mouse.pos + ", mouse relative pos " + mouse.cameraRelativePos,
+        "position": [300, 150]
+    }
+    drawToCanvas(debug3);
 
 
 };
