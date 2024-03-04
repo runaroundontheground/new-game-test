@@ -7,3 +7,21 @@ function consoleLog(message) {
 };
 
 
+/*
+class test {
+    constructor() {
+        this.a = "1"
+        this.testFunction = this.testFunction.bind(this);
+    }
+    testFunction() {
+        consoleLog(this.a);
+        this.a = 5;
+        consoleLog(this.a);
+    }
+}
+
+
+let testing = new test();
+
+testing.testFunction();
+*/

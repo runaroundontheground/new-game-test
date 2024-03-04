@@ -466,11 +466,21 @@ class Player {
         this.blockBreakProgress = 0
         this.currentBreakingBlock = undefined
 
-
+        // bind functions here i guess?
         this.generalMovement = this.generalMovement.bind(this);
+        this.giveItem = this.giveItem.bind(this);
+        this.moveItem = this.moveItem.bind(this);
+        this.doInventoryThings = this.doInventoryThings.bind(this);
+        this.handleTimers = this.handleTimers.bind(this);
+        this.updateCamera = this.updateCamera.bind(this);
+        this.updateImageThings = this.updateImageThings.bind(this);
+        this.doStuff = this.doStuff.bind(this);
+        this.positionInSpawnArea = this.positionInSpawnArea.bind(this);
+        this.doStuffOnRightClick = this.doStuffOnRightClick.bind(this);
+        this.doStuffOnLeftClick = this.doStuffOnLeftClick.bind(this);
+        this.changeCraftingGrid = this.changeCraftingGrid.bind(this);
     }
         generalMovement(deltaTime) {
-        //this.generalMovement = function (deltaTime) 
 
             this.chunkCoord = getChunkCoord(this.x, this.z)
             this.blockCoord = getBlockCoord(this.x, this.y, this.z)
@@ -484,10 +494,8 @@ class Player {
                 this.collision[collisionList[i]] = false;
             }
 
-
             
-
-            this.doCollisionBelow = function () {
+            function doCollisionBelow () {
                 consoleLog(this.x + ", " + this.y + ", " + this.z);
                 let topLeft = findBlock(this.x, this.y - this.height - 3, this.z, false, true)
                 let topRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z, false, true)
@@ -497,7 +505,7 @@ class Player {
                     this.collision.below = true;
                 };
             };
-            this.doCollisionBelow()
+            doCollisionBelow()
 
             this.doCollisionAbove = function () {
                 let topLeft = findBlock(this.x, this.y, this.z, false, true)
@@ -788,7 +796,7 @@ class Player {
                     this.collision["insideOfBlock"] != "water") { this.y += 5; };
 
 
-                // do all the position updates that other things use
+                
                 this.xv = Math.round(this.xv * 100) / 100;
                 this.yv = Math.round(this.yv * 100) / 100;
                 this.zv = Math.round(this.zv * 100) / 100;
@@ -805,7 +813,7 @@ class Player {
             };
         };
 
-        this.giveItem = function (item, count = 1) {
+        giveItem(item, count = 1) {
 
             function checkForStackables(container, done, count, item) {
                 if (!done && item.stackable) {
@@ -867,10 +875,7 @@ class Player {
             return done
         };
 
-
-
-
-        this.moveItem = function (movingItemSlot, movingItem, amount, receivingContainer) {
+        moveItem(movingItemSlot, movingItem, amount, receivingContainer) {
             // these parameters will be changed by the function, hopefully it works?
             // this function will return whether the operation was successful or not
             let receivingSlotId = undefined;
@@ -937,7 +942,7 @@ class Player {
             return false;
         }
 
-        this.doInventoryThings = function () {
+        doInventoryThings() {
 
 
             if (keysPressed.e) { this.otherInventoryData.open = !this.otherInventoryData.open; };
@@ -1459,7 +1464,7 @@ class Player {
 
         };
 
-        this.handleTimers = function () {
+        handleTimers() {
             for (let i = 0; i < Object.keys(this.timers); i++) {
                 let timerValue = this.timers[i];
                 if (timerValue > 0) { timerValue -= 1; };
@@ -1468,9 +1473,7 @@ class Player {
             }
         };
 
-
-
-        this.updateCamera = function () {
+        updateCamera() {
             camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
             camera.y = this.y
             camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
@@ -1478,9 +1481,7 @@ class Player {
             camera.currentChunk = getChunkCoord(camera.x, camera.z)
         };
 
-
-
-        this.updateImageThings = function () {
+        updateImageThings() {
             let imageX = this.x - camera.x;
             let imageY = this.z - camera.z;
 
@@ -1488,9 +1489,7 @@ class Player {
             //this.renderDataData = this needs to be updated when animations, etc exist
         };
 
-
-
-        this.doStuff = function (deltaTime) {
+        doStuff(deltaTime) {
 
             mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth / 2);
             mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight / 2);
@@ -1505,9 +1504,7 @@ class Player {
             this.updateImageThings()
         };
 
-
-
-        this.positionInSpawnArea = function () {
+        positionInSpawnArea() {
             for (let y = 0; y < chunkSize[1] - 1; y++) {
                 if (findBlock(0, y * blockSize, 0)) {
                     if (!findBlock(0, (y + 1) * blockSize, 0)) {
@@ -1520,9 +1517,7 @@ class Player {
             }
         };
 
-
-
-        this.doStuffOnRightClick = function (heldItem = "empty") {
+        doStuffOnRightClick(heldItem = "empty") {
             let hoveredBlockType = mouse.hoveredBlock.type;
 
             if (hoveredBlockType == "crafting table") {
@@ -1532,8 +1527,7 @@ class Player {
             };
         };
 
-
-        this.doStuffOnLeftClick = function (currentlyHeldItem = "empty") {
+        doStuffOnLeftClick(currentlyHeldItem = "empty") {
             let item = currentlyHeldItem;
 
             let breakingPower = 1
@@ -1629,10 +1623,7 @@ class Player {
             };
         };
 
-
-
-
-        this.changeCraftingGrid = function (gridSize) {
+        changeCraftingGrid(gridSize) {
 
 
             // attempt to place items back into inventory, otherwise drop them
@@ -1691,7 +1682,6 @@ class Player {
 
         };
     };
-};
 
 
 
