@@ -387,6 +387,10 @@ export function render() {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
 
+                    if (random.integer(0, 100) == 5) {
+                        consoleLog(block.type)
+                    }
+
                     if (block.render && block.type != "air") {
                         let xPos = x * blockSize;
                         let yPos = z * blockSize;
@@ -438,6 +442,7 @@ export function render() {
                         renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
+                        consoleLog(renderData)
                     };
                 };
             };

@@ -156,16 +156,16 @@ export let camera = new Camera();
 
 class Random {
     constructor() {
-        this.integer = function (startInt, endInt) {
-            // inclusive with end int
-            return Math.floor(Math.random() * (endInt - startInt + 1) + startInt);
-        };
-
-        this.float = function (startNum, endNum) {
-            return Math.random() * (endNum - startNum) + startNum;
-        }
-
+        this.integer = this.integer.bind(this);
+        this.float = this.float.bind(this);
     };
+
+    integer(startInt, endInt) {
+        return Math.floor(Math.random() * (endInt - startInt + 1) + startInt);
+    }
+    float(startNum, endNum) {
+        return Math.random() * (endNum - startNum) + startNum;
+    }
 };
 
 export let random = new Random();
