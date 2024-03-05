@@ -495,17 +495,18 @@ class Player {
             }
 
             
-            function doCollisionBelow () {
-                consoleLog(this.x + ", " + this.y + ", " + this.z);
-                let topLeft = findBlock(this.x, this.y - this.height - 3, this.z, false, true)
-                let topRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z, false, true)
-                let bottomLeft = findBlock(this.x, this.y - this.height - 3, this.z + this.width, false, true)
-                let bottomRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z + this.width, false, true)
+
+
+            function doCollisionBelow (This) {
+                let topLeft = findBlock(This.x, This.y - This.height - 3, This.z, false, true)
+                let topRight = findBlock(This.x + This.width, This.y - This.height - 3, This.z, false, true)
+                let bottomLeft = findBlock(This.x, This.y - This.height - 3, This.z + This.width, false, true)
+                let bottomRight = findBlock(This.x + This.width, This.y - This.height - 3, This.z + This.width, false, true)
                 if (topLeft || topRight || bottomLeft || bottomRight) {
-                    this.collision.below = true;
+                    This.collision.below = true;
                 };
             };
-            doCollisionBelow()
+            doCollisionBelow(this)
 
             this.doCollisionAbove = function () {
                 let topLeft = findBlock(this.x, this.y, this.z, false, true)
@@ -801,10 +802,11 @@ class Player {
                 this.yv = Math.round(this.yv * 100) / 100;
                 this.zv = Math.round(this.zv * 100) / 100;
 
-                this.x += (this.xv * deltaTime);
-                this.y += (this.yv * deltaTime);
-                this.z += (this.zv * deltaTime);
-
+                
+                this.x += this.xv * deltaTime;
+                this.y += this.yv * deltaTime;
+                this.z += this.zv * deltaTime;
+                
 
 
 

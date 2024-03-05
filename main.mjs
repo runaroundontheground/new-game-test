@@ -33,7 +33,7 @@ function gameLoop() {
 
     lastFrameTime = performance.now();
 
-    player.doStuff();
+    player.doStuff(deltaTime);
     
     /*
     for (let i = entities.length - 1; i >= 0; i--) {

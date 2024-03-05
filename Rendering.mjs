@@ -293,6 +293,7 @@ function drawToCanvas(renderData) {
 
             ctx.fillRect(x, y, width, height);
             ctx.strokeRect(x, y, width, height);
+            consoleLog("hey blocks should be rendering");
 
             break;
 
@@ -328,7 +329,7 @@ export function render() {
 
 
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+   // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
     let chunkList = generateNearbyAreas(2, true)
@@ -336,11 +337,11 @@ export function render() {
 
     // separate the blocks into layers, so they get rendered in the right order
     // also, keep track of the scale for each y layer
-    let yLayer = [];
+    var yLayer = [];
     for (let i = 0; i < chunkSize[1]; i++) {
         yLayer.push([]);
     };
-
+    
 
 
     for (const chunkCoord of chunkList) {
@@ -469,9 +470,9 @@ export function render() {
     // add all the layers to the main rendering data
     for (let y = 0; y < chunkSize[1]; y++) {
         let yLayerData = yLayer[y];
-        yLayerData.forEach(function (data) {
-            renderingData.push(data);
-        })
+        for (let i = 0; i < yLayerData.length; i++) {
+            renderingData.push(yLayerData[i]);
+        }
     }
 
 
