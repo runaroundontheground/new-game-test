@@ -271,18 +271,16 @@ export function generateSpawnArea() {
 
 
 function drawToCanvas(renderData) {
-    let drawType = renderData.drawType;
-    let position = renderData.position || 0;
+    let drawType = renderData.drawType || "fillRect";
+    let position = renderData.position || [0, 0];
     let x = position[0];
     let y = position[1];
 
     // this fixes redclaring stuff
-    let width = renderData.width || 20;
-    let height = renderData.height || 20;
+    let width = renderData.width || blockSize;
+    let height = renderData.height || blockSize;
     let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
-    let globalAlpha = renderData.globalAlpha || 100;
-    ctx.globalAlpha = globalAlpha;
-
+    ctx.globalAlpha = renderData.globalAlpha || 100;
 
     switch (drawType) {
         case "block":
@@ -293,7 +291,6 @@ function drawToCanvas(renderData) {
 
             ctx.fillRect(x, y, width, height);
             ctx.strokeRect(x, y, width, height);
-            consoleLog("hey blocks should be rendering");
 
             break;
 
@@ -329,7 +326,7 @@ export function render() {
 
 
 
-   // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
     let chunkList = generateNearbyAreas(2, true)
@@ -341,7 +338,7 @@ export function render() {
     for (let i = 0; i < chunkSize[1]; i++) {
         yLayer.push([]);
     };
-    
+
 
 
     for (const chunkCoord of chunkList) {
@@ -386,10 +383,6 @@ export function render() {
                 for (let z = 0; z < chunkSize[0]; z++) {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
-
-                    if (random.integer(0, 100) == 5) {
-                        consoleLog(block.type)
-                    }
 
                     if (block.render && block.type != "air") {
                         let xPos = x * blockSize;
@@ -442,7 +435,7 @@ export function render() {
                         renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
-                        consoleLog(renderData)
+                        //consoleLog(renderData)
                     };
                 };
             };

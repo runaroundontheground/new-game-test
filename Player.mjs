@@ -497,16 +497,16 @@ class Player {
             
 
 
-            function doCollisionBelow (This) {
-                let topLeft = findBlock(This.x, This.y - This.height - 3, This.z, false, true)
-                let topRight = findBlock(This.x + This.width, This.y - This.height - 3, This.z, false, true)
-                let bottomLeft = findBlock(This.x, This.y - This.height - 3, This.z + This.width, false, true)
-                let bottomRight = findBlock(This.x + This.width, This.y - This.height - 3, This.z + This.width, false, true)
+            this.doCollisionBelow = function () {
+                let topLeft = findBlock(this.x, this.y - this.height - 3, this.z, false, true)
+                let topRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z, false, true)
+                let bottomLeft = findBlock(this.x, this.y - this.height - 3, this.z + this.width, false, true)
+                let bottomRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z + this.width, false, true)
                 if (topLeft || topRight || bottomLeft || bottomRight) {
-                    This.collision.below = true;
+                    this.collision.below = true;
                 };
             };
-            doCollisionBelow(this)
+            this.doCollisionBelow();
 
             this.doCollisionAbove = function () {
                 let topLeft = findBlock(this.x, this.y, this.z, false, true)
@@ -985,12 +985,15 @@ class Player {
 
             // change hotbar slot based on pressing stuff
             let numberList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-            numberList.forEach(function (number) {
-                if (keys[number]) { this.otherInventoryData.currentHotbarSlot = Number(number); };
-            })
+            for (let number = 0; number < numberList.length; number++) {
+                if (keys[numberList[number]]) {
+                    this.otherInventoryData.currentHotbarSlot = number;
+                }
+            }
+            
 
 
-            function dropItems() {
+            this.dropItems = function () {
                 // drop items from the hotbar
                 if (keysPressed.q) {
                     if (!this.otherInventoryData.open) {
@@ -1023,7 +1026,7 @@ class Player {
                     };
                 };
             };
-            dropItems();
+            this.dropItems();
 
 
             this.hotbarHeldItemStuff = function () {
@@ -1065,7 +1068,7 @@ class Player {
             // need to rework crafting to be a list, or it won't work with the moveItem function
             // probably separate the crafting slot from the rest of the other slots, do special logic
 
-            function mouseInteractionWithContainer(container, otherContainer = undefined, isResultSlot = false) {
+            this.mouseInteractionWithContainer = function (container, otherContainer = undefined, isResultSlot = false) {
                 for (let i = 0; i < container.length; i++) {
                     let slot = container[i];
                     if (slot.rect.collide.point(mouse.x, mouse.y)) {
@@ -1151,21 +1154,21 @@ class Player {
                     if (this.storageUIOpen) {
                         otherContainer = this.currentStorageBlock;
                     }
-                    mouseInteractionWithContainer(this.inventory, otherContainer);
+                    this.mouseInteractionWithContainer(this.inventory, otherContainer);
                 }
                 if (mouse.inPlayerHotbar) {
                     let otherContainer = undefined;
                     if (this.storageUIOpen) {
                         otherContainer = this.currentStorageBlock;
                     }
-                    mouseInteractionWithContainer(this.hotbar, otherContainer);
+                    this.mouseInteractionWithContainer(this.hotbar, otherContainer);
                 }
                 if (mouse.inPlayerCraftingAndArmor) {
                     let gridSize = this.crafting.gridSize;
-                    mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
-                    mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
-                    mouseInteractionWithContainer(this.armor, this.inventory);
-                }
+                    this.mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
+                    this.mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
+                    this.mouseInteractionWithContainer(this.armor, this.inventory);
+                }   
                 // checks for this haven't been implemented yet
                 if (mouse.inStorageUI) {
 
@@ -1257,7 +1260,7 @@ class Player {
                 };
 
                 this.nearExactRecipeLogic = function (recipe) {
-
+                    checkForSpecificItemInSlot.bind(this);
                     function checkForSpecificItemInSlot(instructions) {
                         /*
                         startingItemName, directions, operators, and items are contained in instructions
@@ -1270,7 +1273,7 @@ class Player {
                         
                         compares the values of does this slot have this specific item
                         */
-
+                        checkADirection.bind(this);
                         function checkADirection(direction, startingSlotId) {
                             let gridSize = this.crafting["gridSize"]
                             let testSlotId = 0

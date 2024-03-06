@@ -127,11 +127,11 @@ export function generateChunkTerrain(chunkCoords) {
             };
 
           }
-
+          /* is this making everything break??
           if (y >= 8) { blockData.type = "stone"; };
           if (y < 10) { blockData.type = "dirt"; };
           if (y > 15) { blockData.type = "snowy stone"; };
-
+          */
 
 
           if (y === 0) { blockData.type = "bedrock"; };
@@ -168,15 +168,30 @@ export function generateChunkStructures(inputChunkCoord) {
       let chunkX = inputChunkCoord[0];
       let chunkZ = inputChunkCoord[1];
 
-      let structureBlockCoord = thisStructureKeys[i];
-      let block = thisStructure[structureBlockCoord];
+      let key = thisStructureKeys[i];
+      let block = thisStructure[key];
 
-      let x = blockCoord[0] + structureBlockCoord[0];
-      let y = blockCoord[1] + structureBlockCoord[1];
-      let z = blockCoord[2] + structureBlockCoord[2];
+      let x = blockCoord[0]; let y = blockCoord[1]; let z = blockCoord[2];
+      let updatingNumber = "";
+      let currentCoord = 0;
+      for (let i = 0; i < key.length; i++) {
+        let currentChar = key[i];
+
+        if (currentChar == "," || i == key.length - 1) {
+          if (currentCoord == 0) { x += Number(updatingNumber); }
+          if (currentCoord == 1) { y += Number(updatingNumber); }
+          if (currentCoord == 2) { z += Number(updatingNumber); }
+
+          currentCoord += 1;
+          updatingNumber = "";
+        };
+        
+        updatingNumber += key[i];
+      };
+
 
       while (x >= chunkSize[0]) {
-        x -= chunkSize;
+        x -= chunkSize[0];
         chunkX += 1;
       }
       while (x < 0) {
@@ -239,15 +254,18 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
   for (let x = 0; x < chunkSize[0]; x++) {
     for (let y = 0; y < chunkSize[1]; y++) {
       for (let z = 0; z < chunkSize[0]; z++) {
+
+
         let blockCoord = [x, y, z].toString();
-        let block = chunks[chunkCoord].data[blockCoord];
+        let block = chunks[chunkCoord.toString()].data[blockCoord];
+
+
 
         function checkForSolidBlock(block) {
           if (block.type != "air" && block.type != "water") {
             return true;
           };
           return false;
-
         };
 
         function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
@@ -265,7 +283,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
 
         if (block.type == "water") {
-          let hopefullyAir = findBlock(x, y + 1, z, extraInfo = true, chunkCoordInput = chunkCoord);
+          let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
 
           if (hopefullyAir.type == "air") {
             block.alphaValue = 100;
@@ -277,7 +295,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
             while (didntFindWater) {
               // make sure no blocks underneath are rendered, make top water less transparent
-              let hopefullyWater = findBlock(x, y - subtractY, z, extraInfo = true, chunkCoordInput = chunkCoord);
+              let hopefullyWater = findBlock(x, y - subtractY, z, true, false, chunkCoord);
 
               if (hopefullyWater.type == "water") {
                 block.alphaValue += 25;
@@ -295,69 +313,68 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
               subtractY -= 1;
             }; // end of while loop
           };
+        };
 
 
-          let blockAbove = findBlock(x, y + 1, z, extraInfo = True, chunkCoordInput = chunkCoord);
-          let blockBelow = findBlock(x, y - 1, z, extraInfo = True, chunkCoordInput = chunkCoord);
-          let blockToRight = findBlock(x + 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord);
-          let blockToLeft = findBlock(x - 1, y, z, extraInfo = True, chunkCoordInput = chunkCoord);
-          let blockToDown = findBlock(x, y, z + 1, extraInfo = True, chunkCoordInput = chunkCoord);
-          let blockToUp = findBlock(x, y, z - 1, extraInfo = True, chunkCoordInput = chunkCoord);
+        let blockAbove = findBlock(x, y + 1, z, true, false, chunkCoord);
+        let blockBelow = findBlock(x, y - 1, z, true, false, chunkCoord);
+        let blockToRight = findBlock(x + 1, y, z, true, false, chunkCoord);
+        let blockToLeft = findBlock(x - 1, y, z, true, false, chunkCoord);
+        let blockToDown = findBlock(x, y, z + 1, true, false, chunkCoord);
+        let blockToUp = findBlock(x, y, z - 1, true, false, chunkCoord);
 
-          let above = checkForSolidBlock(blockAbove);
-          let below = checkForSolidBlock(blockBelow);
-          let toRight = checkForSolidBlock(blockToRight);
-          let toLeft = checkForSolidBlock(blockToLeft);
-          let toUp = checkForSolidBlock(blockToUp);
-          let toDown = checkForSolidBlock(blockToDown);
+        let above = checkForSolidBlock(blockAbove);
+        let below = checkForSolidBlock(blockBelow);
+        let toRight = checkForSolidBlock(blockToRight);
+        let toLeft = checkForSolidBlock(blockToLeft);
+        let toUp = checkForSolidBlock(blockToUp);
+        let toDown = checkForSolidBlock(blockToDown);
 
-          let surrounded = false;
-          if (toLeft && toUp && toDown && toRight) { surrounded = true; };
+        let surrounded = false;
+        if (toLeft && toUp && toDown && toRight) { surrounded = true; };
 
-
-          if (above) {
-            if (blockBelow.alphaValue < 255) {
-              // current block should have alpha, hide the block underneath
-              block.alphaValue = 150;
-              block.render = true;
-              modifyOtherBlock(x, y - 1, z, render = false);
-            };
-
-            if (!surrounded) {
-              block.render = true;
-            };
-          } else {
-            // no block is above, should probably be rendered
+        if (above) {
+          if (blockBelow.alphaValue < 255) {
+            // current block should have alpha, hide the block underneath
+            block.alphaValue = 150;
             block.render = true;
+            modifyOtherBlock(x, y - 1, z, render = false);
           };
 
-          if (below) {
-            if (!above) { block.render = true; }
-            if (blockBelow.alphaValue < 255) {
-              block.alphaValue = 150;
-              block.render = true;
-              modifyOtherBlock(x, y - 1, z, render = false);
-            };
-            if (block.render) { modifyOtherBlock(x, y - 1, z, render = false); };
+          if (!surrounded) {
+            block.render = true;
+          };
+        } else {
+          // no block is above, should probably be rendered
+          block.render = true;
+        };
 
-          } else {
-            // no block is under this one
-            if (!above) {
-              block.render = true;
-              block.alphaValue = 100;
-            };
+        if (below) {
+          if (!above) { block.render = true; }
+          if (blockBelow.alphaValue < 255) {
+            block.alphaValue = 150;
+            block.render = true;
+            modifyOtherBlock(x, y - 1, z, render = false);
+          };
+          if (block.render) { modifyOtherBlock(x, y - 1, z, false); };
+
+        } else {
+          // no block is under this one
+          if (!above) {
+            block.render = true;
+            block.alphaValue = 100;
           };
         };
 
-        chunks[chunkCoord].data[blockCoord] = block;
-
+        chunks[chunkCoord.toString()].data[blockCoord] = block;
 
       };
     };
-
-    chunks[chunkCoord].blocksUpdated = true;
   };
+
+  chunks[chunkCoord.toString()].blocksUpdated = true;
 };
+
 
 
 
@@ -375,12 +392,12 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
     return false
   };
 
-  let blockAbove = findBlock(x, y + 1, z, extraInfo = true, chunkCoordInput = chunkCoord)
-  let blockBelow = findBlock(x, y - 1, z, extraInfo = true, chunkCoordInput = chunkCoord)
-  let blockToRight = findBlock(x + 1, y, z, extraInfo = true, chunkCoordInput = chunkCoord)
-  let blockToLeft = findBlock(x - 1, y, z, extraInfo = true, chunkCoordInput = chunkCoord)
-  let blockToUp = findBlock(x, y, z - 1, extraInfo = true, chunkCoordInput = chunkCoord)
-  let blockToDown = findBlock(x, y, z + 1, extraInfo = true, chunkCoordInput = chunkCoord)
+  let blockAbove = findBlock(x, y + 1, z, true, false, chunkCoord)
+  let blockBelow = findBlock(x, y - 1, z, true, false, chunkCoord)
+  let blockToRight = findBlock(x + 1, y, z, true, false, chunkCoord)
+  let blockToLeft = findBlock(x - 1, y, z, true, false, chunkCoord)
+  let blockToUp = findBlock(x, y, z - 1, true, false, chunkCoord)
+  let blockToDown = findBlock(x, y, z + 1, true, false, chunkCoord)
 
   let above = checkForSolidBlock(blockAbove)
   let below = checkForSolidBlock(blockBelow)
@@ -407,10 +424,10 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
   };
 
   function checkSidesOfBlock(x, y, z) {
-    let left = findBlock(x - 1, y, z, chunkCoordInput = chunkCoord)
-    let right = findBlock(x + 1, y, z, chunkCoordInput = chunkCoord)
-    let down = findBlock(x, y, z + 1, chunkCoordInput = chunkCoord)
-    let up = findBlock(x, y, z - 1, chunkCoordInput = chunkCoord)
+    let left = findBlock(x - 1, y, z, undefined, undefined, chunkCoord)
+    let right = findBlock(x + 1, y, z, undefined, undefined, chunkCoord)
+    let down = findBlock(x, y, z + 1, undefined, undefined, chunkCoord)
+    let up = findBlock(x, y, z - 1, undefined, undefined, chunkCoord)
     if (left && right && down && up) { return true; };
     return false;
   };
@@ -431,7 +448,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
           let belowSurrounded = checkSidesOfBlock(x, y - 1, z);
           if (belowSurrounded) {
-            modifyOtherBlock(x, y - 1, z, render = false);
+            modifyOtherBlock(x, y - 1, z, false);
           };
         };
       } else { block.alphaValue = 100; };
@@ -443,12 +460,12 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
         if (blockBelow.alphaValue < 255) {
           block.alphaValue = 100;
-          modifyOtherBlock(x, y - 1, z, render = false);
+          modifyOtherBlock(x, y - 1, z, false);
         } else {
 
           let belowSurrounded = checkSidesOfBlock(x, y - 1, z)
           if (belowSurrounded) {
-            modifyOtherBlock(x, y - 1, z, render = false);
+            modifyOtherBlock(x, y - 1, z, false);
           };
         };
 
@@ -459,35 +476,36 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
     if (below) {
       modifyOtherBlock(x, y - 1, z, render = true)
 
-      let blockBelow2 = findBlock(x, y - 2, z, true, chunkCoordInput = chunkCoord)
+      let blockBelow2 = findBlock(x, y - 2, z, true, undefined, chunkCoord)
       let below2 = checkForSolidBlock(blockBelow2)
 
       if (!below2) {
-        modifyOtherBlock(x, y - 1, z, render = true, alphaValue = 100)
+        modifyOtherBlock(x, y - 1, z, true, 100)
       } else {
         if (blockBelow2.alphaValue < 255) {
-          modifyOtherBlock(x, y - 2, z, render = false);
-          modifyOtherBlock(x, y - 1, z, alphaValue = 100);
+          modifyOtherBlock(x, y - 2, z, false);
+          modifyOtherBlock(x, y - 1, z, undefined, 100);
         };
       };
     };
   };
 
 
-  chunks[chunkCoord].data[blockCoord] = block;
+  chunks[chunkCoord.toString()].data[blockCoord.toString()] = block;
 };
 
 export function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = false,
   chunkCoordInput = undefined) {
   let blockCoord = [0, 0, 0];
   let chunkCoord = [0, 0];
+  
   if (chunkCoordInput !== undefined) {
     let x = xPos;
     let y = yPos;
     let z = zPos;
 
-    let chunkX = chunkCoordInput[0]
-    let chunkZ = chunkCoordInput[1]
+    let chunkX = Number(chunkCoordInput[0])
+    let chunkZ = Number(chunkCoordInput[1])
 
     while (x >= chunkSize[0]) {
       x -= chunkSize[0]
