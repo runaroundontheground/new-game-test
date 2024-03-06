@@ -13,21 +13,23 @@
 
 <body>
     <h1>tada, its a canvas</h1>
-    
+
     <div id="imageHolder" style="display: none;"></div>
 
     <canvas id="canvas" width="30" height="30" style="border: 1px solid #000;"></canvas>
 
-    <button onclick="document.getElementById('loadingProgressDiv').style.display='none'">hide the loading progress</button>
+    <button onclick="document.getElementById('loadingProgressDiv').style.display='none'">hide the loading
+        progress</button>
     <div id="loadingProgressDiv" style="height: 200px; overflow: scroll; border: #000 1px solid;"></div>
     <div id="console" style="height: 200px; overflow: scroll; border: #000 1px solid;"></div>
 
 
+
     <script src="./console.js"></script>
-    
+
     <script type="module" src="./GlobalVariables.mjs"></script>
     <script type="module" src="./ImageLoader.mjs"></script>
-    
+
     <script type="module" src="./PerlinNoise.mjs"></script>
     <script type="module" src="./Controls.mjs"></script>
     <script type="module" src="./Entities.mjs"></script>

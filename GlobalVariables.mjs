@@ -35,7 +35,7 @@ export const gravity = 1;
 
 export const itemEntitySize = blockSize / 2;
 
-export let chunks = {};
+export var chunks = {};
 
 export let keys = {};
 export let keysPressed = {};

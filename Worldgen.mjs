@@ -64,92 +64,96 @@ fixStructureData();
 let waterHeight = 4;
 
 export function generateChunkTerrain(chunkCoords) {
-  let chunkData = {};
+  var chunkData = {};
 
-  function initialTerrainGeneration() {
 
-    for (let x = 0; x < chunkSize[0]; x++) {
-      for (let y = 0; y < chunkSize[1]; y++) {
-        for (let z = 0; z < chunkSize[0]; z++) {
-          let blockData = {
-            "type": "air",
-            "render": false,
-            "alphaValue": 255,
-            "hardness": 0,
-            "effectiveTool": "none",
-            "dropsWithNoTool": false
+
+  for (let x = 0; x < chunkSize[0]; x++) {
+    for (let y = 0; y < chunkSize[1]; y++) {
+      for (let z = 0; z < chunkSize[0]; z++) {
+        let blockData = {
+          "type": "air",
+          "render": false,
+          "alphaValue": 255,
+          "hardness": 0,
+          "effectiveTool": "none",
+          "dropsWithNoTool": false
+        }
+
+        /*let noiseX = x;
+        let noiseZ = z;
+        let noiseIntensity = 25;
+        noiseX += chunkSize[0] * chunkCoords[0];
+        noiseZ += chunkSize[0] * chunkCoords[1];
+
+        noiseX /= noiseIntensity;
+        noiseZ /= noiseIntensity;*/
+
+        let surfaceYLevel = 7//Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
+
+        if (y > surfaceYLevel) {
+          if (y <= waterHeight) {
+            blockData.type = "water";
           }
+        }
+        if (y === surfaceYLevel) {
+          blockData.type = "grass";
+        }
 
-          let noiseX = x;
-          let noiseZ = z;
-          let noiseIntensity = 25;
-          noiseX += chunkSize[0] * chunkCoords[0];
-          noiseZ += chunkSize[0] * chunkCoords[1];
-
-          noiseX /= noiseIntensity;
-          noiseZ /= noiseIntensity;
-
-          let surfaceYLevel = Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
-
-          if (y > surfaceYLevel) {
-            if (y <= waterHeight) {
-              blockData.type = "water";
-            }
+        if (y < surfaceYLevel) {
+          if (y < 8) {
+            blockData.type = "dirt";
           }
-          if (y === surfaceYLevel) {
-            blockData.type = "grass";
+          if (y >= 8) {
+            blockData.type = "stone";
           }
-
-          if (y < surfaceYLevel) {
-            if (y < 8) {
-              blockData.type = "dirt";
-            }
-            if (y >= 8) {
-              blockData.type = "stone";
-            }
-            if (y < 6) {
-              blockData.type = "sand";
-            }
-            if (y < waterHeight) {
-              let randomNum = Math.floor(Math.random() * 3);
-              switch (randomNum) {
-                case randomNum === 0:
-                  blockData.type = "sand";
-                  break;
-                case randomNum === 1:
-                  blockData.type = "clay";
-                  break;
-                case randomNum === 2:
-                  blockData.type = "gravel";
-                  break;
-              }
-
-            };
-
+          if (y < 6) {
+            blockData.type = "sand";
           }
-          /* is this making everything break??
-          if (y >= 8) { blockData.type = "stone"; };
-          if (y < 10) { blockData.type = "dirt"; };
-          if (y > 15) { blockData.type = "snowy stone"; };
-          */
+          if (y < waterHeight) {
+            let randomNum = Math.floor(Math.random() * 3);
+            switch (randomNum) {
+              case randomNum === 0:
+                blockData.type = "sand";
+                break;
+              case randomNum === 1:
+                blockData.type = "clay";
+                break;
+              case randomNum === 2:
+                blockData.type = "gravel";
+                break;
+            }
 
-
-          if (y === 0) { blockData.type = "bedrock"; };
-
-          let accessedBreakingInfo = dictOfBlockBreakingStuff[blockData.type];
-
-          blockData["hardness"] = accessedBreakingInfo.hardness;
-          blockData["effectiveTool"] = accessedBreakingInfo.effectiveTool;
-          blockData["dropsWithNoTool"] = accessedBreakingInfo.dropsWithNoTool;
-
-
-          chunkData[[x, y, z].toString()] = blockData;
+          };
 
         }
+
+        /*if (y >= 8) { blockData.type = "stone"; };
+        if (y < 10) { blockData.type = "dirt"; };
+        if (y > 15) { blockData.type = "snowy stone"; };
+        */
+
+
+
+        if (y == 0) { blockData.type = "bedrock"; };
+
+        let accessedBreakingInfo = dictOfBlockBreakingStuff[blockData.type];
+
+        blockData["hardness"] = accessedBreakingInfo.hardness;
+        blockData["effectiveTool"] = accessedBreakingInfo.effectiveTool;
+        blockData["dropsWithNoTool"] = accessedBreakingInfo.dropsWithNoTool;
+
+
+
+
+        chunkData[[x, y, z].toString()] = blockData;
+        if (random.integer(0, 1000) == 150) {
+          consoleLog("block matches chunk's data? " + blockData === chunkData[[x, y, z].toString()])
+        }
+
       }
     }
   }
-  initialTerrainGeneration()
 
   chunks[chunkCoords.toString()] = {
     "data": chunkData,
@@ -185,7 +189,7 @@ export function generateChunkStructures(inputChunkCoord) {
           currentCoord += 1;
           updatingNumber = "";
         };
-        
+
         updatingNumber += key[i];
       };
 
@@ -498,7 +502,7 @@ export function findBlock(xPos, yPos, zPos, extraInfo = false, ignoreWater = fal
   chunkCoordInput = undefined) {
   let blockCoord = [0, 0, 0];
   let chunkCoord = [0, 0];
-  
+
   if (chunkCoordInput !== undefined) {
     let x = xPos;
     let y = yPos;

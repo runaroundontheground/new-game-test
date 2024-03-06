@@ -14,36 +14,6 @@ import { player } from "./Player.mjs";
 
 
 
-/*
-huge rework needed here, probably just delete most of the code, besides the Math i suppose
-
-
-
-
-renderData, how stuff should be rendered
-{   first thing accessed should be drawType, if it's none, do not do anything else
-    "drawType": "none",
-    next should be position, [x, y]
-    "position": [x, y],
-    then size (width/height)
-    "size": [width, height],
-    and a dict that contains specified stylings for stuff, which has to be name exact with the context
-    properties
-    "drawStyles" {
-        all should have this
-        "globalAlpha": self explanatory
-        if the drawType was fill rect
-        "fillStyle": color, gradient, etc,
-        if the drawType was stroke rect
-        "strokeStyle": same values as fillStyle,
-        "lineWidth": self explanatory
-    }
-}
-
-
-*/
-
-
 let blockRenderData = {
     "air": {
         "drawType": "block", "color": undefined, "borderColor": undefined,
@@ -282,15 +252,22 @@ function drawToCanvas(renderData) {
     let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
     ctx.globalAlpha = renderData.globalAlpha || 100;
 
+
+
     switch (drawType) {
         case "block":
             let borderColor = renderData.borderColor;
+            let length = renderData.length;
 
             ctx.fillStyle = color;
             ctx.strokeStyle = borderColor;
 
-            ctx.fillRect(x, y, width, height);
-            ctx.strokeRect(x, y, width, height);
+            if (random.integer(0, 300) == 25) {
+                //consoleLog(camera.x)
+            };
+
+            ctx.fillRect(x, y, length, length);
+            ctx.strokeRect(x, y, length, length);
 
             break;
 
@@ -316,6 +293,13 @@ function drawToCanvas(renderData) {
             ctx.strokeStyle = color;
             //ctx.stroke find line/border width later
             ctx.strokeRect(x, y, width, height);
+            break;
+        
+        case "fillText":
+            ctx.fillStyle = color;
+            let text = renderData.text || "no text provided";
+
+            ctx.fillText(text, x, y)
             break;
     }
 }
@@ -385,11 +369,7 @@ export function render() {
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
 
                     if (block.render && block.type != "air") {
-                        let xPos = x * blockSize;
-                        let yPos = z * blockSize;
-
-                        xPos += chunkCoord[0] * totalChunkSize;
-                        yPos += chunkCoord[1] * totalChunkSize;
+                        
 
                         if (block.type != "water") {
                             if (block.globalAlpha < 255 && player.blockCoord[1] < y) {
@@ -421,14 +401,24 @@ export function render() {
                         };
 
 
-                        xPos -= player.x
-                        yPos -= player.z
+                        /*    xPos -= player.x
+                            yPos -= player.z
+    
+                            xPos *= scaleFactor
+                            yPos *= scaleFactor
+                            */
 
-                        xPos *= scaleFactor
-                        yPos *= scaleFactor
+                        let xPos = x * blockSize;
+                        let yPos = z * blockSize;
+
+                        xPos += chunkCoord[0] * totalChunkSize;
+                        yPos += chunkCoord[1] * totalChunkSize;
 
                         xPos -= camera.x - player.x
                         yPos -= camera.z - player.z
+
+                        xPos = random.integer(0, canvas.width);
+                        yPos = random.integer(0, canvas.height);
 
                         let renderData = scaledRenderData[block.type];
 
@@ -480,7 +470,7 @@ export function render() {
     // run inventory rendering
     if (player.otherInventoryData.open) {
         // render the base part of the inventory
-        let renderData = player.inventoryRenderingData.inventoryRenderingData;
+        let renderData = player.inventoryRenderingData.inventoryRenderData;
         renderingData.push(renderData);
 
         // render the 2x2 crafting grid and armor slots
@@ -633,7 +623,7 @@ export function render() {
 
             for (let i = 0; i < player.crafting[player.crafting.gridSize].slots.length; i++) {
                 let slot = player.crafting[player.crafting.gridSize].slots[i];
-                doTheThingy(slot, this.inventory);
+                doTheThingy(slot, player.inventory);
             };
 
 
@@ -839,7 +829,7 @@ export function render() {
     let debug2 = {
         "drawType": "fillText",
         "fillStyle": "red",
-        "text": "player block coord " + player.blockCoord + ", player yv " + player.yv,
+        "text": "player pos " + player.position + ", player yv " + player.yv,
         "position": [300, 125]
     }
     drawToCanvas(debug2);
