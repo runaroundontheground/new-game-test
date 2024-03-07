@@ -1,7 +1,7 @@
 
 import {
   chunkSize, chunks, blockSize, totalChunkSize, camera, canvasHeightInChunks, canvasWidthInChunks,
-  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog, random, showLoadingProgress
+  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog, random, showLoadingProgress, ctx, canvas
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Worldgen.mjs");
 
@@ -73,8 +73,8 @@ export function generateChunkTerrain(chunkCoords) {
       for (let z = 0; z < chunkSize[0]; z++) {
         let blockData = {
           "type": "air",
-          "render": false,
-          "alphaValue": 255,
+          "render": true, // REMOVE LATER aka change to false
+          "alphaValue": 100, // REMOVE LATER aka change to 255
           "hardness": 0,
           "effectiveTool": "none",
           "dropsWithNoTool": false
@@ -89,7 +89,7 @@ export function generateChunkTerrain(chunkCoords) {
         noiseX /= noiseIntensity;
         noiseZ /= noiseIntensity;*/
 
-        let surfaceYLevel = 7//Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
+        let surfaceYLevel = 5//Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
 
         if (y > surfaceYLevel) {
           if (y <= waterHeight) {
@@ -147,9 +147,6 @@ export function generateChunkTerrain(chunkCoords) {
 
 
         chunkData[[x, y, z].toString()] = blockData;
-        if (random.integer(0, 1000) == 150) {
-          consoleLog("block matches chunk's data? " + blockData === chunkData[[x, y, z].toString()])
-        }
 
       }
     }
@@ -160,6 +157,7 @@ export function generateChunkTerrain(chunkCoords) {
     "blocksUpdated": false,
     "structuresGenerated": false
   };
+
 }
 
 
@@ -236,7 +234,7 @@ export function generateChunkStructures(inputChunkCoord) {
 
         let blockCoord = [x, y, z];
 
-        let block = chunks[inputChunkCoord.toString()]["data"][blockCoord.toString()];
+        let block = chunks[inputChunkCoord.toString()].data[blockCoord.toString()];
 
 
         if (block.type === "grass") {
@@ -249,7 +247,7 @@ export function generateChunkStructures(inputChunkCoord) {
     };
   };
 
-  chunks[inputChunkCoord].structuresGenerated = true;
+  chunks[inputChunkCoord.toString()].structuresGenerated = true;
 
 };
 
@@ -265,6 +263,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
 
 
+
         function checkForSolidBlock(block) {
           if (block.type != "air" && block.type != "water") {
             return true;
@@ -277,11 +276,14 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           let localBlockCoord = localBlockAndChunkCoord[0].toString();
           let localChunkCoord = localBlockAndChunkCoord[1].toString();
 
-          if (render != "no change") {
-            chunks[localChunkCoord].data[localBlockCoord].render = render;
-          };
-          if (alphaValue != "no change") {
-            chunks[localChunkCoord].data[localBlockCoord].alphaValue = alphaValue;
+          if (chunks[localChunkCoord].data[localBlockCoord].type != "air") {
+
+            if (render != "no change") {
+              chunks[localChunkCoord].data[localBlockCoord].render = render;
+            };
+            if (alphaValue != "no change") {
+              chunks[localChunkCoord].data[localBlockCoord].alphaValue = alphaValue;
+            };
           };
         };
 
@@ -289,7 +291,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
         if (block.type == "water") {
           let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
 
-          if (hopefullyAir.type == "air") {
+          if (hopefullyAir.type == "air" && block.type != "air") {
             block.alphaValue = 100;
             block.render = true;
 
@@ -317,7 +319,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
               subtractY -= 1;
             }; // end of while loop
           };
-        };
+        }; // if block type = water
 
 
         let blockAbove = findBlock(x, y + 1, z, true, false, chunkCoord);
@@ -342,7 +344,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             // current block should have alpha, hide the block underneath
             block.alphaValue = 150;
             block.render = true;
-            modifyOtherBlock(x, y - 1, z, render = false);
+            modifyOtherBlock(x, y - 1, z, false);
           };
 
           if (!surrounded) {
@@ -358,7 +360,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           if (blockBelow.alphaValue < 255) {
             block.alphaValue = 150;
             block.render = true;
-            modifyOtherBlock(x, y - 1, z, render = false);
+            modifyOtherBlock(x, y - 1, z, false);
           };
           if (block.render) { modifyOtherBlock(x, y - 1, z, false); };
 
@@ -369,6 +371,16 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             block.alphaValue = 100;
           };
         };
+
+        // testing for rendering things
+        // REMOVE LATER
+        if (block.type == "air") {
+          block.render = false;
+        } else {
+          block.render = true;
+        }
+
+
 
         chunks[chunkCoord.toString()].data[blockCoord] = block;
 
@@ -446,7 +458,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
         if (blockBelow.alphaValue < 255) {
           block.alphaValue = 100
-          modifyOtherBlock(x, y - 1, z, render = false)
+          modifyOtherBlock(x, y - 1, z, false)
 
         } else {
 

@@ -1561,11 +1561,11 @@ class Player {
 
         // else:
         // break blocks
-        if (this.currentBreakingBlock != mouse.hoveredBlock.block) { this.blockBreakProgress = 0; };
+        if (this.currentBreakingBlock != mouse.hoveredBlock) { this.blockBreakProgress = 0; };
 
         if (this.canReachSelectedBlock) {
 
-            this.currentBreakingBlock = mouse.hoveredBlock.block;
+            this.currentBreakingBlock = mouse.hoveredBlock;
             let block = this.currentBreakingBlock;
 
             if (block["hardness"] != "infinity") {

@@ -85,7 +85,7 @@ export function updateMouseAndKeys() {
 
     if (chunks[chunkCoord].data[blockCoord] === undefined) { generateChunkTerrain(chunkCoord); };
 
-    mouse.hoveredBlock.block = chunks[chunkCoord].data[blockCoord];
+    mouse.hoveredBlock = chunks[chunkCoord].data[blockCoord];
     mouse.hoveredBlock.chunkCoord = chunkCoord;
     mouse.hoveredBlock.blockCoord = blockCoord;
 

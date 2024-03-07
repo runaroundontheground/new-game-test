@@ -250,7 +250,7 @@ function drawToCanvas(renderData) {
     let width = renderData.width || blockSize;
     let height = renderData.height || blockSize;
     let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
-    ctx.globalAlpha = renderData.globalAlpha || 100;
+    ctx.globalAlpha = renderData.globalAlpha || 255;
 
 
 
@@ -262,9 +262,7 @@ function drawToCanvas(renderData) {
             ctx.fillStyle = color;
             ctx.strokeStyle = borderColor;
 
-            if (random.integer(0, 300) == 25) {
-                //consoleLog(camera.x)
-            };
+            
 
             ctx.fillRect(x, y, length, length);
             ctx.strokeRect(x, y, length, length);
@@ -294,7 +292,7 @@ function drawToCanvas(renderData) {
             //ctx.stroke find line/border width later
             ctx.strokeRect(x, y, width, height);
             break;
-        
+
         case "fillText":
             ctx.fillStyle = color;
             let text = renderData.text || "no text provided";
@@ -367,9 +365,10 @@ export function render() {
                 for (let z = 0; z < chunkSize[0]; z++) {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
+                    let randomChance = random.integer(0, 1000) === 1;
 
-                    if (block.render && block.type != "air") {
-                        
+                    if (/*block.render && */block.type != "air") {
+
 
                         if (block.type != "water") {
                             if (block.globalAlpha < 255 && player.blockCoord[1] < y) {
@@ -417,20 +416,20 @@ export function render() {
                         xPos -= camera.x - player.x
                         yPos -= camera.z - player.z
 
-                        xPos = random.integer(0, canvas.width);
-                        yPos = random.integer(0, canvas.height);
+                        //xPos = random.integer(0, canvas.width);
+                        //yPos = random.integer(0, canvas.height);
 
                         let renderData = scaledRenderData[block.type];
+
 
                         renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
-                        //consoleLog(renderData)
-                    };
-                };
-            };
-        };
-    };
+                    }; // closing bracket of block.type isn't air and block.render = true
+                }; // end of z for loop 
+            }; // end of x for loop
+        }; // end of y for loop
+    }; // end of const chunkCoord of chunkList loop
 
     var renderingData = [];
 
@@ -456,12 +455,12 @@ export function render() {
     };
 
     // add all the layers to the main rendering data
-    for (let y = 0; y < chunkSize[1]; y++) {
-        let yLayerData = yLayer[y];
-        for (let i = 0; i < yLayerData.length; i++) {
-            renderingData.push(yLayerData[i]);
+    for (const yLayerData of yLayer) {
+        for (const data of yLayerData) {
+            renderingData.push(data);
         }
     }
+
 
 
     renderingData.push(player.inventoryRenderingData.hotbarRenderData);
@@ -812,9 +811,9 @@ export function render() {
     };
 
 
-    for (let i = 0; i < renderingData.length; i++) {
-        drawToCanvas(renderingData[i]);
-    };
+    for (const renderData of renderingData) {
+        drawToCanvas(renderData);
+    }
 
 
     // debug things

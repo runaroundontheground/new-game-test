@@ -71,7 +71,7 @@ export class PlaceableItem extends Item {
         this.placeItem = function (player) {
 
             if (player.canReachSelectedBlock) {
-                let blockType = mouse.hoveredBlock.block.type;
+                let blockType = mouse.hoveredBlock.type;
                 if (blockType == "air" || blockType == "water") {
                     let count = player.hotbar[this.slotId].count;
 
