@@ -90,12 +90,6 @@ class Player {
 
         let gapBetweenSlots = Math.round(slotSizeInPixels / 5);
 
-
-        let backgroundColor = "rgb(150, 150, 150)";
-        let slotColor = "rgb(125, 125, 125)";
-        let slotOutlineColor = "rgb(175, 175, 175)";
-        let alphaForUI = 255;
-
         let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
 
         let itemIconShift = emptySpaceBetweenItemAndSlotBorder
@@ -1619,7 +1613,7 @@ class Player {
                     let air = {
                         "type": "air",
                         "render": false,
-                        "alphaValue": 255,
+                        "alphaValue": 1,
                         "hardness": "infinity",
                         "effectiveTool": "none"
                     };

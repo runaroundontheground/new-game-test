@@ -60,7 +60,7 @@ export class PlaceableItem extends Item {
         this.placedBlock = {
             "type": this.name,
             "render": false,
-            "alphaValue": 255,
+            "alphaValue": 1,
             "hardness": 0,
             "effectiveTool": "none"
         };

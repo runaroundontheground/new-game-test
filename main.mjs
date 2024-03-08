@@ -61,8 +61,12 @@ function gameLoop() {
     }
 
     let delayBetweenFramesInMilliseconds = 1000/fps//(1000 / fps) * timeScale;
+
+
+
+    requestAnimationFrame(gameLoop);
     if (running) {
-        setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
+        //setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
     };
 };
 

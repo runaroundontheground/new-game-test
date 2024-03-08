@@ -65,7 +65,7 @@ function makePlayerInventoryImages() {
     let backgroundColor = "rgb(150, 150, 150)";
     let slotColor = "rgb(125, 125, 125)";
     let slotOutlineColor = "rgb(175, 175, 175)";
-    let alphaForUI = 125;
+    let alphaForUI = 0.5;
 
     let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
 

@@ -49,7 +49,7 @@ function fixStructureData() {
       let block = structures[structureName][blockCoord];
 
       block.render = false;
-      block.alphaValue = 255;
+      block.alphaValue = 1;
 
       let accessedBreakingInfo = dictOfBlockBreakingStuff[block.type];
       block.hardness = accessedBreakingInfo.hardness;
@@ -74,7 +74,7 @@ export function generateChunkTerrain(chunkCoords) {
         let blockData = {
           "type": "air",
           "render": true, // REMOVE LATER aka change to false
-          "alphaValue": 100, // REMOVE LATER aka change to 255
+          "alphaValue": 1,
           "hardness": 0,
           "effectiveTool": "none",
           "dropsWithNoTool": false
@@ -292,7 +292,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
 
           if (hopefullyAir.type == "air" && block.type != "air") {
-            block.alphaValue = 100;
+            block.alphaValue = 0.5;
             block.render = true;
 
             let didntFindWater = true;
@@ -304,11 +304,11 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
               let hopefullyWater = findBlock(x, y - subtractY, z, true, false, chunkCoord);
 
               if (hopefullyWater.type == "water") {
-                block.alphaValue += 25;
+                block.alphaValue += 0.05;
               } else { didntFindWater = false; }
 
-              if (block.alphaValue >= 255) {
-                block.alphaValue = 255;
+              if (block.alphaValue > 1) {
+                block.alphaValue = 1;
                 break;
               }
 
@@ -340,9 +340,9 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
         if (toLeft && toUp && toDown && toRight) { surrounded = true; };
 
         if (above) {
-          if (blockBelow.alphaValue < 255) {
+          if (blockBelow.alphaValue < 1) {
             // current block should have alpha, hide the block underneath
-            block.alphaValue = 150;
+            block.alphaValue = 0.5;
             block.render = true;
             modifyOtherBlock(x, y - 1, z, false);
           };
@@ -357,8 +357,8 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
         if (below) {
           if (!above) { block.render = true; }
-          if (blockBelow.alphaValue < 255) {
-            block.alphaValue = 150;
+          if (blockBelow.alphaValue < 1) {
+            block.alphaValue = 0.5;
             block.render = true;
             modifyOtherBlock(x, y - 1, z, false);
           };
@@ -368,7 +368,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           // no block is under this one
           if (!above) {
             block.render = true;
-            block.alphaValue = 100;
+            block.alphaValue = 0.5;
           };
         };
 
@@ -456,8 +456,8 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
       if (below) {
 
-        if (blockBelow.alphaValue < 255) {
-          block.alphaValue = 100
+        if (blockBelow.alphaValue < 1) {
+          block.alphaValue = 0.5
           modifyOtherBlock(x, y - 1, z, false)
 
         } else {
@@ -467,15 +467,15 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
             modifyOtherBlock(x, y - 1, z, false);
           };
         };
-      } else { block.alphaValue = 100; };
+      } else { block.alphaValue = 0.5; };
     };
 
     if (!above) {
       block.render = true;
       if (below) {
 
-        if (blockBelow.alphaValue < 255) {
-          block.alphaValue = 100;
+        if (blockBelow.alphaValue < 1) {
+          block.alphaValue = 0.5;
           modifyOtherBlock(x, y - 1, z, false);
         } else {
 
@@ -485,7 +485,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
           };
         };
 
-      } else { block.alphaValue = 100; };
+      } else { block.alphaValue = 0.5; };
     };
   } else { // current block is air
 
@@ -496,11 +496,11 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
       let below2 = checkForSolidBlock(blockBelow2)
 
       if (!below2) {
-        modifyOtherBlock(x, y - 1, z, true, 100)
+        modifyOtherBlock(x, y - 1, z, true, 0.5)
       } else {
-        if (blockBelow2.alphaValue < 255) {
+        if (blockBelow2.alphaValue < 1) {
           modifyOtherBlock(x, y - 2, z, false);
-          modifyOtherBlock(x, y - 1, z, undefined, 100);
+          modifyOtherBlock(x, y - 1, z, undefined, 0.5);
         };
       };
     };

@@ -17,12 +17,12 @@ import { player } from "./Player.mjs";
 let blockRenderData = {
     "air": {
         "drawType": "block", "color": undefined, "borderColor": undefined,
-        "globalAlpha": 255, "length": blockSize, "position": [0, 0]
+        "globalAlpha": 1, "length": blockSize, "position": [0, 0]
     }
 };
 
 let blockCursorHightlightData = {
-    "strokeStyle": "black", "width": blockSize, "globalAlpha": 200,
+    "strokeStyle": "black", "width": blockSize, "globalAlpha": 0.5,
     "drawType": "strokeRect", "height": blockSize, "position": [0, 0],
     "lineWidth": "3px"
 }
@@ -34,7 +34,7 @@ let newCanvas = document.createElement("canvas");
 newCanvas.id = "image creation canvas";
 let context = newCanvas.getContext("2d");
 
-function addABlock(blockType, color, borderColor, alpha = 255) {
+function addABlock(blockType, color, borderColor, alpha = 1) {
 
     let data = {
         "drawType": "block",
@@ -71,7 +71,7 @@ function addABlock(blockType, color, borderColor, alpha = 255) {
     context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
     newCanvas.width = itemIconSize; newCanvas.height = itemIconSize;
-    context.globalAlpha = 100; // change later, 255 should? be opaque
+    context.globalAlpha = 0.5;
     context.drawImage(images[blockType], 0, 0, newCanvas.width, newCanvas.height);
     let itemIcon = new Image();
     itemIcon.src = newCanvas.toDataURL();
@@ -249,7 +249,7 @@ function drawToCanvas(renderData) {
     let width = renderData.width || blockSize;
     let height = renderData.height || blockSize;
     let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
-    ctx.globalAlpha = 100//renderData.globalAlpha || 255;
+    ctx.globalAlpha = renderData.globalAlpha || 1;
 
 
 
@@ -265,7 +265,7 @@ function drawToCanvas(renderData) {
 
             ctx.fillRect(x, y, length, length);
             ctx.strokeRect(x, y, length, length);
-            if (random.integer(0, 3000) == 1) {
+            if (random.boolean(5000)) {
                 consoleLog(position[0] + ", " + position[1])
             }
 
@@ -308,7 +308,7 @@ function drawToCanvas(renderData) {
 
 export function render() {
 
-
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
@@ -367,11 +367,11 @@ export function render() {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
 
-                    if (/*block.render && */block.type != "air" && block.type == "grass") {
+                    if (/*block.render && */block.type != "air") {
 
 
                         if (block.type != "water") {
-                            if (block.globalAlpha < 255 && player.blockCoord[1] < y) {
+                            if (block.globalAlpha < 1 && player.blockCoord[1] < y) {
                                 const fiveBlocks = 5 * blockSize;
 
                                 if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
@@ -410,9 +410,8 @@ export function render() {
                         //xPos *= scaleFactor;
                         //yPos *= scaleFactor;
 
-                        xPos -= camera.x// - player.x
-                        yPos -= camera.z// - player.z
-
+                        xPos -= camera.x + canvasWidth// - player.x
+                        yPos -= camera.z + canvasHeight// - player.z
                         
 
                         xPos = Math.round(xPos);
@@ -838,7 +837,6 @@ export function render() {
         "position": [300, 150]
     }
     drawToCanvas(debug3);
-
 
 };
 

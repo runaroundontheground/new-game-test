@@ -13,8 +13,8 @@ showLoadingProgress("loading GlobalVariables.mjs");
 
 
 
-export const canvasWidth = 1000;
-export const canvasHeight = 500;
+export const canvasWidth = 250; // was 1000
+export const canvasHeight = 250; // was 500
 export const blockSize = 30; // pixels
 export const chunkSize = [10, 30]; // width or length, then height (both in blocks)
 
@@ -158,6 +158,7 @@ class Random {
     constructor() {
         this.integer = this.integer.bind(this);
         this.float = this.float.bind(this);
+        this.boolean = this.boolean.bind(this);
     };
 
     integer(startInt, endInt) {
@@ -165,6 +166,9 @@ class Random {
     }
     float(startNum, endNum) {
         return Math.random() * (endNum - startNum) + startNum;
+    }
+    boolean(chanceOutOf) {
+        return (Math.floor(Math.random() * (chanceOutOf + 1))) == 1;
     }
 };
 
