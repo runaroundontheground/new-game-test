@@ -119,7 +119,7 @@ export let projectiles = [];
 export let items = {};
 export let itemIcons = {};
 
-export const fps = 60;
+export const fps = 30; // change to 60 when it actually works
 export let timeScale = 1
 
 export const maxStackSize = 64;
@@ -145,14 +145,14 @@ class Camera {
     constructor() {
         this.smoothness = 10;
         this.centerTheCamera = [canvasWidth / 2, canvasHeight / 2];
-        this.x = -this.centerTheCamera[0];
+        this.x = 0//-this.centerTheCamera[0];
         this.y = 0;
         this.z = -this.centerTheCamera[1];
         this.currentChunk = [0, 0];
     }
 }
 
-export let camera = new Camera();
+export var camera = new Camera();
 
 class Random {
     constructor() {
@@ -168,7 +168,7 @@ class Random {
     }
 };
 
-export let random = new Random();
+export var random = new Random();
 
 
 class Trig {
@@ -177,7 +177,7 @@ class Trig {
     }
 }
 
-export let trig = new Trig();
+export var trig = new Trig();
 
 class Mouse {
     constructor() {
@@ -218,7 +218,7 @@ class Mouse {
     };
 }
 
-export let mouse = new Mouse();
+export var mouse = new Mouse();
 
 
 

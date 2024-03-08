@@ -55,8 +55,7 @@ function addABlock(blockType, color, borderColor, alpha = 255) {
 
 
     if (borderColor === undefined) {
-        let newBorderColor = nameToRgba(color);
-        //consoleLog(newBorderColor)
+        data.borderColor = nameToRgba(color);
     }
 
     newCanvas.width = data.length;
@@ -85,7 +84,7 @@ function addABlock(blockType, color, borderColor, alpha = 255) {
 
 };
 
-addABlock("grass", "darkgreen", "brown")
+addABlock("grass", "darkgreen", "darkbrown")
 addABlock("dirt", "brown")
 addABlock("stone", "rgb(125, 125, 125)")
 addABlock("cobblestone", "rgb(150, 150, 150)")
@@ -250,7 +249,7 @@ function drawToCanvas(renderData) {
     let width = renderData.width || blockSize;
     let height = renderData.height || blockSize;
     let color = renderData.color || "pink"; // pink is a pretty visible "no color" indicator
-    ctx.globalAlpha = renderData.globalAlpha || 255;
+    ctx.globalAlpha = 100//renderData.globalAlpha || 255;
 
 
 
@@ -262,10 +261,13 @@ function drawToCanvas(renderData) {
             ctx.fillStyle = color;
             ctx.strokeStyle = borderColor;
 
-            
+
 
             ctx.fillRect(x, y, length, length);
             ctx.strokeRect(x, y, length, length);
+            if (random.integer(0, 3000) == 1) {
+                consoleLog(position[0] + ", " + position[1])
+            }
 
             break;
 
@@ -305,7 +307,6 @@ function drawToCanvas(renderData) {
 
 
 export function render() {
-
 
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -365,9 +366,8 @@ export function render() {
                 for (let z = 0; z < chunkSize[0]; z++) {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
-                    let randomChance = random.integer(0, 1000) === 1;
 
-                    if (/*block.render && */block.type != "air") {
+                    if (/*block.render && */block.type != "air" && block.type == "grass") {
 
 
                         if (block.type != "water") {
@@ -400,12 +400,6 @@ export function render() {
                         };
 
 
-                        /*    xPos -= player.x
-                            yPos -= player.z
-    
-                            xPos *= scaleFactor
-                            yPos *= scaleFactor
-                            */
 
                         let xPos = x * blockSize;
                         let yPos = z * blockSize;
@@ -413,11 +407,16 @@ export function render() {
                         xPos += chunkCoord[0] * totalChunkSize;
                         yPos += chunkCoord[1] * totalChunkSize;
 
-                        xPos -= camera.x - player.x
-                        yPos -= camera.z - player.z
+                        //xPos *= scaleFactor;
+                        //yPos *= scaleFactor;
 
-                        //xPos = random.integer(0, canvas.width);
-                        //yPos = random.integer(0, canvas.height);
+                        xPos -= camera.x// - player.x
+                        yPos -= camera.z// - player.z
+
+                        
+
+                        xPos = Math.round(xPos);
+                        yPos = Math.round(yPos);
 
                         let renderData = scaledRenderData[block.type];
 
@@ -425,14 +424,13 @@ export function render() {
                         renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
-                    }; // closing bracket of block.type isn't air and block.render = true
+                    }; // closing bracket of block.type isn't air and other things
                 }; // end of z for loop 
             }; // end of x for loop
         }; // end of y for loop
     }; // end of const chunkCoord of chunkList loop
 
     var renderingData = [];
-
 
 
 

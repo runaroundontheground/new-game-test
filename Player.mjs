@@ -1482,6 +1482,7 @@ class Player {
     };
 
     updateCamera() {
+        
         camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = this.y
         camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)

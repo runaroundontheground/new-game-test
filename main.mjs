@@ -56,14 +56,14 @@ function gameLoop() {
 
     deltaTime = 1//performance.now() - lastFrameTime;
     //deltaTime /= 100;
-    /*if (deltaTime > 2) {
+    if (deltaTime > 2) {
         deltaTime = 2;
-    }*/
+    }
 
-    /*let delayBetweenFramesInMilliseconds = 1000/fps//(1000 / fps) * timeScale;
+    let delayBetweenFramesInMilliseconds = 1000/fps//(1000 / fps) * timeScale;
     if (running) {
         setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
-    };*/
+    };
 };
 
 
@@ -72,10 +72,11 @@ function checkForImageLoaded () {
 
     initializeGame();
     showLoadingProgress("main loaded, probably");
-    //gameLoop();
-    let game = setInterval(gameLoop, 1000/fps);
+    gameLoop();
+    //let game = setInterval(gameLoop, 1000/fps);
     clearInterval(tryToStartGame);
     tryToStartGame = null;
+    document.getElementById('loadingProgressDiv').style.display='none'
     };
 }
 
