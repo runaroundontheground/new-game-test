@@ -237,6 +237,7 @@ export function generateSpawnArea() {
 
     ctx.fillText("chunk blocks have been updated", 100, 200)
 };
+let prevPos = ["", ""];
 
 
 function drawToCanvas(renderData) {
@@ -263,7 +264,7 @@ function drawToCanvas(renderData) {
             ctx.fillStyle = color;
             ctx.strokeStyle = borderColor;
 
-
+            
 
             ctx.fillRect(x, y, length, length);
             ctx.strokeRect(x, y, length, length);
@@ -393,43 +394,32 @@ export function render() {
 
 
                         if (!scaledRenderData[block.type].scaled) {
-                            if (scaleFactor != 1) {
-
-                                let scaledLength = scaledRenderData[block.type].length * scaleFactor;
-
-                                scaledRenderData[block.type].length = scaledLength;
+                            if (scaleFactor != 1) {                                
+                                scaledRenderData[block.type].length *= scaleFactor;
 
                             };
                             scaledRenderData[block.type].scaled = true;
                         };
 
 
-                        /*
+                        
                         let xPos = x * blockSize;
                         let yPos = z * blockSize;
 
-                        xPos += chunkCoord[0] * totalChunkSize;
-                        yPos += chunkCoord[1] * totalChunkSize;
+                        xPos += /*(chunkCoord[0] * chunkSize[0]) * blockSize*/chunkCoord[0] * totalChunkSize;
+                        yPos += /*(chunkCoord[1] * chunkSize[0]) * blockSize*/chunkCoord[1] * totalChunkSize;
 
                         //xPos *= scaleFactor;
                         //yPos *= scaleFactor;
 
-                        xPos -= camera.x + canvasWidth// - player.x
-                        yPos -= camera.z + canvasHeight// - player.z
-                        */
+                        xPos -= camera.x// - player.x
+                        yPos -= camera.z// - player.z
 
-                        // current block's position?
-                        let xPos = (x + (chunkCoord[0] * chunkSize[0])) * blockSize;
-                        let yPos = (z + (chunkCoord[1] * chunkSize[0])) * blockSize;
-
-                        xPos -= (camera.x + canvasWidth);
-                        yPos -= (camera.z + canvasHeight);
 
                         xPos = Math.round(xPos);
                         yPos = Math.round(yPos);
 
                         let renderData = scaledRenderData[block.type];
-
 
                         renderData.position = [xPos, yPos];
 
@@ -817,7 +807,6 @@ export function render() {
             renderingData.push(renderData);
         };
     };
-
     for (const renderData of renderingData) {
         drawToCanvas(renderData);
     }

@@ -1468,18 +1468,16 @@ class Player {
 
     handleTimers() {
         for (let i = 0; i < Object.keys(this.timers); i++) {
-            let timerValue = this.timers[i];
-            if (timerValue > 0) { timerValue -= 1; };
-            if (timerValue < 0) { timerValue += 1; };
-            this.timers[i] = timerValue;
+            if (this.timers[i] > 0) { this.timers[i] -= 1; };
+            if (this.timers[i] < 0) { this.timers[i] += 1; };
         }
     };
 
     updateCamera() {
-        
-        camera.x -= Math.round((camera.x - this.x + camera.centerTheCamera[0]) / camera.smoothness)
+
+        camera.x -= Math.round((camera.x - this.x - this.width/2 + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = this.y
-        camera.z -= Math.round((camera.z - this.z + camera.centerTheCamera[1]) / camera.smoothness)
+        camera.z -= Math.round((camera.z - this.z + this.width/2 + camera.centerTheCamera[1]) / camera.smoothness)
 
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
     };

@@ -49,7 +49,7 @@ function fixStructureData() {
       let block = structures[structureName][blockCoord];
 
       block.render = false;
-      block.alphaValue = 1;
+      block.globalAlpha = 1;
 
       let accessedBreakingInfo = dictOfBlockBreakingStuff[block.type];
       block.hardness = accessedBreakingInfo.hardness;
@@ -74,23 +74,24 @@ export function generateChunkTerrain(chunkCoords) {
         let blockData = {
           "type": "air",
           "render": false,
-          "alphaValue": 1,
+          "globalAlpha": 1,
           "hardness": 0,
           "effectiveTool": "none",
           "dropsWithNoTool": false
         }
 
-        /*let noiseX = x;
-        let noiseZ = z;
-        let noiseIntensity = 25;
-        noiseX += chunkSize[0] * chunkCoords[0];
-        noiseZ += chunkSize[0] * chunkCoords[1];
+        /* let noiseX = x;
+         let noiseZ = z;
+         let noiseIntensity = 25;
+         noiseX += chunkSize[0] * chunkCoords[0];
+         noiseZ += chunkSize[0] * chunkCoords[1];
+ 
+         noiseX /= noiseIntensity;
+         noiseZ /= noiseIntensity;*/
 
-        noiseX /= noiseIntensity;
-        noiseZ /= noiseIntensity;*/
-
-        let surfaceYLevel = 5//Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
-
+        //let surfaceYLevel = Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
+        if (y == 9) { blockData.type = "grass"; }
+        /*
         if (y > surfaceYLevel) {
           if (y <= waterHeight) {
             blockData.type = "water";
@@ -135,7 +136,7 @@ export function generateChunkTerrain(chunkCoords) {
 
 
 
-        if (y == 0) { blockData.type = "bedrock"; };
+        //if (y == 0) { blockData.type = "bedrock"; };
 
         let accessedBreakingInfo = dictOfBlockBreakingStuff[blockData.type];
 
@@ -273,7 +274,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             return false;
           };
 
-          function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
+          function modifyOtherBlock(x, y, z, render = "no change", globalAlpha = "no change") {
             let localBlockAndChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord);
             let localBlockCoord = localBlockAndChunkCoord[0].toString();
             let localChunkCoord = localBlockAndChunkCoord[1].toString();
@@ -283,8 +284,8 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
               if (render != "no change") {
                 chunks[localChunkCoord].data[localBlockCoord].render = render;
               };
-              if (alphaValue != "no change") {
-                chunks[localChunkCoord].data[localBlockCoord].alphaValue = alphaValue;
+              if (globalAlpha != "no change") {
+                chunks[localChunkCoord].data[localBlockCoord].globalAlpha = globalAlpha;
               };
             };
           };
@@ -294,7 +295,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
 
             if (hopefullyAir.type == "air" && block.type != "air") {
-              block.alphaValue = 0.5;
+              block.globalAlpha = 0.5;
               block.render = true;
 
               let didntFindWater = true;
@@ -306,11 +307,11 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
                 let hopefullyWater = findBlock(x, y - subtractY, z, true, false, chunkCoord);
 
                 if (hopefullyWater.type == "water") {
-                  block.alphaValue += 0.05;
+                  block.globalAlpha += 0.05;
                 } else { didntFindWater = false; }
 
-                if (block.alphaValue > 1) {
-                  block.alphaValue = 1;
+                if (block.globalAlpha > 1) {
+                  block.globalAlpha = 1;
                   break;
                 }
 
@@ -341,9 +342,9 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           let surrounded = toLeft && toUp && toDown && toRight;
 
           if (above) {
-            if (blockBelow.alphaValue < 1) {
+            if (blockBelow.globalAlpha < 1) {
               // current block should have alpha, hide the block underneath
-              block.alphaValue = 0.5;
+              block.globalAlpha = 0.5;
               block.render = true;
               modifyOtherBlock(x, y - 1, z, false);
             };
@@ -358,8 +359,8 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
           if (below) {
             if (!above) { block.render = true; }
-            if (blockBelow.alphaValue < 1) {
-              block.alphaValue = 0.5;
+            if (blockBelow.globalAlpha < 1) {
+              block.globalAlpha = 0.5;
               block.render = true;
               modifyOtherBlock(x, y - 1, z, false);
             };
@@ -369,7 +370,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             // no block is under this one
             if (!above) {
               block.render = true;
-              block.alphaValue = 0.5;
+              block.globalAlpha = 0.5;
             };
           };
 
@@ -422,7 +423,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
   if (toRight && toLeft && toUp && toDown) { surrounded = true; };
 
 
-  function modifyOtherBlock(x, y, z, render = "no change", alphaValue = "no change") {
+  function modifyOtherBlock(x, y, z, render = "no change", globalAlpha = "no change") {
     let localBlockAndChunkCoord = getBlockAndChunkCoord(x, y, z, chunkCoord);
     let localBlockCoord = localBlockAndChunkCoord[0].toString();
     let localChunkCoord = localBlockAndChunkCoord[1].toString();
@@ -430,8 +431,8 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
     if (render != "no change") {
       chunks[localChunkCoord].data[localBlockCoord].render = render;
     };
-    if (alphaValue != "no change") {
-      chunks[localChunkCoord].data[localBlockCoord].alphaValue = alphaValue;
+    if (globalAlpha != "no change") {
+      chunks[localChunkCoord].data[localBlockCoord].globalAlpha = globalAlpha;
     };
   };
 
@@ -452,8 +453,8 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
       if (below) {
 
-        if (blockBelow.alphaValue < 1) {
-          block.alphaValue = 0.5
+        if (blockBelow.globalAlpha < 1) {
+          block.globalAlpha = 0.5
           modifyOtherBlock(x, y - 1, z, false)
 
         } else {
@@ -463,15 +464,15 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
             modifyOtherBlock(x, y - 1, z, false);
           };
         };
-      } else { block.alphaValue = 0.5; };
+      } else { block.globalAlpha = 0.5; };
     };
 
     if (!above) {
       block.render = true;
       if (below) {
 
-        if (blockBelow.alphaValue < 1) {
-          block.alphaValue = 0.5;
+        if (blockBelow.globalAlpha < 1) {
+          block.globalAlpha = 0.5;
           modifyOtherBlock(x, y - 1, z, false);
         } else {
 
@@ -481,7 +482,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
           };
         };
 
-      } else { block.alphaValue = 0.5; };
+      } else { block.globalAlpha = 0.5; };
     };
   } else { // current block is air
 
@@ -494,7 +495,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
       if (!below2) {
         modifyOtherBlock(x, y - 1, z, true, 0.5)
       } else {
-        if (blockBelow2.alphaValue < 1) {
+        if (blockBelow2.globalAlpha < 1) {
           modifyOtherBlock(x, y - 2, z, false);
           modifyOtherBlock(x, y - 1, z, undefined, 0.5);
         };
