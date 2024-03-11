@@ -85,10 +85,10 @@ function addABlock(blockType, color, borderColor, alpha = 1) {
 };
 
 addABlock("grass", "darkgreen", "darkbrown")
-addABlock("dirt", "brown")
+addABlock("dirt", "darkbrown")
 addABlock("stone", "rgb(125, 125, 125)")
 addABlock("cobblestone", "rgb(150, 150, 150)")
-addABlock("snowy dirt", "rgb(220, 220, 220)", "brown")
+addABlock("snowy dirt", "rgb(220, 220, 220)", "darkbrown")
 addABlock("snowy stone", "rgb(220, 220, 220)", "rgb(125, 125, 125)")
 addABlock("sand", "rgb(232, 228, 118)")
 addABlock("clay", "rgb(196, 152, 94)")
@@ -245,6 +245,8 @@ function drawToCanvas(renderData) {
     let x = position[0];
     let y = position[1];
 
+    ctx.save();
+
     // this fixes redclaring stuff
     let width = renderData.width || blockSize;
     let height = renderData.height || blockSize;
@@ -302,13 +304,15 @@ function drawToCanvas(renderData) {
             ctx.fillText(text, x, y)
             break;
     }
+
+    ctx.restore();
 }
 
 
 
 export function render() {
 
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
@@ -367,7 +371,7 @@ export function render() {
 
                     let block = chunks[chunkCoord.toString()].data[[x, y, z].toString()];
 
-                    if (/*block.render && */block.type != "air") {
+                    if (block.render && block.type != "air") {
 
 
                         if (block.type != "water") {
@@ -400,7 +404,7 @@ export function render() {
                         };
 
 
-
+                        /*
                         let xPos = x * blockSize;
                         let yPos = z * blockSize;
 
@@ -412,7 +416,14 @@ export function render() {
 
                         xPos -= camera.x + canvasWidth// - player.x
                         yPos -= camera.z + canvasHeight// - player.z
-                        
+                        */
+
+                        // current block's position?
+                        let xPos = (x + (chunkCoord[0] * chunkSize[0])) * blockSize;
+                        let yPos = (z + (chunkCoord[1] * chunkSize[0])) * blockSize;
+
+                        xPos -= (camera.x + canvasWidth);
+                        yPos -= (camera.z + canvasHeight);
 
                         xPos = Math.round(xPos);
                         yPos = Math.round(yPos);
@@ -806,7 +817,6 @@ export function render() {
             renderingData.push(renderData);
         };
     };
-
 
     for (const renderData of renderingData) {
         drawToCanvas(renderData);

@@ -23,6 +23,7 @@ canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 export let ctx = canvas.getContext("2d");
 ctx.font = "20px Arial";
+ctx.imageSmoothingEnabled = false;
 
 
 
