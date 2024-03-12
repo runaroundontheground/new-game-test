@@ -14,12 +14,7 @@ import { player } from "./Player.mjs";
 
 
 
-let blockRenderData = {
-    "air": {
-        "drawType": "block", "color": undefined, "borderColor": undefined,
-        "globalAlpha": 1, "length": blockSize, "position": [0, 0]
-    }
-};
+let blockRenderData = {};
 
 let blockCursorHightlightData = {
     "strokeStyle": "black", "width": blockSize, "globalAlpha": 0.5,
@@ -37,12 +32,10 @@ let context = newCanvas.getContext("2d");
 function addABlock(blockType, color, borderColor, alpha = 1) {
 
     let data = {
-        "drawType": "block",
         "color": color,
         "borderColor": borderColor || color,
         "globalAlpha": alpha,
         "length": blockSize,
-        "position": [0, 0]
     }
 
 
@@ -264,14 +257,8 @@ function drawToCanvas(renderData) {
             ctx.fillStyle = color;
             ctx.strokeStyle = borderColor;
 
-
-
             ctx.fillRect(x, y, length, length);
             ctx.strokeRect(x, y, length, length);
-
-            if (random.boolean(5000)) {
-                consoleLog(renderData.position);
-            }
 
             break;
 
@@ -426,17 +413,25 @@ export function render() {
                         */
 
                         let localScaleFactor = yScaleFactor;
-                        // xpos and ypos are currently in line with what their x/z should be
-                        // camera.x should be the left side of the screen,
-                        // camera.x + canvasWidth should be the right side of the screen
-                        // using those, multiply the scale factor by a thing that changes
 
-                        
-                        xPos -= camera.x
-                        yPos -= camera.z
+                        //let offsetX = (canvasWidth/2) - camera.x;
+                        //let offsetY = (canvasHeight/2) - camera.z;
+
+
+
+                        xPos -= camera.x;
+                        yPos -= camera.z;
+
+                        xPos -= canvasWidth/2;
+                        yPos -= canvasHeight/2;
 
                         xPos *= localScaleFactor;
                         yPos *= localScaleFactor;
+
+                        xPos += canvasWidth/2;
+                        yPos += canvasHeight/2;
+
+
 
 
                         xPos = Math.round(xPos);
@@ -445,7 +440,7 @@ export function render() {
                         let renderData = {
                             "drawType": "block",
                             "position": [xPos, yPos],
-                            "length": blockSize * localScaleFactor,
+                            "length": blockSize * yScaleFactor,
                             "globalAlpha": block.globalAlpha,
                             "color": scaledRenderData[block.type].color,
                             "borderColor": scaledRenderData[block.type].borderColor,
