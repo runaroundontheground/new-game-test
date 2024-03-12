@@ -331,7 +331,7 @@ export function render() {
     // separate the blocks into layers, so they get rendered in the right order
     // also, keep track of the scale for each y layer
     var yLayer = [];
-    
+
     for (let i = 0; i < chunkSize[1]; i++) {
         yLayer.push([]);
     };
@@ -344,7 +344,7 @@ export function render() {
 
             // scale images outside of x/z loop, better performance
 
-            let scaleFactor = 1
+            let yScaleFactor = 1
 
             // scale smoother when using exact position rather than player's block coord
             let playerYInBlocks = player.y / blockSize
@@ -353,19 +353,19 @@ export function render() {
             if (y > playerYInBlocks) {
                 let differenceInBlocks = y - playerYInBlocks;
                 differenceInBlocks /= blockSize;
-                scaleFactor += differenceInBlocks;
+                yScaleFactor += differenceInBlocks;
             };
 
 
             if (y < playerYInBlocks) {
                 let differenceInBlocks = playerYInBlocks - y;
                 differenceInBlocks /= blockSize;
-                scaleFactor -= differenceInBlocks;
+                yScaleFactor -= differenceInBlocks;
             };
 
 
-            if (scaleFactor < 0.1) { scaleFactor = 0.1; };
-            if (scaleFactor > 5) { scaleFactor = 5; };
+            if (yScaleFactor < 0.1) { yScaleFactor = 0.1; };
+            if (yScaleFactor > 5) { yScaleFactor = 5; };
 
 
 
@@ -403,8 +403,8 @@ export function render() {
 
 
                         if (!scaledRenderData[block.type].scaled) {
-                            if (scaleFactor != 1) {
-                                scaledRenderData[block.type].length *= scaleFactor;
+                            if (yScaleFactor != 1) {
+                                scaledRenderData[block.type].length *= yScaleFactor;
 
                             };
                             scaledRenderData[block.type].scaled = true;
@@ -418,13 +418,25 @@ export function render() {
                         xPos += chunkCoord[0] * totalChunkSize;
                         yPos += chunkCoord[1] * totalChunkSize;
 
+                        /*
+                        figure out something to do with the canvas width and height, idk
+                        that will make it so that the scale factor or whatever is dependent on how far
+                        the block is to the x and z, so if it's closer to canvaswidth/2 and canvasheight/2,
+                        then it should have less of a scale factor?
+                        */
+
+                        let localScaleFactor = yScaleFactor;
+                        // xpos and ypos are currently in line with what their x/z should be
+                        // camera.x should be the left side of the screen,
+                        // camera.x + canvasWidth should be the right side of the screen
+                        // using those, multiply the scale factor by a thing that changes
+
                         
+                        xPos -= camera.x
+                        yPos -= camera.z
 
-                        xPos -= camera.x// - player.x
-                        yPos -= camera.z// - player.z
-
-                        xPos *= scaleFactor;
-                        yPos *= scaleFactor;
+                        xPos *= localScaleFactor;
+                        yPos *= localScaleFactor;
 
 
                         xPos = Math.round(xPos);
@@ -433,7 +445,7 @@ export function render() {
                         let renderData = {
                             "drawType": "block",
                             "position": [xPos, yPos],
-                            "length": blockSize * scaleFactor,
+                            "length": blockSize * localScaleFactor,
                             "globalAlpha": block.globalAlpha,
                             "color": scaledRenderData[block.type].color,
                             "borderColor": scaledRenderData[block.type].borderColor,
