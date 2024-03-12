@@ -40,8 +40,11 @@ class Player {
         this.width = blockSize - 5;
         this.height = blockSize - 5;
         this.renderData = {
-            "rectData": Rect(0, 0, this.width, this.height),
-            "color": "red"
+            "drawType": "fillRect",
+            "width": this.width,
+            "height": this.height,
+            "color": "red",
+            "position": [0, 0]
         };
 
         // this is to make rendering work currently and should be removed later!
@@ -861,7 +864,7 @@ class Player {
 
 
 
-        done = false
+        let done = false
 
         done = checkForStackables(this.hotbar, done, count, item)
         done = checkForStackables(this.inventory, done, count, item)
@@ -1475,19 +1478,17 @@ class Player {
 
     updateCamera() {
 
-        camera.x -= Math.round((camera.x - this.x - this.width/2 + camera.centerTheCamera[0]) / camera.smoothness)
+        camera.x -= Math.round((camera.x - this.x - this.width / 2 + camera.centerTheCamera[0]) / camera.smoothness)
         camera.y = this.y
-        camera.z -= Math.round((camera.z - this.z + this.width/2 + camera.centerTheCamera[1]) / camera.smoothness)
+        camera.z -= Math.round((camera.z - this.z + this.width / 2 + camera.centerTheCamera[1]) / camera.smoothness)
 
         camera.currentChunk = getChunkCoord(camera.x, camera.z)
     };
 
     updateImageThings() {
-        let imageX = this.x - camera.x;
-        let imageY = this.z - camera.z;
 
-        this.renderData.position = [imageX, imageY];
-        //this.renderDataData = this needs to be updated when animations, etc exist
+        this.renderData.position = [this.x - camera.x, this.z - camera.z];
+        //this.renderData = this needs to be updated when animations, etc exist
     };
 
     doStuff(deltaTime) {

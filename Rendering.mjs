@@ -264,12 +264,13 @@ function drawToCanvas(renderData) {
             ctx.fillStyle = color;
             ctx.strokeStyle = borderColor;
 
-            
+
 
             ctx.fillRect(x, y, length, length);
             ctx.strokeRect(x, y, length, length);
+
             if (random.boolean(5000)) {
-                consoleLog(position[0] + ", " + position[1])
+                consoleLog(renderData.position);
             }
 
             break;
@@ -317,12 +318,20 @@ export function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
-    let chunkList = generateNearbyAreas(2, true)
+    let rangeOfGeneration = 2;
+
+    // increase the size of this, since place *should* be able to see more things
+    if (player.blockCoord[1] > chunkSize[1] * 0.66) {
+        rangeOfGeneration = 3;
+    }
+
+    let chunkList = generateNearbyAreas(rangeOfGeneration, true)
 
 
     // separate the blocks into layers, so they get rendered in the right order
     // also, keep track of the scale for each y layer
     var yLayer = [];
+    
     for (let i = 0; i < chunkSize[1]; i++) {
         yLayer.push([]);
     };
@@ -394,7 +403,7 @@ export function render() {
 
 
                         if (!scaledRenderData[block.type].scaled) {
-                            if (scaleFactor != 1) {                                
+                            if (scaleFactor != 1) {
                                 scaledRenderData[block.type].length *= scaleFactor;
 
                             };
@@ -402,26 +411,34 @@ export function render() {
                         };
 
 
-                        
+
                         let xPos = x * blockSize;
                         let yPos = z * blockSize;
 
-                        xPos += /*(chunkCoord[0] * chunkSize[0]) * blockSize*/chunkCoord[0] * totalChunkSize;
-                        yPos += /*(chunkCoord[1] * chunkSize[0]) * blockSize*/chunkCoord[1] * totalChunkSize;
+                        xPos += chunkCoord[0] * totalChunkSize;
+                        yPos += chunkCoord[1] * totalChunkSize;
 
-                        //xPos *= scaleFactor;
-                        //yPos *= scaleFactor;
+                        
 
                         xPos -= camera.x// - player.x
                         yPos -= camera.z// - player.z
+
+                        xPos *= scaleFactor;
+                        yPos *= scaleFactor;
 
 
                         xPos = Math.round(xPos);
                         yPos = Math.round(yPos);
 
-                        let renderData = scaledRenderData[block.type];
+                        let renderData = {
+                            "drawType": "block",
+                            "position": [xPos, yPos],
+                            "length": blockSize * scaleFactor,
+                            "globalAlpha": block.globalAlpha,
+                            "color": scaledRenderData[block.type].color,
+                            "borderColor": scaledRenderData[block.type].borderColor,
+                        };
 
-                        renderData.position = [xPos, yPos];
 
                         yLayer[y].push(renderData)
                     }; // closing bracket of block.type isn't air and other things

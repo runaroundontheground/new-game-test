@@ -13,10 +13,12 @@ showLoadingProgress("loading GlobalVariables.mjs");
 
 
 
-export const canvasWidth = 250; // was 1000
+export const canvasWidth = 500; // was 1000
 export const canvasHeight = 250; // was 500
 export const blockSize = 30; // pixels
 export const chunkSize = [10, 30]; // width or length, then height (both in blocks)
+export const totalChunkSize = chunkSize[0] * blockSize;
+export const itemEntitySize = blockSize / 2;
 
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
@@ -30,11 +32,9 @@ ctx.imageSmoothingEnabled = false;
 export var images = {};
 
 
-export const totalChunkSize = chunkSize[0] * blockSize;
 
 export const gravity = 1;
 
-export const itemEntitySize = blockSize / 2;
 
 export var chunks = {};
 
@@ -120,7 +120,7 @@ export let projectiles = [];
 export let items = {};
 export let itemIcons = {};
 
-export const fps = 30; // change to 60 when it actually works
+export const fps = 60; // change to 60 when it actually works
 export let timeScale = 1
 
 export const maxStackSize = 64;

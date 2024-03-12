@@ -11,11 +11,36 @@ import { render, generateSpawnArea } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
 import { allImagesLoaded } from "./ImageLoader.mjs";
 
+
 showLoadingProgress("loading main.mjs")
 
 let lastFrameTime = 0;
 let running = true;
 let deltaTime = 1;
+
+
+
+let commandInput = document.createElement("input");
+let commandButton = document.createElement("button");
+commandButton.id = "command button";
+commandButton.innerHTML = "run";
+commandInput.id = "command input";
+commandButton.onclick = function () {
+    let value = commandInput.value;
+    commandInput.value = "";
+    eval(String(value));
+}
+
+let commandDiv = document.getElementById("command stuff");
+commandDiv.appendChild(commandInput);
+commandDiv.appendChild(commandButton);
+
+
+
+
+
+
+
 
 function initializeGame() {
 
@@ -34,7 +59,7 @@ function gameLoop() {
     lastFrameTime = performance.now();
 
     player.doStuff(deltaTime);
-    
+
     /*
     for (let i = entities.length - 1; i >= 0; i--) {
 
@@ -60,27 +85,29 @@ function gameLoop() {
         deltaTime = 2;
     }
 
-    let delayBetweenFramesInMilliseconds = 1000/fps//(1000 / fps) * timeScale;
+    let delayBetweenFramesInMilliseconds = 1000 / fps//(1000 / fps) * timeScale;
 
 
-
-    requestAnimationFrame(gameLoop);
     if (running) {
-        //setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
+        requestAnimationFrame(
+            function () {
+                setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
+            }
+        );
     };
 };
 
 
-function checkForImageLoaded () {
+function checkForImageLoaded() {
     if (allImagesLoaded) {
 
-    initializeGame();
-    showLoadingProgress("main loaded, probably");
-    gameLoop();
-    //let game = setInterval(gameLoop, 1000/fps);
-    clearInterval(tryToStartGame);
-    tryToStartGame = null;
-    document.getElementById('loadingProgressDiv').style.display='none'
+        initializeGame();
+        showLoadingProgress("main loaded, probably");
+        gameLoop();
+        //let game = setInterval(gameLoop, 1000/fps);
+        clearInterval(tryToStartGame);
+        tryToStartGame = null;
+        document.getElementById('loadingProgressDiv').style.display = 'none'
     };
 }
 

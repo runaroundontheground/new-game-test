@@ -80,18 +80,19 @@ export function generateChunkTerrain(chunkCoords) {
           "dropsWithNoTool": false
         }
 
-        /* let noiseX = x;
-         let noiseZ = z;
-         let noiseIntensity = 25;
-         noiseX += chunkSize[0] * chunkCoords[0];
-         noiseZ += chunkSize[0] * chunkCoords[1];
- 
-         noiseX /= noiseIntensity;
-         noiseZ /= noiseIntensity;*/
+        let noiseX = x;
+        let noiseZ = z;
+        let noiseIntensity = 25;
+        noiseX += chunkSize[0] * chunkCoords[0];
+        noiseZ += chunkSize[0] * chunkCoords[1];
 
-        //let surfaceYLevel = Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
-        if (y == 9) { blockData.type = "grass"; }
-        /*
+        noiseX /= noiseIntensity;
+        noiseZ /= noiseIntensity;
+
+        let surfaceYLevel = Math.round(Math.abs(noise.perlin2(noiseX, noiseZ) * noiseIntensity)) + 1;
+
+
+
         if (y > surfaceYLevel) {
           if (y <= waterHeight) {
             blockData.type = "water";
@@ -129,14 +130,9 @@ export function generateChunkTerrain(chunkCoords) {
 
         }
 
-        /*if (y >= 8) { blockData.type = "stone"; };
-        if (y < 10) { blockData.type = "dirt"; };
-        if (y > 15) { blockData.type = "snowy stone"; };
-        */
 
 
-
-        //if (y == 0) { blockData.type = "bedrock"; };
+        if (y == 0) { blockData.type = "bedrock"; };
 
         let accessedBreakingInfo = dictOfBlockBreakingStuff[blockData.type];
 
@@ -294,7 +290,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           if (block.type == "water") {
             let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
 
-            if (hopefullyAir.type == "air" && block.type != "air") {
+            if (hopefullyAir.type == "air") {
               block.globalAlpha = 0.5;
               block.render = true;
 
