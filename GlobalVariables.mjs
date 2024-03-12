@@ -144,7 +144,7 @@ export let listOfBlockNames = Object.keys(dictOfBlockBreakingStuff);
 
 class Camera {
     constructor() {
-        this.smoothness = 10;
+        this.smoothness = 6;
         this.centerTheCamera = [canvasWidth / 2, canvasHeight / 2];
         this.x = 0//-this.centerTheCamera[0];
         this.y = 0;

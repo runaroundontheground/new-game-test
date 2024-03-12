@@ -96,32 +96,34 @@ export function generateChunkTerrain(chunkCoords) {
         if (y > surfaceYLevel) {
           if (y <= waterHeight) {
             blockData.type = "water";
-          }
-        }
+          };
+        };
+
         if (y === surfaceYLevel) {
-          blockData.type = "grass";
+
+          if (y < 13) { blockData.type = "grass"; };
+          if (y >= 13) { blockData.type = "stone"; };
+          if (y >= 30) { blockData.type = "snowy stone"; };
+          if (y <= waterHeight + 1) { blockData.type = "sand"; };
+
         }
 
         if (y < surfaceYLevel) {
-          if (y < 8) {
+          if (y < 12) {
             blockData.type = "dirt";
           }
-          if (y >= 8) {
+          if (y >= 13) {
             blockData.type = "stone";
           }
-          if (y < 6) {
-            blockData.type = "sand";
-          }
           if (y < waterHeight) {
-            let randomNum = Math.floor(Math.random() * 3);
-            switch (randomNum) {
-              case randomNum === 0:
+            switch (random.integer(0, 3)) {
+              case 0:
                 blockData.type = "sand";
                 break;
-              case randomNum === 1:
+              case 1:
                 blockData.type = "clay";
                 break;
-              case randomNum === 2:
+              case 2:
                 blockData.type = "gravel";
                 break;
             }
@@ -220,7 +222,7 @@ export function generateChunkStructures(inputChunkCoord) {
         generateChunkTerrain(chunkCoord);
       };
 
-      chunks[chunkCoord]["data"][newBlockCoord] = block;
+      chunks[chunkCoord].data[newBlockCoord] = block;
     };
   };
 
@@ -369,7 +371,6 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
               block.globalAlpha = 0.5;
             };
           };
-
 
         } else { // block is air
           block.render = false;

@@ -331,7 +331,7 @@ export function render() {
 
             // scale images outside of x/z loop, better performance
 
-            let yScaleFactor = 1
+            let scaleFactor = 1
 
             // scale smoother when using exact position rather than player's block coord
             let playerYInBlocks = player.y / blockSize
@@ -340,19 +340,19 @@ export function render() {
             if (y > playerYInBlocks) {
                 let differenceInBlocks = y - playerYInBlocks;
                 differenceInBlocks /= blockSize;
-                yScaleFactor += differenceInBlocks;
+                scaleFactor += differenceInBlocks;
             };
 
 
             if (y < playerYInBlocks) {
                 let differenceInBlocks = playerYInBlocks - y;
                 differenceInBlocks /= blockSize;
-                yScaleFactor -= differenceInBlocks;
+                scaleFactor -= differenceInBlocks;
             };
 
 
-            if (yScaleFactor < 0.1) { yScaleFactor = 0.1; };
-            if (yScaleFactor > 5) { yScaleFactor = 5; };
+            if (scaleFactor < 0.1) { scaleFactor = 0.1; };
+            if (scaleFactor > 5) { scaleFactor = 5; };
 
 
 
@@ -370,6 +370,12 @@ export function render() {
 
                     if (block.render && block.type != "air") {
 
+
+                        let xPos = x * blockSize;
+                        let yPos = z * blockSize;
+
+                        xPos += chunkCoord[0] * totalChunkSize;
+                        yPos += chunkCoord[1] * totalChunkSize;
 
                         if (block.type != "water") {
                             if (block.globalAlpha < 1 && player.blockCoord[1] < y) {
@@ -390,8 +396,8 @@ export function render() {
 
 
                         if (!scaledRenderData[block.type].scaled) {
-                            if (yScaleFactor != 1) {
-                                scaledRenderData[block.type].length *= yScaleFactor;
+                            if (scaleFactor != 1) {
+                                scaledRenderData[block.type].length *= scaleFactor;
 
                             };
                             scaledRenderData[block.type].scaled = true;
@@ -399,39 +405,18 @@ export function render() {
 
 
 
-                        let xPos = x * blockSize;
-                        let yPos = z * blockSize;
-
-                        xPos += chunkCoord[0] * totalChunkSize;
-                        yPos += chunkCoord[1] * totalChunkSize;
-
-                        /*
-                        figure out something to do with the canvas width and height, idk
-                        that will make it so that the scale factor or whatever is dependent on how far
-                        the block is to the x and z, so if it's closer to canvaswidth/2 and canvasheight/2,
-                        then it should have less of a scale factor?
-                        */
-
-                        let localScaleFactor = yScaleFactor;
-
-                        //let offsetX = (canvasWidth/2) - camera.x;
-                        //let offsetY = (canvasHeight/2) - camera.z;
-
-
-
                         xPos -= camera.x;
                         yPos -= camera.z;
 
+                        // scale relative to the center of the screen
                         xPos -= canvasWidth/2;
                         yPos -= canvasHeight/2;
 
-                        xPos *= localScaleFactor;
-                        yPos *= localScaleFactor;
+                        xPos *= scaleFactor;
+                        yPos *= scaleFactor;
 
                         xPos += canvasWidth/2;
                         yPos += canvasHeight/2;
-
-
 
 
                         xPos = Math.round(xPos);
@@ -440,7 +425,7 @@ export function render() {
                         let renderData = {
                             "drawType": "block",
                             "position": [xPos, yPos],
-                            "length": blockSize * yScaleFactor,
+                            "length": blockSize * scaleFactor,
                             "globalAlpha": block.globalAlpha,
                             "color": scaledRenderData[block.type].color,
                             "borderColor": scaledRenderData[block.type].borderColor,
