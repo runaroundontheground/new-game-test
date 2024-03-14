@@ -1,2 +1,1 @@
-# a top down minecraft esque? (how to spell) clone
-basically an experiment to figure out how to make something like this
+# top down '3d' game (not really 3d)
