@@ -52,10 +52,10 @@ export class ItemEntity extends Entity {
 
         this.positionUpdates = function (player) {
 
-            let a = findBlock(this.x, this.y - this.height, this.z, ignoreWater = true)
-            let b = findBlock(this.x, this.y - this.height, this.z + this.width, ignoreWater = true)
-            let c = findBlock(this.x + this.width, this.y - this.height, this.z, ignoreWater = true)
-            let d = findBlock(this.x + this.width, this.y - this.height, this.z + this.width, ignoreWater = true)
+            let a = findBlock(this.x, this.y - this.height, this.z, undefined, true)
+            let b = findBlock(this.x, this.y - this.height, this.z + this.width, undefined, true)
+            let c = findBlock(this.x + this.width, this.y - this.height, this.z, undefined, true)
+            let d = findBlock(this.x + this.width, this.y - this.height, this.z + this.width, undefined, true)
             let blockBelow = false;
 
             if (a || b || c || d) { blockBelow = true; };
@@ -107,7 +107,7 @@ export class ItemEntity extends Entity {
                 let blockToSide = false;
 
                 if (this.zv > 0) { sideValue += this.width; };
-
+                intentional error to look around here later
                 let collision = {
                     "corner 1": findBlock(this.x, this.y, sideValue),
                     "corner 2": findBlock(this.x + this.width, this.y, sideValue),
@@ -124,7 +124,7 @@ export class ItemEntity extends Entity {
             };
         };
 
-        let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, ignoreWater = true)
+        let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, undefined, true)
         if (insideABlock) { this.y += blockSize / 2; };
 
 
@@ -136,6 +136,7 @@ export class ItemEntity extends Entity {
 
         this.renderData.x = this.x - camera.x;
         this.renderData.y = this.z - camera.z;
+
         this.renderData.yLayer = yRenderLayer;
 
         

@@ -1035,7 +1035,8 @@ class Player {
                 let slotData = this.hotbar[index];
                 let item = slotData.contents;
 
-                if (mouse.buttons.pressed.left || mouse.buttons["left"]) {
+
+                if (mouse.buttons.pressed.left || mouse.buttons.left) {
                     this.doStuffOnLeftClick(item)
                 };
 
@@ -1537,7 +1538,7 @@ class Player {
         let breakingType = "none"
         let attack = 1
         let knockback = 1
-        let slowestBreakSpeed = 20 / fps
+        let slowestBreakSpeed = 1000 / fps; // one second, though if something is hard just make it slower?
 
         if (item != "empty") {
             if (item.itemType == "ToolItem") {
@@ -1559,6 +1560,7 @@ class Player {
 
         if (this.canReachSelectedBlock) {
 
+
             this.currentBreakingBlock = mouse.hoveredBlock;
             let block = this.currentBreakingBlock;
 
@@ -1571,8 +1573,12 @@ class Player {
 
 
                 if (powerfulEnoughTool && correctTool) {
-                    this.blockBreakProgress += breakingSpeed / fps;
-                } else { this.blockBreakProgress += slowestBreakSpeed / fps; };
+                    this.blockBreakProgress += breakingSpeed;
+                } else if (block.dropsWithNoTool) {
+                    this.blockBreakProgress += slowestBreakSpeed;
+                } else {
+                    this.blockBreakProgress += slowestBreakSpeed / fps;
+                };
 
 
                 // breaking stuff is based on seconds of time,
@@ -1583,7 +1589,7 @@ class Player {
 
                     if (correctTool || block.dropsWithNoTool) {
 
-                        let itemData = PlaceableItem(block["type"])
+                        let itemData = new PlaceableItem(block["type"])
 
                         let chunkCoord = mouse.hoveredBlock.chunkCoord;
                         let blockCoord = mouse.hoveredBlock.blockCoord;
@@ -1597,15 +1603,15 @@ class Player {
 
 
                         let count = 1
-                        let xv = random.randint(-3, 3)
-                        let zv = random.randint(-3, 3)
+                        let xv = random.integer(-3, 3)
+                        let zv = random.integer(-3, 3)
                         if (true) { // replace later with silk touch or something
                             if (block.type == ("grass" || "snowy grass")) { itemData.name = "dirt" };
                             if (block.type == ("stone" || "snowy stone")) { itemData.name = "cobblestone"; };
                         };
 
                         let yv = 5;
-                        let entity = ItemEntity(itemData, count, x, y, z, xv, yv, zv);
+                        let entity = new ItemEntity(itemData, count, x, y, z, xv, yv, zv);
                         entities.append(entity);
                     };
 

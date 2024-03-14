@@ -165,6 +165,7 @@ export function generateChunkStructures(inputChunkCoord) {
     let thisStructure = structures[structureName];
     let thisStructureKeys = Object.keys(thisStructure);
 
+
     for (let i = 0; i < thisStructureKeys.length; i++) {
       let chunkX = inputChunkCoord[0];
       let chunkZ = inputChunkCoord[1];
@@ -189,7 +190,6 @@ export function generateChunkStructures(inputChunkCoord) {
 
         updatingNumber += key[i];
       };
-
 
       while (x >= chunkSize[0]) {
         x -= chunkSize[0];
@@ -236,8 +236,8 @@ export function generateChunkStructures(inputChunkCoord) {
         let block = chunks[inputChunkCoord.toString()].data[blockCoord.toString()];
 
 
-        if (block.type === "grass") {
-          if (random.integer(0, 20) === 0) {
+        if (block.type == "grass") {
+          if (random.boolean(1) === 0) {
             generateStructure("tree 1", blockCoord);
           };
         };

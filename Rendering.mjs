@@ -301,8 +301,8 @@ function drawToCanvas(renderData) {
 
 export function render() {
 
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgb(33 39 69)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
     let rangeOfGeneration = 2;

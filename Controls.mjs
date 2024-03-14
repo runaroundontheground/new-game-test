@@ -62,7 +62,6 @@ window.addEventListener("keydown", function (event) {
         keys.ctrl = event.ctrlKey;
         keys.shift = event.shiftKey;
 
-        consoleLog(event.key)
     };
 
 })

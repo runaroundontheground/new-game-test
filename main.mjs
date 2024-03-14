@@ -2,7 +2,8 @@
 import {
     items, entities, projectiles, fps, keysPressed,
     timeScale, consoleLog, showLoadingProgress,
-    canvas, ctx
+    canvas, ctx, // importing things to be accessed from eval() command line thingy
+    chunks
 } from "./GlobalVariables.mjs";
 import { makeItemsExist } from "./Items.mjs";
 import { makeRecipesExist } from "./Recipes.mjs";
@@ -10,6 +11,7 @@ import { updateMouseAndKeys } from "./Controls.mjs";
 import { render, generateSpawnArea } from "./Rendering.mjs";
 import { player } from "./Player.mjs";
 import { allImagesLoaded } from "./ImageLoader.mjs";
+
 
 
 showLoadingProgress("loading main.mjs")
@@ -79,8 +81,8 @@ function gameLoop() {
 
     updateMouseAndKeys();
 
-    deltaTime = 1//performance.now() - lastFrameTime;
-    //deltaTime /= 100;
+    deltaTime = 1//(performance.now() - lastFrameTime) / 1000; // it's probably in milliseconds right
+
     if (deltaTime > 2) {
         deltaTime = 2;
     }
@@ -89,11 +91,7 @@ function gameLoop() {
 
 
     if (running) {
-        requestAnimationFrame(
-            function () {
-                setTimeout(gameLoop, delayBetweenFramesInMilliseconds);
-            }
-        );
+        requestAnimationFrame(function () { setTimeout(gameLoop, delayBetweenFramesInMilliseconds); });
     };
 };
 
