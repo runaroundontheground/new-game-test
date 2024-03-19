@@ -451,17 +451,22 @@ export function render() {
         renderingData.push(player.renderData);
     }
 
+
     if (entities.length > 0) {
         for (let i = -1; i >= -entities.length; i--) {
-            consoleLog(entities.length);
-            let yInBlocks = Math.floor(entities[i].y / blockSize);
+            
+            let e = i;
+            if (entities.length == 1) {
+                e = 0;
+            }
+            let yInBlocks = Math.floor(entities[e].y / blockSize);
             if (yInBlocks < 0) {
                 yInBlocks = 0;
             } else if (yInBlocks > chunkSize[1] - 1) {
                 yInBlocks = chunkSize[1] - 1;
             }
 
-            yLayer[yInBlocks].push(entities[i].renderData);
+            yLayer[yInBlocks].push(entities[e].renderData);
         };
     };
 

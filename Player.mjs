@@ -1592,8 +1592,9 @@ class Player {
 
                     if (correctTool || block.dropsWithNoTool) {
 
-                        let itemData = new PlaceableItem(block["type"])
-
+                        let itemData = new PlaceableItem(block.type, true);
+                        consoleLog(Object.values(itemData));
+                        consoleLog("<br> + " + itemData.name)
                         
                         let x = (chunkCoord[0] * chunkSize[0]) * blockSize
                         let y = blockCoord[1] * blockSize

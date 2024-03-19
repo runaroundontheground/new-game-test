@@ -34,8 +34,11 @@ export class ItemEntity extends Entity {
         this.height = itemEntitySize;
         this.rect = Rect(0, 0, this.width, this.height);
 
+        consoleLog(Object.values(this.itemData));
+
         this.renderData = {
             "drawType": "image",
+            "imageUrl": this.itemData.name,
             "position": [0, 0],
             "width": this.width,
             "height": this.height

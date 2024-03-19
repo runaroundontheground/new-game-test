@@ -51,9 +51,10 @@ class Item {
 
 
 export class PlaceableItem extends Item {
-    constructor(stackable) {
+    constructor(placeableType, stackable) {
         super();
 
+        this.name = placeableType || this.name;
         this.stackable = stackable || true;
         this.itemType = "PlaceableItem";
 
@@ -98,15 +99,18 @@ export class PlaceableItem extends Item {
             };
 
         };
+        this.placeItem.bind(this);
 
         this.RMBAction = function (player) {
 
         };
+        this.RMBAction.bind(this);
 
 
         this.RMBPressedAction = function (player) {
             this.placeItem(player);
         };
+        this.RMBPressedAction.bind(this);
     };
 };
 
