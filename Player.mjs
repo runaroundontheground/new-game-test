@@ -1587,12 +1587,14 @@ class Player {
                 if (this.blockBreakProgress >= fps) {
                     this.blockBreakProgress = 0
 
+                    let chunkCoord = mouse.hoveredBlock.chunkCoord;
+                    let blockCoord = mouse.hoveredBlock.blockCoord;
+
                     if (correctTool || block.dropsWithNoTool) {
 
                         let itemData = new PlaceableItem(block["type"])
 
-                        let chunkCoord = mouse.hoveredBlock.chunkCoord;
-                        let blockCoord = mouse.hoveredBlock.blockCoord;
+                        
                         let x = (chunkCoord[0] * chunkSize[0]) * blockSize
                         let y = blockCoord[1] * blockSize
                         let z = (chunkCoord[1] * chunkSize[0]) * blockSize
@@ -1612,7 +1614,7 @@ class Player {
 
                         let yv = 5;
                         let entity = new ItemEntity(itemData, count, x, y, z, xv, yv, zv);
-                        entities.append(entity);
+                        entities.push(entity);
                     };
 
                     let air = {
@@ -1623,7 +1625,7 @@ class Player {
                         "effectiveTool": "none"
                     };
 
-                    chunks[chunkCoord.toString()].data[blockCoord.toString()] = air.copy()
+                    chunks[chunkCoord.toString()].data[blockCoord.toString()] = air;
 
                     smallScaleBlockUpdates(chunkCoord, blockCoord);
                 };

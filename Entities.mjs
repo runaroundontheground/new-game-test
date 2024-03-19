@@ -107,7 +107,7 @@ export class ItemEntity extends Entity {
                 let blockToSide = false;
 
                 if (this.zv > 0) { sideValue += this.width; };
-                intentional error to look around here later
+
                 let collision = {
                     "corner 1": findBlock(this.x, this.y, sideValue),
                     "corner 2": findBlock(this.x + this.width, this.y, sideValue),
@@ -122,30 +122,28 @@ export class ItemEntity extends Entity {
 
                 if (blockToSide) { this.z -= this.zv; this.zv = 0; };
             };
+
+
+            let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, undefined, true)
+            if (insideABlock) { this.y += blockSize / 2; };
+
+
+
+            this.renderData.x = this.x - camera.x;
+            this.renderData.y = this.z - camera.z;
+
+
+            this.x += this.xv;
+            this.y += this.yv;
+            this.z += this.zv;
+
+            this.rect.x = this.x;
+            this.rect.y = this.z;
+
         };
 
-        let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, undefined, true)
-        if (insideABlock) { this.y += blockSize / 2; };
+        this.positionUpdates.bind(this);
 
-
-        // update image things
-        
-        let yRenderLayer = Math.floor(this.y / blockSize);
-        if (yRenderLayer >= chunkSize[1]) {yRenderLayer = chunkSize[1] - 1};
-        if (yRenderLayer < 0) {yRenderLayer = 0};
-
-        this.renderData.x = this.x - camera.x;
-        this.renderData.y = this.z - camera.z;
-
-        this.renderData.yLayer = yRenderLayer;
-
-        
-        this.x += this.xv;
-        this.y += this.yv;
-        this.z += this.zv;
-
-        this.rect.x = this.x;
-        this.rect.y = this.z;
 
 
         this.runTimers = function () {
@@ -158,6 +156,7 @@ export class ItemEntity extends Entity {
                 this.timers[key] = value;
             };
         };
+        this.runTimers.bind(this);
 
         this.playerInteraction = function (player) {
             if (this.timers.pickupDelay == 0) {
@@ -170,6 +169,8 @@ export class ItemEntity extends Entity {
             };
         };
 
+        this.playerInteraction.bind(this);
+
         this.doStuff = function (player) {
 
             if (!this.deleteMe) {
@@ -178,6 +179,8 @@ export class ItemEntity extends Entity {
                 this.playerInteraction(player);
             };
         };
+
+        this.doStuff.bind(this);
     };
 };
 

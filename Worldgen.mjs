@@ -484,7 +484,7 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
   } else { // current block is air
 
     if (below) {
-      modifyOtherBlock(x, y - 1, z, render = true)
+      modifyOtherBlock(x, y - 1, z, true)
 
       let blockBelow2 = findBlock(x, y - 2, z, true, undefined, chunkCoord)
       let below2 = checkForSolidBlock(blockBelow2)

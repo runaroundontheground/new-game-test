@@ -453,11 +453,15 @@ export function render() {
 
     if (entities.length > 0) {
         for (let i = -1; i >= -entities.length; i--) {
-            let entityRenderData = entities[i].renderData;
+            consoleLog(entities.length);
+            let yInBlocks = Math.floor(entities[i].y / blockSize);
+            if (yInBlocks < 0) {
+                yInBlocks = 0;
+            } else if (yInBlocks > chunkSize[1] - 1) {
+                yInBlocks = chunkSize[1] - 1;
+            }
 
-            yLayer[entities[i].renderData.yLayer].push(entityRenderData);
-
-
+            yLayer[yInBlocks].push(entities[i].renderData);
         };
     };
 
