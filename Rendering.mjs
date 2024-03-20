@@ -450,7 +450,15 @@ export function render() {
 
     // add player to rendering
     if (player.blockCoord[1] < chunkSize[1]) {
-        yLayer[player.blockCoord[1]].push(player.renderData);
+
+        if (player.collision.insideOfBlock == "water" && player.blockCoord[1] != 0
+            && chunks[player.chunkCoord.toString()].data[[player.blockCoord[0], player.blockCoord[1] + 1, player.blockCoord[2]]].type == "air") {
+            // when player is in water, if it's 1 deep, player isn't rendered as under the water
+            yLayer[player.blockCoord[1] - 1].push(player.renderData);
+        } else {
+            yLayer[player.blockCoord[1]].push(player.renderData);
+        };
+
     } else {
         renderingData.push(player.renderData);
     }
@@ -713,7 +721,9 @@ export function render() {
             let renderData = {
                 "drawType": "image",
                 "imageUrl": item.name,
-                "position": slot.renderPosition
+                "position": slot.renderPosition,
+                "width": itemIconSize,
+                "height": itemIconSize
             }
 
             renderingData.push(renderData);

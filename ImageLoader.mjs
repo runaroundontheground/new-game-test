@@ -62,15 +62,19 @@ function makePlayerInventoryImages() {
     let hotbarCanvasContext = hotbarCanvas.getContext("2d");
 
     let inventoryWidthInPixels = canvasWidth / 3;
+
     let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
 
     let gapBetweenSlots = Math.round(slotSizeInPixels / 5);
+
+    inventoryWidthInPixels += gapBetweenSlots; // fix for a thing?
 
 
     let backgroundColor = "rgb(150, 150, 150)";
     let slotColor = "rgb(125, 125, 125)";
     let slotOutlineColor = "rgb(175, 175, 175)";
     let alphaForUI = 1;
+    
 
     let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
 
@@ -146,12 +150,10 @@ function makePlayerInventoryImages() {
 
     // make hotbar image
     let hotbarSizeInPixels = [Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2))]
-    newCanvas.width = hotbarSizeInPixels[0];
-    newCanvas.height = hotbarSizeInPixels[1];
-    context.fillStyle = backgroundColor;
-    context.fillRect(0, 0, newCanvas.width, newCanvas.height);
-    hotbarImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    hotbarCanvas.width = hotbarSizeInPixels[0];
+    hotbarCanvas.height = hotbarSizeInPixels[1];
+    hotbarCanvasContext.fillStyle = backgroundColor;
+    hotbarCanvasContext.fillRect(0, 0, hotbarCanvas.width, hotbarCanvas.height);
 
     // result slot for 2x2 grid
     let slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
@@ -271,15 +273,10 @@ function makePlayerInventoryImages() {
         slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
         slotY = gapBetweenSlots;
 
-        context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-        newCanvas.width = hotbarSizeInPixels[0];
-        newCanvas.height = hotbarSizeInPixels[1];
-        context.drawImage(hotbarImage, 0, 0);
-        context.fillStyle = slotColor;
-        context.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-        //context.drawImage(slotImage, slotX, slotY);
-        hotbarImage.src = newCanvas.toDataURL();
+        hotbarCanvasContext.fillStyle = slotColor;
+        hotbarCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
     };
+    hotbarImage.src = hotbarCanvas.toDataURL();
 
     images["UI/" + "inventory"] = inventoryImage;
     images["UI/" + "crafting table"] = craftingTableImage;
@@ -318,7 +315,7 @@ function checkForImagesLoading () {
         clearInterval(interval);
         interval = null;
     }
-    consoleLog(currentNumberOfLoadedImages + "/" + totalNumberOfImages);
+    showLoadingProgress(currentNumberOfLoadedImages + "/" + totalNumberOfImages);
 }
 
 

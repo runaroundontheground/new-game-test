@@ -28,7 +28,7 @@ class Player {
         this.zv = 0;
 
         this.acceleration = 0.6;
-        this.maxHorizontalSpeed = 10;
+        this.maxHorizontalSpeed = blockSize / 6;
         this.slipperyness = 5;
         this.normalJumpForce = 10;
 
@@ -115,9 +115,9 @@ class Player {
         let craftingAndArmorSizeInPixels = [Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels)]
 
 
-        let inventorySizeInPixels = (Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels))
+        let inventorySizeInPixels = [Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels)]
 
-        let hotbarSizeInPixels = (Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2)))
+        let hotbarSizeInPixels = [Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2))]
 
         let craftingAndArmorRenderX = (canvasWidth - (craftingAndArmorWidthInPixels)) / 2
         let craftingAndArmorRenderY = (canvasHeight - (craftingAndArmorHeightInPixels + inventoryHeightInPixels))// - (slotSizeInPixels * craftingAndArmorHeightInSlots)
@@ -251,7 +251,7 @@ class Player {
 
         let slotId = 0
 
-        // create and blit the crafting slots for the player's crafting grid
+        // create the crafting slots for the player's crafting grid
         for (let y = 0; y < 2; y++) {
             for (let x = 0; x < 2; x++) {
 
@@ -283,7 +283,7 @@ class Player {
 
 
         slotId = 0
-        // create and blit slots for the crafting table grid
+        // create slots for the crafting table grid
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
                 slotX = ((widthOfInventoryInSlots - 6) * slotSizeInPixels) + (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
@@ -567,7 +567,7 @@ class Player {
 
         this.checkForBeingInsideOfABlock = function () {
             let center = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, true);
-            this.collision["insideOfBlock"] = center["type"]
+            this.collision.insideOfBlock = center.type
         };
         this.checkForBeingInsideOfABlock()
 
@@ -690,13 +690,15 @@ class Player {
         // and block step up (go up blocks without jumping
 
 
-        this.booleans["blockStepUsed"] = false
+        this.booleans["blockStepUsed"] = true // disabling block step up, is buggy and idc
+        // disabled <- navigation for ctrl + f
 
         if (this.collision["up"]) {
             let a = this.collision["below"]
             let b = !this.collision["aboveUp"]
             let c = !this.booleans["blockStepUsed"]
-            let d = keys.w
+            let d = keys.w;
+
             if (a && b && c && d) {
                 this.y += blockSize
                 // update collision, since player's been moved a lot
@@ -705,9 +707,11 @@ class Player {
                 this.doCollisionToRight()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.z += Math.abs(this.zv);
+                this.z = (Math.round(this.z / blockSize) * blockSize) + 1;
                 this.zv = 0
-                this.z += 1
+                this.doCollisionToDown()
+                this.doCollisionToLeft()
+                this.doCollisionToRight()
             };
         };
 
@@ -724,9 +728,11 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x -= Math.abs(this.xv);
+                this.x = (Math.round(this.x / blockSize) * blockSize) + this.width - 1;
                 this.xv = 0
-                this.x -= 1
+                this.doCollisionToDown()
+                this.doCollisionToLeft()
+                this.doCollisionToUp()
             };
         };
 
@@ -743,9 +749,11 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x += Math.abs(this.xv)
-                this.xv = 0
-                this.x += 1
+                this.x = (Math.round(this.x / blockSize) * blockSize) + 1;
+                this.xv = 0;
+                this.doCollisionToDown()
+                this.doCollisionToRight()
+                this.doCollisionToUp()
             };
         };
 
@@ -762,9 +770,11 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x -= Math.abs(this.zv)
+                this.z = (Math.round(this.z / blockSize) * blockSize) + this.width - 1;
                 this.zv = 0
-                this.z -= 1
+                this.doCollisionToLeft()
+                this.doCollisionToRight()
+                this.doCollisionToUp()
             };
         };
 
@@ -992,10 +1002,11 @@ class Player {
 
 
         // change hotbar slot based on pressing stuff
-        let numberList = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        let numberList = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
         for (let number = 0; number < numberList.length; number++) {
             if (keys[numberList[number]]) {
                 this.otherInventoryData.currentHotbarSlot = number;
+                break;
             }
         }
 

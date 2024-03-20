@@ -41,12 +41,14 @@ function fixStructureData() {
   let structureNames = Object.keys(structures);
   for (let i = 0; i < structureNames.length; i++) {
     let structureName = structureNames[i];
+
     let blockCoords = Object.keys(structures[structureName]);
 
     for (let i2 = 0; i2 < blockCoords.length; i2++) {
-
       let blockCoord = blockCoords[i2]
       let block = structures[structureName][blockCoord];
+
+
 
       block.render = false;
       block.globalAlpha = 1;
@@ -55,6 +57,7 @@ function fixStructureData() {
       block.hardness = accessedBreakingInfo.hardness;
       block.effectiveTool = accessedBreakingInfo.effectiveTool;
       block.dropsWithNoTool = accessedBreakingInfo.dropsWithNoTool;
+
       structures[structureName][blockCoord] = block;
     }
   }
@@ -163,33 +166,20 @@ export function generateChunkTerrain(chunkCoords) {
 export function generateChunkStructures(inputChunkCoord) {
   function generateStructure(structureName, blockCoord) {
     let thisStructure = structures[structureName];
-    let thisStructureKeys = Object.keys(thisStructure);
+    let structureBlockCoords = Object.keys(thisStructure);
 
 
-    for (let i = 0; i < thisStructureKeys.length; i++) {
+    for (let i = 0; i < structureBlockCoords.length; i++) {
+      let currentBlockCoord = structureBlockCoords[i].split(",");
+
+      let block = thisStructure[structureBlockCoords[i]];
+
       let chunkX = inputChunkCoord[0];
       let chunkZ = inputChunkCoord[1];
 
-      let key = thisStructureKeys[i];
-      let block = thisStructure[key];
-
-      let x = blockCoord[0]; let y = blockCoord[1]; let z = blockCoord[2];
-      let updatingNumber = "";
-      let currentCoord = 0;
-      for (let i = 0; i < key.length; i++) {
-        let currentChar = key[i];
-
-        if (currentChar == "," || i == key.length - 1) {
-          if (currentCoord == 0) { x += Number(updatingNumber); }
-          if (currentCoord == 1) { y += Number(updatingNumber); }
-          if (currentCoord == 2) { z += Number(updatingNumber); }
-
-          currentCoord += 1;
-          updatingNumber = "";
-        };
-
-        updatingNumber += key[i];
-      };
+      let x = blockCoord[0] + currentBlockCoord[0];
+      let y = blockCoord[1] + currentBlockCoord[1];
+      let z = blockCoord[2] + currentBlockCoord[2];
 
       while (x >= chunkSize[0]) {
         x -= chunkSize[0];
@@ -237,7 +227,7 @@ export function generateChunkStructures(inputChunkCoord) {
 
 
         if (block.type == "grass") {
-          if (random.boolean(1) === 0) {
+          if (random.boolean(30)) {
             generateStructure("tree 1", blockCoord);
           };
         };

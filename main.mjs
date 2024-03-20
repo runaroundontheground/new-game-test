@@ -33,6 +33,15 @@ commandButton.onclick = function () {
     eval(String(value));
 }
 
+commandInput.onkeydown = function (event) {
+    if (event.key == "Enter") {
+        let value = commandInput.value;
+        commandInput.value = "";
+        eval(String(value));
+        commandInput.blur()
+    }
+}
+
 let commandDiv = document.getElementById("command stuff");
 commandDiv.appendChild(commandInput);
 commandDiv.appendChild(commandButton);
@@ -62,7 +71,7 @@ function gameLoop() {
 
     player.doStuff(deltaTime);
 
-    
+
     for (let i = entities.length - 1; i >= 0; i--) {
 
         entities[i].doStuff(player);
