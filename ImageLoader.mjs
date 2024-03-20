@@ -48,13 +48,18 @@ for (const key of Object.keys(imageUrlsAndNames)) {
 
 };
 
-
 function makePlayerInventoryImages() {
     let widthOfInventoryInSlots = 9;
     let heightOfInventoryInSlots = 3;
 
     let newCanvas = document.createElement("canvas");
     let context = newCanvas.getContext("2d");
+
+    let inventoryCanvas = document.createElement("canvas");
+    let inventoryCanvasContext = inventoryCanvas.getContext("2d");
+
+    let hotbarCanvas = document.createElement("canvas");
+    let hotbarCanvasContext = hotbarCanvas.getContext("2d");
 
     let inventoryWidthInPixels = canvasWidth / 3;
     let slotSizeInPixels = Math.round(inventoryWidthInPixels / widthOfInventoryInSlots);
@@ -65,7 +70,7 @@ function makePlayerInventoryImages() {
     let backgroundColor = "rgb(150, 150, 150)";
     let slotColor = "rgb(125, 125, 125)";
     let slotOutlineColor = "rgb(175, 175, 175)";
-    let alphaForUI = 0.5;
+    let alphaForUI = 1;
 
     let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
 
@@ -115,12 +120,13 @@ function makePlayerInventoryImages() {
 
     // make the inventory image
     let inventorySizeInPixels = [Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels)]
-    newCanvas.width = inventorySizeInPixels[0];
-    newCanvas.height = inventorySizeInPixels[1];
+    inventoryCanvas.width = inventorySizeInPixels[0];
+    inventoryCanvas.height = inventorySizeInPixels[1];
 
-    context.fillRect(0, 0, newCanvas.width, newCanvas.height);
-    inventoryImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    inventoryCanvasContext.fillStyle = backgroundColor;
+    inventoryCanvasContext.fillRect(0, 0, inventoryCanvas.width, inventoryCanvas.height);
+    
+    
 
     // make the slot image
     newCanvas.width = slotSizeInPixels;
@@ -250,17 +256,13 @@ function makePlayerInventoryImages() {
 
             slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
             slotY = (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
-
-            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-            newCanvas.width = inventoryWidthInPixels;
-            newCanvas.height = inventoryHeightInPixels;
-            context.drawImage(inventoryImage, 0, 0);
-            context.fillStyle = slotColor;
-            context.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-            //context.drawImage(slotImage, slotX, slotY);
-            inventoryImage.src = newCanvas.toDataURL();
+            
+            inventoryCanvasContext.fillStyle = slotColor;
+            inventoryCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
+            
         };
     };
+    inventoryImage.src = newCanvas.toDataURL();
 
     // draw slots on the hotbar?
     

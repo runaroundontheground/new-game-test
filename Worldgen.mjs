@@ -109,7 +109,7 @@ export function generateChunkTerrain(chunkCoords) {
         }
 
         if (y < surfaceYLevel) {
-          if (y < 12) {
+          if (y < 13) {
             blockData.type = "dirt";
           }
           if (y >= 13) {

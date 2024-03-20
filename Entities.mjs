@@ -34,7 +34,6 @@ export class ItemEntity extends Entity {
         this.height = itemEntitySize;
         this.rect = Rect(0, 0, this.width, this.height);
 
-        consoleLog(Object.values(this.itemData));
 
         this.renderData = {
             "drawType": "image",
@@ -48,12 +47,19 @@ export class ItemEntity extends Entity {
 
         this.timers = {
             "pickupDelay": 20
-        }
+        };
+
+
+        this.doStuff.bind(this);
+        this.positionUpdates.bind(this);
+        this.runTimers.bind(this);
+        this.playerInteraction.bind(this);
+
+    };
 
 
 
-
-        this.positionUpdates = function (player) {
+        positionUpdates (player) {
 
             let a = findBlock(this.x, this.y - this.height, this.z, undefined, true)
             let b = findBlock(this.x, this.y - this.height, this.z + this.width, undefined, true)
@@ -131,9 +137,7 @@ export class ItemEntity extends Entity {
             if (insideABlock) { this.y += blockSize / 2; };
 
 
-
-            this.renderData.x = this.x - camera.x;
-            this.renderData.y = this.z - camera.z;
+            
 
 
             this.x += this.xv;
@@ -143,13 +147,11 @@ export class ItemEntity extends Entity {
             this.rect.x = this.x;
             this.rect.y = this.z;
 
+            this.renderData.position = [this.x - camera.x, this.z - camera.z];
+
         };
 
-        this.positionUpdates.bind(this);
-
-
-
-        this.runTimers = function () {
+        runTimers () {
             for (const key of Object.keys(this.timers)) {
                 let value = this.timers[key];
 
@@ -159,9 +161,8 @@ export class ItemEntity extends Entity {
                 this.timers[key] = value;
             };
         };
-        this.runTimers.bind(this);
 
-        this.playerInteraction = function (player) {
+        playerInteraction (player) {
             if (this.timers.pickupDelay == 0) {
 
                 if (this.rect.collide.rect(player.rect)) {
@@ -172,9 +173,7 @@ export class ItemEntity extends Entity {
             };
         };
 
-        this.playerInteraction.bind(this);
-
-        this.doStuff = function (player) {
+        doStuff (player) {
 
             if (!this.deleteMe) {
                 this.positionUpdates(player);
@@ -183,9 +182,8 @@ export class ItemEntity extends Entity {
             };
         };
 
-        this.doStuff.bind(this);
+        
     };
-};
 
 
 

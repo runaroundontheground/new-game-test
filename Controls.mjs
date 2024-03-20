@@ -20,6 +20,13 @@ canvas.addEventListener("mousemove", function (event) {
     mouse.y = y;
 });
 
+
+addEventListener("contextmenu", function (event) {
+    if (inFocus) { // disable the context menu while playing game
+    event.preventDefault();
+    };
+})
+
 window.addEventListener("mousedown", function (event) {
 
     if (inFocus) {

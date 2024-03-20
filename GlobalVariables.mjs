@@ -1,3 +1,4 @@
+
 export function consoleLog(message) {
     let myConsole = document.getElementById("console")
     myConsole.innerHTML += message + "<br />"
@@ -48,45 +49,47 @@ export function Rect(x, y, width, height) {
         "x": x,
         "y": y,
         "width": width,
-        "height": height
-    }
-    rect.collide = {};
-    rect.collide.rect = function (otherRect) {
-        let myRect = rect;
+        "height": height,
+        "collide": {
+            "rect": function (otherRect) {
+                let myRect = rect;
 
-        let meetsX = false;
-        let meetsY = false;
+                let meetsX = false;
+                let meetsY = false;
 
-        if ((otherRect.x <= myRect.x + myRect.width) && (otherRect.x + otherRect.width >= myRect.x)) {
-            meetsX = true;
-        };
-        if ((otherRect.y <= myRect.y + myRect.height) && (otherRect.y + otherRect.height >= myRect.y)) {
-            meetsY = true;
+                if ((otherRect.x <= myRect.x + myRect.width) && (otherRect.x + otherRect.width >= myRect.x)) {
+                    meetsX = true;
+                };
+                if ((otherRect.y <= myRect.y + myRect.height) && (otherRect.y + otherRect.height >= myRect.y)) {
+                    meetsY = true;
+                }
+
+                if (meetsX && meetsY) {
+                    return true;
+                };
+                return false;
+            },
+
+            "point": function (x, y) {
+                let myRect = rect;
+
+                let meetsX = false;
+                let meetsY = false;
+
+
+                if ((x >= myRect.x) && (x <= myRect.x + myRect.width)) {
+                    meetsX = true;
+                };
+                if ((y >= myRect.y) && (y <= myRect.y + myRect.height)) {
+                    meetsY = true;
+                }
+
+                if (meetsX && meetsY) {
+                    return true;
+                };
+                return false;
+            }
         }
-
-        if (meetsX && meetsY) {
-            return true;
-        };
-        return false;
-    };
-    rect.collide.point = function (x, y) {
-        let myRect = rect;
-
-        let meetsX = false;
-        let meetsY = false;
-
-
-        if ((x >= myRect.x) && (x <= myRect.x + myRect.width)) {
-            meetsX = true;
-        };
-        if ((y >= myRect.y) && (y <= myRect.y + myRect.height)) {
-            meetsY = true;
-        }
-
-        if (meetsX && meetsY) {
-            return true;
-        };
-        return false;
     }
 
     return rect
@@ -198,7 +201,7 @@ class Mouse {
         // detection for blocks and stuff
         this.hoveredBlock = {};
         this.hoveredSlotId = 0;
-        
+
 
 
         this.inPlayerInventory = false;

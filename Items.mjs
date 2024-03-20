@@ -4,12 +4,13 @@ import {
     entities, items, chunks, listOfBlockNames,
     listOfIntermediateItems, blockSize, gravity,
     dictOfBlockBreakingStuff,
-    showLoadingProgress, mouse
+    showLoadingProgress, mouse, maxStackSize
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Items.mjs")
 
 //import { mouse } from "./Controls.mjs";
 import { ItemEntity } from "./Entities.mjs";
+import { smallScaleBlockUpdates } from "./Worldgen.mjs";
 
 
 class Item {
@@ -43,7 +44,7 @@ class Item {
                 };
             };
 
-            
+
         };
 
     };
@@ -63,28 +64,36 @@ export class PlaceableItem extends Item {
             "render": false,
             "alphaValue": 1,
             "hardness": 0,
-            "effectiveTool": "none"
+            "effectiveTool": "none",
+            "dropsWithNoTool": false
         };
 
         this.placedBlock.hardness = dictOfBlockBreakingStuff[this.name].hardness;
         this.placedBlock.effectiveTool = dictOfBlockBreakingStuff[this.name].effectiveTool;
+        this.placedBlock.effectiveTool = dictOfBlockBreakingStuff[this.name].dropsWithNoTool;
 
-        this.placeItem = function (player) {
+        this.placeItem.bind(this);
+        this.RMBAction.bind(this);
+        this.RMBPressedAction.bind(this);
 
-            if (player.canReachSelectedBlock) {
-                let blockType = mouse.hoveredBlock.type;
-                if (blockType == "air" || blockType == "water") {
-                    let count = player.hotbar[this.slotId].count;
+    };
 
-                    switch (count) {
-                        case count > 1:
-                            player.hotbar[this.slotId].count -= 1; break;
-                        case count == 1:
-                            player.hotbar[this.slotId].count = 0;
-                            player.hotbar[this.slotId].contents = "empty";
-                            break;
-                        case count <= 0:
-                            consooeLog("how'd you do that??");
+    placeItem(player) {
+
+        if (player.canReachSelectedBlock) {
+            let blockType = mouse.hoveredBlock.type;
+
+            if (blockType == "air" || blockType == "water") {
+                let count = player.hotbar[this.slotId].count;
+
+                if (count >= 1) {
+
+
+                    if (count == 1) {
+                        player.hotbar[this.slotId].count = 0;
+                        player.hotbar[this.slotId].contents = "empty";
+                    } else if (count > 1) {
+                        player.hotbar[this.slotId].count -= 1;
                     }
 
 
@@ -94,24 +103,22 @@ export class PlaceableItem extends Item {
 
                     chunks[chunkCoord].data[blockCoord] = this.placedBlock;
 
-                    smallScaleBlockUpdates(chunkCoord, blockCoord)
+
+                    smallScaleBlockUpdates(chunkCoord, blockCoord);
                 };
             };
-
         };
-        this.placeItem.bind(this);
 
-        this.RMBAction = function (player) {
-
-        };
-        this.RMBAction.bind(this);
-
-
-        this.RMBPressedAction = function (player) {
-            this.placeItem(player);
-        };
-        this.RMBPressedAction.bind(this);
     };
+
+    RMBAction = function (player) {
+
+    };
+
+    RMBPressedAction = function (player) {
+        this.placeItem(player);
+    };
+
 };
 
 export class ToolItem extends Item {
@@ -136,14 +143,18 @@ export class ToolItem extends Item {
 
         this.durability = 100; // durabilty does nothing atm
 
-        this.RMBPressedAction = function (player) {
+        this.RMBPressedAction.bind(this);
+        this.RMBAction.bind(this);
 
-        };
+    };
+
+    RMBPressedAction = function (player) {
+
+    };
 
 
-        this.RMBAction = function (player) {
+    RMBAction = function (player) {
 
-        };
     };
 };
 

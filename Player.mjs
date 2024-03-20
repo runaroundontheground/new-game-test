@@ -823,7 +823,9 @@ class Player {
 
                     let slot = container[i];
                     if (slot.contents == "empty" || slot.contents.name != item.name ||
-                        slot.contents.cound == maxStackSize) {
+                        slot.contents.count == maxStackSize) {
+
+                        container[i] = slot;
                         return done;
                     }
 
@@ -831,12 +833,16 @@ class Player {
                     let addedCount = count + slot["count"]
                     if (addedCount <= maxStackSize) {
 
-                        slot["count"] = addedCount
+                        slot["count"] = addedCount;
+
+                        container[i] = slot;
                         return true
                     } else {
                         if (addedCount > maxStackSize) {
                             slot["count"] = maxStackSize
-                            count = addedCount - maxStackSize
+                            count = addedCount - maxStackSize;
+
+                            container[i] = slot;
                             break
                         }
                     };
@@ -850,21 +856,23 @@ class Player {
 
         function checkForEmptySlots(container, done, count, item) {
             if (!done) {
-                container.forEach(function (slot) {
+                for (let i = 0; i < container.length; i++) {
+                    let slot = container[i];
                     if (slot.contents == "empty") {
                         slot.contents = item;
                         slot.count = count;
 
+                        container[i] = slot;
                         return true;
-                    }
-                });
+                    };
+                };
             };
             return done
         };
 
 
 
-        let done = false
+        let done = false;
 
         done = checkForStackables(this.hotbar, done, count, item)
         done = checkForStackables(this.inventory, done, count, item)
@@ -1494,9 +1502,9 @@ class Player {
 
     doStuff(deltaTime) {
 
-        mouse.cameraRelativeX = Math.round((this.x + mouse.x) - canvasWidth / 2);
-        mouse.cameraRelativeZ = Math.round((this.z + mouse.y) - canvasHeight / 2);
-        mouse.cameraRelativePos = (mouse.cameraRelativeX, mouse.cameraRelativeZ);
+        mouse.cameraRelativeX = mouse.x + camera.x
+        mouse.cameraRelativeZ = mouse.y + camera.z;
+        mouse.cameraRelativePos = [mouse.cameraRelativeX, mouse.cameraRelativeZ];
 
         this.generalMovement(deltaTime)
         this.doInventoryThings()
@@ -1593,15 +1601,10 @@ class Player {
                     if (correctTool || block.dropsWithNoTool) {
 
                         let itemData = new PlaceableItem(block.type, true);
-                        consoleLog(Object.values(itemData));
-                        consoleLog("<br> + " + itemData.name)
-                        
-                        let x = (chunkCoord[0] * chunkSize[0]) * blockSize
-                        let y = blockCoord[1] * blockSize
-                        let z = (chunkCoord[1] * chunkSize[0]) * blockSize
 
-                        x += blockCoord[0] * blockSize
-                        z += blockCoord[2] * blockSize
+                        let x = ((chunkCoord[0] * chunkSize[0]) + blockCoord[0]) * blockSize;
+                        let y = blockCoord[1] * blockSize
+                        let z = ((chunkCoord[1] * chunkSize[0]) + blockCoord[2]) * blockSize;
 
 
 
@@ -1614,7 +1617,7 @@ class Player {
                         };
 
                         let yv = 5;
-                        let entity = new ItemEntity(itemData, count, x, y, z, xv, yv, zv);
+                        let entity = new ItemEntity(x, y, z, xv, yv, zv, count, itemData);
                         entities.push(entity);
                     };
 

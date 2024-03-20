@@ -62,20 +62,20 @@ function gameLoop() {
 
     player.doStuff(deltaTime);
 
-    /*
+    
     for (let i = entities.length - 1; i >= 0; i--) {
 
-        entities[i].doStuff();
+        entities[i].doStuff(player);
         if (entities[i].deleteMe) { entities.splice(i, 1); };
 
     }
 
     for (let i = projectiles.length - 1; i >= 0; i--) {
 
-        projectiles[i].doStuff();
+        projectiles[i].doStuff(player);
         if (projectiles[i].deleteMe) { projectiles.splice(i, 1); };
 
-    }*/
+    }
 
     render();
 

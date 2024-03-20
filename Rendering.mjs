@@ -17,7 +17,7 @@ import { player } from "./Player.mjs";
 let blockRenderData = {};
 
 let blockCursorHightlightData = {
-    "strokeStyle": "black", "width": blockSize, "globalAlpha": 0.5,
+    "strokeStyle": "black", "width": blockSize, "globalAlpha": 1,
     "drawType": "strokeRect", "height": blockSize, "position": [0, 0],
     "lineWidth": "3px"
 }
@@ -281,8 +281,9 @@ function drawToCanvas(renderData) {
             break;
         case "strokeRect":
 
-            ctx.strokeStyle = color;
-            //ctx.stroke find line/border width later
+            ctx.strokeStyle = renderData.strokeStyle;
+            ctx.lineWidth = renderData.lineWidth || 3;
+
             ctx.strokeRect(x, y, width, height);
             break;
 
@@ -377,20 +378,23 @@ export function render() {
                         xPos += chunkCoord[0] * totalChunkSize;
                         yPos += chunkCoord[1] * totalChunkSize;
 
-                        if (block.type != "water") {
-                            if (block.globalAlpha < 1 && player.blockCoord[1] < y) {
+                        let currentAlpha = 1;
+
+                        if (block.type != "water" && block.globalAlpha < 1) {
+                            if (player.blockCoord[1] < y) {
                                 const fiveBlocks = 5 * blockSize;
 
                                 if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
                                     if (yPos - fiveBlocks < player.z && yPos + fiveBlocks > player.z) {
-                                        scaledRenderData[block.type].globalAlpha = block.globalAlpha;
+                                        
+                                        currentAlpha = block.globalAlpha;
                                     };
                                 };
                             };
                         };
 
                         if (block.type == "water") {
-                            scaledRenderData[block.type].globalAlpha = block.globalAlpha;
+                            currentAlpha = block.globalAlpha;
                         };
 
 
@@ -409,14 +413,14 @@ export function render() {
                         yPos -= camera.z;
 
                         // scale relative to the center of the screen
-                        xPos -= canvasWidth/2;
-                        yPos -= canvasHeight/2;
+                        xPos -= canvasWidth / 2;
+                        yPos -= canvasHeight / 2;
 
                         xPos *= scaleFactor;
                         yPos *= scaleFactor;
 
-                        xPos += canvasWidth/2;
-                        yPos += canvasHeight/2;
+                        xPos += canvasWidth / 2;
+                        yPos += canvasHeight / 2;
 
 
                         xPos = Math.round(xPos);
@@ -426,7 +430,7 @@ export function render() {
                             "drawType": "block",
                             "position": [xPos, yPos],
                             "length": blockSize * scaleFactor,
-                            "globalAlpha": block.globalAlpha,
+                            "globalAlpha": currentAlpha,
                             "color": scaledRenderData[block.type].color,
                             "borderColor": scaledRenderData[block.type].borderColor,
                         };
@@ -452,22 +456,16 @@ export function render() {
     }
 
 
-    if (entities.length > 0) {
-        for (let i = -1; i >= -entities.length; i--) {
-            
-            let e = i;
-            if (entities.length == 1) {
-                e = 0;
-            }
-            let yInBlocks = Math.floor(entities[e].y / blockSize);
-            if (yInBlocks < 0) {
-                yInBlocks = 0;
-            } else if (yInBlocks > chunkSize[1] - 1) {
-                yInBlocks = chunkSize[1] - 1;
-            }
+    for (let i = entities.length - 1; i >= 0; i--) {
+        let yInBlocks = Math.floor(entities[i].y / blockSize);
 
-            yLayer[yInBlocks].push(entities[e].renderData);
-        };
+        if (yInBlocks < 0) {
+            yInBlocks = 0;
+        } else if (yInBlocks > chunkSize[1] - 1) {
+            yInBlocks = chunkSize[1] - 1;
+        }
+
+        yLayer[yInBlocks].push(entities[i].renderData);
     };
 
     // add all the layers to the main rendering data
@@ -479,6 +477,7 @@ export function render() {
 
 
 
+    // do all the UI rendering and things
     renderingData.push(player.inventoryRenderingData.hotbarRenderData);
 
 
@@ -762,7 +761,7 @@ export function render() {
 
     // run mouse's held item rendering
     // also highlights and tells what block you're hovering over
-    if (!player.otherInventoryData.open) {
+    if (!player.otherInventoryData.open && mouse.hoveredBlock.type != "air") {
         let x = Math.floor(mouse.cameraRelativeX / blockSize);
         let z = Math.floor(mouse.cameraRelativeZ / blockSize);
         x *= blockSize;
