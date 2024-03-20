@@ -707,11 +707,9 @@ class Player {
                 this.doCollisionToRight()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.z = (Math.round(this.z / blockSize) * blockSize) + 1;
+                this.z += Math.abs(this.zv/2);
+                this.z += 1;
                 this.zv = 0
-                this.doCollisionToDown()
-                this.doCollisionToLeft()
-                this.doCollisionToRight()
             };
         };
 
@@ -728,11 +726,9 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x = (Math.round(this.x / blockSize) * blockSize) + this.width - 1;
+                this.x -= Math.abs(this.xv/2);
+                this.x -= 1;
                 this.xv = 0
-                this.doCollisionToDown()
-                this.doCollisionToLeft()
-                this.doCollisionToUp()
             };
         };
 
@@ -749,11 +745,9 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x = (Math.round(this.x / blockSize) * blockSize) + 1;
+                this.x += Math.abs(this.xv/2);
+                this.x += 1;
                 this.xv = 0;
-                this.doCollisionToDown()
-                this.doCollisionToRight()
-                this.doCollisionToUp()
             };
         };
 
@@ -768,13 +762,11 @@ class Player {
                 this.doCollisionToLeft()
                 this.doCollisionToRight()
                 this.doCollisionToUp()
-                this.booleans["blockStepUsed"] = true
+                this.booleans["blockStepUsed"] = true;
             } else {
-                this.z = (Math.round(this.z / blockSize) * blockSize) + this.width - 1;
-                this.zv = 0
-                this.doCollisionToLeft()
-                this.doCollisionToRight()
-                this.doCollisionToUp()
+                this.z -= Math.abs(this.zv/2);
+                this.z -= 1;
+                this.zv = 0;
             };
         };
 
