@@ -14,8 +14,8 @@ showLoadingProgress("loading GlobalVariables.mjs");
 
 
 
-export const canvasWidth = 500; // was 1000 or 500
-export const canvasHeight = 250; // was 500 or 250
+export const canvasWidth = 750; // was 1000 or 500
+export const canvasHeight = 500; // was 500 or 250
 export const blockSize = 30; // pixels
 export const chunkSize = [10, 30]; // width or length, then height (both in blocks)
 export const totalChunkSize = chunkSize[0] * blockSize;

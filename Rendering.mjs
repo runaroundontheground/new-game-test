@@ -302,7 +302,7 @@ function drawToCanvas(renderData) {
 
 export function render() {
 
-    ctx.fillStyle = "rgb(33 39 69)";
+    ctx.fillStyle = "rgb(0, 0, 0)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
@@ -751,7 +751,7 @@ export function render() {
                             let renderData = {
                                 "drawType": "fillText",
                                 "fillStyle": "white",
-                                "text": tooltip,
+                                "text": item.tooltip,
                                 "position": [mouse.x + 10, mouse.y + 5]
                             }
 
@@ -816,12 +816,14 @@ export function render() {
         let renderData = {
             "drawType": "image",
             "imageUrl": mouse.heldSlot.contents.name,
-            "position": [mouse.x + 5, mouse.y + 5]
+            "position": [mouse.x + 5, mouse.y + 5],
+            "width": itemIconSize,
+            "height": itemIconSize
         }
 
         renderingData.push(renderData);
 
-        shift = player.inventoryRenderingData["slotSize"] - 10
+        let shift = player.inventoryRenderingData["slotSize"] - 10
 
         // draw the item count, if there's more than one item
         if (mouse.heldSlot.count > 1) {

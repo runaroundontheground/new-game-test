@@ -74,7 +74,7 @@ function makePlayerInventoryImages() {
     let slotColor = "rgb(125, 125, 125)";
     let slotOutlineColor = "rgb(175, 175, 175)";
     let alphaForUI = 1;
-    
+
 
     let emptySpaceBetweenItemAndSlotBorder = gapBetweenSlots / 2
 
@@ -108,19 +108,23 @@ function makePlayerInventoryImages() {
     let craftingTableImage = new Image();
 
     // make the crafting/armor image
-    context.fillStyle = backgroundColor
-    context.globalAlpha = alphaForUI;
-    context.fillRect(0, 0, newCanvas.width, newCanvas.height);
-    craftingAndArmorImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    let craftingAndArmorCanvas = document.createElement("canvas");
+    let craftingAndArmorCanvasContext = craftingAndArmorCanvas.getContext("2d");
+    craftingAndArmorCanvas.width = craftingAndArmorWidthInPixels;
+    craftingAndArmorCanvas.height = craftingAndArmorHeightInPixels;
+
+    craftingAndArmorCanvasContext.fillStyle = backgroundColor;
+    craftingAndArmorCanvasContext.globalAlpha = alphaForUI;
+
+    craftingAndArmorCanvasContext.fillRect(0, 0, craftingAndArmorCanvas.width, craftingAndArmorCanvas.height);
 
     // make the crafting table image
-    newCanvas.width = craftingTableSizeInPixels[0];
-    newCanvas.height = craftingTableSizeInPixels[1];
+    let craftingTableCanvas = document.createElement("canvas");
+    let craftingTableCanvasContext = craftingTableCanvas.getContext("2d");
+    craftingTableCanvas.width = craftingTableSizeInPixels[0];
+    craftingTableCanvas.height = craftingTableSizeInPixels[1];
 
-    context.fillRect(0, 0, newCanvas.width, newCanvas.height);
-    craftingTableImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    craftingTableCanvasContext.fillRect(0, 0, craftingTableCanvas.width, craftingTableCanvas.height);
 
     // make the inventory image
     let inventorySizeInPixels = [Math.round(inventoryWidthInPixels), Math.round(inventoryHeightInPixels)]
@@ -129,8 +133,8 @@ function makePlayerInventoryImages() {
 
     inventoryCanvasContext.fillStyle = backgroundColor;
     inventoryCanvasContext.fillRect(0, 0, inventoryCanvas.width, inventoryCanvas.height);
-    
-    
+
+
 
     // make the slot image
     newCanvas.width = slotSizeInPixels;
@@ -159,29 +163,15 @@ function makePlayerInventoryImages() {
     let slotX = ((widthOfInventoryInSlots) * slotSizeInPixels)
     let slotY = (slotSizeInPixels * 1.5)
 
-    newCanvas.width = craftingAndArmorWidthInPixels;
-    newCanvas.height = craftingAndArmorHeightInPixels;
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-    context.drawImage(craftingAndArmorImage, 0, 0);
-    context.fillStyle = slotColor;
-    context.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-    //context.drawImage(slotImage, slotX, slotY);
-    craftingAndArmorImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    craftingAndArmorCanvasContext.fillStyle = slotColor;
+    craftingAndArmorCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
 
     // result slot for 3x3 grid
     slotX = ((widthOfInventoryInSlots - 2) * slotSizeInPixels) + slotSizeInPixels * 1.7
     slotY = (slotSizeInPixels * 2.1)
 
-    newCanvas.width = craftingTableSizeInPixels[0];
-    newCanvas.height = craftingTableSizeInPixels[1];
-    context.drawImage(craftingTableImage, 0, 0);
-    context.fillStyle = slotColor;
-    context.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-    //context.drawImage(slotImage, slotX, slotY);
-    craftingTableImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-
+    craftingTableCanvasContext.fillStyle = slotColor;
+    craftingTableCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
 
 
 
@@ -193,14 +183,8 @@ function makePlayerInventoryImages() {
             slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
 
-            newCanvas.width = craftingAndArmorWidthInPixels;
-            newCanvas.height = craftingAndArmorHeightInPixels;
-            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-            context.drawImage(craftingAndArmorImage, 0, 0);
             context.fillStyle = slotColor;
-            context.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-            //context.drawImage(slotImage, slotX, slotY);
-            craftingAndArmorImage.src = newCanvas.toDataURL();
+            craftingAndArmorCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
 
         };
     };
@@ -212,14 +196,8 @@ function makePlayerInventoryImages() {
             slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
 
-            newCanvas.width = craftingTableSizeInPixels[0];
-            newCanvas.height = craftingTableSizeInPixels[1];
-            context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-            context.drawImage(craftingTableImage, 0, 0);
-            context.fillStyle = slotColor;
-            context.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-            //context.drawImage(slotImage, slotX, slotY);
-            craftingTableImage.src = newCanvas.toDataURL();
+            craftingTableCanvasContext.fillStyle = slotColor;
+            craftingTableCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
 
         };
     };
@@ -232,25 +210,17 @@ function makePlayerInventoryImages() {
     let arrowHeight = images["inventory arrow"].naturalHeight / scale;
 
 
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-    newCanvas.width = craftingAndArmorWidthInPixels;
-    newCanvas.height = craftingAndArmorHeightInPixels;
-    context.drawImage(craftingAndArmorImage, 0, 0)
-    context.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
+    craftingAndArmorCanvasContext.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
 
-    craftingAndArmorImage.src = newCanvas.toDataURL();
+    craftingAndArmorImage.src = craftingAndArmorCanvas.toDataURL();
 
 
     // arrow for 3x3 grid
     arrowX = (widthOfInventoryInSlots - 0.60) * slotSizeInPixels - slotSizeInPixels * 0.8;
     arrowY = (slotSizeInPixels * 0.75) + slotSizeInPixels * 1.1 + slotSizeInPixels / 1.8
 
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
-    newCanvas.width = craftingTableSizeInPixels[0];
-    newCanvas.height = craftingTableSizeInPixels[1];
-    context.drawImage(craftingTableImage, 0, 0);
-    context.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
-    craftingTableImage.src = newCanvas.toDataURL();
+    craftingTableCanvasContext.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
+    craftingTableImage.src = craftingTableCanvas.toDataURL();
 
     // draw slots to the inventory
     for (let y = 0; y < heightOfInventoryInSlots; y++) {
@@ -258,16 +228,16 @@ function makePlayerInventoryImages() {
 
             slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
             slotY = (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
-            
+
             inventoryCanvasContext.fillStyle = slotColor;
             inventoryCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
-            
+
         };
     };
-    inventoryImage.src = newCanvas.toDataURL();
+    inventoryImage.src = inventoryCanvas.toDataURL();
 
     // draw slots on the hotbar?
-    
+
     for (let x = 0; x < widthOfInventoryInSlots; x++) {
 
         slotX = (x * slotSizeInPixels) + ((x + 1) * gapBetweenSlots)
@@ -285,12 +255,12 @@ function makePlayerInventoryImages() {
     images["UI/" + "slot outline"] = slotOutlineImage;
     images["UI/" + "crafting and armor"] = craftingAndArmorImage;
 
-    inventoryImage.onload = function () {currentNumberOfLoadedImages += 1;};
-    craftingTableImage.onload = function () {currentNumberOfLoadedImages += 1;};
-    hotbarImage.onload = function () {currentNumberOfLoadedImages += 1;};
-    slotImage.onload = function () {currentNumberOfLoadedImages += 1;};
-    slotOutlineImage.onload = function () {currentNumberOfLoadedImages += 1;};
-    craftingAndArmorImage.onload = function () {currentNumberOfLoadedImages += 1;};
+    inventoryImage.onload = function () { currentNumberOfLoadedImages += 1; };
+    craftingTableImage.onload = function () { currentNumberOfLoadedImages += 1; };
+    hotbarImage.onload = function () { currentNumberOfLoadedImages += 1; };
+    slotImage.onload = function () { currentNumberOfLoadedImages += 1; };
+    slotOutlineImage.onload = function () { currentNumberOfLoadedImages += 1; };
+    craftingAndArmorImage.onload = function () { currentNumberOfLoadedImages += 1; };
 
 };
 
@@ -299,7 +269,7 @@ function makePlayerInventoryImages() {
 
 
 // wait one second between each check
-function checkForImagesLoading () {
+function checkForImagesLoading() {
     if (currentNumberOfLoadedImages >= totalNumberOfImages - UIElements) {
         nonUIImagesLoaded = true;
     }

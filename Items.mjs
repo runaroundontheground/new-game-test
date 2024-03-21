@@ -58,6 +58,7 @@ export class PlaceableItem extends Item {
         this.name = placeableType || this.name;
         this.stackable = stackable || true;
         this.itemType = "PlaceableItem";
+        this.tooltip = this.name;
 
         this.placedBlock = {
             "type": this.name,
