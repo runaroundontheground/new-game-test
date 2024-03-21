@@ -52,7 +52,6 @@ commandDiv.appendChild(commandButton);
 
 
 
-
 function initializeGame() {
 
     clearInterval(tryToStartGame);
