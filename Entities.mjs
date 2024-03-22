@@ -15,7 +15,7 @@ class Entity {
         this.width = blockSize;
         this.height = this.width;
 
-        this.rect = Rect(0, 0, this.width, this.height);
+        this.rect = new Rect(0, 0, this.width, this.height);
 
 
     };
@@ -32,7 +32,7 @@ export class ItemEntity extends Entity {
 
         this.width = itemEntitySize;
         this.height = itemEntitySize;
-        this.rect = Rect(0, 0, this.width, this.height);
+        this.rect = new Rect(0, 0, this.width, this.height);
 
 
         this.renderData = {

@@ -137,7 +137,6 @@ function generateNearbyAreas(rangeOfGeneration = 2, returnChunkList = false) {
         for (let z = terrainGenRange.z.min; z < terrainGenRange.z.max; z++) {
             if (chunks[[x, z].toString()] === undefined) {
                 generateChunkTerrain([x, z]);
-                consoleLog("generating terrain probably")
             };
         };
     };
@@ -264,8 +263,11 @@ function drawToCanvas(renderData) {
 
         case "image":
             let imageUrl = renderData.imageUrl;
-            width = renderData.width || images[imageUrl].width;
-            height = renderData.height || images[imageUrl].height;
+
+            if ((renderData.width || renderData.height) === undefined) {
+                width = images[imageUrl].width;
+                height = images[imageUrl].height;
+            }
 
             if (images[imageUrl].complete) {
                 // later, add in sub-x and y, for doing stuff with spritesheets
@@ -386,7 +388,7 @@ export function render() {
 
                                 if (xPos - fiveBlocks < player.x && xPos + fiveBlocks > player.x) {
                                     if (yPos - fiveBlocks < player.z && yPos + fiveBlocks > player.z) {
-                                        
+
                                         currentAlpha = block.globalAlpha;
                                     };
                                 };
@@ -511,7 +513,7 @@ export function render() {
         if (mouse.inPlayerInventory && mouse.inASlot) {
             let renderData = {
                 "drawType": "image",
-                "imageUrl": "slot outline",
+                "imageUrl": "UI/slot outline",
                 "position": player.inventory[mouse.hoveredSlotId].outlineRenderPosition
             };
 
@@ -530,7 +532,7 @@ export function render() {
 
             let renderData = {
                 "drawType": "image",
-                "imageUrl": "slot outline",
+                "imageUrl": "UI/slot outline",
                 "position": position
             }
 
@@ -548,7 +550,7 @@ export function render() {
 
             let renderData = {
                 "drawType": "image",
-                "imageUrl": "slot outline",
+                "imageUrl": "UI/slot outline",
                 "position": position
             }
 
@@ -810,7 +812,7 @@ export function render() {
 
 
 
-    
+
 
     if (mouse.heldSlot.contents != "empty") {
         let renderData = {

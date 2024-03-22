@@ -14,8 +14,8 @@ showLoadingProgress("loading GlobalVariables.mjs");
 
 
 
-export const canvasWidth = 750; // was 1000 or 500
-export const canvasHeight = 500; // was 500 or 250
+export const canvasWidth = 500; // was 1000 or 500
+export const canvasHeight = 250; // was 500 or 250
 export const blockSize = 30; // pixels
 export const chunkSize = [10, 30]; // width or length, then height (both in blocks)
 export const totalChunkSize = chunkSize[0] * blockSize;
@@ -24,10 +24,10 @@ export const itemEntitySize = blockSize / 2;
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
+canvas.style.marginLeft = ((window.screen.width - canvas.width) / 2.1) + "px";
 export let ctx = canvas.getContext("2d");
 ctx.font = "20px Arial";
 ctx.imageSmoothingEnabled = false;
-
 
 
 export var images = {};
@@ -44,23 +44,22 @@ export let keysPressed = {};
 
 export let deltaTime = 1;
 
-export function Rect(x, y, width, height) {
-    let rect = {
-        "x": x,
-        "y": y,
-        "width": width,
-        "height": height,
-        "collide": {
-            "rect": function (otherRect) {
-                let myRect = rect;
+export class Rect {
+    constructor(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
 
+        this.collide = {
+            "rect": (otherRect) => {
                 let meetsX = false;
                 let meetsY = false;
 
-                if ((otherRect.x <= myRect.x + myRect.width) && (otherRect.x + otherRect.width >= myRect.x)) {
+                if ((otherRect.x <= this.x + this.width) && (otherRect.x + otherRect.width >= this.x)) {
                     meetsX = true;
                 };
-                if ((otherRect.y <= myRect.y + myRect.height) && (otherRect.y + otherRect.height >= myRect.y)) {
+                if ((otherRect.y <= this.y + this.height) && (otherRect.y + otherRect.height >= this.y)) {
                     meetsY = true;
                 }
 
@@ -69,18 +68,14 @@ export function Rect(x, y, width, height) {
                 };
                 return false;
             },
-
-            "point": function (x, y) {
-                let myRect = rect;
-
+            "point": (x, y) => {
                 let meetsX = false;
                 let meetsY = false;
 
-
-                if ((x >= myRect.x) && (x <= myRect.x + myRect.width)) {
+                if ((x >= this.x) && (x <= this.x + this.width)) {
                     meetsX = true;
                 };
-                if ((y >= myRect.y) && (y <= myRect.y + myRect.height)) {
+                if ((y >= this.y) && (y <= this.y + this.height)) {
                     meetsY = true;
                 }
 
@@ -89,10 +84,8 @@ export function Rect(x, y, width, height) {
                 };
                 return false;
             }
-        }
+        };
     }
-
-    return rect
 }
 
 export const dictOfBlockBreakingStuff = {
@@ -149,7 +142,7 @@ class Camera {
     constructor() {
         this.smoothness = 6;
         this.centerTheCamera = [canvasWidth / 2, canvasHeight / 2];
-        this.x = 0//-this.centerTheCamera[0];
+        this.x = -this.centerTheCamera[0];
         this.y = 0;
         this.z = -this.centerTheCamera[1];
         this.currentChunk = [0, 0];

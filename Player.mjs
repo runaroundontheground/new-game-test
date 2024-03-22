@@ -55,7 +55,7 @@ class Player {
         this.chunkCoord = [0, 0]
         this.blockCoord = [0, 0, 0]
 
-        this.rect = Rect(0, 0, this.width, this.width);
+        this.rect = new Rect(0, 0, this.width, this.width);
 
         // how i'm organizing the collision
         // default is the same height as player
@@ -136,13 +136,13 @@ class Player {
                 "renderPosition": [0, 0],
                 "outlineRenderPosition": [0, 0],
                 "itemCountRenderPosition": [0, 0],
-                "rect": Rect(0, 0, 0, 0), // used for mouse collision
+                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
             },
             3: {
                 "renderPosition": [0, 0],
                 "outlineRenderPosition": [0, 0],
                 "itemCountRenderPosition": [0, 0],
-                "rect": Rect(0, 0, 0, 0), // used for mouse collision
+                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
             }
         }
 
@@ -153,13 +153,13 @@ class Player {
                 "renderPosition": [0, 0],
                 "outlineRenderPosition": [0, 0],
                 "itemCountRenderPosition": [0, 0],
-                "rect": Rect(0, 0, 0, 0), // used for mouse collision
+                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
             },
             3: {
                 "renderPosition": [0, 0],
                 "outlineRenderPosition": [0, 0],
                 "itemCountRenderPosition": [0, 0],
-                "rect": Rect(0, 0, 0, 0), // used for mouse collision
+                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
             },
             "slotId": 0
         }
@@ -168,7 +168,7 @@ class Player {
             "contents": "empty",
             "renderPosition": [0, 0],
             "outlineRenderPosition": [0, 0],
-            "rect": Rect(0, 0, 0, 0),
+            "rect": new Rect(0, 0, 0, 0),
             "slotId": 0
         }
 
@@ -203,7 +203,6 @@ class Player {
         ]
 
 
-        // actually add content spots to the armor/crafting
 
 
 
@@ -220,7 +219,7 @@ class Player {
 
 
         resultSlot.renderPosition = [renderX, renderY]
-        resultSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+        resultSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
         resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
         resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
 
@@ -239,7 +238,7 @@ class Player {
         rectY = renderY - itemIconShift
 
         resultSlot.renderPosition = [renderX, renderY]
-        resultSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+        resultSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
         resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
         resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
 
@@ -270,7 +269,7 @@ class Player {
                 let newCraftingSlot = craftingSlot
 
                 newCraftingSlot.renderPosition = [renderX, renderY]
-                newCraftingSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                newCraftingSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
                 newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
                 newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
                 newCraftingSlot.slotId = slotId
@@ -301,7 +300,7 @@ class Player {
 
 
                 newCraftingSlot.renderPosition = [renderX, renderY]
-                newCraftingSlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                newCraftingSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
                 newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
                 newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
                 newCraftingSlot.slotId = slotId
@@ -324,7 +323,7 @@ class Player {
             "renderPosition": [0, 0],
             "outlineRenderPosition": [0, 0],
             "itemCountRenderPosition": [0, 0],
-            "rect": Rect(0, 0, 0, 0), // used for mouse collision
+            "rect": new Rect(0, 0, 0, 0), // used for mouse collision
             "slotId": 0
         }
 
@@ -333,6 +332,7 @@ class Player {
 
         slotId = 0;
 
+        // create inventory slots
         for (let y = 0; y < heightOfInventoryInSlots; y++) {
             for (let x = 0; x < widthOfInventoryInSlots; x++) {
 
@@ -351,7 +351,7 @@ class Player {
                 updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
                 updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots,
                 rectY - gapBetweenSlots]
-                updatedInventorySlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
+                updatedInventorySlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
                 updatedInventorySlot.slotId = slotId
                 slotId += 1
 
@@ -381,7 +381,7 @@ class Player {
             updatedInventorySlot.renderPosition = [renderX, renderY]
             updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
             updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-            updatedInventorySlot.rect = Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels);
+            updatedInventorySlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels);
             updatedInventorySlot.slotId = slotId;
             slotId += 1
 
@@ -389,16 +389,16 @@ class Player {
             this.hotbar.push(updatedInventorySlot)
         };
 
-        let inventoryRect = Rect(inventoryRenderX, inventoryRenderY,
+        let inventoryRect = new Rect(inventoryRenderX, inventoryRenderY,
             inventoryWidthInPixels, inventoryHeightInPixels)
 
-        let hotbarRect = Rect(hotbarRenderX, hotbarRenderY,
+        let hotbarRect = new Rect(hotbarRenderX, hotbarRenderY,
             inventoryWidthInPixels, hotbarSizeInPixels[1])
 
-        let craftingAndArmorRect = Rect(craftingAndArmorRenderX, craftingAndArmorRenderY,
+        let craftingAndArmorRect = new Rect(craftingAndArmorRenderX, craftingAndArmorRenderY,
             craftingAndArmorWidthInPixels, craftingAndArmorHeightInPixels)
 
-        let craftingTableRect = Rect(
+        let craftingTableRect = new Rect(
             craftingTableRenderX, craftingTableRenderY,
             craftingTableSizeInPixels[0], craftingTableSizeInPixels[1]
         )
@@ -707,7 +707,7 @@ class Player {
                 this.doCollisionToRight()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.z += Math.abs(this.zv/2);
+                this.z += Math.abs(this.zv / 2);
                 this.z += 1;
                 this.zv = 0
             };
@@ -726,7 +726,7 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x -= Math.abs(this.xv/2);
+                this.x -= Math.abs(this.xv / 2);
                 this.x -= 1;
                 this.xv = 0
             };
@@ -745,7 +745,7 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
-                this.x += Math.abs(this.xv/2);
+                this.x += Math.abs(this.xv / 2);
                 this.x += 1;
                 this.xv = 0;
             };
@@ -764,7 +764,7 @@ class Player {
                 this.doCollisionToUp()
                 this.booleans["blockStepUsed"] = true;
             } else {
-                this.z -= Math.abs(this.zv/2);
+                this.z -= Math.abs(this.zv / 2);
                 this.z -= 1;
                 this.zv = 0;
             };
@@ -1085,6 +1085,7 @@ class Player {
                 let slot = container[i];
                 if (slot.rect.collide.point(mouse.x, mouse.y)) {
                     mouse.inASlot = true;
+                    consoleLog("mouse should be in a slot rn")
                     // only do quick transfer things if the other container is specified
                     if (otherContainer !== undefined) {
                         // do a quick transfer of max items

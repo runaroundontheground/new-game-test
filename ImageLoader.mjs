@@ -52,8 +52,6 @@ function makePlayerInventoryImages() {
     let widthOfInventoryInSlots = 9;
     let heightOfInventoryInSlots = 3;
 
-    let newCanvas = document.createElement("canvas");
-    let context = newCanvas.getContext("2d");
 
     let inventoryCanvas = document.createElement("canvas");
     let inventoryCanvasContext = inventoryCanvas.getContext("2d");
@@ -96,8 +94,6 @@ function makePlayerInventoryImages() {
 
     let craftingAndArmorSizeInPixels = [Math.round(craftingAndArmorWidthInPixels), Math.round(craftingAndArmorHeightInPixels)]
     // create the crafting and armor image, only the background first though
-    newCanvas.width = craftingAndArmorSizeInPixels[0];
-    newCanvas.height = craftingAndArmorSizeInPixels[1];
 
 
     let craftingAndArmorImage = new Image();
@@ -137,20 +133,23 @@ function makePlayerInventoryImages() {
 
 
     // make the slot image
-    newCanvas.width = slotSizeInPixels;
-    newCanvas.height = slotSizeInPixels;
-    context.fillStyle = slotColor
-    context.fillRect(0, 0, newCanvas.width, newCanvas.height);
-    slotImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    let slotCanvas = document.createElement("canvas");
+    let slotCanvasContext = slotCanvas.getContext("2d");
+    slotCanvas.width = slotSizeInPixels;
+    slotCanvas.height = slotSizeInPixels;
+    slotCanvasContext.fillStyle = slotColor;
+    slotCanvasContext.fillRect(0, 0, slotCanvas.width, slotCanvas.height);
+    slotImage.src = slotCanvas.toDataURL();
 
     // make the slot outline image
-    newCanvas.width = slotSizeInPixels + gapBetweenSlots * 2;
-    newCanvas.height = slotSizeInPixels + gapBetweenSlots * 2;
-    context.strokeStyle = slotOutlineColor;
-    context.strokeRect(0, 0, newCanvas.width, newCanvas.height);
-    slotOutlineImage.src = newCanvas.toDataURL();
-    context.clearRect(0, 0, newCanvas.width, newCanvas.height);
+    let slotOutlineCanvas = document.createElement("canvas");
+    let slotOutlineCanvasContext = slotOutlineCanvas.getContext("2d");
+    slotOutlineCanvas.width = slotSizeInPixels + gapBetweenSlots * 2;
+    slotOutlineCanvas.height = slotSizeInPixels + gapBetweenSlots * 2;
+    slotOutlineCanvasContext.strokeStyle = slotOutlineColor;
+    slotOutlineCanvasContext.lineWidth = 5;
+    slotOutlineCanvasContext.strokeRect(0, 0, slotOutlineCanvas.width, slotOutlineCanvas.height);
+    slotOutlineImage.src = slotOutlineCanvas.toDataURL();
 
     // make hotbar image
     let hotbarSizeInPixels = [Math.round(inventorySizeInPixels[0]), Math.round(slotSizeInPixels + (gapBetweenSlots * 2))]
@@ -183,7 +182,7 @@ function makePlayerInventoryImages() {
             slotY = (slotSizeInPixels * 0.75) + (y * slotSizeInPixels + ((y + 1) * gapBetweenSlots))
 
 
-            context.fillStyle = slotColor;
+            craftingAndArmorCanvasContext.fillStyle = slotColor;
             craftingAndArmorCanvasContext.fillRect(slotX, slotY, slotSizeInPixels, slotSizeInPixels);
 
         };

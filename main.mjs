@@ -22,16 +22,8 @@ let deltaTime = 1;
 
 
 
-let commandInput = document.createElement("input");
-let commandButton = document.createElement("button");
-commandButton.id = "command button";
-commandButton.innerHTML = "run";
-commandInput.id = "command input";
-commandButton.onclick = function () {
-    let value = commandInput.value;
-    commandInput.value = "";
-    eval(String(value));
-}
+
+let commandInput = document.getElementById("command input");
 
 commandInput.onkeydown = function (event) {
     if (event.key == "Enter") {
@@ -41,15 +33,6 @@ commandInput.onkeydown = function (event) {
         commandInput.blur()
     }
 }
-
-let commandDiv = document.getElementById("command stuff");
-commandDiv.appendChild(commandInput);
-commandDiv.appendChild(commandButton);
-
-
-
-
-
 
 
 function initializeGame() {
