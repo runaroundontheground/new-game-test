@@ -731,10 +731,15 @@ export function render() {
             renderingData.push(renderData);
         }
 
-        if (i == currentHotbarSlot) {
+        if (i === currentHotbarSlot) {
 
-            let renderData = player.inventoryRenderingData.selectedSlotRenderData;
-            renderData.position = slot.outlineRenderPosition;
+            let renderData = {
+                "drawType": "image",
+                "imageUrl": player.inventoryRenderingData.selectedSlotRenderData.imageUrl,
+                "position": slot.outlineRenderPosition,
+            };
+
+            
 
             renderingData.push(renderData);
 

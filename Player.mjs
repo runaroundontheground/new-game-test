@@ -132,36 +132,10 @@ class Player {
         let resultSlot = {
             "contents": "empty",
             "count": 0,
-            2: {
-                "renderPosition": [0, 0],
-                "outlineRenderPosition": [0, 0],
-                "itemCountRenderPosition": [0, 0],
-                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
-            },
-            3: {
-                "renderPosition": [0, 0],
-                "outlineRenderPosition": [0, 0],
-                "itemCountRenderPosition": [0, 0],
-                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
-            }
-        }
-
-        let craftingSlot = {
-            "contents": "empty",
-            "count": 0,
-            2: {
-                "renderPosition": [0, 0],
-                "outlineRenderPosition": [0, 0],
-                "itemCountRenderPosition": [0, 0],
-                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
-            },
-            3: {
-                "renderPosition": [0, 0],
-                "outlineRenderPosition": [0, 0],
-                "itemCountRenderPosition": [0, 0],
-                "rect": new Rect(0, 0, 0, 0), // used for mouse collision
-            },
-            "slotId": 0
+            "renderPosition": [0, 0],
+            "outlineRenderPosition": [0, 0],
+            "itemCountRenderPosition": [0, 0],
+            "rect": new Rect(0, 0, 0, 0), // used for mouse collision
         }
 
         let armorSlot = {
@@ -177,18 +151,18 @@ class Player {
         this.crafting = {
             2: {
                 "slots": [
-                    craftingSlot, craftingSlot,
-                    craftingSlot, craftingSlot
+                    0, 0,
+                    0, 0
                 ],
                 "resultSlot": 0
             },
             3: {
                 "slots": [
-                    craftingSlot, craftingSlot,
-                    craftingSlot, craftingSlot,
-                    craftingSlot, craftingSlot,
-                    craftingSlot, craftingSlot,
-                    craftingSlot
+                    0, 0,
+                    0, 0,
+                    0, 0,
+                    0, 0,
+                    0
                 ],
                 "resultSlot": 0
             },
@@ -196,7 +170,7 @@ class Player {
         }
         this.totalCraftingContents = {}
         this.armor = [ // head, chest, legs, feet
-            armorSlot,
+            armorSlot, // FIX LATER!!
             armorSlot,
             armorSlot,
             armorSlot
@@ -216,14 +190,17 @@ class Player {
         let rectX = renderX - itemIconShift
         let rectY = renderY - itemIconShift;
 
+        let newResultSlot = {
+            "contents": "empty",
+            "count": 0,
+            "renderPosition": [renderX, renderY],
+            "rect": new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels),
+            "outlineRenderPosition": [rectX - gapBetweenSlots, rectY - gapBetweenSlots],
+            "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
+        }
 
 
-        resultSlot.renderPosition = [renderX, renderY]
-        resultSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-        resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-        resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
-
-        this.crafting[2].resultSlot = resultSlot;
+        this.crafting[2].resultSlot = newResultSlot;
 
 
 
@@ -237,12 +214,16 @@ class Player {
         rectX = renderX - itemIconShift
         rectY = renderY - itemIconShift
 
-        resultSlot.renderPosition = [renderX, renderY]
-        resultSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-        resultSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-        resultSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
+        let newResultSlot2 = {
+            "contents": "empty",
+            "count": 0,
+            "renderPosition": [renderX, renderY],
+            "rect": new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels),
+            "outlineRenderPosition": [rectX - gapBetweenSlots, rectY - gapBetweenSlots],
+            "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
+        }
 
-        this.crafting[3].resultSlot = resultSlot
+        this.crafting[3].resultSlot = newResultSlot2;
 
 
 
@@ -266,15 +247,17 @@ class Player {
                 rectX = renderX - itemIconShift
                 rectY = renderY - itemIconShift
 
-                let newCraftingSlot = craftingSlot
+                let newCraftingSlot = {
+                    "contents": "empty",
+                    "count": 0,
+                    "renderPosition": [renderX, renderY],
+                    "outlineRenderPosition": [rectX - gapBetweenSlots, rectY - gapBetweenSlots],
+                    "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1],
+                    "rect": new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels),
+                    "slotId": slotId
+                }
 
-                newCraftingSlot.renderPosition = [renderX, renderY]
-                newCraftingSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-                newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
-                newCraftingSlot.slotId = slotId
-
-                this.crafting[2].slots[slotId] = newCraftingSlot
+                this.crafting[2].slots[slotId] = newCraftingSlot;
 
                 slotId += 1
             };
@@ -296,14 +279,15 @@ class Player {
 
 
 
-                let newCraftingSlot = craftingSlot
-
-
-                newCraftingSlot.renderPosition = [renderX, renderY]
-                newCraftingSlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                newCraftingSlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-                newCraftingSlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
-                newCraftingSlot.slotId = slotId
+                let newCraftingSlot = {
+                    "contents": "empty",
+                    "count": 0,
+                    "renderPosition": [renderX, renderY],
+                    "outlineRenderPosition": [rectX - gapBetweenSlots, rectY - gapBetweenSlots],
+                    "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1],
+                    "rect": new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels),
+                    "slotId": slotId
+                };
 
                 this.crafting[3].slots[slotId] = newCraftingSlot;
 
@@ -317,19 +301,8 @@ class Player {
         let hotbarRenderX = inventoryRenderX
         let hotbarRenderY = (canvasHeight - hotbarSizeInPixels[1]) - (hotbarSizeInPixels[1] / 2)
 
-        let inventorySlot = {
-            "contents": "empty", // this is where itemData goes
-            "count": 0, // how many of x item is in this slot
-            "renderPosition": [0, 0],
-            "outlineRenderPosition": [0, 0],
-            "itemCountRenderPosition": [0, 0],
-            "rect": new Rect(0, 0, 0, 0), // used for mouse collision
-            "slotId": 0
-        }
-
         this.inventory = [];
         this.hotbar = [];
-
         slotId = 0;
 
         // create inventory slots
@@ -345,14 +318,16 @@ class Player {
                 rectX = renderX - itemIconShift
                 rectY = renderY - itemIconShift
 
-                let updatedInventorySlot = inventorySlot
+                let updatedInventorySlot = {
+                    "count": 0,
+                    "contents": "empty",
+                    "renderPosition": [renderX, renderY],
+                    "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1],
+                    "outlineRenderPosition": [rectX - gapBetweenSlots, rectY - gapBetweenSlots],
+                    "rect": new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels),
+                    "slotId": slotId
+                }
 
-                updatedInventorySlot.renderPosition = [renderX, renderY]
-                updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
-                updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots,
-                rectY - gapBetweenSlots]
-                updatedInventorySlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels)
-                updatedInventorySlot.slotId = slotId
                 slotId += 1
 
 
@@ -376,18 +351,25 @@ class Player {
 
             rectX = renderX - itemIconShift
             rectY = renderY - itemIconShift
-            let updatedInventorySlot = inventorySlot
 
-            updatedInventorySlot.renderPosition = [renderX, renderY]
-            updatedInventorySlot.itemCountRenderPosition = [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
-            updatedInventorySlot.outlineRenderPosition = [rectX - gapBetweenSlots, rectY - gapBetweenSlots]
-            updatedInventorySlot.rect = new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels);
-            updatedInventorySlot.slotId = slotId;
+            let updatedInventorySlot = {
+                "count": 0,
+                "contents": "empty",
+                "renderPosition": [renderX, renderY],
+                "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1],
+                "outlineRenderPosition": [rectX - gapBetweenSlots, rectY - gapBetweenSlots],
+                "rect": new Rect(rectX, rectY, slotSizeInPixels, slotSizeInPixels),
+                "slotId": slotId
+            }
+
             slotId += 1
 
 
             this.hotbar.push(updatedInventorySlot)
         };
+
+        consoleLog("line break thingy")
+        consoleLog(this.hotbar[3].outlineRenderPosition + ", " + this.hotbar[4].outlineRenderPosition)
 
         let inventoryRect = new Rect(inventoryRenderX, inventoryRenderY,
             inventoryWidthInPixels, inventoryHeightInPixels)
@@ -959,14 +941,12 @@ class Player {
 
         if (keysPressed.e) { this.otherInventoryData.open = !this.otherInventoryData.open; };
 
-
         this.inventory.forEach(function (slot) {
             if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
         })
         this.hotbar.forEach(function (slot) {
             if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
         })
-
 
         this.adjustMouseSelectedBlockHeight = function () {
             // change the selected height of the mouse
@@ -1004,7 +984,7 @@ class Player {
 
 
 
-        this.dropItems = function () {
+        const dropItems = () => {
             // drop items from the hotbar
             if (keysPressed.q) {
                 if (!this.otherInventoryData.open) {
@@ -1037,8 +1017,7 @@ class Player {
                 };
             };
         };
-        this.dropItems();
-
+        dropItems();
 
         this.hotbarHeldItemStuff = function () {
             if (!this.otherInventoryData.open) {
@@ -1225,7 +1204,7 @@ class Player {
         };
 
 
-        this.recipeChecksAndStuff = function () {
+        this.recipeChecksAndStuff = () => {
             // dict with total amount of each item in crafting slots
             this.totalCraftingContents = {};
             this.isCrafting = false;
@@ -1234,7 +1213,7 @@ class Player {
             // this for loop doesn't include the result slot
             for (const slot of this.crafting[this.crafting.gridSize].slots) {
                 if (slot.contents !== "empty") {
-                    if (this.totalCraftingContents[slot.contents].name === undefined) {
+                    if (this.totalCraftingContents[slot.contents.name] === undefined) {
                         this.totalCraftingContents[slot.contents.name] = 0;
                     }
                     this.totalCraftingContents[slot["contents"].name] += 1;
@@ -1261,7 +1240,7 @@ class Player {
             let foundARecipe = false
             let recipeThatWasFound = undefined;
 
-            this.exactRecipeDetection = function (recipe) {
+            this.exactRecipeDetection = (recipe) => {
                 // doesn't exist yet
 
                 if (this.totalCraftingContents == recipe.requiredItems) {
@@ -1272,9 +1251,8 @@ class Player {
                 return false, undefined
             };
 
-            this.nearExactRecipeLogic = function (recipe) {
-                checkForSpecificItemInSlot.bind(this);
-                function checkForSpecificItemInSlot(instructions) {
+            this.nearExactRecipeLogic = (recipe) => {
+                const checkForSpecificItemInSlot = (instructions) => {
                     /*
                     startingItemName, directions, operators, and items are contained in instructions
  
@@ -1286,8 +1264,7 @@ class Player {
                     
                     compares the values of does this slot have this specific item
                     */
-                    checkADirection.bind(this);
-                    function checkADirection(direction, startingSlotId) {
+                    const checkADirection = (direction, startingSlotId) => {
                         let gridSize = this.crafting["gridSize"]
                         let testSlotId = 0
                         switch (direction) {
@@ -1426,7 +1403,7 @@ class Player {
                 return [false, undefined];
             };
 
-            this.shapelessRecipeLogic = function (recipe) {
+            this.shapelessRecipeLogic = (recipe) => {
 
                 if (this.totalCraftingContents == recipe.requiredItems) { return [true, recipe]; };
                 return [false, undefined];
