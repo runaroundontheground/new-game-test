@@ -102,12 +102,22 @@ export function generateChunkTerrain(chunkCoords) {
           };
         };
 
-        if (y === surfaceYLevel) {
+        if (y == surfaceYLevel) {
 
           if (y < 13) { blockData.type = "grass"; };
           if (y >= 13) { blockData.type = "stone"; };
           if (y >= 30) { blockData.type = "snowy stone"; };
-          if (y <= waterHeight + 1) { blockData.type = "sand"; };
+          if (y <= waterHeight + 1) {
+            blockData.type = "sand";
+
+            if (y < waterHeight) {
+              let num = random.integer(0, 2);
+
+              if (num == 0) blockData.type = "sand";
+              if (num == 1) blockData.type = "clay";
+              if (num == 2) blockData.type = "gravel";
+            };
+          };
 
         }
 
@@ -118,20 +128,6 @@ export function generateChunkTerrain(chunkCoords) {
           if (y >= 13) {
             blockData.type = "stone";
           }
-          if (y < waterHeight) {
-            switch (random.integer(0, 3)) {
-              case 0:
-                blockData.type = "sand";
-                break;
-              case 1:
-                blockData.type = "clay";
-                break;
-              case 2:
-                blockData.type = "gravel";
-                break;
-            }
-
-          };
 
         }
 
@@ -253,7 +249,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
         let block = chunks[chunkCoord.toString()].data[blockCoord];
 
         if (block.type != "air") {
-          
+
 
           function checkForSolidBlock(block) {
             if (block.type != "air" && block.type != "water") {
@@ -296,95 +292,48 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
           let surrounded = (toLeft && toUp && toDown && toRight);
 
-          block.render = false;
-          block.globalAlpha = 1;
+          if (block.type != "water") {
 
-
-          if (above) {
-            if (!surrounded) { block.render = true; };
-
-            if (below) {
+            if (above) {
 
               if (blockBelow.globalAlpha < 1) {
-                block.globalAlpha = 0.5
-                modifyOtherBlock(x, y - 1, z, false)
-
-              } else {
-
-              };
-            } else { block.globalAlpha = 0.5; };
-          };
-
-          if (!above) {
-            block.render = true;
-            if (below) {
-
-              if (blockBelow.globalAlpha < 1) {
-                block.globalAlpha = 0.5;
-                modifyOtherBlock(x, y - 1, z, false);
-              } else {
-
+                // current block should have alpha, make block underneath barely visible
+                block.globalAlpha = 0.05;
+                block.render = true;
+                modifyOtherBlock(x, y - 1, z, true, 0.05);
+                modifyOtherBlock(x, y + 1, z, true, 0.05);
               };
 
-            } else { block.globalAlpha = 0.5; };
-          };
-
-
-          if (below) {
-            modifyOtherBlock(x, y - 1, z, true)
-
-            let blockBelow2 = findBlock(x, y - 2, z, true, undefined, chunkCoord)
-            let below2 = checkForSolidBlock(blockBelow2)
-
-            if (!below2) {
-              modifyOtherBlock(x, y - 1, z, true, 0.5)
+              if (!surrounded) {
+                block.render = true;
+              };
             } else {
-              if (blockBelow2.globalAlpha < 1) {
-                modifyOtherBlock(x, y - 2, z, false);
-                modifyOtherBlock(x, y - 1, z, undefined, 0.5);
+              // no block is above, should probably be rendered
 
+              block.render = true;
+
+              if (blockBelow.globalAlpha < 1) {
+                // current block should have alpha, make block underneath barely visible
+                block.globalAlpha = 0.5;
+                modifyOtherBlock(x, y - 1, z, true, 0.05);
+                modifyOtherBlock(x, y + 1, z, true, 0.05);
               };
             };
-          };
-          /*if (above) {
 
-            if (blockBelow.globalAlpha < 1) {
-              // current block should have alpha, make block underneath barely visible
-              block.globalAlpha = 0.05;
+            if (below) {
+              if (blockBelow.globalAlpha < 1) {
+                block.globalAlpha = 0.05;
+                block.render = true;
+                modifyOtherBlock(x, y - 1, z, true, 0.05);
+              };
+              if (block.render) { modifyOtherBlock(x, y - 1, z, false); };
+
+            } else {
+              // no block is under this one
               block.render = true;
-              modifyOtherBlock(x, y - 1, z, true, 0.05);
-              modifyOtherBlock(x, y + 1, z, true, 0.05)
-            };
-
-            if (!surrounded) {
-              block.render = true;
-            };
-          } else {
-            // no block is above, should probably be rendered
-
-            block.render = true;
-
-            if (blockBelow.globalAlpha < 1) {
-              // current block should have alpha, make block underneath barely visible
               block.globalAlpha = 0.5;
-              modifyOtherBlock(x, y - 1, z, true, 0.05);
-              modifyOtherBlock(x, y + 1, z, true, 0.05)
             };
           };
-
-          if (below) {
-            if (blockBelow.globalAlpha < 1) {
-              block.globalAlpha = 0.05;
-              block.render = true;
-              modifyOtherBlock(x, y - 1, z, true, 0.05);
-            };
-            if (block.render) { modifyOtherBlock(x, y - 1, z, false); };
-
-          } else {
-            // no block is under this one
-            block.render = true;
-            block.globalAlpha = 0.5;
-          };*/
 
 
 
@@ -393,7 +342,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
 
             if (hopefullyAir.type == "air") {
-              block.globalAlpha = 0.3;
+              block.globalAlpha = 0.4;
               block.render = true;
 
               let didntFindWater = true;
@@ -405,7 +354,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
                 let hopefullyWater = findBlock(x, y - subtractY, z, true, false, chunkCoord);
 
                 if (hopefullyWater.type == "water") {
-                  block.globalAlpha += 0.05;
+                  block.globalAlpha += 0.1;
                 } else {
                   didntFindWater = false;
                   break;

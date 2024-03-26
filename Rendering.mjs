@@ -77,12 +77,12 @@ function addABlock(blockType, color, borderColor, alpha = 1) {
 
 };
 
-addABlock("grass", "darkgreen", "darkbrown")
-addABlock("dirt", "rgb(176, 132, 74)", "darkbrown")
-addABlock("stone", "rgb(125, 125, 125)")
+addABlock("grass", "darkgreen", "rgb(146 102 28)")
+addABlock("dirt", "rgb(176, 132, 74)", "rgb(146 102 28)")
+addABlock("stone", "rgb(125, 125, 125)", "rgb(105, 105, 105)")
 addABlock("cobblestone", "rgb(150, 150, 150)")
-addABlock("snowy dirt", "rgb(220, 220, 220)", "darkbrown")
-addABlock("snowy stone", "rgb(220, 220, 220)", "rgb(125, 125, 125)")
+addABlock("snowy dirt", "rgb(220, 220, 220)", "rgb(146 102 28)")
+addABlock("snowy stone", "rgb(220, 220, 220)", "rgb(105, 105, 105)")
 addABlock("sand", "rgb(232, 228, 118)")
 addABlock("clay", "brown")
 addABlock("gravel", "rgb(150, 150, 150)")
@@ -304,7 +304,7 @@ function drawToCanvas(renderData) {
 
 export function render() {
 
-    ctx.fillStyle = "purple";
+    ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
