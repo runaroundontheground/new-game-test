@@ -209,7 +209,7 @@ function makePlayerInventoryImages() {
     let arrowHeight = images["inventory arrow"].naturalHeight / scale;
 
 
-    craftingAndArmorCanvasContext.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
+    // craftingAndArmorCanvasContext.drawImage(images["inventory arrow"], arrowX, arrowY, arrowWidth, arrowHeight);
 
     craftingAndArmorImage.src = craftingAndArmorCanvas.toDataURL();
 

@@ -330,7 +330,6 @@ class Player {
 
                 slotId += 1
 
-
                 this.inventory.push(updatedInventorySlot)
             };
         };
@@ -367,9 +366,6 @@ class Player {
 
             this.hotbar.push(updatedInventorySlot)
         };
-
-        consoleLog("line break thingy")
-        consoleLog(this.hotbar[3].outlineRenderPosition + ", " + this.hotbar[4].outlineRenderPosition)
 
         let inventoryRect = new Rect(inventoryRenderX, inventoryRenderY,
             inventoryWidthInPixels, inventoryHeightInPixels)
@@ -1059,12 +1055,13 @@ class Player {
         // need to rework crafting to be a list, or it won't work with the moveItem function
         // probably separate the crafting slot from the rest of the other slots, do special logic
 
-        this.mouseInteractionWithContainer = function (container, otherContainer = undefined, isResultSlot = false) {
+        const mouseInteractionWithContainer = (container, otherContainer = undefined, isResultSlot = false) => {
             for (let i = 0; i < container.length; i++) {
                 let slot = container[i];
                 if (slot.rect.collide.point(mouse.x, mouse.y)) {
                     mouse.inASlot = true;
-                    consoleLog("mouse should be in a slot rn")
+                    mouse.hoveredSlotId = i;
+                   
                     // only do quick transfer things if the other container is specified
                     if (otherContainer !== undefined) {
                         // do a quick transfer of max items
@@ -1146,20 +1143,20 @@ class Player {
                 if (this.storageUIOpen) {
                     otherContainer = this.currentStorageBlock;
                 }
-                this.mouseInteractionWithContainer(this.inventory, otherContainer);
+                mouseInteractionWithContainer(this.inventory, otherContainer);
             }
             if (mouse.inPlayerHotbar) {
                 let otherContainer = undefined;
                 if (this.storageUIOpen) {
                     otherContainer = this.currentStorageBlock;
                 }
-                this.mouseInteractionWithContainer(this.hotbar, otherContainer);
+                mouseInteractionWithContainer(this.hotbar, otherContainer);
             }
             if (mouse.inPlayerCraftingAndArmor) {
                 let gridSize = this.crafting.gridSize;
-                this.mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
-                this.mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
-                this.mouseInteractionWithContainer(this.armor, this.inventory);
+                mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
+                mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
+                mouseInteractionWithContainer(this.armor, this.inventory);
             }
             // checks for this haven't been implemented yet
             if (mouse.inStorageUI) {

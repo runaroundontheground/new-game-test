@@ -516,7 +516,7 @@ export function render() {
                 "imageUrl": "UI/slot outline",
                 "position": player.inventory[mouse.hoveredSlotId].outlineRenderPosition
             };
-
+            
             renderingData.push(renderData)
         };
 
@@ -528,6 +528,7 @@ export function render() {
                 position = player.crafting[player.crafting.gridSize].slots[mouse.hoveredSlotId].outlineRenderPosition;
             } else {
                 position = player.crafting[player.crafting.gridSize].resultSlot.outlineRenderPosition;
+                consoleLog("test")
             };
 
             let renderData = {
@@ -731,22 +732,23 @@ export function render() {
             renderingData.push(renderData);
         }
 
+        let outlineRenderData = {
+            "drawType": "image",
+            "imageUrl": player.inventoryRenderingData.selectedSlotRenderData.imageUrl,
+            "position": slot.outlineRenderPosition
+        };
+
+        if (player.otherInventoryData.open && mouse.inPlayerHotbar && mouse.inASlot) {
+            if (i == mouse.hoveredSlotId)
+            renderingData.push(outlineRenderData);
+        }
+
         if (i === currentHotbarSlot) {
+            renderingData.push(outlineRenderData);
 
-            let renderData = {
-                "drawType": "image",
-                "imageUrl": player.inventoryRenderingData.selectedSlotRenderData.imageUrl,
-                "position": slot.outlineRenderPosition,
-            };
+            if (mouse.inPlayerHotbar && mouse.inASlot && player.otherInventoryData.open) {
 
-            
-
-            renderingData.push(renderData);
-
-            if (mouse.inPlayerHotbar && mouse.inASlot) {
-
-                if (item != "empty" && player.otherInventoryData.open) {
-
+                if (item != "empty") {
 
                     let renderData = player.inventoryRenderingData.selectedSlotRenderData;
                     renderData.position = player.hotbar[mouse.hoveredSlotId].outlineRenderPosition;
@@ -765,7 +767,7 @@ export function render() {
                             renderingData.push(renderData);
                         };
                     };
-                };
+                }
 
 
             };
