@@ -89,19 +89,23 @@ export class Rect {
 }
 
 export const dictOfBlockBreakingStuff = {
+    // shovel
     "grass": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "dirt": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "snowy dirt": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "clay": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "gravel": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
     "sand": { "hardness": 1, "effectiveTool": "shovel", "dropsWithNoTool": true },
+    // pickaxe
     "stone": { "hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": false },
     "snowy stone": { "hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": false },
     "cobblestone": { "hardness": 2, "effectiveTool": "pickaxe", "dropsWithNoTool": false },
+    // axe
     "log": { "hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": true },
     "planks": { "hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": true },
     "leaves": { "hardness": 0, "effectiveTool": "axe", "dropsWithNoTool": false },
     "crafting table": { "hardness": 1, "effectiveTool": "axe", "dropsWithNoTool": true },
+    // unbreakable
     "bedrock": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false },
     "air": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false },
     "water": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false }

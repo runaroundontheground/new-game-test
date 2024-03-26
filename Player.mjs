@@ -129,15 +129,6 @@ class Player {
         let fontShift = ctx.measureText("1").width;
 
 
-        let resultSlot = {
-            "contents": "empty",
-            "count": 0,
-            "renderPosition": [0, 0],
-            "outlineRenderPosition": [0, 0],
-            "itemCountRenderPosition": [0, 0],
-            "rect": new Rect(0, 0, 0, 0), // used for mouse collision
-        }
-
         let armorSlot = {
             "contents": "empty",
             "renderPosition": [0, 0],
@@ -148,13 +139,13 @@ class Player {
 
         this.isCrafting = false
 
-        this.crafting = {
+        this.crafting = { // result slot is a list so that the inventory functions work
             2: {
                 "slots": [
                     0, 0,
                     0, 0
                 ],
-                "resultSlot": 0
+                "resultSlot": [0]
             },
             3: {
                 "slots": [
@@ -164,7 +155,7 @@ class Player {
                     0, 0,
                     0
                 ],
-                "resultSlot": 0
+                "resultSlot": [0]
             },
             "gridSize": 2
         }
@@ -200,7 +191,7 @@ class Player {
         }
 
 
-        this.crafting[2].resultSlot = newResultSlot;
+        this.crafting[2].resultSlot[0] = newResultSlot;
 
 
 
@@ -223,7 +214,7 @@ class Player {
             "itemCountRenderPosition": [rectX + slotSizeInPixels - fontShift - 1, rectY + slotSizeInPixels - fontShift - 1]
         }
 
-        this.crafting[3].resultSlot = newResultSlot2;
+        this.crafting[3].resultSlot[0] = newResultSlot2;
 
 
 
@@ -892,9 +883,8 @@ class Player {
         if (receivingSlotId === undefined && movingItem.stackable) {
             for (let i = 0; i < receivingContainer.length; i++) {
                 let slot = receivingContainer[i];
-                let item = slot.contents;
 
-                if (item === "empty") {
+                if (slot.contents == "empty") {
                     receivingSlotId = i;
                     break;
                 }
@@ -911,12 +901,13 @@ class Player {
             // important! make sure the parameter gets updated from receivingSlot
             let receivingSlot = receivingContainer[receivingSlotId];
             let movingCount = receivingSlot.count + amount;
+            consoleLog(movingCount);
 
             if (movingCount <= maxStackSize) {
                 receivingSlot.count = movingCount;
                 receivingSlot.contents = movingItem;
 
-                movingItem = "empty";
+                movingItemSlot.contents = "empty";
                 movingItemSlot.count = 0;
             } else {
                 let leftOverCount = movingCount - maxStackSize;
@@ -1056,47 +1047,59 @@ class Player {
         // probably separate the crafting slot from the rest of the other slots, do special logic
 
         const mouseInteractionWithContainer = (container, otherContainer = undefined, isResultSlot = false) => {
+
             for (let i = 0; i < container.length; i++) {
                 let slot = container[i];
+
+
                 if (slot.rect.collide.point(mouse.x, mouse.y)) {
                     mouse.inASlot = true;
-                    mouse.hoveredSlotId = i;
-                   
+                    if (isResultSlot) {
+                        mouse.hoveredSlotId = "resultSlot";
+                    } else {
+                        mouse.hoveredSlotId = i;
+                    }
+
                     // only do quick transfer things if the other container is specified
-                    if (otherContainer !== undefined) {
-                        // do a quick transfer of max items
-                        if (keys.shift && !keys.ctrl) {
-                            if (!isResultSlot) {
-                                this.moveItem(container[i], container[i].contents, 64, otherContainer);
-                                break;
-                            } else {
-                                // figure out what to write in order to crafting maximum number of items
+                    if (otherContainer !== undefined && mouse.buttons.pressed.left) {
+                        if (keys.shift || keys.ctrl) {
+                            consoleLog("shift: " + keys.shift + ", ctrl: " + keys.ctrl)
+                            // do a quick transfer of max items
+                            if (keys.shift && !keys.ctrl) {
+                                if (!isResultSlot) {
+                                    this.moveItem(container[i], container[i].contents, 64, otherContainer);
+                                    break;
+                                } else {
+                                    // figure out what to write in order to crafting maximum number of items
+                                }
                             }
-                        }
-                        // move a single item
-                        if (keys.ctrl && !keys.shift && !isResultSlot) {
-                            this.moveItem(container[i], container[i].contents, 1, otherContainer);
-                            break;
-                        }
+                            // move a single item
+                            if (keys.ctrl && !keys.shift && !isResultSlot) {
+                                this.moveItem(container[i], container[i].contents, 1, otherContainer);
+                                break;
+                            }
+                        };
                     };
 
                     if (!keys.ctrl && !keys.shift) {
                         // do left click interaction
                         if (mouse.buttons.pressed.left && !mouse.buttons.right) {
-                            let tempItem = mouse.heldSlot.contents;
-                            let tempCount = mouse.heldSlot.count;
+                            if (!isResultSlot || mouse.heldSlot.contents == "empty") {
+                                let tempItem = mouse.heldSlot.contents;
+                                let tempCount = mouse.heldSlot.count;
 
-                            mouse.heldSlot.contents = container[i].contents;
-                            mouse.heldSlot.count = container[i].count;
+                                mouse.heldSlot.contents = container[i].contents;
+                                mouse.heldSlot.count = container[i].count;
 
-                            container[i].contents = tempItem;
-                            container[i].count = tempCount;
+                                container[i].contents = tempItem;
+                                container[i].count = tempCount;
 
-                            break;
+                                break;
+                            };
                         };
 
                         // do right click interaction
-                        if (mouse.buttons.pressed.right && !mouse.buttons.left) {
+                        if (mouse.buttons.pressed.right && !mouse.buttons.left && !isResultSlot) {
                             // grab half of the item count, try not to dupe things
                             if (mouse.heldSlot.contents === "empty") {
                                 let newMouseSlotCount = Math.ceil(slot.count / 2);
@@ -1139,14 +1142,14 @@ class Player {
 
             if (mouse.inPlayerInventory) {
                 // this part with the storage thing has no basis, storage containers don't exist yet
-                let otherContainer = undefined;
+                let otherContainer = this.hotbar;
                 if (this.storageUIOpen) {
                     otherContainer = this.currentStorageBlock;
                 }
                 mouseInteractionWithContainer(this.inventory, otherContainer);
             }
             if (mouse.inPlayerHotbar) {
-                let otherContainer = undefined;
+                let otherContainer = this.inventory;
                 if (this.storageUIOpen) {
                     otherContainer = this.currentStorageBlock;
                 }
@@ -1154,7 +1157,7 @@ class Player {
             }
             if (mouse.inPlayerCraftingAndArmor) {
                 let gridSize = this.crafting.gridSize;
-                mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory);
+                mouseInteractionWithContainer(this.crafting[gridSize].resultSlot, this.inventory, true);
                 mouseInteractionWithContainer(this.crafting[gridSize].slots, this.inventory);
                 mouseInteractionWithContainer(this.armor, this.inventory);
             }
@@ -1439,11 +1442,11 @@ class Player {
 
             let gridSize = this.crafting.gridSize;
             if (foundARecipe) {
-                this.crafting[gridSize].resultSlot.contents = recipeThatWasFound.output;
-                this.crafting[gridSize].resultSlot.count = recipeThatWasFound.outputCount;
+                this.crafting[gridSize].resultSlot[0].contents = recipeThatWasFound.output;
+                this.crafting[gridSize].resultSlot[0].count = recipeThatWasFound.outputCount;
             } else {
-                this.crafting[gridSize].resultSlot.contents = "empty";
-                this.crafting[gridSize].resultSlot.count = 0;
+                this.crafting[gridSize].resultSlot[0].contents = "empty";
+                this.crafting[gridSize].resultSlot[0].count = 0;
             };
 
 
@@ -1561,9 +1564,9 @@ class Player {
                 if (powerfulEnoughTool && correctTool) {
                     this.blockBreakProgress += breakingSpeed;
                 } else if (block.dropsWithNoTool) {
-                    this.blockBreakProgress += slowestBreakSpeed;
+                    this.blockBreakProgress += slowestBreakSpeed / (block.hardness + 0.01);
                 } else {
-                    this.blockBreakProgress += slowestBreakSpeed / fps;
+                    this.blockBreakProgress += slowestBreakSpeed;
                 };
 
 
@@ -1589,12 +1592,16 @@ class Player {
                         let count = 1
                         let xv = random.integer(-3, 3)
                         let zv = random.integer(-3, 3)
+
                         if (true) { // replace later with silk touch or something
-                            if (block.type == ("grass" || "snowy grass")) { itemData.name = "dirt" };
+                            if (block.type == ("grass" || "snowy grass")) { itemData.name = "dirt"; };
                             if (block.type == ("stone" || "snowy stone")) { itemData.name = "cobblestone"; };
                         };
 
                         let yv = 5;
+
+                        itemData.placedBlock.type = itemData.name;
+
                         let entity = new ItemEntity(x, y, z, xv, yv, zv, count, itemData);
                         entities.push(entity);
                     };
@@ -1604,7 +1611,8 @@ class Player {
                         "render": false,
                         "alphaValue": 1,
                         "hardness": "infinity",
-                        "effectiveTool": "none"
+                        "effectiveTool": "none",
+                        "dropsWithNoTool": false
                     };
 
                     chunks[chunkCoord.toString()].data[blockCoord.toString()] = air;
@@ -1658,7 +1666,7 @@ class Player {
             }
         };
 
-        this.crafting.gridSize = gridSize
+        this.crafting.gridSize = gridSize;
 
         if (gridSize == 2) {
             this.otherInventoryData.showCraftingAndArmor = true

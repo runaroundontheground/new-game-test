@@ -253,7 +253,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
         let block = chunks[chunkCoord.toString()].data[blockCoord];
 
         if (block.type != "air") {
-
+          
 
           function checkForSolidBlock(block) {
             if (block.type != "air" && block.type != "water") {
@@ -279,39 +279,6 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           };
 
 
-          if (block.type == "water") {
-            let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
-
-            if (hopefullyAir.type == "air") {
-              block.globalAlpha = 0.5;
-              block.render = true;
-
-              let didntFindWater = true;
-
-              let subtractY = 1;
-
-              while (didntFindWater) {
-                // make sure no blocks underneath are rendered, make top water less transparent
-                let hopefullyWater = findBlock(x, y - subtractY, z, true, false, chunkCoord);
-
-                if (hopefullyWater.type == "water") {
-                  block.globalAlpha += 0.05;
-                } else { didntFindWater = false; }
-
-                if (block.globalAlpha > 1) {
-                  block.globalAlpha = 1;
-                  break;
-                }
-
-                if (subtractY <= -chunkSize[1] || !didntFindWater) {
-                  break;
-                }
-
-                subtractY -= 1;
-              }; // end of while loop
-            };
-          }; // if block type = water
-
 
           let blockAbove = findBlock(x, y + 1, z, true, false, chunkCoord);
           let blockBelow = findBlock(x, y - 1, z, true, false, chunkCoord);
@@ -327,14 +294,66 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
           let toUp = checkForSolidBlock(blockToUp);
           let toDown = checkForSolidBlock(blockToDown);
 
-          let surrounded = toLeft && toUp && toDown && toRight;
+          let surrounded = (toLeft && toUp && toDown && toRight);
+
+          block.render = false;
+          block.globalAlpha = 1;
+
 
           if (above) {
+            if (!surrounded) { block.render = true; };
+
+            if (below) {
+
+              if (blockBelow.globalAlpha < 1) {
+                block.globalAlpha = 0.5
+                modifyOtherBlock(x, y - 1, z, false)
+
+              } else {
+
+              };
+            } else { block.globalAlpha = 0.5; };
+          };
+
+          if (!above) {
+            block.render = true;
+            if (below) {
+
+              if (blockBelow.globalAlpha < 1) {
+                block.globalAlpha = 0.5;
+                modifyOtherBlock(x, y - 1, z, false);
+              } else {
+
+              };
+
+            } else { block.globalAlpha = 0.5; };
+          };
+
+
+          if (below) {
+            modifyOtherBlock(x, y - 1, z, true)
+
+            let blockBelow2 = findBlock(x, y - 2, z, true, undefined, chunkCoord)
+            let below2 = checkForSolidBlock(blockBelow2)
+
+            if (!below2) {
+              modifyOtherBlock(x, y - 1, z, true, 0.5)
+            } else {
+              if (blockBelow2.globalAlpha < 1) {
+                modifyOtherBlock(x, y - 2, z, false);
+                modifyOtherBlock(x, y - 1, z, undefined, 0.5);
+
+              };
+            };
+          };
+          /*if (above) {
+
             if (blockBelow.globalAlpha < 1) {
-              // current block should have alpha, hide the block underneath
-              block.globalAlpha = 0.5;
+              // current block should have alpha, make block underneath barely visible
+              block.globalAlpha = 0.05;
               block.render = true;
-              modifyOtherBlock(x, y - 1, z, false);
+              modifyOtherBlock(x, y - 1, z, true, 0.05);
+              modifyOtherBlock(x, y + 1, z, true, 0.05)
             };
 
             if (!surrounded) {
@@ -342,32 +361,85 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
             };
           } else {
             // no block is above, should probably be rendered
+
             block.render = true;
+
+            if (blockBelow.globalAlpha < 1) {
+              // current block should have alpha, make block underneath barely visible
+              block.globalAlpha = 0.5;
+              modifyOtherBlock(x, y - 1, z, true, 0.05);
+              modifyOtherBlock(x, y + 1, z, true, 0.05)
+            };
           };
 
           if (below) {
-            if (!above) { block.render = true; }
             if (blockBelow.globalAlpha < 1) {
-              block.globalAlpha = 0.5;
+              block.globalAlpha = 0.05;
               block.render = true;
-              modifyOtherBlock(x, y - 1, z, false);
+              modifyOtherBlock(x, y - 1, z, true, 0.05);
             };
             if (block.render) { modifyOtherBlock(x, y - 1, z, false); };
 
           } else {
             // no block is under this one
-            if (!above) {
+            block.render = true;
+            block.globalAlpha = 0.5;
+          };*/
+
+
+
+
+          if (block.type == "water") {
+            let hopefullyAir = findBlock(x, y + 1, z, true, false, chunkCoord);
+
+            if (hopefullyAir.type == "air") {
+              block.globalAlpha = 0.3;
               block.render = true;
-              block.globalAlpha = 0.5;
+
+              let didntFindWater = true;
+
+              let subtractY = 1;
+
+              while (didntFindWater) {
+                // make sure no water blocks underneath are rendered, make top water more opaque
+                let hopefullyWater = findBlock(x, y - subtractY, z, true, false, chunkCoord);
+
+                if (hopefullyWater.type == "water") {
+                  block.globalAlpha += 0.05;
+                } else {
+                  didntFindWater = false;
+                  break;
+                };
+
+                if (block.globalAlpha > 1) {
+                  block.globalAlpha = 1;
+                  consoleLog("reached too much alpha")
+                  break;
+                }
+
+                if (subtractY <= -chunkSize[1] || !didntFindWater) {
+                  break;
+                }
+
+                subtractY -= 1;
+              }; // end of while loop
             };
-          };
+          }; // if block type = water
 
-        } else { // block is air
-          block.render = false;
-        }
 
-        chunks[chunkCoord.toString()].data[blockCoord] = block;
 
+
+
+          // REMOVE LATER!
+          if (blockAbove.type == "water" && block.type != "water") {
+            block.render = true;
+            block.globalAlpha = 1;
+          }
+
+
+
+          chunks[chunkCoord.toString()].data[blockCoord] = block;
+        };
       };
     };
   };
@@ -434,61 +506,62 @@ export function smallScaleBlockUpdates(chunkCoord, blockCoord) {
 
 
 
-  if (block.type != "air") {
-    if (above) {
-      if (!surrounded) { block.render = true; };
 
-      if (below) {
-
-        if (blockBelow.globalAlpha < 1) {
-          block.globalAlpha = 0.5
-          modifyOtherBlock(x, y - 1, z, false)
-
-        } else {
-
-          let belowSurrounded = checkSidesOfBlock(x, y - 1, z);
-          if (belowSurrounded) {
-            modifyOtherBlock(x, y - 1, z, false);
-          };
-        };
-      } else { block.globalAlpha = 0.5; };
-    };
-
-    if (!above) {
-      block.render = true;
-      if (below) {
-
-        if (blockBelow.globalAlpha < 1) {
-          block.globalAlpha = 0.5;
-          modifyOtherBlock(x, y - 1, z, false);
-        } else {
-
-          let belowSurrounded = checkSidesOfBlock(x, y - 1, z)
-          if (belowSurrounded) {
-            modifyOtherBlock(x, y - 1, z, false);
-          };
-        };
-
-      } else { block.globalAlpha = 0.5; };
-    };
-  } else { // current block is air
+  if (above) {
+    if (!surrounded) { block.render = true; };
 
     if (below) {
-      modifyOtherBlock(x, y - 1, z, true)
 
-      let blockBelow2 = findBlock(x, y - 2, z, true, undefined, chunkCoord)
-      let below2 = checkForSolidBlock(blockBelow2)
+      if (blockBelow.globalAlpha < 1) {
+        block.globalAlpha = 0.5
+        modifyOtherBlock(x, y - 1, z, false)
 
-      if (!below2) {
-        modifyOtherBlock(x, y - 1, z, true, 0.5)
       } else {
-        if (blockBelow2.globalAlpha < 1) {
-          modifyOtherBlock(x, y - 2, z, false);
-          modifyOtherBlock(x, y - 1, z, undefined, 0.5);
+
+        let belowSurrounded = checkSidesOfBlock(x, y - 1, z);
+        if (belowSurrounded) {
+          modifyOtherBlock(x, y - 1, z, false);
         };
+      };
+    } else { block.globalAlpha = 0.5; };
+  };
+
+  if (!above) {
+    block.render = true;
+    if (below) {
+
+      if (blockBelow.globalAlpha < 1) {
+        block.globalAlpha = 0.5;
+        modifyOtherBlock(x, y - 1, z, false);
+      } else {
+
+        let belowSurrounded = checkSidesOfBlock(x, y - 1, z)
+        if (belowSurrounded) {
+          modifyOtherBlock(x, y - 1, z, false);
+        };
+      };
+
+    } else { block.globalAlpha = 0.5; };
+  };
+
+
+  if (below) {
+    modifyOtherBlock(x, y - 1, z, true)
+
+    let blockBelow2 = findBlock(x, y - 2, z, true, undefined, chunkCoord)
+    let below2 = checkForSolidBlock(blockBelow2)
+
+    if (!below2) {
+      modifyOtherBlock(x, y - 1, z, true, 0.5)
+    } else {
+      if (blockBelow2.globalAlpha < 1) {
+        modifyOtherBlock(x, y - 2, z, false);
+        modifyOtherBlock(x, y - 1, z, undefined, 0.5);
+
       };
     };
   };
+
 
 
   chunks[chunkCoord.toString()].data[blockCoord.toString()] = block;

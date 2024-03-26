@@ -59,131 +59,131 @@ export class ItemEntity extends Entity {
 
 
 
-        positionUpdates (player) {
+    positionUpdates(player) {
 
-            let a = findBlock(this.x, this.y - this.height, this.z, undefined, true)
-            let b = findBlock(this.x, this.y - this.height, this.z + this.width, undefined, true)
-            let c = findBlock(this.x + this.width, this.y - this.height, this.z, undefined, true)
-            let d = findBlock(this.x + this.width, this.y - this.height, this.z + this.width, undefined, true)
-            let blockBelow = false;
+        let a = findBlock(this.x, this.y - this.height, this.z, undefined, true)
+        let b = findBlock(this.x, this.y - this.height, this.z + this.width, undefined, true)
+        let c = findBlock(this.x + this.width, this.y - this.height, this.z, undefined, true)
+        let d = findBlock(this.x + this.width, this.y - this.height, this.z + this.width, undefined, true)
+        let blockBelow = false;
 
-            if (a || b || c || d) { blockBelow = true; };
+        if (a || b || c || d) { blockBelow = true; };
 
-            if (blockBelow) {
-                this.yv = 0;
+        if (blockBelow) {
+            this.yv = 0;
 
-                // snap this onto the block it should be on
-                this.y = Math.floor(this.y / blockSize) * blockSize + this.height;
+            // snap this onto the block it should be on
+            this.y = Math.floor(this.y / blockSize) * blockSize + this.height;
 
-                // do friction
-                this.xv -= this.xv / 15;
-                this.zv -= this.zv / 15;
+            // do friction
+            this.xv -= this.xv / 15;
+            this.zv -= this.zv / 15;
 
-                if (Math.abs(this.xv) < 0.1) { this.xv = 0; };
-                if (Math.abs(this.zv) < 0.1) { this.zv = 0; };
+            if (Math.abs(this.xv) < 0.1) { this.xv = 0; };
+            if (Math.abs(this.zv) < 0.1) { this.zv = 0; };
 
-            } else {
-                if (this.yv > this.terminalVelocity) { this.yv -= gravity; };
-            };
-
-
-            if (this.xv != 0) {
-
-                let sideValue = this.x;
-                let blockToSide = false;
-
-                if (this.xv > 0) { sideValue += this.width; };
-
-                let collision = {
-                    "corner 1": findBlock(sideValue, this.y, this.z),
-                    "corner 2": findBlock(sideValue, this.y, this.z + this.width),
-                    "corner 3": findBlock(sideValue, this.y - this.height, this.z),
-                    "corner 4": findBlock(sideValue, this.y - this.height, this.z + this.width),
-                };
-
-                for (const cornerPassedCollision of Object.values(collision)) {
-                    if (cornerPassedCollision) { blockToSide = true; break; }
-                };
-
-
-                if (blockToSide) { this.x -= this.xv; this.xv = 0; };
-            };
-
-
-            if (this.zv != 0) {
-
-                let sideValue = this.z;
-                let blockToSide = false;
-
-                if (this.zv > 0) { sideValue += this.width; };
-
-                let collision = {
-                    "corner 1": findBlock(this.x, this.y, sideValue),
-                    "corner 2": findBlock(this.x + this.width, this.y, sideValue),
-                    "corner 3": findBlock(this.x, this.y - this.height, sideValue),
-                    "corner 4": findBlock(this.x + this.width, this.y - this.height, sideValue),
-                };
-
-                for (const cornerPassedCollision of Object.values(collision)) {
-                    if (cornerPassedCollision) { blockToSide = true; break; }
-                }
-
-
-                if (blockToSide) { this.z -= this.zv; this.zv = 0; };
-            };
-
-
-            let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, undefined, true)
-            if (insideABlock) { this.y += blockSize / 2; };
-
-
-            
-
-
-            this.x += this.xv;
-            this.y += this.yv;
-            this.z += this.zv;
-
-            this.rect.x = this.x;
-            this.rect.y = this.z;
-
-            this.renderData.position = [this.x - camera.x, this.z - camera.z];
-
+        } else {
+            if (this.yv > this.terminalVelocity) { this.yv -= gravity; };
         };
 
-        runTimers () {
-            for (const key of Object.keys(this.timers)) {
-                let value = this.timers[key];
 
-                if (value > 0) { value -= 1; };
-                if (value < 0) { value += 1; };
+        if (this.xv != 0) {
 
-                this.timers[key] = value;
+            let sideValue = this.x;
+            let blockToSide = false;
+
+            if (this.xv > 0) { sideValue += this.width; };
+
+            let collision = {
+                "corner 1": findBlock(sideValue, this.y, this.z),
+                "corner 2": findBlock(sideValue, this.y, this.z + this.width),
+                "corner 3": findBlock(sideValue, this.y - this.height, this.z),
+                "corner 4": findBlock(sideValue, this.y - this.height, this.z + this.width),
             };
+
+            for (const cornerPassedCollision of Object.values(collision)) {
+                if (cornerPassedCollision) { blockToSide = true; break; }
+            };
+
+
+            if (blockToSide) { this.x -= this.xv; this.xv = 0; };
         };
 
-        playerInteraction (player) {
-            if (this.timers.pickupDelay == 0) {
 
-                if (this.rect.collide.rect(player.rect)) {
+        if (this.zv != 0) {
 
-                    let itemPickedUp = player.giveItem(this.itemData, this.count);
-                    if (itemPickedUp) { this.deleteMe = true; }
-                };
+            let sideValue = this.z;
+            let blockToSide = false;
+
+            if (this.zv > 0) { sideValue += this.width; };
+
+            let collision = {
+                "corner 1": findBlock(this.x, this.y, sideValue),
+                "corner 2": findBlock(this.x + this.width, this.y, sideValue),
+                "corner 3": findBlock(this.x, this.y - this.height, sideValue),
+                "corner 4": findBlock(this.x + this.width, this.y - this.height, sideValue),
             };
+
+            for (const cornerPassedCollision of Object.values(collision)) {
+                if (cornerPassedCollision) { blockToSide = true; break; }
+            }
+
+
+            if (blockToSide) { this.z -= this.zv; this.zv = 0; };
         };
 
-        doStuff (player) {
 
-            if (!this.deleteMe) {
-                this.positionUpdates(player);
-                this.runTimers();
-                this.playerInteraction(player);
-            };
-        };
+        let insideABlock = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, undefined, true)
+        if (insideABlock) { this.y += blockSize / 2; };
 
-        
+
+
+
+
+        this.x += this.xv;
+        this.y += this.yv;
+        this.z += this.zv;
+
+        this.rect.x = this.x;
+        this.rect.y = this.z;
+
+        this.renderData.position = [this.x - camera.x, this.z - camera.z];
+
     };
+
+    runTimers() {
+        for (const key of Object.keys(this.timers)) {
+            let value = this.timers[key];
+
+            if (value > 0) { value -= 1; };
+            if (value < 0) { value += 1; };
+
+            this.timers[key] = value;
+        };
+    };
+
+    playerInteraction(player) {
+        if (this.timers.pickupDelay == 0) {
+
+            if (this.rect.collide.rect(player.rect)) {
+
+                let itemPickedUp = player.giveItem(this.itemData, this.count);
+                if (itemPickedUp) { this.deleteMe = true; }
+            };
+        };
+    };
+
+    doStuff(player) {
+
+        if (!this.deleteMe) {
+            this.positionUpdates(player);
+            this.runTimers();
+            this.playerInteraction(player);
+        };
+    };
+
+
+};
 
 
 

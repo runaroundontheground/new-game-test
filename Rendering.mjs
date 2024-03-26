@@ -64,7 +64,7 @@ function addABlock(blockType, color, borderColor, alpha = 1) {
     context.clearRect(0, 0, newCanvas.width, newCanvas.height);
 
     newCanvas.width = itemIconSize; newCanvas.height = itemIconSize;
-    context.globalAlpha = 0.5;
+    context.globalAlpha = 1;
     context.drawImage(images[blockType], 0, 0, newCanvas.width, newCanvas.height);
     let itemIcon = new Image();
     itemIcon.src = newCanvas.toDataURL();
@@ -78,13 +78,13 @@ function addABlock(blockType, color, borderColor, alpha = 1) {
 };
 
 addABlock("grass", "darkgreen", "darkbrown")
-addABlock("dirt", "darkbrown")
+addABlock("dirt", "rgb(176, 132, 74)", "darkbrown")
 addABlock("stone", "rgb(125, 125, 125)")
 addABlock("cobblestone", "rgb(150, 150, 150)")
 addABlock("snowy dirt", "rgb(220, 220, 220)", "darkbrown")
 addABlock("snowy stone", "rgb(220, 220, 220)", "rgb(125, 125, 125)")
 addABlock("sand", "rgb(232, 228, 118)")
-addABlock("clay", "rgb(196, 152, 94)")
+addABlock("clay", "brown")
 addABlock("gravel", "rgb(150, 150, 150)")
 addABlock("water", "rgb(0, 0, 255)", "rgb(0, 0, 255)")
 addABlock("bedrock", "rgb(0, 255, 255)")
@@ -304,7 +304,7 @@ function drawToCanvas(renderData) {
 
 export function render() {
 
-    ctx.fillStyle = "rgb(0, 0, 0)";
+    ctx.fillStyle = "purple";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // get the chunks to be used for rendering
@@ -433,8 +433,8 @@ export function render() {
                             "position": [xPos, yPos],
                             "length": blockSize * scaleFactor,
                             "globalAlpha": currentAlpha,
-                            "color": scaledRenderData[block.type].color,
-                            "borderColor": scaledRenderData[block.type].borderColor,
+                            "color": blockRenderData[block.type].color,
+                            "borderColor": blockRenderData[block.type].borderColor,
                         };
 
 
@@ -516,7 +516,7 @@ export function render() {
                 "imageUrl": "UI/slot outline",
                 "position": player.inventory[mouse.hoveredSlotId].outlineRenderPosition
             };
-            
+
             renderingData.push(renderData)
         };
 
@@ -527,8 +527,7 @@ export function render() {
             if (mouse.hoveredSlotId != "resultSlot") {
                 position = player.crafting[player.crafting.gridSize].slots[mouse.hoveredSlotId].outlineRenderPosition;
             } else {
-                position = player.crafting[player.crafting.gridSize].resultSlot.outlineRenderPosition;
-                consoleLog("test")
+                position = player.crafting[player.crafting.gridSize].resultSlot[0].outlineRenderPosition;
             };
 
             let renderData = {
@@ -546,7 +545,7 @@ export function render() {
             if (mouse.hoveredSlotId != "resultSlot") {
                 position = player.crafting[player.crafting.gridSize].slots[mouse.hoveredSlotId].outlineRenderPosition;
             } else {
-                position = player.crafting[player.crafting.gridSize].resultSlot.outlineRenderPosition;
+                position = player.crafting[player.crafting.gridSize].resultSlot[0].outlineRenderPosition;
             }
 
             let renderData = {
@@ -568,6 +567,7 @@ export function render() {
                 let renderData = {
                     "drawType": "image",
                     "imageUrl": "item icons/" + item.name,
+                    "globalAlpha": 1,
                     "position": slot.renderPosition
                 }
 
@@ -639,9 +639,9 @@ export function render() {
                 };
             };
 
-            if (player.crafting[player.crafting.gridSize].resultSlot.contents != "empty") {
+            if (player.crafting[player.crafting.gridSize].resultSlot[0].contents != "empty") {
                 doTheThingy(
-                    player.crafting[player.crafting.gridSize].resultSlot,
+                    player.crafting[player.crafting.gridSize].resultSlot[0],
                     player.crafting[player.crafting.gridSize]
                 )
             }
@@ -706,7 +706,7 @@ export function render() {
             };
 
             doTheThingy(
-                player.crafting[player.crafting.gridSize].resultSlot,
+                player.crafting[player.crafting.gridSize].resultSlot[0],
                 player.crafting[player.crafting.gridSize]
             )
 
@@ -740,7 +740,7 @@ export function render() {
 
         if (player.otherInventoryData.open && mouse.inPlayerHotbar && mouse.inASlot) {
             if (i == mouse.hoveredSlotId)
-            renderingData.push(outlineRenderData);
+                renderingData.push(outlineRenderData);
         }
 
         if (i === currentHotbarSlot) {

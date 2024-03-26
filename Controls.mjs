@@ -23,7 +23,7 @@ canvas.addEventListener("mousemove", function (event) {
 
 addEventListener("contextmenu", function (event) {
     if (inFocus) { // disable the context menu while playing game
-    event.preventDefault();
+        event.preventDefault();
     };
 })
 
@@ -75,7 +75,15 @@ window.addEventListener("keydown", function (event) {
 
 window.addEventListener("keyup", function (event) {
 
-    if (inFocus) { keys[event.key] = false; };
+    if (inFocus) {
+        keys[event.key] = false;
+        keys.ctrl = event.ctrlKey;
+        keys.shift = event.shiftKey;
+
+        if (event.key == "/") {
+            document.getElementById("command input").focus();
+        }
+    };
 
 })
 // add an event listener for clicking, keys down, keys up, and maybe some others?

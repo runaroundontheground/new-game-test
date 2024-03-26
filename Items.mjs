@@ -71,7 +71,7 @@ export class PlaceableItem extends Item {
 
         this.placedBlock.hardness = dictOfBlockBreakingStuff[this.name].hardness;
         this.placedBlock.effectiveTool = dictOfBlockBreakingStuff[this.name].effectiveTool;
-        this.placedBlock.effectiveTool = dictOfBlockBreakingStuff[this.name].dropsWithNoTool;
+        this.placedBlock.dropsWithNoTool = dictOfBlockBreakingStuff[this.name].dropsWithNoTool;
 
         this.placeItem.bind(this);
         this.RMBAction.bind(this);
