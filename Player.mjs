@@ -463,7 +463,7 @@ class Player {
 
 
 
-        this.doCollisionBelow = function () {
+        const doCollisionBelow = () => {
             let topLeft = findBlock(this.x, this.y - this.height - 3, this.z, false, true)
             let topRight = findBlock(this.x + this.width, this.y - this.height - 3, this.z, false, true)
             let bottomLeft = findBlock(this.x, this.y - this.height - 3, this.z + this.width, false, true)
@@ -472,9 +472,9 @@ class Player {
                 this.collision.below = true;
             };
         };
-        this.doCollisionBelow();
+        doCollisionBelow();
 
-        this.doCollisionAbove = function () {
+        const doCollisionAbove = () => {
             let topLeft = findBlock(this.x, this.y, this.z, false, true)
             let topRight = findBlock(this.x + this.width, this.y, this.z, false, true)
             let bottomLeft = findBlock(this.x, this.y, this.z + this.width, false, true)
@@ -483,9 +483,9 @@ class Player {
                 this.collision["above"] = true
             };
         };
-        this.doCollisionAbove()
+        doCollisionAbove()
 
-        this.doCollisionToRight = function () {
+        const doCollisionToRight = () => {
             let temporaryNumber = this.x + this.width + 1;
             let aboveTopRight = findBlock(temporaryNumber, this.y, this.z, false, true)
             let aboveBottomRight = findBlock(temporaryNumber, this.y, this.z + this.width, false, true)
@@ -496,9 +496,9 @@ class Player {
             };
         };
 
-        this.doCollisionToRight()
+        doCollisionToRight()
 
-        this.doCollisionToLeft = function () {
+        const doCollisionToLeft = () => {
             let temporaryNumber = this.x - 1
             let aboveTopLeft = findBlock(temporaryNumber, this.y, this.z, false, true)
             let aboveBottomLeft = findBlock(temporaryNumber, this.y, this.z + this.width, false, true)
@@ -508,9 +508,9 @@ class Player {
                 this.collision["left"] = true
             };
         };
-        this.doCollisionToLeft()
+        doCollisionToLeft()
 
-        this.doCollisionToUp = function () {
+        const doCollisionToUp = () => {
             let aboveTopLeft = findBlock(this.x, this.y, this.z - 1, false, true)
             let aboveTopRight = findBlock(this.x + this.width, this.y, this.z - 1, false, true)
             let belowTopRight = findBlock(this.x + this.width, this.y - this.height, this.z - 1, false, true)
@@ -520,9 +520,9 @@ class Player {
             };
         };
 
-        this.doCollisionToUp()
+        doCollisionToUp()
 
-        this.doCollisionToDown = function () {
+        const doCollisionToDown = () => {
             let aboveBottomLeft = findBlock(this.x, this.y, this.z + this.width + 1, false, true)
             let aboveBottomRight = findBlock(this.x + this.width, this.y, this.z + this.width + 1, false, true)
             let belowBottomRight = findBlock(this.x + this.width, this.y - this.height, this.z + this.width + 1, false, true)
@@ -532,13 +532,13 @@ class Player {
             };
         };
 
-        this.doCollisionToDown()
+        doCollisionToDown()
 
-        this.checkForBeingInsideOfABlock = function () {
+        const checkForBeingInsideOfABlock = () => {
             let center = findBlock(this.x + this.width / 2, this.y - this.height / 2, this.z + this.width / 2, true);
             this.collision.insideOfBlock = center.type
         };
-        this.checkForBeingInsideOfABlock()
+        checkForBeingInsideOfABlock()
 
 
         let temporaryNumber = (this.y - this.height) + blockSize + 3;
@@ -635,28 +635,34 @@ class Player {
                 this.y = this.blockCoord[1] * blockSize + this.height
                 // re-do collisions, hopefully fixes colliding with walls while hitting
                 // the ground hard, looks like it didn't fix it?
-                //this.doCollisionToDown()
-                //this.doCollisionToLeft()
-                //this.doCollisionToUp()
-                //this.doCollisionToRight()
-            };
-            // don't let player fall out of the world
-            if (this.y < -300) {
-                this.y = chunkSize[1] * blockSize
-                this.yv = 0
-            };
-
-            // don't let player go through ceilings
-            if (this.collision["above"]) {
-                if (this.yv > 0) {
-                    this.y -= this.yv
-                    this.yv = 0
-                };
+                //doCollisionToDown()
+                //doCollisionToLeft()
+                //doCollisionToUp()
+                //doCollisionToRight()
             };
         };
 
+        // don't let player fall out of the world
+        if (this.y < -300) {
+            this.y = chunkSize[1] * blockSize;
+            this.yv = 0;
+        };
+
+        // don't let player go through ceilings
+        if (this.collision.above) {
+            if (this.yv > 0) {
+                this.y -= this.yv;
+                this.yv = 0;
+            };
+        };
+
+        // unstuck player when it happens
+        if (this.collision.insideOfBlock != "air" && this.collision.insideOfBlock != "water") {
+            consoleLog("stuck?");
+        }
+
         // wall collision
-        // and block step up (go up blocks without jumping
+        // and block step up (go up blocks without jumping)
 
 
         this.booleans["blockStepUsed"] = true // disabling block step up, is buggy and idc
@@ -671,9 +677,9 @@ class Player {
             if (a && b && c && d) {
                 this.y += blockSize
                 // update collision, since player's been moved a lot
-                this.doCollisionToDown()
-                this.doCollisionToLeft()
-                this.doCollisionToRight()
+                doCollisionToDown()
+                doCollisionToLeft()
+                doCollisionToRight()
                 this.booleans["blockStepUsed"] = true
             } else {
                 this.z += Math.abs(this.zv / 2);
@@ -690,9 +696,9 @@ class Player {
             if (a && b && c && d) {
                 this.y += blockSize
                 // update collision, since player's been moved a lot
-                this.doCollisionToDown()
-                this.doCollisionToLeft()
-                this.doCollisionToUp()
+                doCollisionToDown()
+                doCollisionToLeft()
+                doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
                 this.x -= Math.abs(this.xv / 2);
@@ -709,9 +715,9 @@ class Player {
             if (a && b && c && d) {
                 this.y += blockSize
                 // update collision, since player's been moved a lot
-                this.doCollisionToDown()
-                this.doCollisionToRight()
-                this.doCollisionToUp()
+                doCollisionToDown()
+                doCollisionToRight()
+                doCollisionToUp()
                 this.booleans["blockStepUsed"] = true
             } else {
                 this.x += Math.abs(this.xv / 2);
@@ -728,9 +734,9 @@ class Player {
             if (a && b && c && d) {
                 this.y += blockSize
                 // update collision, since player's been moved a lot
-                this.doCollisionToLeft()
-                this.doCollisionToRight()
-                this.doCollisionToUp()
+                doCollisionToLeft()
+                doCollisionToRight()
+                doCollisionToUp()
                 this.booleans["blockStepUsed"] = true;
             } else {
                 this.z -= Math.abs(this.zv / 2);
@@ -935,7 +941,7 @@ class Player {
             if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
         })
 
-        this.adjustMouseSelectedBlockHeight = function () {
+        const adjustMouseSelectedBlockHeight = () => {
             // change the selected height of the mouse
             mouse.selectedY = this.y
 
@@ -957,7 +963,7 @@ class Player {
             if (mouse.selectedY <= 0) { mouse.selectedY = blockSize; };
             if (mouse.selectedY >= chunkSize[1] * blockSize) { mouse.selectedY = chunkSize[1] * (blockSize - 1); };
         };
-        this.adjustMouseSelectedBlockHeight()
+        adjustMouseSelectedBlockHeight()
 
 
         // change hotbar slot based on pressing stuff
@@ -1006,7 +1012,7 @@ class Player {
         };
         dropItems();
 
-        this.hotbarHeldItemStuff = function () {
+        const hotbarHeldItemStuff = () => {
             if (!this.otherInventoryData.open) {
                 let index = this.otherInventoryData.currentHotbarSlot;
                 let slotData = this.hotbar[index];
@@ -1027,9 +1033,9 @@ class Player {
                 };
             };
         };
-        this.hotbarHeldItemStuff();
+        hotbarHeldItemStuff();
 
-        this.updateMouseInventoryCollision = function () {
+        const updateMouseInventoryCollision = () => {
             mouse.inPlayerInventory = false;
             mouse.inPlayerHotbar = false;
             mouse.inPlayerCraftingAndArmor = false;
@@ -1041,10 +1047,8 @@ class Player {
             mouse.inPlayerHotbar = this.otherInventoryData.hotbarRect.collide.point(mouse.x, mouse.y)
             mouse.inPlayerCraftingTable = this.otherInventoryData.craftingTableRect.collide.point(mouse.x, mouse.y)
         }
-        this.updateMouseInventoryCollision();
+        updateMouseInventoryCollision();
 
-        // need to rework crafting to be a list, or it won't work with the moveItem function
-        // probably separate the crafting slot from the rest of the other slots, do special logic
 
         const mouseInteractionWithContainer = (container, otherContainer = undefined, isResultSlot = false) => {
 
@@ -1204,7 +1208,7 @@ class Player {
         };
 
 
-        this.recipeChecksAndStuff = () => {
+        const recipeChecksAndStuff = () => {
             // dict with total amount of each item in crafting slots
             this.totalCraftingContents = {};
             this.isCrafting = false;
@@ -1240,7 +1244,7 @@ class Player {
             let foundARecipe = false
             let recipeThatWasFound = undefined;
 
-            this.exactRecipeDetection = (recipe) => {
+            const exactRecipeDetection = (recipe) => {
                 // doesn't exist yet
 
                 if (this.totalCraftingContents == recipe.requiredItems) {
@@ -1251,7 +1255,7 @@ class Player {
                 return false, undefined
             };
 
-            this.nearExactRecipeLogic = (recipe) => {
+            const nearExactRecipeLogic = (recipe) => {
                 const checkForSpecificItemInSlot = (instructions) => {
                     /*
                     startingItemName, directions, operators, and items are contained in instructions
@@ -1329,7 +1333,7 @@ class Player {
                                     }
                                     let itemName = checkADirection(currentDirection, i);
 
-                                    if (itemName == items[i]) {
+                                    if (itemName == currentItem) {
                                         slotDictThing.containsCorrectItem = true;
                                     }
                                     slotsChecked.push(slotDictThing);
@@ -1403,7 +1407,7 @@ class Player {
                 return [false, undefined];
             };
 
-            this.shapelessRecipeLogic = (recipe) => {
+            const shapelessRecipeLogic = (recipe) => {
 
                 if (this.totalCraftingContents == recipe.requiredItems) { return [true, recipe]; };
                 return [false, undefined];
@@ -1415,7 +1419,7 @@ class Player {
             if (this.isCrafting) {
 
                 for (const recipe of Object.values(recipes[this.crafting.gridSize].exact)) {
-                    let recipeDataStuff = this.exactRecipeDetection(recipe);
+                    let recipeDataStuff = exactRecipeDetection(recipe);
                     foundARecipe = recipeDataStuff[0];
                     recipeThatWasFound = recipeDataStuff[1];
                     if (foundARecipe) { break; };
@@ -1423,7 +1427,7 @@ class Player {
 
                 if (!foundARecipe) {
                     for (const recipe of Object.keys(recipes[this.crafting.gridSize].nearExact)) {
-                        let recipeDataStuff = this.nearExactRecipeLogic(recipe);
+                        let recipeDataStuff = nearExactRecipeLogic(recipe);
                         foundARecipe = recipeDataStuff[0];
                         recipeThatWasFound = recipeDataStuff[1];
                         if (foundARecipe) { break; };
@@ -1432,7 +1436,7 @@ class Player {
 
                 if (!foundARecipe) {
                     for (const recipe of Object.keys(recipes[this.crafting.gridSize].shapeless)) {
-                        let recipeDataStuff = this.shapelessRecipeLogic(recipe);
+                        let recipeDataStuff = shapelessRecipeLogic(recipe);
                         foundARecipe = recipeDataStuff[0];
                         recipeThatWasFound = recipeDataStuff[1];
                         if (foundARecipe) { break; };
@@ -1454,7 +1458,7 @@ class Player {
 
 
         };
-        this.recipeChecksAndStuff();
+        recipeChecksAndStuff();
 
 
     };
@@ -1478,7 +1482,7 @@ class Player {
     updateImageThings() {
 
         this.renderData.position = [this.x - camera.x, this.z - camera.z];
-        //this.renderData = this needs to be updated when animations, etc exist
+        // this needs to be updated when animations, etc exist
     };
 
     doStuff(deltaTime) {
@@ -1526,8 +1530,8 @@ class Player {
         let breakingSpeed = 1
         let breakingType = "none"
         let attack = 1
-        let knockback = 1
-        let slowestBreakSpeed = 1000 / fps; // one second, though if something is hard just make it slower?
+        let knockback = 1;
+        let slowestBreakSpeed = (5 * 1000);
 
         if (item != "empty") {
             if (item.itemType == "ToolItem") {
@@ -1552,6 +1556,7 @@ class Player {
 
             this.currentBreakingBlock = mouse.hoveredBlock;
             let block = this.currentBreakingBlock;
+            slowestBreakSpeed /= block.hardness + 0.01;
 
             if (block["hardness"] != "infinity") {
                 let correctTool = false
@@ -1563,8 +1568,6 @@ class Player {
 
                 if (powerfulEnoughTool && correctTool) {
                     this.blockBreakProgress += breakingSpeed;
-                } else if (block.dropsWithNoTool) {
-                    this.blockBreakProgress += slowestBreakSpeed / (block.hardness + 0.01);
                 } else {
                     this.blockBreakProgress += slowestBreakSpeed;
                 };
