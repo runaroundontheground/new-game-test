@@ -932,7 +932,14 @@ class Player {
     doInventoryThings() {
 
 
-        if (keysPressed.e) { this.otherInventoryData.open = !this.otherInventoryData.open; };
+        if (keysPressed.e) {
+            if (this.otherInventoryData.showCraftingTable && this.otherInventoryData.open === true) {
+                this.crafting.gridSize = 2;
+                this.otherInventoryData.showCraftingTable = false;
+                this.otherInventoryData.showCraftingAndArmor = true;
+            }
+            this.otherInventoryData.open = !this.otherInventoryData.open;
+        };
 
         this.inventory.forEach(function (slot) {
             if (slot.contents != "empty") { slot.contents.slotId = slot.slotId; };
@@ -1029,7 +1036,9 @@ class Player {
                         item.RMBPressedAction(this);
                     } else { if (mouse.buttons.right) { item.RMBAction(this); } };
                 } else {
-                    this.doStuffOnRightClick(item)
+                    if (mouse.buttons.right) {
+                        this.doStuffOnRightClick(item)
+                    };
                 };
             };
         };
@@ -1252,7 +1261,7 @@ class Player {
                 }
 
 
-                return [false, undefined]
+                return false
             };
 
             const nearExactRecipeLogic = (recipe) => {
@@ -1402,15 +1411,15 @@ class Player {
 
                     let foundARecipe = checkForSpecificItemInSlot(recipe.instructions)
 
-                    if (foundARecipe) { return [true, recipe] };
+                    if (foundARecipe) { return true };
                 }
-                return [false, undefined];
+                return false;
             };
 
             const shapelessRecipeLogic = (recipe) => {
 
-                if (this.totalCraftingContents == recipe.requiredItems) { return [true, recipe]; };
-                return [false, undefined];
+                if (this.totalCraftingContents == recipe.requiredItems) { return true; };
+                return false;
             };
 
 
@@ -1448,7 +1457,7 @@ class Player {
             };
 
             let gridSize = this.crafting.gridSize;
-            if (foundARecipe) {
+            if (foundARecipe && recipeThatWasFound !== undefined) {
                 this.crafting[gridSize].resultSlot[0].contents = recipeThatWasFound.output;
                 this.crafting[gridSize].resultSlot[0].count = recipeThatWasFound.outputCount;
             } else {
@@ -1520,9 +1529,11 @@ class Player {
         let hoveredBlockType = mouse.hoveredBlock.type;
 
         if (hoveredBlockType == "crafting table") {
+            this.crafting.gridSize = 3;
             this.otherInventoryData.showCraftingAndArmor = false;
             this.otherInventoryData.showCraftingTable = true;
-            this.crafting.gridSize = 3;
+            this.otherInventoryData.open = true;
+
         };
     };
 

@@ -77,7 +77,7 @@ function addABlock(blockType, color, borderColor, alpha = 1) {
 
 };
 
-addABlock("crafting table", "hot pink");
+addABlock("crafting table", "hot pink", "hot pink");
 addABlock("grass", "darkgreen", "rgb(146 102 28)")
 addABlock("dirt", "rgb(176, 132, 74)", "rgb(146 102 28)")
 addABlock("stone", "rgb(125, 125, 125)", "rgb(105, 105, 105)")
@@ -605,9 +605,9 @@ export function render() {
 
             function doTheThingy(slot, comparedSlotThing) {
                 let item = slot.contents;
-
+                
                 if (item != "empty") {
-
+                    
                     let renderData = {
                         "drawType": "image",
                         "imageUrl": "item icons/" + item.name,
@@ -647,17 +647,16 @@ export function render() {
                 )
             }
 
-            for (let i = 0; i < player.crafting[player.crafting.gridSize].slots.length; i++) {
-                let slot = player.crafting[player.crafting.gridSize].slots[i];
+            player.crafting[player.crafting.gridSize].slots.forEach(slot => {
                 doTheThingy(slot, player.inventory);
-            };
+            });
+
 
 
 
 
             /*for slot in player.armor.values():
                 //whoops, no armor exists, neither do the slots
-                pass
                 */
         };
 
