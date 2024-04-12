@@ -103,8 +103,8 @@ export const dictOfBlockBreakingStuff = {
     // axe
     "log": { "hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": true },
     "planks": { "hardness": 2, "effectiveTool": "axe", "dropsWithNoTool": true },
-    "leaves": { "hardness": 0, "effectiveTool": "axe", "dropsWithNoTool": false },
-    "crafting table": { "hardness": 1, "effectiveTool": "axe", "dropsWithNoTool": true },
+    "leaves": { "hardness": 0.5, "effectiveTool": "axe", "dropsWithNoTool": false },
+    "crafting table": { "hardness": 0.5, "effectiveTool": "axe", "dropsWithNoTool": true },
     // unbreakable
     "bedrock": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false },
     "air": { "hardness": "infinity", "effectiveTool": "none", "dropsWithNoTool": false },

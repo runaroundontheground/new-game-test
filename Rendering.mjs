@@ -77,6 +77,7 @@ function addABlock(blockType, color, borderColor, alpha = 1) {
 
 };
 
+addABlock("crafting table", "hot pink");
 addABlock("grass", "darkgreen", "rgb(146 102 28)")
 addABlock("dirt", "rgb(176, 132, 74)", "rgb(146 102 28)")
 addABlock("stone", "rgb(125, 125, 125)", "rgb(105, 105, 105)")

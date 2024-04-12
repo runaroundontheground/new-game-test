@@ -67,21 +67,31 @@ function addRecipe(
 
 export function makeRecipesExist() {
     /*
-    *  new better way to do recipes for nearExact to implement later
-    * have a lot of thigns in one list + dicts
-    * each item is a dict, dict contains: the first direction, its item, and the operator between the second direction
-    * directionItemPairs will look like this: {"up": "itemName"}
-    * an example for how to write this?
-    * instructions = {
-    *       "up": "planks",
-    *       "operator": "xor",
-    *       "down": "planks"
-    *}  }
-    *}
-    * if at any point there needs to be multiple directions to find something (it's not just adjacent)
-    * then this can be used: "up,up,right": "planks"
-    * comma separated directions as the str key thingy will be how that works
+        how recipes should be formatted
+        list, contains multiple instructions
+        instructions = [
+            { if it needs an operator, it'll use this
+                "up": "planks",
+                "operator": "xor",
+                "down": "planks"
+            },
+            {
+                "up": "planks"
+            }
+        ]
+     instructions = {
+           "up": "planks",
+           "operator": "xor",
+           "down": "planks"
+    }  }
+    }
+     if at any point there needs to be multiple directions to find something (it's not just adjacent)
+     then this can be used: "up,up,right": "planks"
+    
     */
+
+    addRecipe("shapeless", "craftingTable", { "planks": 4 }, items["crafting table"], 1);
+
     addRecipe("shapeless", "logToPlanks", { "log": 1 }, items["planks"], 4);
 
     addRecipe("nearExact", "planksToSticks", { "planks": 2 }, items["stick"], 4, undefined,
@@ -93,18 +103,17 @@ export function makeRecipesExist() {
             "items": ["planks", "planks"]
         }
     )
-    /*
-        addRecipe("exact", "stone pickaxe", {"stick": 2, "cobblestone": 3}, items["stone pickaxe"], 
-                  recipeShape = {
-                      0: "cobblestone",
-                      1: "cobblestone",
-                      2: "cobblestone",
-                      4: "stick",
-                      7: "stick"
-                  }, requiredGridSize = 3
-    
+
+    addRecipe("exact", "stone pickaxe", { "stick": 2, "cobblestone": 3 }, items["stone pickaxe"], 1,
+        {
+            0: "cobblestone",
+            1: "cobblestone",
+            2: "cobblestone",
+            4: "stick",
+            7: "stick"
+        }, 3
     )
-    */
+
 };
 
 showLoadingProgress("Recipes.mjs loaded");

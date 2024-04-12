@@ -1245,14 +1245,14 @@ class Player {
             let recipeThatWasFound = undefined;
 
             const exactRecipeDetection = (recipe) => {
-                // doesn't exist yet
+
 
                 if (this.totalCraftingContents == recipe.requiredItems) {
 
                 }
 
 
-                return false, undefined
+                return [false, undefined]
             };
 
             const nearExactRecipeLogic = (recipe) => {
@@ -1419,27 +1419,30 @@ class Player {
             if (this.isCrafting) {
 
                 for (const recipe of Object.values(recipes[this.crafting.gridSize].exact)) {
-                    let recipeDataStuff = exactRecipeDetection(recipe);
-                    foundARecipe = recipeDataStuff[0];
-                    recipeThatWasFound = recipeDataStuff[1];
-                    if (foundARecipe) { break; };
+                    foundARecipe = exactRecipeDetection(recipe);
+                    if (foundARecipe) {
+                        recipeThatWasFound = recipe;
+                        break;
+                    };
                 };
 
                 if (!foundARecipe) {
                     for (const recipe of Object.keys(recipes[this.crafting.gridSize].nearExact)) {
-                        let recipeDataStuff = nearExactRecipeLogic(recipe);
-                        foundARecipe = recipeDataStuff[0];
-                        recipeThatWasFound = recipeDataStuff[1];
-                        if (foundARecipe) { break; };
+                        foundARecipe = nearExactRecipeLogic(recipe);
+                        if (foundARecipe) {
+                            recipeThatWasFound = recipe;
+                            break;
+                        };
                     }
                 };
 
                 if (!foundARecipe) {
                     for (const recipe of Object.keys(recipes[this.crafting.gridSize].shapeless)) {
-                        let recipeDataStuff = shapelessRecipeLogic(recipe);
-                        foundARecipe = recipeDataStuff[0];
-                        recipeThatWasFound = recipeDataStuff[1];
-                        if (foundARecipe) { break; };
+                        let foundARecipe = shapelessRecipeLogic(recipe);
+                        if (foundARecipe) {
+                            recipeThatWasFound = recipe;
+                            break;
+                        };
                     };
                 };
             };
