@@ -7,15 +7,23 @@
     <title>new game test</title>
 
 
+    <style>
+        #canvas {
+            border: 1px solid black;
+            margin: auto;
+        }
+    </style>
+
+
 
 </head>
 
 
 <body>
 
-    <div id="imageHolder" style="display: none;"></div>
+    <button id="game stopper" style="display: inline-block;">kill game</button>
 
-    <canvas id="canvas" width="30" height="30" style="border: 1px solid #000;"></canvas>
+    <canvas id="canvas" width="30" height="30"></canvas>
 
     <div id="command stuff">
         <input id="command input">
@@ -46,14 +54,6 @@
 
     <script type="module" src="./testing-file.mjs"></script>
 
-
-
-
-
-
-
-
-
 </body>
 
 
@@ -72,21 +72,10 @@
     
 to do list/ideas for things:
 
-    port this all to javascript
-
-    make sure inventory management is fully functioning and doesn't break
-
 
     i think wood tool images eixst
     no weapons or shovel exist yet
 
-    
-    lets goooooo
-    crafting sticks works now
-
-    now all i need to do is add in a shovel, and make a crafting table, and make
-    a crafting table UI that uses all of the player's crafting slots, and that removes
-    the items from the crafting slots if the player closes the ui aka inventory
 
 
 
@@ -94,20 +83,13 @@ to do list/ideas for things:
     changing the interaction points of inventory slots
     normalInventoryPosition = (x, y)?
     reset it to that when things happen to get to the normal inventory state or something
-
-
-    blocks needed to make simple structures (like a small hut, or something)
-        glass?
-        same rule as water (or similar at least), uses alpha by default
-
-    
     
     
 
-    add 3? surfaces to represent breaking blocks
+    add 3? images to represent breaking blocks
     probably at the mouse's position, with math.floor and blocksize to put it
     on top of the block
-    based on % of break progress, put that kind of breaking progress surf there
+    based on % of break progress, put that kind of breaking progress img there
     
 
 
@@ -149,8 +131,7 @@ enemies
 
 day/night cycle and lighting
     don't use a screen sized surface with some alpha for lighting
-    use rgb add or subtract or whatever, that will also be used for the lighitng system in general
-    but everything on screen can have that as a temporarly solution for testing overall lighting
+    add or subtract rgb to change the lighting of the block
 
     new lighting idea:
         every air block has a light value, and it dimishes over distance, but in direct light it will be max
@@ -212,6 +193,7 @@ lighting system ideas:
     light decays over distance, more so through walls, daytime has a high light level
     use pygame coloring stuff to change block's lighting
     read the text block that's before the game loop for diff info
+    later edit: imagine not using js instead of python
 
 crafting system:
     copy minecraft?

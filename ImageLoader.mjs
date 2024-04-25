@@ -1,9 +1,4 @@
 
-function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
 
 function showLoadingProgress(message) {
     let loadingDiv = document.getElementById("loadingProgressDiv");

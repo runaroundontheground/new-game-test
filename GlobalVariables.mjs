@@ -1,9 +1,5 @@
 
-export function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
+
 export function showLoadingProgress(message) {
     let loadingDiv = document.getElementById("loadingProgressDiv");
     loadingDiv.innerHTML += message + "<br />";
@@ -11,7 +7,10 @@ export function showLoadingProgress(message) {
 }
 showLoadingProgress("loading GlobalVariables.mjs");
 
-
+console.log = message => {
+    document.getElementById("console").innerHTML += message + "<br />";
+    document.getElementById("console").scrollTop = document.getElementById("console").scrollHeight;
+};
 
 
 export const canvasWidth = 500; // was 1000 or 500
@@ -24,7 +23,8 @@ export const itemEntitySize = blockSize / 2;
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
-canvas.style.marginLeft = ((window.screen.width - canvas.width) / 2.1) + "px";
+
+
 export let ctx = canvas.getContext("2d");
 ctx.font = "20px Arial";
 ctx.imageSmoothingEnabled = false;

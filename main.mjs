@@ -34,6 +34,12 @@ commandInput.onkeydown = function (event) {
     }
 }
 
+document.getElementById("game stopper").onclick = () => {
+    running = false;
+    canvas.width = 5;
+    canvas.height = 5;
+}
+
 
 function initializeGame() {
 

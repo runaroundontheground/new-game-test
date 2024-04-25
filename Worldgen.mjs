@@ -362,7 +362,7 @@ export function runBlockUpdatesAfterGeneration(chunkCoord) {
 
                 if (block.globalAlpha > 1) {
                   block.globalAlpha = 1;
-                  consoleLog("reached too much alpha")
+                  console.log("reached too much alpha")
                   break;
                 }
 

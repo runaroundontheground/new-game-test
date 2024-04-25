@@ -1,10 +1,5 @@
 // this file is used only for testing things
 
-function consoleLog(message) {
-    let myConsole = document.getElementById("console")
-    myConsole.innerHTML += message + "<br />"
-    myConsole.scrollTop = myConsole.scrollHeight
-};
 
 /*
 
@@ -15,13 +10,13 @@ class test {
         this.testFunction = this.testFunction.bind(this);
         this.otherTestFunction = function (change = 0) {
             this.x += change;
-            consoleLog(this.x);
+            console.log(this.x);
         }
     }
     testFunction() {
-        consoleLog(this.a);
+        console.log(this.a);
         this.a = 5;
-        consoleLog(this.a);
+        console.log(this.a);
         this.newFunction = function() {
             this.x += 5;
         }

@@ -571,7 +571,7 @@ export function render() {
                     "globalAlpha": 1,
                     "position": slot.renderPosition
                 }
-
+                console.log("added render data");
                 renderingData.push(renderData);
 
                 if (mouse.inPlayerInventory && mouse.inASlot) {
@@ -605,9 +605,9 @@ export function render() {
 
             function doTheThingy(slot, comparedSlotThing) {
                 let item = slot.contents;
-                
+
                 if (item != "empty") {
-                    
+
                     let renderData = {
                         "drawType": "image",
                         "imageUrl": "item icons/" + item.name,

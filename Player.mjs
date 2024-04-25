@@ -658,7 +658,7 @@ class Player {
 
         // unstuck player when it happens
         if (this.collision.insideOfBlock != "air" && this.collision.insideOfBlock != "water") {
-            consoleLog("stuck?");
+            console.log("stuck?");
         }
 
         // wall collision
@@ -857,7 +857,7 @@ class Player {
         done = checkForEmptySlots(this.hotbar, done, count, item)
         done = checkForEmptySlots(this.inventory, done, count, item)
 
-        if (!done) { consoleLog("failed to give item"); };
+        if (!done) { console.log("failed to give item"); };
 
         return done
     };
@@ -907,7 +907,7 @@ class Player {
             // important! make sure the parameter gets updated from receivingSlot
             let receivingSlot = receivingContainer[receivingSlotId];
             let movingCount = receivingSlot.count + amount;
-            consoleLog(movingCount);
+            console.log(movingCount);
 
             if (movingCount <= maxStackSize) {
                 receivingSlot.count = movingCount;
@@ -1076,7 +1076,7 @@ class Player {
                     // only do quick transfer things if the other container is specified
                     if (otherContainer !== undefined && mouse.buttons.pressed.left) {
                         if (keys.shift || keys.ctrl) {
-                            consoleLog("shift: " + keys.shift + ", ctrl: " + keys.ctrl)
+                            console.log("shift: " + keys.shift + ", ctrl: " + keys.ctrl)
                             // do a quick transfer of max items
                             if (keys.shift && !keys.ctrl) {
                                 if (!isResultSlot) {
@@ -1390,7 +1390,7 @@ class Player {
                                         if (conditionA || conditionB) { return true; }
                                     }
 
-                                    consoleLog("invalid recipe operator or something like that")
+                                    console.log("invalid recipe operator or something like that")
                                 }
                             }
                         }
