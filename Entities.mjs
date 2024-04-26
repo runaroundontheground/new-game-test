@@ -1,4 +1,4 @@
-import { blockSize, gravity, maxStackSize, itemEntitySize, Rect, consoleLog, showLoadingProgress, camera } from "./GlobalVariables.mjs";
+import { blockSize, gravity, maxStackSize, itemEntitySize, Rect, showLoadingProgress, camera } from "./GlobalVariables.mjs";
 import { findBlock } from "./Worldgen.mjs";
 
 showLoadingProgress("loading Entities.mjs");

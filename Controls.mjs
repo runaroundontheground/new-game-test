@@ -1,4 +1,4 @@
-import { chunks, keys, keysPressed, showLoadingProgress, canvas, Rect, consoleLog, mouse } from "./GlobalVariables.mjs";
+import { chunks, keys, keysPressed, showLoadingProgress, canvas, Rect, mouse } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Controls.mjs");
 import { getBlockCoord, getChunkCoord, generateChunkTerrain } from "./Worldgen.mjs";
 

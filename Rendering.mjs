@@ -1,7 +1,7 @@
 import {
     canvasWidth, canvasHeight, totalChunkSize, blockSize, chunks, keys,
     chunkSize, canvasWidthInChunks, canvasHeightInChunks, entities, keysPressed, mouse,
-    itemEntitySize, camera, itemIcons, consoleLog, canvas, ctx, showLoadingProgress, images, random
+    itemEntitySize, camera, itemIcons, canvas, ctx, showLoadingProgress, images, random
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Rendering.mjs");
 

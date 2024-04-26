@@ -1,5 +1,5 @@
 import {
-    consoleLog, camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
+    camera, blockSize, gravity, chunkSize, maxStackSize, entities, recipes, items,
     canvasWidth, canvasHeight, chunks, fps, itemEntitySize, keys, keysPressed, mouse, random,
     showLoadingProgress, Rect, canvas, ctx, deltaTime
 

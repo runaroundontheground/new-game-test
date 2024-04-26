@@ -1,7 +1,7 @@
 
 import {
     items, entities, projectiles, fps, keysPressed,
-    timeScale, consoleLog, showLoadingProgress,
+    timeScale, showLoadingProgress,
     canvas, ctx, // importing things to be accessed from eval() command line thingy
     chunks
 } from "./GlobalVariables.mjs";

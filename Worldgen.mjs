@@ -1,7 +1,7 @@
 
 import {
   chunkSize, chunks, blockSize, totalChunkSize, camera, canvasHeightInChunks, canvasWidthInChunks,
-  listOfBlockNames, dictOfBlockBreakingStuff, consoleLog, random, showLoadingProgress, ctx, canvas
+  listOfBlockNames, dictOfBlockBreakingStuff, random, showLoadingProgress, ctx, canvas
 } from "./GlobalVariables.mjs";
 showLoadingProgress("loading Worldgen.mjs");
 
