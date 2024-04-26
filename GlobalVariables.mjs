@@ -29,7 +29,7 @@ canvas.style.marginLeft = remainingHorizontalSpace / 2 + "px";
 
 
 export let ctx = canvas.getContext("2d");
-ctx.font = "20px Arial";
+ctx.font = Math.round(canvasWidth / 50) + "px Arial";
 ctx.imageSmoothingEnabled = false;
 
 

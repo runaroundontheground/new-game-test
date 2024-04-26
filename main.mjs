@@ -30,7 +30,9 @@ commandInput.onkeydown = function (event) {
         let value = commandInput.value;
         commandInput.value = "";
         eval(String(value));
-        commandInput.blur()
+        commandInput.blur();
+        commandInput.blur();
+        document.getElementById("canvas").focus();
     }
 }
 

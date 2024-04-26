@@ -3,6 +3,15 @@ showLoadingProgress("loading Controls.mjs");
 import { getBlockCoord, getChunkCoord, generateChunkTerrain } from "./Worldgen.mjs";
 
 let inFocus = false;
+let commandInputFocused = false;
+
+let commandInput = document.getElementById("command input");
+commandInput.onfocus = () => {
+    commandInputFocused = true;
+}
+commandInput.onblur = () => {
+    commandInputFocused = false;
+}
 
 canvas.addEventListener("mouseenter", function (event) {
     inFocus = true;
@@ -29,7 +38,7 @@ addEventListener("contextmenu", function (event) {
 
 window.addEventListener("mousedown", function (event) {
 
-    if (inFocus) {
+    if (inFocus && !commandInputFocused) {
 
         event.preventDefault();
 
@@ -59,9 +68,11 @@ window.addEventListener("mouseup", function (event) {
 
 });
 
+
+
 window.addEventListener("keydown", function (event) {
 
-    if (inFocus) {
+    if (inFocus && !commandInputFocused) {
         event.preventDefault();
 
         if (!keys[event.key]) { keysPressed[event.key] = true; };
@@ -75,7 +86,7 @@ window.addEventListener("keydown", function (event) {
 
 window.addEventListener("keyup", function (event) {
 
-    if (inFocus) {
+    if (inFocus && !commandInputFocused) {
         keys[event.key] = false;
         keys.ctrl = event.ctrlKey;
         keys.shift = event.shiftKey;

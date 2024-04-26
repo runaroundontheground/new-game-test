@@ -571,7 +571,7 @@ export function render() {
                     "globalAlpha": 1,
                     "position": slot.renderPosition
                 }
-                console.log("added render data");
+
                 renderingData.push(renderData);
 
                 if (mouse.inPlayerInventory && mouse.inASlot) {
@@ -730,6 +730,14 @@ export function render() {
             }
 
             renderingData.push(renderData);
+
+            if (slot.count > 1) {
+                renderingData.push({
+                    "drawType": "fillText",
+                    "text": slot.count,
+                    "position": slot.itemCountRenderPosition,
+                })
+            }
         }
 
         let outlineRenderData = {
@@ -832,7 +840,7 @@ export function render() {
 
         renderingData.push(renderData);
 
-        let shift = player.inventoryRenderingData["slotSize"] - 10
+        let shift = itemIconSize;
 
         // draw the item count, if there's more than one item
         if (mouse.heldSlot.count > 1) {
