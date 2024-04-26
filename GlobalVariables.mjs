@@ -12,7 +12,6 @@ console.log = message => {
     document.getElementById("console").scrollTop = document.getElementById("console").scrollHeight;
 };
 
-
 export const canvasWidth = 500; // was 1000 or 500
 export const canvasHeight = 250; // was 500 or 250
 export const blockSize = 30; // pixels
@@ -23,6 +22,10 @@ export const itemEntitySize = blockSize / 2;
 export let canvas = document.getElementById("canvas");
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
+
+let remainingHorizontalSpace = window.screen.availWidth - canvasWidth;
+canvas.style.marginLeft = remainingHorizontalSpace / 2 + "px";
+
 
 
 export let ctx = canvas.getContext("2d");
@@ -224,6 +227,7 @@ class Mouse {
 }
 
 export var mouse = new Mouse();
+
 
 
 
